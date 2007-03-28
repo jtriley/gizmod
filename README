@@ -1,0 +1,101 @@
+Gizmo Daemon :: v3.0 -- (c) 2006 Tim Burrell
+=------------------= -- [tim [dot] burrell [at] gmail [dot] com]
+
+http://gizmod.sourceforge.net
+
+README
+=----=
+
+Introduction:
+-------------
+
+Gizmo Daemon is an advanced input device controller that enables any Linux
+input device to be used for any purpose imaginable.  Input events can be
+mapped to control applications (console and X11), the ALSA system mixer
+volume, XMMS / BMP, EWMH compliant window managers (for desktop switching),
+or events can be directed at other devices (keyboards, mice, force feedback
+joysticks, LIRC remotes, etc).
+
+Gizmo Daemon also features a robust plugin architecture, including a
+pluginable script engine (the default is to use the Python (http://python.org)
+programming language to control and interact with Linux input devices.
+
+Gizmo Daemon also offers support for devices with visualization capabilities
+(such as the Griffin PowerMate's LED).  In this way a number of system events
+can be sent to any devices which have visualization abilities.  Current
+monitor plugins include: system volume, CPU usage, sound output from
+XMMS / BMP, and more!  This means you'll be able to watch your PowerMate (or
+any other device with support) dance in time to music!
+
+Dependencies:
+-------------
+
+Gizmo Daemon depends on the Linux Kernel's event input system, ALSA, and 
+Python in order to be compiled.  Optionally it can depend on X Windows, 
+XMMS/BMP, and libXOSD.
+
+Installation:
+-------------
+
+- Make sure the input event system is enabled in your kernel config options:
+
+	Device Drivers --->
+	   Input Device Support -->
+	      <M> Event interface
+
+- After enabling the event system make sure permissions are correct.  Check
+  /dev/input/* to make sure the current user / group has read / write
+  privileges.  Modern systems make use of udev rules to change permissions
+  on the devices, however this is beyond the scope if this document.
+
+- If you have a PowerMate make sure it's module is enabled as well!
+
+	Device Drivers --->
+	   USB support --->
+	      <M> Griffin PowerMate and Contour Jog support
+
+- Install the Python scripting language via your distributions package management
+  system (Note: be sure to install the dev packages too!).  Or download and 
+  install from http://python.org.
+
+- If you wish to use Gizmo Daemon with XMMS or BMP, X windows, you should have
+  them installed prior to compilation.
+
+- Download (http://gizmod.sourceforge.net)
+
+- Unpack, and install:
+
+	tar jxvf gizmod-version.tar.bz2
+	CFLAGS="-O3" CXXFLAGS="-O3" ./configure --prefix=/usr --with-boost
+	make
+	make install
+	
+- Note that the configuration files are stored in: $(prefix)/share/gizmo/scripts
+
+- Launch the user space daemon:
+
+	gizmod&
+	
+Documentation, Scripting API, and Support:
+------------------------------------------
+	
+For documention, support, and help, visit the Gizmo Daemon web site
+(http://gizmod.sourceforge.net)
+
+Command Line Switches:
+----------------------
+
+    -g --debug              :: Enable Debug Mode
+    	- If reporting bugs, please turn on debug mode and send along a
+	  detailed report of what happened.
+	
+    -h --help               :: Help Screen
+
+    -q --quiet              :: Be somewhat silent
+
+    -s --script-plugin      :: Change default script plugin
+
+    -c --config-script      :: Change default configuration script
+    
+    -v --version            :: Show version information
+    

@@ -1,0 +1,59 @@
+----------------------------------------
+-- v 2.9.0
+----------------------------------------
+Mar 28 2007
+	- Work begins on 3.0!
+
+----------------------------------------
+-- v 2.3
+----------------------------------------
+May 14 2006
+        - many bug fixes thanks to users
+        - more fixes for gcc4, amd64
+	- removed software pulse plugin
+        - stripped out heavy multithreading code in favor of
+          single threaded non-blocking code.  This fixes some
+          critical section locking errors and affected users report 
+          no more segfaults.
+
+---------------------------------------
+-- v 2.1
+----------------------------------------
+Feb 09 2006
+	- Many bug fixes thanks to users
+	- Josh Tibbs sends fixes for gcc4, amd64, and distro 
+          specific xmms problems
+        - Added hardware pulsing support to powermate plugin
+        - Added software pulse plugin
+
+----------------------------------------
+-- v 2.0
+----------------------------------------
+Jan 24 2006
+	- Complete redesign!
+	- Now using Python as the scripting language
+	- Support for everything from prior versions
+	- New plugin for LIRC remotes
+
+----------------------------------------
+-- v 0.3
+----------------------------------------
+June 13 2005
+	- Added default remote support for MPlayer
+June 10 2005
+	- Add error handlers to Lua script engine
+		- Should fix remaining segfault issue
+----------------------------------------
+-- v 0.2
+----------------------------------------
+June 06 2005
+	- Added support for RF Remotes
+	- device locking
+	- device remapping
+	- huge script fixes
+June 05 2005
+	- Fix segfault in InputDeviceX11 (XFree on children list)
+----------------------------------------
+-- v 0.1
+----------------------------------------
+June 04 2005 - Initial Release!
