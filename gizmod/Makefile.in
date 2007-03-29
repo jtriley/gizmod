@@ -48,8 +48,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(gizmod_includedir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_gizmod_OBJECTS = Main.$(OBJEXT) Gizmod.$(OBJEXT) \
-	PythonEmbedder.$(OBJEXT)
+am_gizmod_OBJECTS = Main.$(OBJEXT) Gizmod.$(OBJEXT)
 gizmod_OBJECTS = $(am_gizmod_OBJECTS)
 am__DEPENDENCIES_1 =
 gizmod_DEPENDENCIES = ../libH/libH.la $(am__DEPENDENCIES_1) \
@@ -142,7 +141,6 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PTHREADLIB = @PTHREADLIB@
 PYTHON_BIN = @PYTHON_BIN@
 PYTHON_INCLUDE_DIR = @PYTHON_INCLUDE_DIR@
 PYTHON_LIB = @PYTHON_LIB@
@@ -203,9 +201,9 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 gizmod_includedir = $(includedir)/gizmod
-gizmod_include_HEADERS = Main.hpp Gizmod.hpp PythonEmbedder.hpp
-gizmod_SOURCES = Main.cpp Gizmod.cpp PythonEmbedder.cpp
-gizmod_LDADD = ../libH/libH.la $(PTHREADLIB) $(BOOST_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIB) $(BOOST_PYTHON_LIB)
+gizmod_include_HEADERS = Main.hpp Gizmod.hpp
+gizmod_SOURCES = Main.cpp Gizmod.cpp
+gizmod_LDADD = ../libH/libH.la $(PTHREADLIB) $(BOOST_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIB) $(BOOST_THREAD_LIB) $(BOOST_PYTHON_LIB)
 all: all-am
 
 .SUFFIXES:
@@ -279,7 +277,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Gizmod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PythonEmbedder.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

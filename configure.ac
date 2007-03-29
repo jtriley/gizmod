@@ -28,28 +28,6 @@ AC_DEFINE([PACKAGE_WHIMSICAL_NAME], ["Harness the blue"], [Package Pet Name / De
 
 AC_CONFIG_HEADERS(config.h)
 
-###########################################################################
-##
-## Check for pthreads OS
-##
-
-PTHREADLIB=""
-AC_MSG_CHECKING(pthreads)
-if test "`uname`" == FreeBSD ; then
-	PTHREADLIB="-pthread"
-	AC_MSG_RESULT([FreeBSD (-pthread)])
-elif test "`uname`" == Linux ; then
-	PTHREADLIB="-lpthread"
-	AC_MSG_RESULT([Linux (-lpthread)])
-	AC_CHECK_LIB(pthread, pthread_create, , AC_MSG_ERROR([You must have libpthread.so in LD_LIBRARY_PATH!]))
-else
-	PTHREADLIB="-lpthread"
-	AC_MSG_RESULT([Untested (assuming -lpthread)])
-	AC_CHECK_LIB(pthread, pthread_create, , AC_MSG_ERROR([You must have libpthread.so in LD_LIBRARY_PATH!]))
-fi
-
-AC_SUBST(PTHREADLIB)
-
 #############################################################################
 ##
 ## Check for Boost

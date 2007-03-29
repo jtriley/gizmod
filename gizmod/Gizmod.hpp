@@ -38,7 +38,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #include <string>
-#include "PythonEmbedder.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
@@ -55,16 +54,17 @@ public:
 	void				initGizmod();		///< Initialize Gizmod Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 		
+	// construction / deconstruction
 	Gizmod();
 	virtual ~Gizmod();
 
 private:
 	// private functions
 	std::string	 		getProps();		///< Get version information
+	void				initPython();		///< Initialize Python
 	
 	// private member vars
 	std::string			mConfigScript;		///< Configuration Script
-	PythonEmbedder			mPython;		///< Python Interpreter
 };
 
 #endif // __Gizmod_h

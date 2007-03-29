@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "Exception.hpp"
+#include "Debug.hpp"
 #include "stringconverter.hpp"
 #include <sstream>
 
@@ -57,7 +58,10 @@ Exception::Exception(const std::string & Message, ExceptionType Type) {
  * Advanced Constructor
  */
 Exception::Exception(const std::string & Message, const string & File, const string & Function, int LineNumber, ExceptionType Type) {
-	mMessage = "Exception in [" + File + "] :: [" + Function + "] @ [Line " + stringconverter(LineNumber) + "]: " + Message;
+	if (Debug::getDebugEnabled())
+		mMessage = "Exception in [" + File + "] :: [" + Function + "] @ [Line " + stringconverter(LineNumber) + "]: " + Message;
+	else
+		mMessage = "Exception: " + Message;
 	mType = Type;
 }
 

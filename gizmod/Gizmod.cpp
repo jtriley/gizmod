@@ -38,10 +38,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <fstream>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
+#include <boost/python.hpp>
 
 using namespace std;
 using namespace boost;
 using namespace boost::program_options;
+using namespace boost::python;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -103,7 +105,22 @@ string Gizmod::getProps() {
  * Initialize Gizmod
  */
 void Gizmod::initGizmod() {
-	mPython.initialize();
+	// TODO init gizmod
+	
+	// init python
+	try {
+		initPython();
+	} catch (exception) {
+		throw H::Exception("ERROR :: Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
+	}
+}
+
+/**
+ * \brief  Initialize the Python interpreter
+ */
+void Gizmod::initPython() {
+	cdbg << "Embedding Python Interpreter..." << endl;
+	Py_Initialize();
 }
 
 /**
