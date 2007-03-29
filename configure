@@ -21953,7 +21953,7 @@ fi
 fi
 
 CFLAGS="$CFLAGS -I$PYTHON_INCLUDE_DIR"
-BOOST_PYTHON_LIB="-l$PYTHON_LIB"
+BOOST_PYTHON_LIB="-l$PYTHON_LIB -lboost_python"
 
 
 ##################

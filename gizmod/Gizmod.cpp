@@ -121,6 +121,17 @@ void Gizmod::initGizmod() {
 void Gizmod::initPython() {
 	cdbg << "Embedding Python Interpreter..." << endl;
 	Py_Initialize();
+	
+	try {
+		object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
+		object main_namespace = main_module.attr("__dict__");
+		handle<> ignored(( PyRun_String( "print \"Hello, World\"",
+			Py_file_input,
+			main_namespace.ptr(), main_namespace.ptr() ) ));		
+	} catch (error_already_set) {
+		PyErr_Print();
+		throw H::Exception("ERROR :: Failed to Execute Python Script!", __FILE__, __FUNCTION__, __LINE__);
+	}
 }
 
 /**
