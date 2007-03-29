@@ -2,13 +2,13 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  SharedMemory.hpp
-*** \brief SharedMemory header
+*** \file  PythonEmbedder.cpp
+*** \brief PythonEmbedder class body
 ***
 *****************************************
   *****************************************
     **/
-  
+    
 /*
 
 Copyright (c) 2007, Tim Burrell
@@ -30,37 +30,44 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#ifndef __SharedMemory_h
-#define __SharedMemory_h
+#include "PythonEmbedder.hpp"
+#include "../libH/Debug.hpp"
+#include "../libH/Exception.hpp"
+#include <boost/python.hpp>
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
+using namespace std;
+using namespace boost;
+using namespace boost::python;
+using namespace H;
 
-//////////////////////////////////////////////////////////////////////////////
-// Namespace
+////////////////////////////////////////////////////////////////////////////
+// Type Defs / defines
 ///////////////////////////////////////
 
-namespace H {
-
-//////////////////////////////////////////////////////////////////////////////
-// Helper Macros
+////////////////////////////////////////////////////////////////////////////
+// Construction
 ///////////////////////////////////////
 
-/** 
- * \def   makeSharedPointer
- * Helper macro to define a new shared_ptr
+/**
+ * \brief Default Constructor
  */
-#define makeSharedPointer(X)	typedef shared_ptr<X> X##Ptr
-
-/** 
- * \def   newSharedPtr
- * Helper macro to instantiate a new managed pointer
- */
-#define newSharedPtr(x, y)	x##Ptr y = x##Ptr(new x)
-
-//////////////////////////////////////////////////////////////////////////////
-
+PythonEmbedder::PythonEmbedder() {
 }
 
-#endif // __SharedMemory_h
+/**
+ * \brief Default Destructor
+ */
+PythonEmbedder::~PythonEmbedder() {
+}
+
+////////////////////////////////////////////////////////////////////////////
+// Class Body
+///////////////////////////////////////
+
+/**
+ * \brief Initialize the Python Interpreter
+ */
+void PythonEmbedder::initialize() {
+	cdbg << "Embedding Python Interpreter..." << endl;
+	Py_Initialize();
+}

@@ -79,7 +79,6 @@ unsigned long UtilTime::getTicks() {
 
 /**
  * \brief Get time since last update
- * \param UpdateTimer update the timer at the same time
  *
  * Get the elapsed time since last update and update the timer if desired
  */

@@ -90,8 +90,13 @@ public:
 	/// operator overload for const char * -- get the Exception's message
 	virtual operator const char* () const { return mMessage.c_str(); };
 	
+	/// Default Constructor
 	Exception(const std::string & Message, ExceptionType Type = EXCEPTION_NORMAL);
+	
+	/// Extended Constructor
 	Exception(const std::string & Message, const std::string & File, const std::string & Function, int LineNumber, ExceptionType Type = EXCEPTION_NORMAL);
+	
+	/// Destructor
 	virtual ~Exception() throw() ;
 
 protected:

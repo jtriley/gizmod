@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  SharedMemory.hpp
-*** \brief SharedMemory header
+*** \file  PythonEmbedder.hpp
+*** \brief PythonEmbedder class header file
 ***
 *****************************************
   *****************************************
@@ -30,37 +30,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#ifndef __SharedMemory_h
-#define __SharedMemory_h
+#ifndef __PythonEmbedder_h
+#define __PythonEmbedder_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
-// Namespace
+// Class Definition
 ///////////////////////////////////////
 
-namespace H {
-
-//////////////////////////////////////////////////////////////////////////////
-// Helper Macros
-///////////////////////////////////////
-
-/** 
- * \def   makeSharedPointer
- * Helper macro to define a new shared_ptr
+/**
+ * \class PythonEmbedder
+ * \brief Main PythonEmbedder class
  */
-#define makeSharedPointer(X)	typedef shared_ptr<X> X##Ptr
+class PythonEmbedder {
+public:
+	// public functions
+	void 				initialize();		///< Initialize Python Interpreter
+		
+	PythonEmbedder();
+	virtual ~PythonEmbedder();
 
-/** 
- * \def   newSharedPtr
- * Helper macro to instantiate a new managed pointer
- */
-#define newSharedPtr(x, y)	x##Ptr y = x##Ptr(new x)
+private:
+};
 
-//////////////////////////////////////////////////////////////////////////////
-
-}
-
-#endif // __SharedMemory_h
+#endif // __PythonEmbedder_h

@@ -94,7 +94,7 @@ void Gizmod::enterLoop() {
  * \brief Get the program's propers
  */
 string Gizmod::getProps() {
-	return "\nGizmod v" + string(PACKAGE_VERSION) + " -- (c) 2007, Tim Burrell\n";
+	return "\nGizmod v" + string(PACKAGE_VERSION) + " -- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n";
 }
 
 /**
@@ -103,6 +103,7 @@ string Gizmod::getProps() {
  * Initialize Gizmod
  */
 void Gizmod::initGizmod() {
+	mPython.initialize();
 }
 
 /**

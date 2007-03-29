@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #include <string>
+#include "PythonEmbedder.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
@@ -63,6 +64,7 @@ private:
 	
 	// private member vars
 	std::string			mConfigScript;		///< Configuration Script
+	PythonEmbedder			mPython;		///< Python Interpreter
 };
 
 #endif // __Gizmod_h

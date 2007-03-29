@@ -48,7 +48,7 @@ using namespace H;
 /**
  * Default Constructor
  */
-Exception::Exception(const string& Message, ExceptionType Type) {
+Exception::Exception(const std::string & Message, ExceptionType Type) {
 	mMessage = Message;
 	mType = Type;
 }
@@ -56,7 +56,7 @@ Exception::Exception(const string& Message, ExceptionType Type) {
 /**
  * Advanced Constructor
  */
-Exception::Exception(const string& Message, const string& File, const string& Function, int LineNumber, ExceptionType Type) {
+Exception::Exception(const std::string & Message, const string & File, const string & Function, int LineNumber, ExceptionType Type) {
 	mMessage = "Exception in [" + File + "] :: [" + Function + "] @ [Line " + stringconverter(LineNumber) + "]: " + Message;
 	mType = Type;
 }
