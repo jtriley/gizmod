@@ -59,9 +59,9 @@ Exception::Exception(const std::string & Message, ExceptionType Type) {
  */
 Exception::Exception(const std::string & Message, const string & File, const string & Function, int LineNumber, ExceptionType Type) {
 	if (Debug::getDebugEnabled())
-		mMessage = "Exception in [" + File + "] :: [" + Function + "] @ [Line " + stringconverter(LineNumber) + "]: " + Message;
+		mMessage = "Exception in [" + File + "] :: [" + Function + "] @ [Line " + stringconverter(LineNumber) + "] -- " + Message;
 	else
-		mMessage = "Exception: " + Message;
+		mMessage = Message;
 	mType = Type;
 }
 

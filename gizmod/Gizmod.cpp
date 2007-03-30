@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "Gizmod.hpp"
+#include "GizmodPyInterface.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <cstdlib>
@@ -45,6 +46,15 @@ using namespace boost;
 using namespace boost::program_options;
 using namespace boost::python;
 using namespace H;
+
+////////////////////////////////////////////////////////////////////////////
+// C++ -> Python Exposures
+///////////////////////////////////////
+
+BOOST_PYTHON_MODULE(GizmoDaemon) {
+ 	class_<GizmodPyInterface>("Gizmod")
+		.def("getVersion", & GizmodPyInterface::getVersion);
+}
 
 ////////////////////////////////////////////////////////////////////////////
 // Type Defs / defines
@@ -96,7 +106,14 @@ void Gizmod::enterLoop() {
  * \brief Get the program's propers
  */
 string Gizmod::getProps() {
-	return "\nGizmod v" + string(PACKAGE_VERSION) + " -- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n";
+	return "\nGizmod v" + getVersion() + " -- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n";
+}
+
+/**
+ * \brief Get the program's version information
+ */
+string Gizmod::getVersion() {
+	return string(PACKAGE_VERSION);
 }
 
 /**
@@ -110,8 +127,10 @@ void Gizmod::initGizmod() {
 	// init python
 	try {
 		initPython();
-	} catch (exception) {
-		throw H::Exception("ERROR :: Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
+	} catch (H::Exception & e) {
+		throw e;
+	} catch (exception & e) {
+		throw H::Exception("Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
 	}
 }
 
@@ -119,18 +138,35 @@ void Gizmod::initGizmod() {
  * \brief  Initialize the Python interpreter
  */
 void Gizmod::initPython() {
-	cdbg << "Embedding Python Interpreter..." << endl;
-	Py_Initialize();
-	
 	try {
+		cdbg1 << "Embedding Python Interpreter..." << endl;
+		PyImport_AppendInittab("GizmoDaemon", &initGizmoDaemon);
+		Py_Initialize();
+		
+		cdbg << "Executing Python Script..." << endl;
 		object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
 		object main_namespace = main_module.attr("__dict__");
+		
+		// add Gizmo Daemon module automatically to the namespace
+		object GizmoDaemonModule( (handle<>(PyImport_ImportModule("GizmoDaemon"))) );
+		main_namespace["GizmoDaemon"] = GizmoDaemonModule;
+				
+		/*
 		handle<> ignored(( PyRun_String( "print \"Hello, World\"",
 			Py_file_input,
-			main_namespace.ptr(), main_namespace.ptr() ) ));		
+			main_namespace.ptr(), main_namespace.ptr() ) ));
+		*/
+		
+		FILE * ifScript = fopen(mConfigScript.c_str(), "r");
+		if (!ifScript)
+			throw H::Exception("Failed to Open Python Script [" + mConfigScript + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
+		PyRun_SimpleFile(ifScript, mConfigScript.c_str());
+		
+		// create the object instance 
+		//object PyBase = PythonDerived();
 	} catch (error_already_set) {
 		PyErr_Print();
-		throw H::Exception("ERROR :: Failed to Execute Python Script!", __FILE__, __FUNCTION__, __LINE__);
+		throw H::Exception("Failed to Execute Python Script!", __FILE__, __FUNCTION__, __LINE__);
 	}
 }
 

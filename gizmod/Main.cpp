@@ -63,7 +63,7 @@ int main (int argc, char * argv []) {
 		if (!pGizmod->initialize(argc, argv))
 			return EXIT_SUCCESS;
 	} catch (H::Exception & e) {
-		cerr << "\nUnable to Initialize Gizmod: " << e.message() << "\n\n";
+		cerr << "\nUnable to Initialize Gizmod :: " << e.message() << "\n\n";
 		return EXIT_FAILURE;
 	}
 	
@@ -71,7 +71,7 @@ int main (int argc, char * argv []) {
 	try {
 		pGizmod->initGizmod();
 	} catch (H::Exception & e) {
-		cerr << "Unable to Initialize DDE: " << e.message() << "\n\n";
+		cerr << "Unable to Initialize Gizmod :: " << e.message() << "\n\n";
 		return EXIT_FAILURE;
 	}
 	
@@ -79,7 +79,7 @@ int main (int argc, char * argv []) {
 	try {
 		pGizmod->enterLoop();
 	} catch (H::Exception & e) {
-		cerr << "Fatal Error: " << e.message() << "\n\n";
+		cerr << "Fatal Error :: " << e.message() << "\n\n";
 		return EXIT_FAILURE;
 	}
 		

@@ -2,13 +2,13 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmod.hpp
-*** \brief Gizmod class header file
+*** \file  GizmodPyInterface.cpp
+*** \brief GizmodPyInterface class body
 ***
 *****************************************
   *****************************************
     **/
-  
+    
 /*
 
 Copyright (c) 2007, Tim Burrell
@@ -30,42 +30,40 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#ifndef __Gizmod_h
-#define __Gizmod_h
+#include "GizmodPyInterface.hpp"
+#include "../libH/Debug.hpp"
+#include "../libH/Exception.hpp"
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
+using namespace std;
+using namespace H;
 
-#include <string>
+////////////////////////////////////////////////////////////////////////////
+// Type Defs / defines
+///////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////
-// Class Definition
+////////////////////////////////////////////////////////////////////////////
+// Construction
 ///////////////////////////////////////
 
 /**
- * \class Gizmod
- * \brief Main Gizmod class
+ * \brief Default Constructor
  */
-class Gizmod {
-public:
-	// public functions
-	void				enterLoop();		///< Enter the main run loop
-	std::string			getVersion();		///< Get version string
-	void				initGizmod();		///< Initialize Gizmod Evolution
-	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
-		
-	// construction / deconstruction
-	Gizmod();
-	virtual ~Gizmod();
+GizmodPyInterface::GizmodPyInterface() {
+}
 
-private:
-	// private functions
-	std::string	 		getProps();		///< Get version information
-	void				initPython();		///< Initialize Python
-	
-	// private member vars
-	std::string			mConfigScript;		///< Configuration Script
-};
+/**
+ * \brief Default Destructor
+ */
+GizmodPyInterface::~GizmodPyInterface() {
+}
 
-#endif // __Gizmod_h
+////////////////////////////////////////////////////////////////////////////
+// Class Body
+///////////////////////////////////////
+
+/**
+ * \brief Get the program's version information
+ */
+string GizmodPyInterface::getVersion() {
+	return string(PACKAGE_VERSION);
+}

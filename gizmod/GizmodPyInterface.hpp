@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmod.hpp
-*** \brief Gizmod class header file
+*** \file  GizmodPyInterface.hpp
+*** \brief GizmodPyInterface class header file
 ***
 *****************************************
   *****************************************
@@ -30,8 +30,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#ifndef __Gizmod_h
-#define __Gizmod_h
+#ifndef __GizmodPyInterface_h
+#define __GizmodPyInterface_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
@@ -44,28 +44,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ///////////////////////////////////////
 
 /**
- * \class Gizmod
- * \brief Main Gizmod class
+ * \class GizmodPyInterface
+ * \brief Main GizmodPyInterface class
  */
-class Gizmod {
+class GizmodPyInterface {
 public:
 	// public functions
-	void				enterLoop();		///< Enter the main run loop
 	std::string			getVersion();		///< Get version string
-	void				initGizmod();		///< Initialize Gizmod Evolution
-	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 		
 	// construction / deconstruction
-	Gizmod();
-	virtual ~Gizmod();
+	GizmodPyInterface();
+	virtual ~GizmodPyInterface();
 
 private:
-	// private functions
-	std::string	 		getProps();		///< Get version information
-	void				initPython();		///< Initialize Python
-	
-	// private member vars
-	std::string			mConfigScript;		///< Configuration Script
 };
 
-#endif // __Gizmod_h
+#endif // __GizmodPyInterface_h
