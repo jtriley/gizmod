@@ -63,6 +63,7 @@ AC_CONFIG_FILES([
 	Makefile
 	libH/Makefile
 	gizmod/Makefile
+	scripts/Makefile
 ])
 AC_OUTPUT
 

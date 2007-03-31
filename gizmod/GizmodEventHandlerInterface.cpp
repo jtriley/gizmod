@@ -2,13 +2,13 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmodPyInterface.hpp
-*** \brief GizmodPyInterface class header file
+*** \file  GizmodEventHandlerInterface.cpp
+*** \brief GizmodEventHandlerInterface class body
 ***
 *****************************************
   *****************************************
     **/
-  
+    
 /*
 
 Copyright (c) 2007, Tim Burrell
@@ -30,33 +30,33 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#ifndef __GizmodPyInterface_h
-#define __GizmodPyInterface_h
+#include "GizmodEventHandlerInterface.hpp"
+#include "../libH/Debug.hpp"
+#include "../libH/Exception.hpp"
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
+using namespace std;
+using namespace H;
 
-#include <string>
+////////////////////////////////////////////////////////////////////////////
+// Type Defs / defines
+///////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////
-// Class Definition
+////////////////////////////////////////////////////////////////////////////
+// Construction
 ///////////////////////////////////////
 
 /**
- * \class GizmodPyInterface
- * \brief Main GizmodPyInterface class
+ * \brief Default Constructor
  */
-class GizmodPyInterface {
-public:
-	// public functions
-	std::string			getVersion();		///< Get version string
-		
-	// construction / deconstruction
-	GizmodPyInterface();
-	virtual ~GizmodPyInterface();
+GizmodEventHandlerInterface::GizmodEventHandlerInterface() {
+}
 
-private:
-};
+/**
+ * \brief Default Destructor
+ */
+GizmodEventHandlerInterface::~GizmodEventHandlerInterface() {
+}
 
-#endif // __GizmodPyInterface_h
+////////////////////////////////////////////////////////////////////////////
+// Class Body
+///////////////////////////////////////

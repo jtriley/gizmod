@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "Gizmod.hpp"
-#include "GizmodPyInterface.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <cstdlib>
@@ -51,9 +50,31 @@ using namespace H;
 // C++ -> Python Exposures
 ///////////////////////////////////////
 
+/**
+ * \struct GizmodEventHandlerInterfaceWrap
+ * \brief  Wrapper for GizmodEventHandlerInterface so Python can inherit the abstract class
+ */
+struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
+	/// Default Constructor
+	GizmodEventHandlerInterfaceWrap(PyObject * self_) : self(self_) {}
+
+	void		__construct__()	 { return python::call_method<void>(self, "__construct__"); }
+	bool		getInitialized() { return python::call_method<bool>(self, "getInitialized"); }
+	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
+
+	PyObject * 	self;		///< Pointer to self
+};
+
+/**
+ * Python module definition
+ */
 BOOST_PYTHON_MODULE(GizmoDaemon) {
- 	class_<GizmodPyInterface>("Gizmod")
-		.def("getVersion", & GizmodPyInterface::getVersion);
+ 	class_<Gizmod>("PyGizmod")
+		.def("getVersion", & Gizmod::getVersion)
+		;
+	
+	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
+		;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -67,10 +88,22 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 #define CONFIG_FILE		PACKAGE_NAME ".conf"
 
 /** 
- * \def   SCRIPT_FILE
+ * \def   SCRIPT_DIR
  * The default path of the config file
  */
-#define SCRIPT_FILE		PACKAGE_NAME ".py"
+#define SCRIPT_DIR		PACKAGE_PREFIX "/share/gizmo/scripts/"
+
+/** 
+ * \def   SCRIPT_GIZMOD
+ * The path of the initial config script
+ */
+#define SCRIPT_GIZMOD		"Gizmod.py"
+
+/** 
+ * \def   SCRIPT_USER
+ * The path of the user config script that gets run after SCRIPT_GIZMOD
+ */
+#define SCRIPT_USER		"User.py"
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -82,7 +115,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 Gizmod::Gizmod() {
 	cout << getProps();
 	
-	mConfigScript = SCRIPT_FILE;
+	mConfigDir = SCRIPT_DIR;
+	mpPyDispatcher = NULL;
 }
 
 /**
@@ -143,27 +177,47 @@ void Gizmod::initPython() {
 		PyImport_AppendInittab("GizmoDaemon", &initGizmoDaemon);
 		Py_Initialize();
 		
-		cdbg << "Executing Python Script..." << endl;
-		object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
-		object main_namespace = main_module.attr("__dict__");
+		cdbg1 << "Initializing Python Environment..." << endl;
+		object MainModule((handle<>(borrowed(PyImport_AddModule("__main__")))));
+		object MainNamespace = MainModule.attr("__dict__");
 		
 		// add Gizmo Daemon module automatically to the namespace
 		object GizmoDaemonModule( (handle<>(PyImport_ImportModule("GizmoDaemon"))) );
-		main_namespace["GizmoDaemon"] = GizmoDaemonModule;
-				
-		/*
-		handle<> ignored(( PyRun_String( "print \"Hello, World\"",
-			Py_file_input,
-			main_namespace.ptr(), main_namespace.ptr() ) ));
-		*/
+		MainNamespace["GizmoDaemon"] = GizmoDaemonModule;
 		
-		FILE * ifScript = fopen(mConfigScript.c_str(), "r");
+		// create a new object so the script can access this object
+		scope(GizmoDaemonModule).attr("Gizmod") = ptr(this);
+		
+		// execute the main script code
+		string ScriptFile = mConfigDir + SCRIPT_GIZMOD;
+		cdbg << "Executing Main Python Script [" << ScriptFile << "]..." << endl;
+		FILE * ifScript = fopen(ScriptFile.c_str(), "r");
 		if (!ifScript)
-			throw H::Exception("Failed to Open Python Script [" + mConfigScript + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
-		PyRun_SimpleFile(ifScript, mConfigScript.c_str());
+			throw H::Exception("Failed to Open Python Script [" + ScriptFile + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
+		PyRun_SimpleFile(ifScript, ScriptFile.c_str());
+		fclose(ifScript);
 		
-		// create the object instance 
-		//object PyBase = PythonDerived();
+		// Create the event dispatcher object so we can interact with it
+		cdbg1 << "Creating Dispatcher Object" << endl;
+		handle<> ignored((PyRun_String(
+			"Dispatcher = GizmodDispatcher()\n",
+			Py_file_input, MainNamespace.ptr(), MainNamespace.ptr())));
+		
+		// Grab the event dispatcher object so we can interact with it
+		mpPyDispatcher = extract<GizmodEventHandlerInterface*>(MainNamespace["Dispatcher"]);
+		
+		// Initialize the dispatcher object
+		mpPyDispatcher->__construct__();
+		mpPyDispatcher->initialize();
+			
+		// execute the user script code
+		ScriptFile = mConfigDir + SCRIPT_USER;
+		cdbg << "Executing User Python Script [" << ScriptFile << "]..." << endl;
+		ifScript = fopen(ScriptFile.c_str(), "r");
+		if (!ifScript)
+			throw H::Exception("Failed to Open Python Script [" + ScriptFile + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
+		PyRun_SimpleFile(ifScript, ScriptFile.c_str());
+		fclose(ifScript);
 	} catch (error_already_set) {
 		PyErr_Print();
 		throw H::Exception("Failed to Execute Python Script!", __FILE__, __FUNCTION__, __LINE__);
@@ -191,7 +245,7 @@ bool Gizmod::initialize(int argc, char ** argv) {
 	// config file options that can be loaded via command line as well
 	options_description ConfigurationOptions("Configuration Options");
 	ConfigurationOptions.add_options()
-		("config,c",		value<string>(),	"Set config file script")
+		("configdir,c",		value<string>(),	"Set config scripts directory")
 		;
         
         // hiGizmodn options
@@ -249,9 +303,11 @@ bool Gizmod::initialize(int argc, char ** argv) {
 		Debug::setDebugVerbosity(VarMap["verbosity"].as<int>());
 		cdbg << "Debug Verbosity set to [" << VarMap["verbosity"].as<int>() << "]" << endl;
 	}
-	if (VarMap.count("config")) {
-		mConfigScript = VarMap["config"].as<string>();
-		cdbg << "Config Script set to [" << VarMap["config"].as<string>() << "]" << endl;
+	if (VarMap.count("configdir")) {
+		mConfigDir = VarMap["configdir"].as<string>();
+		if (mConfigDir[mConfigDir.length() - 1] != '/')
+			mConfigDir += "/";
+		cdbg << "Config Scripts Directory set to [" << VarMap["configdir"].as<string>() << "]" << endl;
 	}
 
 	cout << endl;

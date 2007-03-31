@@ -37,7 +37,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "config.h"
 #endif
 
+#include "GizmodEventHandlerInterface.hpp"
 #include <string>
+#include <boost/python.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
@@ -65,7 +67,8 @@ private:
 	void				initPython();		///< Initialize Python
 	
 	// private member vars
-	std::string			mConfigScript;		///< Configuration Script
+	std::string			mConfigDir;		///< Configuration scripts directory
+	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmodDispatcher Python object
 };
 
 #endif // __Gizmod_h
