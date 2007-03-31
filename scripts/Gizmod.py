@@ -56,5 +56,9 @@ class GizmodDispatcher(GizmodEventHandler):
 # Dispatcher class end
 ##########################
 
-# To run user defined code post initializing, see User.py
-#	which is executed after this file is parsed
+# To run user defined code post initializing, see User.py which is executed 
+# after this file is parsed, and:
+#
+# - An interface to the main C++ program core is availabe via the 
+#   object "Gizmod"
+# - An instantiation of the GizmodDispatcher is available as "Dispatcher"
