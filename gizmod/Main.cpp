@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #include "Main.hpp"
-#include "Gizmod.hpp"
+#include "GizmoDaemon.hpp"
 #include "../libH/Exception.hpp"
 #include <cstdlib>
 #include <iostream>
@@ -56,7 +56,7 @@ using namespace boost;
  */
 int main (int argc, char * argv []) {
 	// create the Gizmod
-	shared_ptr<Gizmod> pGizmod(new Gizmod);
+	shared_ptr<GizmoDaemon> pGizmod(new GizmoDaemon);
 	
 	// try initializing
 	try {

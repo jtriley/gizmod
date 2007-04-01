@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmod.cpp
-*** \brief Gizmod class body
+*** \file  GizmoDaemon.cpp
+*** \brief GizmoDaemon class body
 ***
 *****************************************
   *****************************************
@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "Gizmod.hpp"
+#include "GizmoDaemon.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <cstdlib>
@@ -45,6 +45,40 @@ using namespace boost;
 using namespace boost::program_options;
 using namespace boost::python;
 using namespace H;
+
+////////////////////////////////////////////////////////////////////////////
+// Type Defs / defines
+///////////////////////////////////////
+
+/** 
+ * \def   CONFIG_FILE
+ * The default path of the config file
+ */
+#define CONFIG_FILE		PACKAGE_NAME ".conf"
+
+/** 
+ * \def   SCRIPT_DIR
+ * The default path of the config file
+ */
+#define SCRIPT_DIR		PACKAGE_PREFIX "/share/gizmo/scripts/"
+
+/** 
+ * \def   SCRIPT_GizmoDaemon
+ * The path of the initial config script
+ */
+#define SCRIPT_GIZMO_DAEMON	"Gizmod.py"
+
+/** 
+ * \def   SCRIPT_USER
+ * The path of the user config script that gets run after SCRIPT_GizmoDaemon
+ */
+#define SCRIPT_USER		"User.py"
+
+/** 
+ * \def   EVENT_NODE_DIR
+ * Default path to the event nodes
+ */
+#define EVENT_NODE_DIR		"/dev/input/event"
 
 ////////////////////////////////////////////////////////////////////////////
 // C++ -> Python Exposures
@@ -69,47 +103,13 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
  * Python module definition
  */
 BOOST_PYTHON_MODULE(GizmoDaemon) {
- 	class_<Gizmod>("PyGizmod")
-		.def("getVersion", & Gizmod::getVersion)
+ 	class_<GizmoDaemon>("PyGizmoDaemon")
+		.def("getVersion", & GizmoDaemon::getVersion)
 		;
 	
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
 		;
 }
-
-////////////////////////////////////////////////////////////////////////////
-// Type Defs / defines
-///////////////////////////////////////
-
-/** 
- * \def   CONFIG_FILE
- * The default path of the config file
- */
-#define CONFIG_FILE		PACKAGE_NAME ".conf"
-
-/** 
- * \def   SCRIPT_DIR
- * The default path of the config file
- */
-#define SCRIPT_DIR		PACKAGE_PREFIX "/share/gizmo/scripts/"
-
-/** 
- * \def   SCRIPT_GIZMOD
- * The path of the initial config script
- */
-#define SCRIPT_GIZMOD		"Gizmod.py"
-
-/** 
- * \def   SCRIPT_USER
- * The path of the user config script that gets run after SCRIPT_GIZMOD
- */
-#define SCRIPT_USER		"User.py"
-
-/** 
- * \def   EVENT_NODE_DIR
- * Default path to the event nodes
- */
-#define EVENT_NODE_DIR		"/dev/input/event"
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -118,18 +118,19 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 /**
  * \brief Default Constructor
  */
-Gizmod::Gizmod() {
+GizmoDaemon::GizmoDaemon() {
 	cout << getProps();
 	
 	mConfigDir = SCRIPT_DIR;
+	mEventsDir = EVENT_NODE_DIR;
 	mpPyDispatcher = NULL;
 }
 
 /**
  * \brief Default Destructor
  */
-Gizmod::~Gizmod() {
-	cdbg << "Gizmod Shutting Down..." << endl << endl;
+GizmoDaemon::~GizmoDaemon() {
+	cdbg << "GizmoDaemon Shutting Down..." << endl << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -139,30 +140,31 @@ Gizmod::~Gizmod() {
 /**
  * \brief Enter the main run loop
  */
-void Gizmod::enterLoop() {
+void GizmoDaemon::enterLoop() {
 }
 
 /**
  * \brief Get the program's propers
  */
-string Gizmod::getProps() {
-	return "\nGizmod v" + getVersion() + " -- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n";
+string GizmoDaemon::getProps() {
+	return "\nGizmoDaemon v" + getVersion() + " -- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n";
 }
 
 /**
  * \brief Get the program's version information
  */
-string Gizmod::getVersion() {
+string GizmoDaemon::getVersion() {
 	return string(PACKAGE_VERSION);
 }
 
 /**
- * \brief  Setup Gizmod
+ * \brief  Setup GizmoDaemon
  * 
- * Initialize Gizmod
+ * Initialize GizmoDaemon
  */
-void Gizmod::initGizmod() {
-	// TODO init gizmod
+void GizmoDaemon::initGizmod() {
+	// TODO init GizmoDaemon
+	
 	
 	// init python
 	try {
@@ -177,7 +179,7 @@ void Gizmod::initGizmod() {
 /**
  * \brief  Initialize the Python interpreter
  */
-void Gizmod::initPython() {
+void GizmoDaemon::initPython() {
 	try {
 		cdbg1 << "Embedding Python Interpreter..." << endl;
 		PyImport_AppendInittab("GizmoDaemon", &initGizmoDaemon);
@@ -195,7 +197,7 @@ void Gizmod::initPython() {
 		scope(GizmoDaemonModule).attr("Gizmod") = ptr(this);
 		
 		// execute the main script code
-		string ScriptFile = mConfigDir + SCRIPT_GIZMOD;
+		string ScriptFile = mConfigDir + SCRIPT_GIZMO_DAEMON;
 		cdbg << "Executing Main Python Script [" << ScriptFile << "]..." << endl;
 		FILE * ifScript = fopen(ScriptFile.c_str(), "r");
 		if (!ifScript)
@@ -238,7 +240,7 @@ void Gizmod::initPython() {
  * 
  * load the config file, process command line options, etc
  */
-bool Gizmod::initialize(int argc, char ** argv) {
+bool GizmoDaemon::initialize(int argc, char ** argv) {
 	// generic options
 	options_description GenericOptions("Generic Options");
 	GenericOptions.add_options()
@@ -252,10 +254,10 @@ bool Gizmod::initialize(int argc, char ** argv) {
 	options_description ConfigurationOptions("Configuration Options");
 	ConfigurationOptions.add_options()
 		("configdir,c",		value<string>(),	"Set config scripts directory") 
-		("eventsdir,e",		value<string>(),	string("Set event node directory (default: " + mEventsDir + ")").c_str())
+		("eventsdir,e",		value<string>(),	"Set event node directory (default: " EVENT_NODE_DIR ")")
 		;
         
-        // hiGizmodn options
+        // hiGizmoDaemonn options
 	options_description HiddenOptions("Hidden Options");
 	HiddenOptions.add_options();
        

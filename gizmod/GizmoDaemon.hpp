@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmod.hpp
-*** \brief Gizmod class header file
+*** \file  GizmoDaemon.hpp
+*** \brief GizmoDaemon class header file
 ***
 *****************************************
   *****************************************
@@ -30,8 +30,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#ifndef __Gizmod_h
-#define __Gizmod_h
+#ifndef __GizmoDaemon_h
+#define __GizmoDaemon_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
@@ -46,20 +46,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ///////////////////////////////////////
 
 /**
- * \class Gizmod
- * \brief Main Gizmod class
+ * \class GizmoDaemon
+ * \brief Main GizmoDaemon class
  */
-class Gizmod {
+class GizmoDaemon {
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
 	std::string			getVersion();		///< Get version string
-	void				initGizmod();		///< Initialize Gizmod Evolution
+	void				initGizmod();		///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 		
 	// construction / deconstruction
-	Gizmod();						///< Default Constructor
-	virtual ~Gizmod();					///< Destructor
+	GizmoDaemon();						///< Default Constructor
+	virtual ~GizmoDaemon();					///< Destructor
 
 private:
 	// private functions
@@ -69,7 +69,7 @@ private:
 	// private member vars
 	std::string			mConfigDir;		///< Configuration scripts directory
 	std::string			mEventsDir;		///< Event node directory
-	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmodDispatcher Python object
+	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
 };
 
-#endif // __Gizmod_h
+#endif // __GizmoDaemon_h
