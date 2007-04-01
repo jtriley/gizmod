@@ -47,7 +47,7 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * Default Constructor
+ * \brief Exception Default Constructor
  */
 Exception::Exception(const std::string & Message, ExceptionType Type) {
 	mMessage = Message;
@@ -55,7 +55,7 @@ Exception::Exception(const std::string & Message, ExceptionType Type) {
 }
 
 /**
- * Advanced Constructor
+ * \brief Exception Advanced Constructor
  */
 Exception::Exception(const std::string & Message, const string & File, const string & Function, int LineNumber, ExceptionType Type) {
 	if (Debug::getDebugEnabled())
@@ -66,7 +66,7 @@ Exception::Exception(const std::string & Message, const string & File, const str
 }
 
 /**
- * Destructor
+ * \brief Exception Destructor
  */
 Exception::~Exception() throw() {
 }

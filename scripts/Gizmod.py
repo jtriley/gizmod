@@ -30,6 +30,7 @@ class GizmodDispatcher(GizmodEventHandler):
 
 	def getInitialized(self):
 		""" Gets whether or not the object has been initialized """
+		
 		return self.initialized
 
 	def initialize(self):

@@ -58,8 +58,8 @@ public:
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 		
 	// construction / deconstruction
-	Gizmod();
-	virtual ~Gizmod();
+	Gizmod();						///< Default Constructor
+	virtual ~Gizmod();					///< Destructor
 
 private:
 	// private functions
