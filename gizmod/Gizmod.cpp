@@ -105,6 +105,12 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
  */
 #define SCRIPT_USER		"User.py"
 
+/** 
+ * \def   EVENT_NODE_DIR
+ * Default path to the event nodes
+ */
+#define EVENT_NODE_DIR		"/dev/input/event"
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -245,7 +251,8 @@ bool Gizmod::initialize(int argc, char ** argv) {
 	// config file options that can be loaded via command line as well
 	options_description ConfigurationOptions("Configuration Options");
 	ConfigurationOptions.add_options()
-		("configdir,c",		value<string>(),	"Set config scripts directory")
+		("configdir,c",		value<string>(),	"Set config scripts directory") 
+		("eventsdir,e",		value<string>(),	string("Set event node directory (default: " + mEventsDir + ")").c_str())
 		;
         
         // hiGizmodn options
@@ -308,6 +315,12 @@ bool Gizmod::initialize(int argc, char ** argv) {
 		if (mConfigDir[mConfigDir.length() - 1] != '/')
 			mConfigDir += "/";
 		cdbg << "Config Scripts Directory set to [" << VarMap["configdir"].as<string>() << "]" << endl;
+	}
+	if (VarMap.count("eventsdir")) {
+		mEventsDir = VarMap["eventsdir"].as<string>();
+		if (mEventsDir[mEventsDir.length() - 1] != '/')
+			mEventsDir += "/";
+		cdbg << "Event Node Directory set to [" << VarMap["eventsdir"].as<string>() << "]" << endl;
 	}
 
 	cout << endl;

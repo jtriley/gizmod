@@ -68,6 +68,7 @@ private:
 	
 	// private member vars
 	std::string			mConfigDir;		///< Configuration scripts directory
+	std::string			mEventsDir;		///< Event node directory
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmodDispatcher Python object
 };
 
