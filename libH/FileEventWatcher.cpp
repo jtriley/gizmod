@@ -46,6 +46,12 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
+/**
+ * \def   DEFAULT_READ_BUF_SIZE 
+ * \brief Default size of the read buffer for the automatic file reader
+ */
+#define READ_BUF_SIZE	65536
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -54,6 +60,7 @@ using namespace H;
  * \brief FileEventWatcher Default Constructor
  */
 FileEventWatcher::FileEventWatcher() {
+	mPolling = false;
 }
 
 /**
@@ -115,7 +122,9 @@ void FileEventWatcher::addFileToWatch(string FileName, FileWatchType WatchType) 
 		flags = O_RDWR;
 		events = POLLIN | POLLOUT;
 		ModeString = "Read / Write";
-		break;		
+		break;
+	case WATCH_INVALID:
+		throw H::Exception("Invalid Watch Type specified on [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);
 	}
 	
 	int fd = open(FileName.c_str(), flags);
@@ -133,6 +142,40 @@ void FileEventWatcher::addFileToWatch(string FileName, FileWatchType WatchType) 
 }
 
 /**
+ * \brief  Get the type of the file event
+ * \param  Index The index of the file to check
+ * \return Type of the event (FileWatchType)
+ */
+FileWatchType FileEventWatcher::getType(int Index) {
+	if (mPollFDs[Index].revents & POLLIN)
+		return WATCH_IN;
+	else if (mPollFDs[Index].revents & POLLOUT)
+		return WATCH_OUT;
+	else if (mPollFDs[Index].revents & POLLOUT & POLLIN)
+		return WATCH_INOUT;
+	else
+		return WATCH_INVALID;
+}
+
+/**
+ * \brief  Read the input event waiting on a file descriptor
+ * \param  fd The file descriptor
+ * \return The results of the read (DynamicBuffer)
+ */
+shared_ptr< DynamicBuffer<char> > FileEventWatcher::readFromFile(int fd) {
+	shared_ptr< DynamicBuffer<char> > pBuffer(new DynamicBuffer<char>);
+	
+	char ReadBuffer[READ_BUF_SIZE];
+	ssize_t BytesRead;
+	do {
+		BytesRead = read(fd, ReadBuffer, READ_BUF_SIZE);
+		pBuffer->addToBuffer(ReadBuffer, BytesRead);
+	} while (BytesRead == READ_BUF_SIZE);
+	
+	return pBuffer;
+}
+
+/**
  * \brief Watch for file events on already specified files
  *
  * Note: Blocking
@@ -144,5 +187,17 @@ void FileEventWatcher::watchForFileEvents() {
 	}
 	
 	cdbg << "FileEventWatcher :: Watching [" << (int) mPollFDs.size() << " Files] for Events..." << endl;
-	poll(&mPollFDs[0], mPollFDs.size(), -1);
+	mPolling = true;
+	while (mPolling) {
+		// poll the open files
+		poll(&mPollFDs[0], mPollFDs.size(), -1);
+		
+		// file events have happened, check for them and dispatch
+		vector<struct pollfd>::iterator iter;
+		for (iter = mPollFDs.begin(); iter != mPollFDs.end(); iter++) {
+			if (iter->revents & POLLIN) {
+				shared_ptr< DynamicBuffer<char> > pBuffer = readFromFile(iter->fd);
+			}
+		}
+	}
 }

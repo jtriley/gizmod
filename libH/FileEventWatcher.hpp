@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <sys/poll.h>
+#include "DynamicBuffer.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 // Namespace
@@ -63,6 +64,7 @@ namespace H {
  * WATCH_INOUT dictates that the file should be watched for reads and writes
  */
 typedef enum {
+	WATCH_INVALID = -1,
 	WATCH_IN,
 	WATCH_OUT,
 	WATCH_INOUT
@@ -111,10 +113,13 @@ public:
 
 protected:
 	// private functions
+	FileWatchType 		getType(int Index);		///< Get the type of file event that happened on specified file
+	boost::shared_ptr< H::DynamicBuffer<char> > readFromFile(int fd); ///< Read from file and return the contents in a vector
 	
 	// private member variables
-	std::list< boost::shared_ptr<FileWatchee> > mWatcheeList; ///< List of files being watched
 	std::vector<struct pollfd> mPollFDs;			///< Array of pollfd for the call to poll()
+	bool			mPolling;			///< Continue polling?
+	std::list< boost::shared_ptr<FileWatchee> > mWatcheeList; ///< List of files being watched
 };
 
 //////////////////////////////////////////////////////////////////////////////
