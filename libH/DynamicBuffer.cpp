@@ -66,7 +66,7 @@ DynamicBuffer<DataType>::~DynamicBuffer() {
 
 /**
  * \brief Add data to the buffer
- * \param DataType* Pointer to the data to be added
+ * \param AddBuf Pointer to the data to be added
  * \param BufLen Length of data to be added
  */
 template <class DataType>

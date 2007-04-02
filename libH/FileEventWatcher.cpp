@@ -43,7 +43,7 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * \def   DEFAULT_READ_BUF_SIZE 
+ * \def   READ_BUF_SIZE 
  * \brief Default size of the read buffer for the automatic file reader
  */
 #define READ_BUF_SIZE	65536
@@ -99,7 +99,7 @@ FileWatchee::~FileWatchee() {
  * \param FileName Absolute path of the file to watch
  * \param WatchType Type of watch to perform on the file
  */
-void FileEventWatcher::addFileToWatch(string FileName, FileWatchType WatchType) {
+void FileEventWatcher::addFileToWatch(std::string FileName, FileWatchType WatchType) {
 	int 	flags;
 	string 	ModeString;
 	short	events;

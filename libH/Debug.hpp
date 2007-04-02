@@ -44,7 +44,8 @@
  * \namespace H
  * \brief     H namespace
  *
- * This class belongs to libH
+ * All code in the H namespace gets its inspiration from the best movie ever made:
+ *    Hackers
  */
 namespace H {
 	

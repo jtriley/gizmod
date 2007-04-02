@@ -59,14 +59,14 @@ using namespace H;
 #define SCRIPT_DIR		PACKAGE_PREFIX "/share/gizmo/scripts/"
 
 /** 
- * \def   SCRIPT_GizmoDaemon
+ * \def   SCRIPT_DISPATCH
  * The path of the initial config script
  */
 #define SCRIPT_DISPATCH 	"Dispatch.py"
 
 /** 
  * \def   SCRIPT_USER
- * The path of the user config script that gets run after SCRIPT_GizmoDaemon
+ * The path of the user config script that gets run after SCRIPT_DISPATCH
  */
 #define SCRIPT_USER		"User.py"
 
