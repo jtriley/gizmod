@@ -2,27 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file    Main.hpp
-*** \brief   Main header
-*** \author  Tim Burrell -- tim.burrell@gmail.com
-***
-*****************************************
-  *****************************************
-    **/
-
-    /**
-  *********************************************************************
-*************************************************************************
-*** 
-*** \mainpage Gizmod
-*** \brief    Gizmod Daemon
-*** \author   Tim Burrell -- tim.burrell@gmail.com
-*** \version  3:0
-***
-*** \todo     Code the entire program!
-*** \bug      Not done coding!
-***
-*** Gizmo Daemon -- Let your computer do what you want it to!
+*** \file  Gizmo.hpp
+*** \brief Gizmo class header file
 ***
 *****************************************
   *****************************************
@@ -44,3 +25,36 @@
   limitations under the License. 
   
 */
+
+#include "Gizmo.hpp"
+#include "../libH/Debug.hpp"
+#include "../libH/Exception.hpp"
+#include <boost/shared_ptr.hpp>
+
+using namespace std;
+using namespace boost;
+using namespace H;
+
+////////////////////////////////////////////////////////////////////////////
+// Type Defs
+///////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+// Construction
+///////////////////////////////////////
+
+/**
+ * \brief Gizmo Default Constructor
+ */
+Gizmo::Gizmo() {
+}
+
+/**
+ * \brief Gizmo Destructor
+ */
+Gizmo::~Gizmo() {
+}
+
+////////////////////////////////////////////////////////////////////////////
+// Class Body
+///////////////////////////////////////

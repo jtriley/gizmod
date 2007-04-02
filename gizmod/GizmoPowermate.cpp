@@ -2,13 +2,13 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmodEventHandlerInterface.cpp
-*** \brief GizmodEventHandlerInterface class body
+*** \file  GizmoPowermate.hpp
+*** \brief GizmoPowermate class header file
 ***
 *****************************************
   *****************************************
     **/
-    
+
 /*
   
   Copyright (c) 2007, Tim Burrell
@@ -26,15 +26,17 @@
   
 */
 
-#include "GizmodEventHandlerInterface.hpp"
+#include "GizmoPowermate.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include <boost/shared_ptr.hpp>
 
 using namespace std;
+using namespace boost;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
-// Type Defs / defines
+// Type Defs
 ///////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
@@ -42,17 +44,25 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * \brief Default Constructor
+ * \brief GizmoPowermate Default Constructor
  */
-GizmodEventHandlerInterface::GizmodEventHandlerInterface() {
+GizmoPowermate::GizmoPowermate() {
 }
 
 /**
- * \brief Default Destructor
+ * \brief GizmoPowermate Destructor
  */
-GizmodEventHandlerInterface::~GizmodEventHandlerInterface() {
+GizmoPowermate::~GizmoPowermate() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Get the Powermate's LED Value
+ * \return LED value (0-255)
+ */
+unsigned char GizmoPowermate::getLEDValue() {
+	return 0;
+}

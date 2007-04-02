@@ -2,32 +2,13 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file    Main.hpp
-*** \brief   Main header
-*** \author  Tim Burrell -- tim.burrell@gmail.com
+*** \file  Gizmo.cpp
+*** \brief Gizmo class body
 ***
 *****************************************
   *****************************************
     **/
-
-    /**
-  *********************************************************************
-*************************************************************************
-*** 
-*** \mainpage Gizmod
-*** \brief    Gizmod Daemon
-*** \author   Tim Burrell -- tim.burrell@gmail.com
-*** \version  3:0
-***
-*** \todo     Code the entire program!
-*** \bug      Not done coding!
-***
-*** Gizmo Daemon -- Let your computer do what you want it to!
-***
-*****************************************
-  *****************************************
-    **/
-
+  
 /*
   
   Copyright (c) 2007, Tim Burrell
@@ -44,3 +25,41 @@
   limitations under the License. 
   
 */
+
+#ifndef __Gizmo_h
+#define __Gizmo_h
+
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+//////////////////////////////////////////////////////////////////////////////
+// Typedef, enum's
+///////////////////////////////////////
+	
+//////////////////////////////////////////////////////////////////////////////
+// Class Definition
+///////////////////////////////////////
+
+/**
+ * \class Gizmo
+ * \brief Base class of all Gizmos
+ *
+ * This class is the base of all Gizmos attached to the system.
+ * Each gizmo must inherit this class
+ */
+class Gizmo {
+public:
+	// public functions
+	
+	// construction / deconstruction
+	Gizmo();					///< Default Constructor
+	virtual ~Gizmo();				///< Destructor
+
+protected:
+	// private functions
+	
+	// private member variables
+};
+
+#endif // __Gizmo_h

@@ -23,4 +23,5 @@
 print
 print "From Python to C++ Gizmod Version v" + str(Gizmod.getVersion())
 print "Dispatcher Initialized from Python: " + str(Dispatcher.getInitialized())
-
+print 
+print "Powermate test: " + str(Gizmod.getLEDValue())

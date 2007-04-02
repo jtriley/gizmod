@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  UtilMath.hpp
-*** \brief UtilMath class header file
+*** \file  GizmoPowermate.cpp
+*** \brief GizmoPowermate class body
 ***
 *****************************************
   *****************************************
@@ -26,49 +26,42 @@
   
 */
 
-#ifndef __UtilMath_h
-#define __UtilMath_h
+#ifndef __GizmoPowermate_h
+#define __GizmoPowermate_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
+#include "Gizmo.hpp"
+
 //////////////////////////////////////////////////////////////////////////////
-// Namespace
+// Typedef, enum's
 ///////////////////////////////////////
-
-/**
- * \namespace H
- * \brief H namespace
- *
- * This class belongs to libH
- */
-namespace H {
-
+	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
 ///////////////////////////////////////
 
 /**
- * \class UtilMath
- * \brief Main UtilMath class
+ * \class GizmoPowermate
+ * \brief Powermate Gizmo
  *
- * This class provides static time routines for sleeping and finding the current time
- *
- * It also can be instantiated to provide a time duration watcher
+ * This class contains all of the helper functions for making use of the Powermate
  */
-class UtilMath {
+class GizmoPowermate : public Gizmo {
 public:
-	static int 		intDivRoundUp(int Div1, int Div2);		///< integer divide and round up
-	static float 		random();					///< get a random float
-	static float 		randomFloat(float MinVal, float MaxVal);	///< get a random float 
-	static int		randomInt(int MinVal, int MaxVal);		///< get a random int
-	static void		randomize();					///< randomize via the clock
+	// public functions
+	unsigned char		getLEDValue();			///< Get the Powermate's LED value
 	
-	UtilMath();
-	virtual ~UtilMath();
+	// construction / deconstruction
+	GizmoPowermate();					///< Default Constructor
+	virtual ~GizmoPowermate();				///< Destructor
+
+protected:
+	// private functions
+	
+	// private member variables
 };
 
-} // H namespace
-
-#endif // __UtilMath_h
+#endif // __GizmoPowermate_h
