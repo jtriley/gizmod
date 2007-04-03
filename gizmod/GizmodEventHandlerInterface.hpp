@@ -74,8 +74,8 @@ public:
 	 */
 	virtual void			initialize() = 0; 		///< Initialization that gets called inside python to init python stuff
 		
-	/**
-	 * \brief  Event triggers
+	/*
+	 * Event triggers
 	 */
 	virtual void			onEvent(GizmoEventPowermate const * Event) = 0; ///< Powermate Event trigger
 	virtual void			onEvent(GizmoEventCPU const * Event) = 0; ///< CPU Event trigger

@@ -43,6 +43,19 @@ class GizmodDispatcher(GizmodEventHandler):
 		self.initialized = True
 		
 	def onEvent(self, Event):
+		"""
+		This method gets called whenever Gizmo Daemon detects an event from a device
+		 
+		The Event object passed in will be of the type associated with that event,
+		so for example if it's a powermate event the Event class will be "Powermate"
+		
+		All event classes share the same base "Event" class, and you can use the Event
+		class method "getEventType" (amongst others) to figure out what type of event it 
+		is.
+		
+		See the C++ API documention on the specific GizmoEvent* type for more details
+		"""
+		
 		print "onEvent: " + Event.getEventType()
 
 	############################
