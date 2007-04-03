@@ -1,0 +1,3 @@
+- claim devices.py
+- register each device as (for ex) Gizmod.Powermate1, Gizmod.Gizmo1, etc
+- upon connect / disconnect, re-evaluate device allocations

@@ -27,6 +27,7 @@
 */
 
 #include "GizmoDaemon.hpp"
+#include "GizmoPowermate.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <cstdlib>
@@ -101,7 +102,6 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 BOOST_PYTHON_MODULE(GizmoDaemon) {
  	class_<GizmoDaemon>("PyGizmoDaemon")
 		.def("getVersion", & GizmoDaemon::getVersion)
-		.def("getLEDValue", & GizmoPowermate::getLEDValue)
 		;
 	
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")

@@ -34,7 +34,6 @@
 #endif
 
 #include "GizmodEventHandlerInterface.hpp"
-#include "GizmoPowermate.hpp"
 #include <string>
 #include <boost/python.hpp>
 
@@ -46,7 +45,7 @@
  * \class GizmoDaemon
  * \brief Main GizmoDaemon class
  */
-class GizmoDaemon : public GizmoPowermate {
+class GizmoDaemon {
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
