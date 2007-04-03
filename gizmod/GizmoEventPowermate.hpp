@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmo.hpp
-*** \brief Gizmo class header
+*** \file  GizmoEventPowermate.hpp
+*** \brief GizmoEventPowermate class header
 ***
 *****************************************
   *****************************************
@@ -26,13 +26,14 @@
   
 */
 
-#ifndef __Gizmo_h
-#define __Gizmo_h
+#ifndef __GizmoEventPowermate_h
+#define __GizmoEventPowermate_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
+#include "GizmoEvent.hpp"
 #include <string>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,19 +45,20 @@
 ///////////////////////////////////////
 
 /**
- * \class Gizmo
- * \brief Base class of all Gizmos
+ * \class GizmoEventPowermate
+ * \brief Base class of all GizmoEventPowermates
  *
- * This class is the base of all Gizmos attached to the system.
- * Each gizmo must inherit this class
+ * This class is the base of all GizmoEventPowermates attached to the system.
+ * Each GizmoEventPowermate must inherit this class
  */
-class Gizmo {
+class GizmoEventPowermate : public GizmoEvent {
 public:
 	// public functions
+	std::string			getEventType();			///< Get the type of the Event
 	
 	// construction / deconstruction
-	Gizmo();						///< Default Constructor
-	virtual ~Gizmo();					///< Destructor
+	GizmoEventPowermate();						///< Default Constructor
+	virtual ~GizmoEventPowermate();					///< Destructor
 
 protected:
 	// private functions
@@ -64,4 +66,4 @@ protected:
 	// private member variables
 };
 
-#endif // __Gizmo_h
+#endif // __GizmoEventPowermate_h

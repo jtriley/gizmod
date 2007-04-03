@@ -40,10 +40,10 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * \def   GIZMOCPU_TYPE
+ * \def   GIZMO_CPU_TYPE
  * \brief String type of this gizmo
  */
-#define GIZMOCPU_TYPE	"CPU"
+#define GIZMO_CPU_TYPE	"CPU"
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -67,8 +67,8 @@ GizmoCPU::~GizmoCPU() {
 
 /**
  * \brief Get the type of this Gizmo
- * \return ZType of the Gizmo
+ * \return Type of the Gizmo
  */
-std::string GizmoCPU::getType() {
-	return GIZMOCPU_TYPE;
+std::string GizmoCPU::getGizmoType() {
+	return GIZMO_CPU_TYPE;
 }

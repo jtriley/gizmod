@@ -77,8 +77,8 @@ public:
 	/**
 	 * \brief  Event triggers
 	 */
-	virtual void			onEvent(GizmoEventPowermate & Gizmo) = 0; ///< Powermate Event trigger
-	virtual void			onEvent(GizmoEventCPU & Gizmo) = 0; ///< CPU Event trigger
+	virtual void			onEvent(GizmoEventPowermate const * Event) = 0; ///< Powermate Event trigger
+	virtual void			onEvent(GizmoEventCPU const * Event) = 0; ///< CPU Event trigger
 	
 	// construction / deconstruction
 	GizmodEventHandlerInterface();

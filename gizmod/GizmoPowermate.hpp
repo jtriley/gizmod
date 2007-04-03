@@ -52,12 +52,12 @@
 class GizmoPowermate : public Gizmo {
 public:
 	// public functions
-	unsigned char		getLEDValue();			///< Get the Powermate's LED value
-	std::string		getType();			///< Get the type of the Gizmo
+	unsigned char			getLEDValue();			///< Get the Powermate's LED value
+	std::string			getGizmoType();			///< Get the type of the Gizmo
 	
-	// construction / deconstruction
-	GizmoPowermate();					///< Default Constructor
-	virtual ~GizmoPowermate();				///< Destructor
+	// construction / deconstruction	
+	GizmoPowermate();						///< Default Constructor
+	virtual ~GizmoPowermate();					///< Destructor
 
 protected:
 	// private functions

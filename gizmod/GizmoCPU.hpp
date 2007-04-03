@@ -52,7 +52,7 @@
 class GizmoCPU : public Gizmo {
 public:
 	// public functions
-	std::string		getType();			///< Get the type of the Gizmo
+	std::string		getGizmoType();			///< Get the type of the Gizmo
 	
 	// construction / deconstruction
 	GizmoCPU();						///< Default Constructor

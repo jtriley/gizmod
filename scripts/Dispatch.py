@@ -42,8 +42,8 @@ class GizmodDispatcher(GizmodEventHandler):
 		print "GizmoDaemon Config Script v" + Gizmod.getVersion()  + " -- Initializing"
 		self.initialized = True
 		
-	def onEvent(self, Gizmo):
-		print "onEvent" + Gizmo.getType()
+	def onEvent(self, Event):
+		print "onEvent: " + Event.getEventType()
 
 	############################
 	# Private Functions

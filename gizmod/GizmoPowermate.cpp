@@ -40,10 +40,10 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * \def   GIZMOPOWERMATE_TYPE
+ * \def   GIZMO_POWERMATE_TYPE
  * \brief String type of this gizmo
  */
-#define GIZMOPOWERMATE_TYPE	"Powermate"
+#define GIZMO_POWERMATE_TYPE	"Powermate"
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -77,6 +77,6 @@ unsigned char GizmoPowermate::getLEDValue() {
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
  */
-std::string GizmoPowermate::getType() {
-	return GIZMOPOWERMATE_TYPE;
+std::string GizmoPowermate::getGizmoType() {
+	return GIZMO_POWERMATE_TYPE;
 }

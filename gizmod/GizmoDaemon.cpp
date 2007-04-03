@@ -78,6 +78,13 @@ using namespace H;
  */
 #define EVENT_NODE_DIR		"/dev/input/event"
 
+/** 
+ * \def   GIZMO_EVENT_PYTHON_DEFS
+ * Macro for including the GizmoEvent base class functions in super classes
+ */
+#define GIZMO_EVENT_PYTHON_DEFS \
+	.def("getEventType", &GizmoEvent::getEventType)
+
 ////////////////////////////////////////////////////////////////////////////
 // C++ -> Python Exposures
 ///////////////////////////////////////
@@ -93,8 +100,8 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		__construct__()	 { return python::call_method<void>(self, "__construct__"); }
 	bool		getInitialized() { return python::call_method<bool>(self, "getInitialized"); }
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
-	void		onEvent(GizmoEventPowermate & Event) { return python::call_method<void>(self, "onEvent", Event); }
-	void		onEvent(GizmoEventCPU & Event) { return python::call_method<void>(self, "onEvent", Event); }
+	void		onEvent(GizmoEventPowermate const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
+	void		onEvent(GizmoEventCPU const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 
 	PyObject * 	self;		///< Pointer to self
 };
@@ -103,11 +110,22 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
  * \brief Python module definition
  */
 BOOST_PYTHON_MODULE(GizmoDaemon) {
- 	class_<GizmoDaemon>("PyGizmoDaemon")
+	/// GizmoDaemon Python Class Export
+	class_<GizmoDaemon>("PyGizmoDaemon")
 		.def("getVersion", & GizmoDaemon::getVersion)
 		;
-	
+	/// GizmodEventHandlerInterface Python Class Export	
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
+		;
+
+	/// GizmoEventPowermate Python Class Export
+	class_<GizmoEventPowermate>("GizmoEventPowermate")
+		GIZMO_EVENT_PYTHON_DEFS
+		;
+
+	/// GizmoEventCPU Python Class Export
+ 	class_<GizmoEventCPU>("GizmoEventCPU")
+		GIZMO_EVENT_PYTHON_DEFS
 		;
 }
 
@@ -217,6 +235,9 @@ void GizmoDaemon::initPython() {
 		// Initialize the dispatcher object
 		mpPyDispatcher->__construct__();
 		mpPyDispatcher->initialize();
+		GizmoEventCPU e;
+		mpPyDispatcher->onEvent(&e);
+		cout << "Mod: " << e.getEventType() << endl;
 			
 		// execute the user script code
 		ScriptFile = mConfigDir + SCRIPT_USER;

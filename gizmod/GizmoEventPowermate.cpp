@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmo.cpp
-*** \brief Gizmo class body
+*** \file  GizmoEventPowermate.cpp
+*** \brief GizmoEventPowermate class body
 ***
 *****************************************
   *****************************************
@@ -26,7 +26,7 @@
   
 */
 
-#include "Gizmo.hpp"
+#include "GizmoEventPowermate.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <boost/shared_ptr.hpp>
@@ -39,22 +39,36 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
+/**
+ * \def   GIZMO_EVENT_POWERMATE_TYPE
+ * \brief String type of this event
+ */
+#define GIZMO_EVENT_POWERMATE_TYPE	"Powermate"
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
 
 /**
- * \brief Gizmo Default Constructor
+ * \brief GizmoEventPowermate Default Constructor
  */
-Gizmo::Gizmo() {
+GizmoEventPowermate::GizmoEventPowermate() {
 }
 
 /**
- * \brief Gizmo Destructor
+ * \brief GizmoEventPowermate Destructor
  */
-Gizmo::~Gizmo() {
+GizmoEventPowermate::~GizmoEventPowermate() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Get the type of this Gizmo
+ * \return Type of the Gizmo
+ */
+std::string GizmoEventPowermate::getEventType() {
+	return GIZMO_EVENT_POWERMATE_TYPE;
+}

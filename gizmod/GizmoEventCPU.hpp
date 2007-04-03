@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmo.hpp
-*** \brief Gizmo class header
+*** \file  GizmoEventCPU.hpp
+*** \brief GizmoEventCPU class header
 ***
 *****************************************
   *****************************************
@@ -26,13 +26,14 @@
   
 */
 
-#ifndef __Gizmo_h
-#define __Gizmo_h
+#ifndef __GizmoEventCPU_h
+#define __GizmoEventCPU_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
+#include "GizmoEvent.hpp"
 #include <string>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,20 +45,20 @@
 ///////////////////////////////////////
 
 /**
- * \class Gizmo
- * \brief Base class of all Gizmos
+ * \class GizmoEventCPU
+ * \brief Base class of all GizmoEventCPUs
  *
- * This class is the base of all Gizmos attached to the system.
- * Each gizmo must inherit this class
+ * This class is the base of all GizmoEventCPUs attached to the system.
+ * Each GizmoEventCPU must inherit this class
  */
-class Gizmo {
+class GizmoEventCPU : public GizmoEvent {
 public:
 	// public functions
-	virtual std::string		getType() = 0;		///< Get the type of the gizmo
+	std::string			getEventType();			///< Get the type of the Event
 	
 	// construction / deconstruction
-	Gizmo();						///< Default Constructor
-	virtual ~Gizmo();					///< Destructor
+	GizmoEventCPU();						///< Default Constructor
+	virtual ~GizmoEventCPU();					///< Destructor
 
 protected:
 	// private functions
@@ -65,4 +66,4 @@ protected:
 	// private member variables
 };
 
-#endif // __Gizmo_h
+#endif // __GizmoEventCPU_h
