@@ -78,13 +78,6 @@ using namespace H;
  */
 #define EVENT_NODE_DIR		"/dev/input/event"
 
-/** 
- * \def   GIZMO_EVENT_PYTHON_DEFS
- * Macro for including the GizmoEvent base class functions in super classes
- */
-#define GIZMO_EVENT_PYTHON_DEFS \
-	.def("getEventType", &GizmoEvent::getEventType)
-
 ////////////////////////////////////////////////////////////////////////////
 // C++ -> Python Exposures
 ///////////////////////////////////////
@@ -105,6 +98,13 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 
 	PyObject * 	self;		///< Pointer to self
 };
+
+/** 
+ * \def   GIZMO_EVENT_PYTHON_DEFS
+ * Macro for including the GizmoEvent base class functions in super classes
+ */
+#define GIZMO_EVENT_PYTHON_DEFS \
+	.def("getEventType", &GizmoEvent::getEventType)
 
 /**
  * \brief Python module definition
