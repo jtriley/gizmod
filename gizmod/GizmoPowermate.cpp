@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoPowermate.hpp
-*** \brief GizmoPowermate class header file
+*** \file  GizmoPowermate.cpp
+*** \brief GizmoPowermate class body
 ***
 *****************************************
   *****************************************
@@ -39,6 +39,12 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
+/**
+ * \def   GIZMOPOWERMATE_TYPE
+ * \brief String type of this gizmo
+ */
+#define GIZMOPOWERMATE_TYPE	"Powermate"
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -65,4 +71,12 @@ GizmoPowermate::~GizmoPowermate() {
  */
 unsigned char GizmoPowermate::getLEDValue() {
 	return 0;
+}
+
+/**
+ * \brief  Get the type of this Gizmo
+ * \return Type of the Gizmo
+ */
+std::string GizmoPowermate::getType() {
+	return GIZMOPOWERMATE_TYPE;
 }

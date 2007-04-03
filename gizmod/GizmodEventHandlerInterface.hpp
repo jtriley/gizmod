@@ -33,6 +33,8 @@
 #include "config.h"
 #endif
 
+#include "GizmoEventPowermate.hpp"
+#include "GizmoEventCPU.hpp"
 #include <string>
 #include <boost/python.hpp>
 
@@ -70,8 +72,14 @@ public:
 	 * 
 	 * It is defined in Gizmod.py in class GizmodDispatcher that inherits from GizmodEventHandler
 	 */
-	virtual void			initialize() = 0; 	///< Initialization that gets called inside python to init python stuff
+	virtual void			initialize() = 0; 		///< Initialization that gets called inside python to init python stuff
 		
+	/**
+	 * \brief  Event triggers
+	 */
+	virtual void			onEvent(GizmoEventPowermate & Gizmo) = 0; ///< Powermate Event trigger
+	virtual void			onEvent(GizmoEventCPU & Gizmo) = 0; ///< CPU Event trigger
+	
 	// construction / deconstruction
 	GizmodEventHandlerInterface();
 	virtual ~GizmodEventHandlerInterface();

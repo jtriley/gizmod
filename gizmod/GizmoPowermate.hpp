@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoPowermate.cpp
-*** \brief GizmoPowermate class body
+*** \file  GizmoPowermate.hpp
+*** \brief GizmoPowermate class header
 ***
 *****************************************
   *****************************************
@@ -53,6 +53,7 @@ class GizmoPowermate : public Gizmo {
 public:
 	// public functions
 	unsigned char		getLEDValue();			///< Get the Powermate's LED value
+	std::string		getType();			///< Get the type of the Gizmo
 	
 	// construction / deconstruction
 	GizmoPowermate();					///< Default Constructor

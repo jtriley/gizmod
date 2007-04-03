@@ -27,7 +27,8 @@
 */
 
 #include "GizmoDaemon.hpp"
-#include "GizmoPowermate.hpp"
+#include "GizmoEventPowermate.hpp"
+#include "GizmoEventCPU.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <cstdlib>
@@ -92,6 +93,8 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		__construct__()	 { return python::call_method<void>(self, "__construct__"); }
 	bool		getInitialized() { return python::call_method<bool>(self, "getInitialized"); }
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
+	void		onEvent(GizmoEventPowermate & Event) { return python::call_method<void>(self, "onEvent", Event); }
+	void		onEvent(GizmoEventCPU & Event) { return python::call_method<void>(self, "onEvent", Event); }
 
 	PyObject * 	self;		///< Pointer to self
 };

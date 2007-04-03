@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Gizmo.cpp
-*** \brief Gizmo class body
+*** \file  Gizmo.hpp
+*** \brief Gizmo class header
 ***
 *****************************************
   *****************************************
@@ -33,6 +33,8 @@
 #include "config.h"
 #endif
 
+#include <string>
+
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
 ///////////////////////////////////////
@@ -51,10 +53,11 @@
 class Gizmo {
 public:
 	// public functions
+	virtual std::string		getType() = 0;		///< Get the type of the gizmo
 	
 	// construction / deconstruction
-	Gizmo();					///< Default Constructor
-	virtual ~Gizmo();				///< Destructor
+	Gizmo();						///< Default Constructor
+	virtual ~Gizmo();					///< Destructor
 
 protected:
 	// private functions
