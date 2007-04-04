@@ -68,7 +68,7 @@ inline Functor for_all(Object & object, Functor functor) {
  * \param  functee The object that the functor belongs to
  * \return result of for_all()
  *
- * This is essentially a short cut for std::for_each
+ * This is a short cut for H::for_all
  */
 #define apply_func(object, functor, functee) \
 	for_all(object, boost::bind(functor, functee, _1))
