@@ -29,10 +29,12 @@
 #include "FileEventWatcher.hpp"
 #include "Debug.hpp"
 #include "Exception.hpp"
+#include "Util.hpp"
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <boost/bind.hpp>
 
 using namespace std;
 using namespace boost;
@@ -172,6 +174,16 @@ shared_ptr< DynamicBuffer<char> > FileEventWatcher::readFromFile(int fd) {
 }
 
 /**
+ * \brief Functor that checks for and handles events on a pollfd object
+ * \param item The item to check and handle events for
+ */
+void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
+	if (item.revents & POLLIN) {
+		shared_ptr< DynamicBuffer<char> > pBuffer = readFromFile(item.fd);
+	}
+}
+
+/**
  * \brief Watch for file events on already specified files
  *
  * Note: Blocking
@@ -189,11 +201,6 @@ void FileEventWatcher::watchForFileEvents() {
 		poll(&mPollFDs[0], mPollFDs.size(), -1);
 		
 		// file events have happened, check for them and dispatch
-		vector<struct pollfd>::iterator iter;
-		for (iter = mPollFDs.begin(); iter != mPollFDs.end(); iter++) {
-			if (iter->revents & POLLIN) {
-				shared_ptr< DynamicBuffer<char> > pBuffer = readFromFile(iter->fd);
-			}
-		}
+		for_each(mPollFDs.begin(), mPollFDs.end(), bind(&FileEventWatcher::handleEventsOnFile, this, _1));
 	}
 }

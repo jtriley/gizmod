@@ -107,9 +107,10 @@ public:
 	FileEventWatcher();					///< Default Constructor
 	virtual ~FileEventWatcher();				///< Destructor
 
-protected:
+private:
 	// private functions
 	FileWatchType 		getType(int Index);		///< Get the type of file event that happened on specified file
+	void 			handleEventsOnFile(struct pollfd & item); ///< Functor that handles file events after a poll()
 	boost::shared_ptr< H::DynamicBuffer<char> > readFromFile(int fd); ///< Read from file and return the contents in a vector
 	
 	// private member variables

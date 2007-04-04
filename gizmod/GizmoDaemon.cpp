@@ -114,6 +114,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	class_<GizmoDaemon>("PyGizmoDaemon")
 		.def("getVersion", & GizmoDaemon::getVersion)
 		;
+	
 	/// GizmodEventHandlerInterface Python Class Export	
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
 		;
