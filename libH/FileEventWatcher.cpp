@@ -201,6 +201,8 @@ void FileEventWatcher::watchForFileEvents() {
 		poll(&mPollFDs[0], mPollFDs.size(), -1);
 		
 		// file events have happened, check for them and dispatch
-		for_each(mPollFDs.begin(), mPollFDs.end(), bind(&FileEventWatcher::handleEventsOnFile, this, _1));
+		//for_each(mPollFDs.begin(), mPollFDs.end(), bind(&FileEventWatcher::handleEventsOnFile, this, _1));		
+		//for_all(mPollFDs, bind(&FileEventWatcher::handleEventsOnFile, this, _1));
+		apply_func(mPollFDs, &FileEventWatcher::handleEventsOnFile, this);
 	}
 }

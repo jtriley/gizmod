@@ -47,6 +47,32 @@ namespace H {
 // Global Functions
 ///////////////////////////////////////
 	
+/**
+ * \brief  Apply function f to all elements in Object o
+ * \param  object The object to apply functor to
+ * \param  functor The function that modifies each object
+ * \return result of std::for_each (unary_function)
+ *
+ * This is essentially a short cut for std::for_each
+ */
+template<class Object, class Functor>
+inline Functor for_all(Object & object, Functor functor) {
+	return std::for_each(object.begin(), object.end(), functor);
+}
+
+/**
+ * \def    apply_func
+ * \brief  Apply a function to a set or collection of items
+ * \param  object  The object to apply functor to
+ * \param  functor The function object that modifies each object
+ * \param  functee The object that the functor belongs to
+ * \return result of for_all()
+ *
+ * This is essentially a short cut for std::for_each
+ */
+#define apply_func(object, functor, functee) \
+	for_all(object, boost::bind(functor, functee, _1))
+	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
 ///////////////////////////////////////
