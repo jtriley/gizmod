@@ -322,7 +322,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	// try parsing the command line
 	try {
 		store(parse_command_line(argc, argv, CommandLineOptions), VarMap);
-	} catch (exception e) {
+	} catch (exception & e) {
 		cout << VisibleOptions;
 		throw H::Exception("Invalid Command Line Argument(s)");
 	}
@@ -331,7 +331,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	try {
 		ifstream ifs(CONFIG_FILE);
 		store(parse_config_file(ifs, ConfigFileOptions), VarMap);
-	} catch (exception e) {
+	} catch (exception & e) {
 		cout << VisibleOptions;
 		throw H::Exception("Invalid Configuration File");
 	}

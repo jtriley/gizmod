@@ -102,6 +102,7 @@ class FileEventWatcher {
 public:
 	// public functions
 	void			addFileToWatch(std::string FileName, FileWatchType WatchType); ///< Add a file to watch for events 
+	boost::shared_ptr<FileWatchee> getWatcheeByFileDescriptor(int fd); ///< Get a Watchee by file descriptor
 	virtual void		onFileWatcheeAdded(boost::shared_ptr<FileWatchee> Device); ///< Event triggered when a new device is registered
 	void			stopWatchingForFileEvents();	///< Disable event watching
 	void 			watchForFileEvents();		///< Watch for events on already specified files
@@ -120,6 +121,16 @@ private:
 	std::vector<struct pollfd> mPollFDs;			///< Array of pollfd for the call to poll()
 	bool			mPolling;			///< Continue polling?
 	std::list< boost::shared_ptr<FileWatchee> > mWatchees;	///< List of files being watched
+};
+
+//////////////////////////////////////////////////////////////////////////////
+// Exception Classes
+///////////////////////////////////////
+
+class DeviceDisconnectException : public std::exception {
+};
+
+class WatcheeNotFoundException : public std::exception {
 };
 
 //////////////////////////////////////////////////////////////////////////////

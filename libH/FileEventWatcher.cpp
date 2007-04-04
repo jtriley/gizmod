@@ -176,6 +176,21 @@ FileWatchType FileEventWatcher::getType(int Index) {
 }
 
 /**
+ * \brief  Get a Watchee by its file descriptor
+ * \param  fd File Desriptor of the desired watchee
+ * \return Type of the event (shared_ptr to FileWatchee)
+ */
+boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByFileDescriptor(int fd) {
+	list< shared_ptr<FileWatchee> >::iterator iter;
+	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
+		if ((*iter)->fd == fd)
+			return *iter;
+	}
+	// not found, return null shared pointer
+	return shared_ptr<FileWatchee>();
+}
+
+/**
  * \brief  Event triggered when a new FileWatchee is added
  * \param  Device The new file (device) being watched
  */
@@ -194,7 +209,8 @@ shared_ptr< DynamicBuffer<char> > FileEventWatcher::readFromFile(int fd) {
 	char ReadBuffer[READ_BUF_SIZE];
 	ssize_t BytesRead;
 	do {
-		BytesRead = read(fd, ReadBuffer, READ_BUF_SIZE);
+		if ((BytesRead = read(fd, ReadBuffer, READ_BUF_SIZE)) <= 0)
+			throw H::DeviceDisconnectException();
 		pBuffer->addToBuffer(ReadBuffer, BytesRead);
 	} while (BytesRead == READ_BUF_SIZE);
 	
@@ -207,7 +223,17 @@ shared_ptr< DynamicBuffer<char> > FileEventWatcher::readFromFile(int fd) {
  */
 void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 	if (item.revents & POLLIN) {
-		shared_ptr< DynamicBuffer<char> > pBuffer = readFromFile(item.fd);
+		try {
+			shared_ptr< DynamicBuffer<char> > pBuffer = readFromFile(item.fd);
+		} catch (H::DeviceDisconnectException & e) {
+			shared_ptr<FileWatchee> pWatchee = getWatcheeByFileDescriptor(item.fd);
+			if (pWatchee) {
+				cout << "Disconnect from Device [" << pWatchee->DeviceName <<"] at [" << pWatchee->FileName << "]" << endl;
+			} else {
+				// not found, not a big deal
+				cout << "Disconnect from Device [Unknown]" << endl;
+			}
+		}
 	}
 }
 
