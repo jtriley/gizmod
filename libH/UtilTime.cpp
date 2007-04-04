@@ -41,14 +41,14 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * Constructor
+ * \brief Default Constructor
  */
 UtilTime::UtilTime() {
 	updateElapsedTimer();
 }
 
 /**
- * Destructor
+ * \brief Destructor
  */
 UtilTime::~UtilTime() {
 }

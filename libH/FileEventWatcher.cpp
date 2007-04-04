@@ -34,6 +34,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <linux/input.h>
+#include <unistd.h>
 #include <boost/bind.hpp>
 
 using namespace std;
@@ -41,14 +43,20 @@ using namespace boost;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
-// Type Defs
+// Type Defs / Defines
 ///////////////////////////////////////
 
 /**
  * \def   READ_BUF_SIZE 
  * \brief Default size of the read buffer for the automatic file reader
  */
-#define READ_BUF_SIZE	65536
+#define READ_BUF_SIZE		65536
+
+/**
+ * \def   DEVICE_NAME_BUF_SIZE
+ * \brief Default size of the device name buffer
+ */
+#define DEVICE_NAME_BUF_SIZE	1024
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -78,10 +86,11 @@ FileWatchee::FileWatchee() {
 /**
  * \brief FileWatchee Init Constructor
  */
-FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, int fileDescriptor) {
+FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, int fileDescriptor, std::string deviceName) {
 	FileName = fileName;
 	WatchType = watchType;
 	fd = fileDescriptor;
+	DeviceName = deviceName;
 }
 
 /**
@@ -102,6 +111,9 @@ FileWatchee::~FileWatchee() {
  * \param WatchType Type of watch to perform on the file
  */
 void FileEventWatcher::addFileToWatch(std::string FileName, FileWatchType WatchType) {
+	cdbg1 << "Adding File [" << FileName << "] to Watch List with Mode [" << WatchType << "]" << endl;
+	
+	// get mode mask
 	int 	flags;
 	string 	ModeString;
 	short	events;
@@ -125,9 +137,16 @@ void FileEventWatcher::addFileToWatch(std::string FileName, FileWatchType WatchT
 		throw H::Exception("Invalid Watch Type specified on [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);
 	}
 	
+	// open the device
 	int fd = open(FileName.c_str(), flags);
 	if (fd == -1)
 		throw H::Exception("Failed to Open file [" + FileName + "] with Mode [" + ModeString + "]", __FILE__, __FUNCTION__, __LINE__);
+	
+	// get the device name
+	char DeviceName[DEVICE_NAME_BUF_SIZE] = {'\0'};
+	if (ioctl(fd, EVIOCGNAME(sizeof(DeviceName)), DeviceName) < 0)
+		throw H::Exception("Failed to Get Device Name for [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);
+	cdbg << "Found Device [" << FileName << "]: " << DeviceName << endl;
 	
 	// Add the new watchee to the list
 	struct pollfd PollFD;
@@ -135,8 +154,9 @@ void FileEventWatcher::addFileToWatch(std::string FileName, FileWatchType WatchT
 	PollFD.events = events;
 	PollFD.revents = 0;
 	mPollFDs.push_back(PollFD);
-	shared_ptr<FileWatchee> pWatchee(new FileWatchee(FileName, WatchType, fd));
-	mWatcheeList.push_back(pWatchee);
+	shared_ptr<FileWatchee> pWatchee(new FileWatchee(FileName, WatchType, fd, DeviceName));
+	onFileWatcheeAdded(pWatchee);
+	mWatchees.push_back(pWatchee);
 }
 
 /**
@@ -153,6 +173,14 @@ FileWatchType FileEventWatcher::getType(int Index) {
 		return WATCH_INOUT;
 	else
 		return WATCH_INVALID;
+}
+
+/**
+ * \brief  Event triggered when a new FileWatchee is added
+ * \param  Device The new file (device) being watched
+ */
+void FileEventWatcher::onFileWatcheeAdded(boost::shared_ptr<FileWatchee> Device) {
+	// overload me
 }
 
 /**
@@ -184,6 +212,16 @@ void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 }
 
 /**
+ * \brief Stop watching for file events
+ * 
+ * This does not interrupt a current call to poll, so watchForFileEvents will only
+ * exit after this function is called, and then the next event is received
+ */
+void FileEventWatcher::stopWatchingForFileEvents() {
+	mPolling = false;
+}
+
+/**
  * \brief Watch for file events on already specified files
  *
  * Note: Blocking
@@ -200,9 +238,9 @@ void FileEventWatcher::watchForFileEvents() {
 		// poll the open files
 		poll(&mPollFDs[0], mPollFDs.size(), -1);
 		
+		cdbg << "Event Detected" << endl;
+		
 		// file events have happened, check for them and dispatch
-		//for_each(mPollFDs.begin(), mPollFDs.end(), bind(&FileEventWatcher::handleEventsOnFile, this, _1));		
-		//for_all(mPollFDs, bind(&FileEventWatcher::handleEventsOnFile, this, _1));
 		apply_func(mPollFDs, &FileEventWatcher::handleEventsOnFile, this);
 	}
 }

@@ -42,7 +42,7 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * Constructor
+ * \brief Default Constructor
  */
 stringconverter::stringconverter(int Value) {
 	stringstream ss;
@@ -51,7 +51,7 @@ stringconverter::stringconverter(int Value) {
 }
 
 /**
- * Destructor
+ * \brief Destructor
  */
 stringconverter::~stringconverter() throw() {
 }

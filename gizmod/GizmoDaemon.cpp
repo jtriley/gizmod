@@ -31,17 +31,21 @@
 #include "GizmoEventCPU.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/Util.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <list>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
 #include <boost/python.hpp>
+#include <boost/filesystem/operations.hpp>
 
 using namespace std;
 using namespace boost;
 using namespace boost::program_options;
 using namespace boost::python;
+using namespace boost::filesystem;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -76,7 +80,7 @@ using namespace H;
  * \def   EVENT_NODE_DIR
  * Default path to the event nodes
  */
-#define EVENT_NODE_DIR		"/dev/input/event"
+#define EVENT_NODE_DIR		"/dev/input"
 
 ////////////////////////////////////////////////////////////////////////////
 // C++ -> Python Exposures
@@ -142,6 +146,7 @@ GizmoDaemon::GizmoDaemon() {
 	
 	mConfigDir = SCRIPT_DIR;
 	mEventsDir = EVENT_NODE_DIR;
+	mInitialized = false;
 	mpPyDispatcher = NULL;
 }
 
@@ -160,6 +165,10 @@ GizmoDaemon::~GizmoDaemon() {
  * \brief Enter the main run loop
  */
 void GizmoDaemon::enterLoop() {
+	if (!mInitialized)
+		throw H::Exception("You must initialize GizmoDaemon first!", __FILE__, __FUNCTION__, __LINE__);
+	
+	watchForFileEvents();
 }
 
 /**
@@ -182,8 +191,11 @@ string GizmoDaemon::getVersion() {
  * Initialize GizmoDaemon
  */
 void GizmoDaemon::initGizmod() {
-	// TODO init GizmoDaemon
+	if (mInitialized)
+		return;
 	
+	// initialize signals
+	initSignals();
 	
 	// init python
 	try {
@@ -193,6 +205,15 @@ void GizmoDaemon::initGizmod() {
 	} catch (exception & e) {
 		throw H::Exception("Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
 	}
+
+	// register all the devices
+	try {
+		registerDevices();
+	} catch (H::Exception & e) {
+		throw e;
+	}
+	
+	mInitialized = true;
 }
 
 /**
@@ -349,4 +370,114 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 
 	cout << endl;
 	return true;
+}
+
+/**
+ * \brief Signal handler for SEGV
+ */
+void GizmoDaemon::onSignalSegv() {
+	// override me
+	cerr << "Segmentation Fault Detected" << endl;
+	stopWatchingForFileEvents();
+}
+
+/**
+ * \brief Signal handler for INT
+ */
+void GizmoDaemon::onSignalInt() {
+	// override me
+	cdbg << "Keyboard Interrupt Received..." << endl;
+	stopWatchingForFileEvents();
+}
+
+/**
+ * \brief Signal handler for HUP
+ */
+void GizmoDaemon::onSignalHup() {
+	// override me
+	cerr << "Unhandled HUP Signal" << endl;
+}
+
+/**
+ * \brief Signal handler for QUIT
+ */
+void GizmoDaemon::onSignalQuit() {
+	// override me
+	cdbg << "Request to Quit Received..." << endl;
+	stopWatchingForFileEvents();
+}
+
+/**
+ * \brief Signal handler for KILL
+ */
+void GizmoDaemon::onSignalKill() {
+	// override me
+	cdbg << "Kill signal Received..." << endl;
+	stopWatchingForFileEvents();
+}
+
+/**
+ * \brief Signal handler for TERM
+ */
+void GizmoDaemon::onSignalTerm() {
+	// override me
+	cdbg << "Request to Terminate Received..." << endl;
+	stopWatchingForFileEvents();
+}
+
+/**
+ * \brief Signal handler for STOP
+ */
+void GizmoDaemon::onSignalStop() {
+	// override me
+	cdbg << "Request to Stop Received..." << endl;
+	stopWatchingForFileEvents();
+}
+
+/**
+ * \brief Signal handler for Unknown Signals
+ */
+void GizmoDaemon::onSignalUnknown(int Signal) {
+	// override me
+	cerr << "Unhandled Unknown Signal" << endl;
+}
+
+/**
+ * \brief  Register all the system devices with Gizmo Daemon
+ * 
+ * This function creates a registry of all the attached devices
+ * and inserts them into Python for use by the user
+ */
+void GizmoDaemon::registerDevices() {
+	cdbg << "Registering Devices..." << endl;
+	
+	// register input event devices
+	registerInputEventDevices();
+	
+	// register CPU usage device
+}
+
+/**
+ * \brief  Register all of the input event devices with Gizmo Daemon
+ */
+void GizmoDaemon::registerInputEventDevices() {
+	cdbg << "Registering Input Event Devices in [" << mEventsDir << "]" << endl;
+	path EventsDirPath(mEventsDir);
+	if (!filesystem::exists(EventsDirPath))
+		throw H::Exception("Input Event dir [" + mEventsDir + "] does NOT exist or permissions are wrong!", __FILE__, __FUNCTION__, __LINE__);
+	
+	// get a file listing
+	std::vector<string> eventsFiles;
+	directory_iterator endItr;
+	for (directory_iterator iter(mEventsDir); iter != endItr; iter ++) {
+		if ( (!filesystem::is_directory(*iter)) && (!filesystem::symbolic_link_exists(*iter)) ) {
+			if (iter->leaf().find("event") != 0)
+				continue;
+			eventsFiles.push_back(mEventsDir + "/" + iter->leaf());
+		}
+	}
+	
+	// sort the list of input event nodes
+	sort_all(eventsFiles);
+	apply_func_args(eventsFiles, &FileEventWatcher::addFileToWatch, this, WATCH_INOUT);
 }

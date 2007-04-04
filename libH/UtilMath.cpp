@@ -42,13 +42,13 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * Constructor
+ * \brief Default Constructor
  */
 UtilMath::UtilMath() {
 }
 
 /**
- * Destructor
+ * \brief Destructor
  */
 UtilMath::~UtilMath() {
 }

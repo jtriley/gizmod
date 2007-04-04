@@ -34,6 +34,8 @@
 #endif
 
 #include "GizmodEventHandlerInterface.hpp"
+#include "../libH/FileEventWatcher.hpp"
+#include "../libH/SignalHandler.hpp"
 #include <string>
 #include <boost/python.hpp>
 
@@ -45,13 +47,21 @@
  * \class GizmoDaemon
  * \brief Main GizmoDaemon class
  */
-class GizmoDaemon {
+class GizmoDaemon : public H::FileEventWatcher, H::SignalHandler {
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
 	std::string			getVersion();		///< Get version string
 	void				initGizmod();		///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
+	virtual void			onSignalSegv();		///< Signal handler for SEGV
+	virtual void			onSignalInt();		///< Signal handler for INT
+	virtual void			onSignalHup();		///< Signal handler for HUP
+	virtual void			onSignalQuit();		///< Signal handler for QUIT
+	virtual void			onSignalKill();		///< Signal handler for KILL
+	virtual void			onSignalTerm();		///< Signal handler for TERM
+	virtual void			onSignalStop();		///< Signal handler for STOP
+	virtual void			onSignalUnknown(int Signal); ///< Signal handler for Unknown Signals
 		
 	// construction / deconstruction
 	GizmoDaemon();						///< Default Constructor
@@ -61,10 +71,13 @@ private:
 	// private functions
 	std::string	 		getProps();		///< Get version information
 	void				initPython();		///< Initialize Python
+	void 				registerDevices();	///< Register all the attached system devices
+	void				registerInputEventDevices(); ///< Register input event devices (/dev/input/*)
 	
 	// private member vars
 	std::string			mConfigDir;		///< Configuration scripts directory
 	std::string			mEventsDir;		///< Event node directory
+	bool				mInitialized;		///< Has GizmoDaemon been properly initialized?
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
 };
 

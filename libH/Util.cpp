@@ -40,13 +40,13 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * Constructor
+ * \brief Default Constructor
  */
 Util::Util() {
 }
 
 /**
- * Destructor
+ * \brief Destructor
  */
 Util::~Util() {
 }

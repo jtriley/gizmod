@@ -46,14 +46,14 @@ int	Debug::mVerbosity = 0;
 ///////////////////////////////////////
 
 /**
- * Constructor
+ * \brief Default Constructor
  */
 Debug::Debug(int ThisVerbosity) {
 	mThisVerbosity = ThisVerbosity;
 }
 
 /**
- * Destructor
+ * \brief Destructor
  */
 Debug::~Debug() {
 }

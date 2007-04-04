@@ -33,7 +33,9 @@
 #include "config.h"
 #endif
 
+#include "Debug.hpp"
 #include <cstdlib>
+#include <iostream>
 #include <boost/any.hpp>
 #include <boost/function.hpp>
 
@@ -44,7 +46,7 @@
 namespace H {
 
 //////////////////////////////////////////////////////////////////////////////
-// Global Functions
+// Global Algorithms
 ///////////////////////////////////////
 	
 /**
@@ -72,6 +74,48 @@ inline Functor for_all(Object & object, Functor functor) {
  */
 #define apply_func(object, functor, functee) \
 	for_all(object, boost::bind(functor, functee, _1))
+	
+/**
+ * \def    apply_func_args
+ * \brief  Apply a function to a set or collection of items with arguments
+ * \param  object  The object to apply functor to
+ * \param  functor The function object that modifies each object
+ * \param  functee The object that the functor belongs to
+ * \param  ...     User argument N to pass to Functor
+ * \return result of for_all()
+ *
+ * This is a short cut for H::for_all
+ */
+#define apply_func_args(object, functor, functee, ...) \
+	for_all(object, boost::bind(functor, functee, _1, ## __VA_ARGS__))
+
+/**
+ * \def    sort_all
+ * \brief  Sort all elements
+ * \param  object  The object to sort
+ */
+#define sort_all(object) \
+	sort(object.begin(), object.end())
+
+//////////////////////////////////////////////////////////////////////////////
+// Global Functors
+///////////////////////////////////////
+	
+/**
+ * \brief  Functor that prints an item using the H:cdbg class
+ * \param  object  The item to print
+ */
+inline void dbg_print_item(std::string & object) {
+	H::cdbg << object << std::endl;
+}
+	
+/**
+ * \brief  Functor that prints an item
+ * \param  object  The item to print
+ */
+inline void print_item(std::string & object) {
+	std::cout << object << std::endl;
+}
 	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
