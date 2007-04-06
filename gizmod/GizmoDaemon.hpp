@@ -34,10 +34,18 @@
 #endif
 
 #include "GizmodEventHandlerInterface.hpp"
+#include "Gizmo.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include <string>
+#include <ext/hash_map>
+#include <map>
 #include <boost/python.hpp>
+#include <boost/shared_ptr.hpp>
+
+//////////////////////////////////////////////////////////////////////////////
+// Typedef's Enums
+///////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
@@ -51,12 +59,14 @@ class GizmoDaemon : public H::FileEventWatcher, H::SignalHandler {
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
+	boost::shared_ptr<Gizmo>	getGizmoByFileName(std::string FileName); ///< Get a Gizmo by its file name
 	std::string			getVersion();		///< Get version string
 	void				initGizmod();		///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 	virtual void			onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
 	virtual void			onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
 	virtual void			onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
+	virtual void			onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a new device is registered
 	virtual void			onSignalSegv();		///< Signal handler for SEGV
 	virtual void			onSignalInt();		///< Signal handler for INT
 	virtual void			onSignalHup();		///< Signal handler for HUP
@@ -82,6 +92,8 @@ private:
 	std::string			mEventsDir;		///< Event node directory
 	bool				mInitialized;		///< Has GizmoDaemon been properly initialized?
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
+	//__gnu_cxx::hash_map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
+	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
 };
 
 #endif // __GizmoDaemon_h

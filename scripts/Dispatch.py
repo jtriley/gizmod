@@ -57,6 +57,17 @@ class GizmodDispatcher(GizmodEventHandler):
 		"""
 		
 		print "onEvent: " + Event.getEventType()
+		
+	def onQueryDeviceType(self, DeviceName, FileName):
+		"""
+		This method is triggered when a new device is being registered (either at startup
+		or when Gizmo Daemon detects a new device has been plugged in to the computer)
+		
+		This method should return the GizmoClass of the device
+		"""
+		
+		print "onQueryDeviceType: " + DeviceName + " [" + FileName + "]"
+		return GizmoClass.Powermate
 
 	############################
 	# Private Functions

@@ -35,6 +35,7 @@
 
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventCPU.hpp"
+#include "Gizmo.hpp"
 #include <string>
 #include <boost/python.hpp>
 
@@ -79,6 +80,14 @@ public:
 	 */
 	virtual void			onEvent(GizmoEventPowermate const * Event) = 0; ///< Powermate Event trigger
 	virtual void			onEvent(GizmoEventCPU const * Event) = 0; ///< CPU Event trigger
+	
+	/**
+	 * \brief  Event triggered when a new device is being registered
+	 * \param  DeviceName The manufacturers description of the device
+	 * \param  FileName The path of the device node on disk
+	 * \return The type of the device
+	 */
+	virtual GizmoClass		onQueryDeviceType(std::string DeviceName, std::string FileName) = 0;
 	
 	// construction / deconstruction
 	GizmodEventHandlerInterface();

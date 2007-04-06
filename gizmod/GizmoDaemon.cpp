@@ -99,6 +99,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
 	void		onEvent(GizmoEventPowermate const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	void		onEvent(GizmoEventCPU const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
+	GizmoClass	onQueryDeviceType(std::string DeviceName, std::string FileName) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceName, FileName); };
 
 	PyObject * 	self;		///< Pointer to self
 };
@@ -114,6 +115,15 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
  * \brief Python module definition
  */
 BOOST_PYTHON_MODULE(GizmoDaemon) {
+	/// GizmoClass enum export
+	enum_<GizmoClass>("GizmoClass")
+		.value("CPU", 		GIZMO_CLASS_CPU)
+		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
+		.value("LIRC",	 	GIZMO_CLASS_LIRC)
+		.value("ATIX10",	GIZMO_CLASS_ATIX10)
+		.value("Standard", 	GIZMO_CLASS_STANDARD)
+		;
+			
 	/// GizmoDaemon Python Class Export
 	class_<GizmoDaemon>("PyGizmoDaemon")
 		.def("getVersion", & GizmoDaemon::getVersion)
@@ -169,6 +179,15 @@ void GizmoDaemon::enterLoop() {
 		throw H::Exception("You must initialize GizmoDaemon first!", __FILE__, __FUNCTION__, __LINE__);
 	
 	watchForFileEvents();
+}
+
+/**
+ * \brief  Get a Gizmo by its file name
+ * \param  FileName The filename of the gizmo to find
+ * \return The Gizmo (shared_ptr) or a NULL shared_ptr if not found
+ */
+boost::shared_ptr<Gizmo> GizmoDaemon::getGizmoByFileName(std::string FileName) {
+	return mGizmos[FileName];
 }
 
 /**
@@ -402,6 +421,16 @@ void GizmoDaemon::onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std
  */
 void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee) {
 	cout << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+}
+
+/**
+ * \brief Event triggered when a new device is registered
+ * \param pWatchee The Watchee that triggered the event
+ */
+void GizmoDaemon::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
+	cout << "onFileEventRegister [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+	GizmoClass Class = mpPyDispatcher->onQueryDeviceType(pWatchee->DeviceName, pWatchee->FileName);
+	cout << "CLASS: " << Class << endl;
 }
 
 /**

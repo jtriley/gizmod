@@ -114,7 +114,7 @@ FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short ev
 	Events = events;
 	fd = fileDescriptor;
 	wd = watchDescriptor;
-	if (fd == -1)
+	if (fd < 0)
 		DeviceType = WATCH_INOTIFY;
 	else
 		DeviceType = WATCH_POLL;
@@ -125,7 +125,7 @@ FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short ev
  * \brief FileWatchee Destructor
  */
 FileWatchee::~FileWatchee() {
-	if (fd != -1)
+	if (fd > -1)
 		close(fd);
 }
 
@@ -185,6 +185,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 		// directory, add watch
 		if ((wd = inotify_add_watch(mInotifyFD, FileName.c_str(), IN_CREATE | IN_DELETE | IN_DELETE_SELF)) == -1)
 			throw H::Exception("Failed to add Watch on Directory [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);
+		fd = -wd;
 		mInotifyWDs.push_back(wd);
 		strcpy(DeviceName, "Directory");
 	} else {	
@@ -197,10 +198,12 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 			throw H::Exception("Failed to Get Device Name for [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);
 	}
 	
-	cdbg << "Watching Device [" << FileName << "]: " << DeviceName << endl;
+	cdbg1 << "Watching Device [" << FileName << "]: " << DeviceName << endl;
 	shared_ptr<FileWatchee> pWatchee(new FileWatchee(FileName, WatchType, events, fd, wd, DeviceName));
-	mWatchees.push_back(pWatchee);
+	mWatchees.insert(make_pair(fd, pWatchee));
 	buildPollFDArrayFromWatchees();
+	onFileEventRegister(pWatchee);
+			
 	return pWatchee;
 }
 
@@ -226,8 +229,9 @@ void FileEventWatcher::buildPollFDArrayFromWatchees() {
  * \brief Functor for building the array of mPollFDs
  * \param pWatchee The Watchee
  */
-void FileEventWatcher::buildPollFDArrayFunctor(boost::shared_ptr<FileWatchee> pWatchee) {
-	if (pWatchee->fd == -1)
+void FileEventWatcher::buildPollFDArrayFunctor(std::pair< int, boost::shared_ptr<FileWatchee> > WatcheePair) {
+	boost::shared_ptr<FileWatchee> pWatchee = WatcheePair.second;
+	if (pWatchee->fd < 0)
 		return;
 	
 	// Add the new watchee to the list
@@ -260,13 +264,7 @@ FileWatchType FileEventWatcher::getType(int Index) {
  * \return The watchee (shared_ptr to FileWatchee)
  */
 boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByFileDescriptor(int fd) {
-	list< shared_ptr<FileWatchee> >::iterator iter;
-	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
-		if ((*iter)->fd == fd)
-			return *iter;
-	}
-	// not found, return null shared pointer
-	return shared_ptr<FileWatchee>();
+	return mWatchees[fd];
 }
 
 /**
@@ -275,10 +273,10 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByFileDescriptor(int 
  * \return The watchee (shared_ptr to FileWatchee)
  */
 boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByPath(std::string FileName) {
-	list< shared_ptr<FileWatchee> >::iterator iter;
+	map< int, shared_ptr<FileWatchee> >::iterator iter;
 	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
-		if ((*iter)->FileName == FileName)
-			return *iter;
+		if (iter->second->FileName == FileName)
+			return iter->second;
 	}
 	// not found, return null shared pointer
 	return shared_ptr<FileWatchee>();
@@ -290,13 +288,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByPath(std::string Fi
  * \return The watchee (shared_ptr to FileWatchee)
  */
 boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByWatchDescriptor(int wd) {
-	list< shared_ptr<FileWatchee> >::iterator iter;
-	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
-		if ((*iter)->wd == wd)
-			return *iter;
-	}
-	// not found, return null shared pointer
-	return shared_ptr<FileWatchee>();
+	return mWatchees[-wd];
 }
 
 /**
@@ -316,21 +308,6 @@ shared_ptr< DynamicBuffer<char> > FileEventWatcher::readFromFile(int fd) {
 	} while (BytesRead == READ_BUF_SIZE);
 	
 	return pBuffer;
-}
-
-/**
- * \brief Remove all watch descriptors
- */
-void FileEventWatcher::removeAllWatchDescriptors() {
-	apply_func(mInotifyWDs, &FileEventWatcher::removeWatchDescriptor, this);
-}
-
-/**
- * \brief Unregister a watch descriptor with inotify
- * \param wd The watch descriptor
- */
-void FileEventWatcher::removeWatchDescriptor(int wd) {
-	inotify_rm_watch(mInotifyFD, wd);
 }
 
 /**
@@ -440,14 +417,37 @@ void FileEventWatcher::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWat
 }
 
 /**
+ * \brief Event triggered when a new device is registered
+ * \param pWatchee The Watchee that triggered the event
+ */
+void FileEventWatcher::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
+	// override me
+}
+
+/**
+ * \brief Unregister a watch descriptor with inotify
+ * \param wd The watch descriptor
+ */
+void FileEventWatcher::removeWatchDescriptor(int wd) {
+	inotify_rm_watch(mInotifyFD, wd);
+}
+
+/**
+ * \brief Remove all watch descriptors
+ */
+void FileEventWatcher::removeAllWatchDescriptors() {
+	apply_func(mInotifyWDs, &FileEventWatcher::removeWatchDescriptor, this);
+}
+
+/**
  * \brief Remove a watchee from the watch list
  * \param pWatchee The watchee to remove
  */
 void FileEventWatcher::removeWatchee(boost::shared_ptr<FileWatchee> pWatchee) {
-	list< shared_ptr<FileWatchee> >::iterator iter;
+	map< int, shared_ptr<FileWatchee> >::iterator iter;
 	bool removed = false;
 	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
-		if ((*iter)->fd == pWatchee->fd) {
+		if (iter->second->fd == pWatchee->fd) {
 			cdbg << "Removed Watchee [" << pWatchee->FileName << "]" << endl;
 			mWatchees.erase(iter);
 			removed = true;

@@ -39,6 +39,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <sys/poll.h>
+#include <map>
 #include "DynamicBuffer.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -127,6 +128,7 @@ public:
 	virtual void			onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
 	virtual void			onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
 	virtual void			onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
+	virtual void			onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a new device is registered
 	void 				removeWatchee(boost::shared_ptr<FileWatchee> pWatchee); ///< Remove a Watchee from the list
 	void				stopWatchingForFileEvents();	///< Disable event watching
 	void 				watchForFileEvents();		///< Watch for events on already specified files
@@ -138,7 +140,7 @@ public:
 private:
 	// private functions
 	void 				buildPollFDArrayFromWatchees();	///< (Re)build mPollFDs array for the call to poll()
-	void 				buildPollFDArrayFunctor(boost::shared_ptr<FileWatchee> pWatchee); ///< Functor for building mPollFDs
+	void 				buildPollFDArrayFunctor(std::pair< int, boost::shared_ptr<FileWatchee> > WatcheePair); ///< Functor for building mPollFDs
 	FileWatchType 			getType(int Index);		///< Get the type of file event that happened on specified file
 	void 				handleEventsOnFile(struct pollfd & item); ///< Functor that handles file events after a poll()
 	boost::shared_ptr< H::DynamicBuffer<char> > readFromFile(int fd); ///< Read from file and return the contents in a vector
@@ -150,7 +152,7 @@ private:
 	std::vector<int>	 	mInotifyWDs;			///< Array of watch descriptors for inotify
 	std::vector<struct pollfd> 	mPollFDs;			///< Array of pollfd for the call to poll()
 	bool				mPolling;			///< Continue polling?
-	std::list< boost::shared_ptr<FileWatchee> > mWatchees;		///< List of files being watched
+	std::map< int, boost::shared_ptr<FileWatchee> > mWatchees; 	///< Map of files being watched
 };
 
 //////////////////////////////////////////////////////////////////////////////
