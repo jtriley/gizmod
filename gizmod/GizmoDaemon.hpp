@@ -54,6 +54,9 @@ public:
 	std::string			getVersion();		///< Get version string
 	void				initGizmod();		///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
+	virtual void			onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
+	virtual void			onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
+	virtual void			onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
 	virtual void			onSignalSegv();		///< Signal handler for SEGV
 	virtual void			onSignalInt();		///< Signal handler for INT
 	virtual void			onSignalHup();		///< Signal handler for HUP

@@ -373,6 +373,38 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 }
 
 /**
+ * \brief Event triggered when a new file is created
+ * \param pWatchee The Watchee that triggered the event
+ * \param FullPath The full (absolute) path of the new file
+ * \param FileName The file name (relative ) of the new file
+ */
+void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
+	if (FileName.find("event") != 0) {
+		cout << "onFileEventCreate [" << FullPath << "]" << endl;
+		return;
+	}
+	addFileToWatch(FullPath, WATCH_INOUT);
+}
+
+/**
+ * \brief Event triggered when a file is deleted
+ * \param pWatchee The Watchee that triggered the event
+ * \param FullPath The full (absolute) path of the new file
+ * \param FileName The file name (relative ) of the new file
+ */
+void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
+	cout << "onFileEventDelete [" << FullPath << "]" << endl;
+}
+
+/**
+ * \brief Event triggered when a file is disconnected
+ * \param pWatchee The Watchee that triggered the event
+ */
+void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee) {
+	cout << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+}
+
+/**
  * \brief Signal handler for SEGV
  */
 void GizmoDaemon::onSignalSegv() {
@@ -466,6 +498,10 @@ void GizmoDaemon::registerInputEventDevices() {
 	if (!filesystem::exists(EventsDirPath))
 		throw H::Exception("Input Event dir [" + mEventsDir + "] does NOT exist or permissions are wrong!", __FILE__, __FUNCTION__, __LINE__);
 	
+	// register the directory itself
+	addFileToWatch(mEventsDir, WATCH_INOUT);
+	
+	// now register the event nodes
 	// get a file listing
 	std::vector<string> eventsFiles;
 	directory_iterator endItr;

@@ -30,6 +30,23 @@ AC_CONFIG_HEADERS(config.h)
 
 #############################################################################
 ##
+## Check for inotify support (kernel >= 2.6.13)
+##
+
+AC_CHECK_HEADER(sys/inotify.h, [
+	AC_DEFINE(HAVE_INOTIFY_H, 1, [Has sys/inotify.h])
+	], [
+	AC_MSG_ERROR([Cannot find sys/inotify.h! -- You must have Linux kernel >= 2.6.13])
+	])
+	
+AC_CHECK_FUNC(inotify_init, [
+	AC_DEFINE(HAVE_INOTIFY_INIT, 1, [Has inotify_init])
+	], [
+	AC_MSG_ERROR([Cannot use inotify_init! -- You must have Linux kernel >= 2.6.13])
+	])
+
+#############################################################################
+##
 ## Check for Boost
 ##
 

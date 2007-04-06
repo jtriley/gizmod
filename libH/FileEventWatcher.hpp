@@ -67,20 +67,35 @@ typedef enum {
 } FileWatchType;
 
 /**
+ * \enum  FileDeviceType
+ * \brief Specifies the type of device watching interface (poll / inotify)
+ *
+ * WATCH_POLL     dictates that the file is a poll device
+ * WATCH_INOTIFY  dictates that the file is an inotify device
+ */
+typedef enum {
+	WATCH_POLL,
+	WATCH_INOTIFY
+} FileDeviceType;
+
+/**
  * \class FileWatchee
  * \brief Structure to hold information about file watchees
  */
 class FileWatchee {
 public:
 	// public member variables
-	std::string		FileName;			///< Name of the file to watch
-	std::string		DeviceName;			///< Name of the device
-	FileWatchType		WatchType;			///< Method to watch the file with
-	int			fd;				///< File Descriptor of the opened file
+	std::string			DeviceName;		///< Name of the device
+	FileDeviceType			DeviceType;		///< Type of the device
+	short				Events;			///< Raw event flag bitmask
+	int				fd;			///< File Descriptor of the opened file (poll)
+	std::string			FileName;		///< Name of the file to watch
+	FileWatchType			WatchType;		///< Method to watch the file with
+	int				wd;			///< Watch descriptor of the device (inotify)
 		
 	// construction / deconstruction
 	FileWatchee();						///< Default Constructor
-	FileWatchee(std::string fileName, FileWatchType watchType, int fileDescriptor, std::string deviceName); ///< Init Constructor
+	FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName); ///< Init Constructor
 	virtual ~FileWatchee();					///< Destructor
 };
 
@@ -97,30 +112,45 @@ public:
  *
  * FileEventWatcher is essentially a wrapper for poll() which makes it easy
  * to integrate into any program
+ * 
+ * Also use the linux kernel's inotify event to get information about directory changes
+ * (add / remove files, etc).  Unfortunately inotify doesn't work with event node updates
+ * so poll is still required
  */
 class FileEventWatcher {
 public:
 	// public functions
-	void			addFileToWatch(std::string FileName, FileWatchType WatchType); ///< Add a file to watch for events 
-	boost::shared_ptr<FileWatchee> getWatcheeByFileDescriptor(int fd); ///< Get a Watchee by file descriptor
-	virtual void		onFileWatcheeAdded(boost::shared_ptr<FileWatchee> Device); ///< Event triggered when a new device is registered
-	void			stopWatchingForFileEvents();	///< Disable event watching
-	void 			watchForFileEvents();		///< Watch for events on already specified files
+	boost::shared_ptr<FileWatchee> 	addFileToWatch(std::string FileName, FileWatchType WatchType); ///< Add a file to watch for events 
+	boost::shared_ptr<FileWatchee>	getWatcheeByFileDescriptor(int fd); ///< Get a Watchee by file descriptor
+	boost::shared_ptr<FileWatchee>	getWatcheeByPath(std::string Path); ///< Get a Watchee by file name
+	boost::shared_ptr<FileWatchee>	getWatcheeByWatchDescriptor(int wd); ///< Get a Watchee by watch descriptor
+	virtual void			onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
+	virtual void			onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
+	virtual void			onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
+	void 				removeWatchee(boost::shared_ptr<FileWatchee> pWatchee); ///< Remove a Watchee from the list
+	void				stopWatchingForFileEvents();	///< Disable event watching
+	void 				watchForFileEvents();		///< Watch for events on already specified files
 	
 	// construction / deconstruction
-	FileEventWatcher();					///< Default Constructor
-	virtual ~FileEventWatcher();				///< Destructor
+	FileEventWatcher();						///< Default Constructor
+	virtual ~FileEventWatcher();					///< Destructor
 
 private:
 	// private functions
-	FileWatchType 		getType(int Index);		///< Get the type of file event that happened on specified file
-	void 			handleEventsOnFile(struct pollfd & item); ///< Functor that handles file events after a poll()
+	void 				buildPollFDArrayFromWatchees();	///< (Re)build mPollFDs array for the call to poll()
+	void 				buildPollFDArrayFunctor(boost::shared_ptr<FileWatchee> Watchee); ///< Functor for building mPollFDs
+	FileWatchType 			getType(int Index);		///< Get the type of file event that happened on specified file
+	void 				handleEventsOnFile(struct pollfd & item); ///< Functor that handles file events after a poll()
 	boost::shared_ptr< H::DynamicBuffer<char> > readFromFile(int fd); ///< Read from file and return the contents in a vector
+	void 				removeAllWatchDescriptors();	///< Remove all watch descriptors
+	void 				removeWatchDescriptor(int wd);	///< Remove a watch descriptor
 	
 	// private member variables
-	std::vector<struct pollfd> mPollFDs;			///< Array of pollfd for the call to poll()
-	bool			mPolling;			///< Continue polling?
-	std::list< boost::shared_ptr<FileWatchee> > mWatchees;	///< List of files being watched
+	int				mInotifyFD;			///< Inotify File Descriptor
+	std::vector<int>	 	mInotifyWDs;			///< Array of watch descriptors for inotify
+	std::vector<struct pollfd> 	mPollFDs;			///< Array of pollfd for the call to poll()
+	bool				mPolling;			///< Continue polling?
+	std::list< boost::shared_ptr<FileWatchee> > mWatchees;		///< List of files being watched
 };
 
 //////////////////////////////////////////////////////////////////////////////
