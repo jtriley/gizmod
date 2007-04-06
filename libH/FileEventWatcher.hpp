@@ -138,7 +138,7 @@ public:
 private:
 	// private functions
 	void 				buildPollFDArrayFromWatchees();	///< (Re)build mPollFDs array for the call to poll()
-	void 				buildPollFDArrayFunctor(boost::shared_ptr<FileWatchee> Watchee); ///< Functor for building mPollFDs
+	void 				buildPollFDArrayFunctor(boost::shared_ptr<FileWatchee> pWatchee); ///< Functor for building mPollFDs
 	FileWatchType 			getType(int Index);		///< Get the type of file event that happened on specified file
 	void 				handleEventsOnFile(struct pollfd & item); ///< Functor that handles file events after a poll()
 	boost::shared_ptr< H::DynamicBuffer<char> > readFromFile(int fd); ///< Read from file and return the contents in a vector
@@ -157,9 +157,11 @@ private:
 // Exception Classes
 ///////////////////////////////////////
 
+/// Exception that indicates a device has disconnected
 class DeviceDisconnectException : public std::exception {
 };
 
+/// Exception that indicates a watchee was not found while iterating
 class WatcheeNotFoundException : public std::exception {
 };
 

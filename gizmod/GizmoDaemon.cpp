@@ -378,7 +378,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
  */
-void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
+void GizmoDaemon::onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	if (FileName.find("event") != 0) {
 		cout << "onFileEventCreate [" << FullPath << "]" << endl;
 		return;
@@ -392,7 +392,7 @@ void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, 
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
  */
-void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
+void GizmoDaemon::onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	cout << "onFileEventDelete [" << FullPath << "]" << endl;
 }
 
@@ -400,7 +400,7 @@ void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, 
  * \brief Event triggered when a file is disconnected
  * \param pWatchee The Watchee that triggered the event
  */
-void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee) {
+void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee) {
 	cout << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 }
 

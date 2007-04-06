@@ -223,13 +223,17 @@ void FileEventWatcher::buildPollFDArrayFromWatchees() {
 }
 
 /**
- * \brief  Functor for building the array of mPollFDs
+ * \brief Functor for building the array of mPollFDs
+ * \param pWatchee The Watchee
  */
-void FileEventWatcher::buildPollFDArrayFunctor(shared_ptr<FileWatchee> Watchee) {
+void FileEventWatcher::buildPollFDArrayFunctor(boost::shared_ptr<FileWatchee> pWatchee) {
+	if (pWatchee->fd == -1)
+		return;
+	
 	// Add the new watchee to the list
 	struct pollfd PollFD;
-	PollFD.fd = Watchee->fd;
-	PollFD.events = Watchee->Events;
+	PollFD.fd = pWatchee->fd;
+	PollFD.events = pWatchee->Events;
 	PollFD.revents = 0;
 	mPollFDs.push_back(PollFD);
 }
