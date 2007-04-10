@@ -3,7 +3,7 @@
 #*************************************************************************
 #*** 
 #*** GizmoDaemon Config Script v3:0
-#*** 	GizmoDaemon.py
+#*** 	GizmodDispatcher.py
 #***
 #*****************************************
   #*****************************************
@@ -13,10 +13,10 @@
 # Imports
 ##########################
 
-from GizmoDaemon import *
+from   GizmoDaemon import *
 
 ############################
-# Dispatcher Class definition
+# GizmodDispatcher Class definition
 ##########################
 
 class GizmodDispatcher(GizmodEventHandler):
@@ -58,7 +58,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		
 		print "onEvent: " + Event.getEventType()
 		
-	def onQueryDeviceType(self, DeviceName, FileName):
+	def onQueryDeviceType(self, DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName):
 		"""
 		This method is triggered when a new device is being registered (either at startup
 		or when Gizmo Daemon detects a new device has been plugged in to the computer)
@@ -66,8 +66,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		This method should return the GizmoClass of the device
 		"""
 		
-		print "onQueryDeviceType: " + DeviceName + " [" + FileName + "]"
-		return GizmoClass.Powermate
+		return GizmoDeviceType(DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName).DeviceType
 
 	############################
 	# Private Functions
@@ -81,7 +80,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		self.initialized = False
 
 ############################
-# Dispatcher class end
+# GizmodDispatcher class end
 ##########################
 
 # To run user defined code post initializing, see User.py which is executed 

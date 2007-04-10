@@ -100,6 +100,11 @@ FileEventWatcher::~FileEventWatcher() {
  * \brief FileWatchee Default Constructor
  */
 FileWatchee::FileWatchee() {
+	DeviceIDBusType = -1;
+	DeviceIDProduct = -1;
+	DeviceIDVendor = -1;
+	DeviceIDVersion = -1;
+
 	WatchType = WATCH_IN;
 	fd = -1;
 	Events = POLLIN;
@@ -108,7 +113,11 @@ FileWatchee::FileWatchee() {
 /**
  * \brief FileWatchee Init Constructor
  */
-FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName) {
+FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion) {
+	DeviceIDBusType = deviceIDBusType;
+	DeviceIDProduct = deviceIDProduct;
+	DeviceIDVendor = deviceIDVendor;
+	DeviceIDVersion = deviceIDVersion;
 	FileName = fileName;
 	WatchType = watchType;
 	Events = events;
@@ -181,6 +190,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 	int fd = -1;
 	int wd = -1;
 	char DeviceName[DEVICE_NAME_BUF_SIZE] = {'\0'};
+	unsigned short DeviceIDs[4] = {-1, -1, -1, -1};
 	if (filesystem::is_directory(FilePath)) {
 		// directory, add watch
 		if ((wd = inotify_add_watch(mInotifyFD, FileName.c_str(), IN_CREATE | IN_DELETE | IN_DELETE_SELF)) == -1)
@@ -196,10 +206,14 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 		// get the device name
 		if (ioctl(fd, EVIOCGNAME(sizeof(DeviceName)), DeviceName) < 0)
 			throw H::Exception("Failed to Get Device Name for [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);
+		
+		// get the device id information
+		if (ioctl(fd, EVIOCGID, DeviceIDs) < 0)
+			throw H::Exception("Failed to Get Device IDs for [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);		
 	}
 	
 	cdbg1 << "Watching Device [" << FileName << "]: " << DeviceName << endl;
-	shared_ptr<FileWatchee> pWatchee(new FileWatchee(FileName, WatchType, events, fd, wd, DeviceName));
+	shared_ptr<FileWatchee> pWatchee(new FileWatchee(FileName, WatchType, events, fd, wd, DeviceName, DeviceIDs[0], DeviceIDs[1], DeviceIDs[2], DeviceIDs[3]));
 	mWatchees.insert(make_pair(fd, pWatchee));
 	buildPollFDArrayFromWatchees();
 	onFileEventRegister(pWatchee);

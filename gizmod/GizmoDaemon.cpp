@@ -65,16 +65,22 @@ using namespace H;
 #define SCRIPT_DIR		PACKAGE_PREFIX "/share/gizmo/scripts/"
 
 /** 
- * \def   SCRIPT_DISPATCH
+ * \def   SCRIPT_DISPATCHER
  * The path of the initial config script
  */
-#define SCRIPT_DISPATCH 	"Dispatch.py"
+#define SCRIPT_DISPATCHER 	"GizmodDispatcher.py"
+
+/** 
+ * \def   SCRIPT_DEVICETYPE
+ * The path of the initial config script
+ */
+#define SCRIPT_DEVICETYPE 	"GizmoDeviceType.py"
 
 /** 
  * \def   SCRIPT_USER
  * The path of the user config script that gets run after SCRIPT_DISPATCH
  */
-#define SCRIPT_USER		"User.py"
+#define SCRIPT_USER		"GizmodUser.py"
 
 /** 
  * \def   EVENT_NODE_DIR
@@ -99,7 +105,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
 	void		onEvent(GizmoEventPowermate const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	void		onEvent(GizmoEventCPU const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
-	GizmoClass	onQueryDeviceType(std::string DeviceName, std::string FileName) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceName, FileName); };
+	GizmoClass	onQueryDeviceType(std::string DeviceName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion, std::string FileName) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName); };
 
 	PyObject * 	self;		///< Pointer to self
 };
@@ -256,7 +262,7 @@ void GizmoDaemon::initPython() {
 		scope(GizmoDaemonModule).attr("Gizmod") = ptr(this);
 		
 		// execute the main script code
-		string ScriptFile = mConfigDir + SCRIPT_DISPATCH;
+		string ScriptFile = mConfigDir + SCRIPT_DISPATCHER;
 		cdbg << "Executing Dispatcher Python Script [" << ScriptFile << "]..." << endl;
 		FILE * ifScript = fopen(ScriptFile.c_str(), "r");
 		if (!ifScript)
@@ -279,7 +285,16 @@ void GizmoDaemon::initPython() {
 		GizmoEventCPU e;
 		mpPyDispatcher->onEvent(&e);
 		cout << "Mod: " << e.getEventType() << endl;
-			
+		
+		// execute the device type script code
+		ScriptFile = mConfigDir + SCRIPT_DEVICETYPE;
+		cdbg << "Executing DeviceType Python Script [" << ScriptFile << "]..." << endl;
+		ifScript = fopen(ScriptFile.c_str(), "r");
+		if (!ifScript)
+			throw H::Exception("Failed to Open Python Script [" + ScriptFile + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
+		PyRun_SimpleFile(ifScript, ScriptFile.c_str());
+		fclose(ifScript);
+					
 		// execute the user script code
 		ScriptFile = mConfigDir + SCRIPT_USER;
 		cdbg << "Executing User Python Script [" << ScriptFile << "]..." << endl;
@@ -429,7 +444,7 @@ void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee)
  */
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
 	cout << "onFileEventRegister [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
-	GizmoClass Class = mpPyDispatcher->onQueryDeviceType(pWatchee->DeviceName, pWatchee->FileName);
+	GizmoClass Class = mpPyDispatcher->onQueryDeviceType(pWatchee->DeviceName, pWatchee->DeviceIDBusType, pWatchee->DeviceIDVendor, pWatchee->DeviceIDProduct, pWatchee->DeviceIDVersion, pWatchee->FileName);
 	cout << "CLASS: " << Class << endl;
 }
 

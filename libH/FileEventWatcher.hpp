@@ -86,6 +86,10 @@ typedef enum {
 class FileWatchee {
 public:
 	// public member variables
+	int				DeviceIDBusType;	///< Bus Type of the device
+	int				DeviceIDProduct;	///< Product code of the device
+	int				DeviceIDVendor;		///< Vendor ID of the device
+	int				DeviceIDVersion;	///< Version of the device
 	std::string			DeviceName;		///< Name of the device
 	FileDeviceType			DeviceType;		///< Type of the device
 	short				Events;			///< Raw event flag bitmask
@@ -96,7 +100,7 @@ public:
 		
 	// construction / deconstruction
 	FileWatchee();						///< Default Constructor
-	FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName); ///< Init Constructor
+	FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion); ///< Init Constructor
 	virtual ~FileWatchee();					///< Destructor
 };
 

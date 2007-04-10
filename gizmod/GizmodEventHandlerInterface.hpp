@@ -84,10 +84,14 @@ public:
 	/**
 	 * \brief  Event triggered when a new device is being registered
 	 * \param  DeviceName The manufacturers description of the device
+	 * \param  DeviceIDBusType The Bus type of the device
+	 * \param  DeviceIDVendor The vendor code of the product
+	 * \param  DeviceIDProduct The product code of the device
+	 * \param  DeviceIDVersion The version ID of the device
 	 * \param  FileName The path of the device node on disk
 	 * \return The type of the device
 	 */
-	virtual GizmoClass		onQueryDeviceType(std::string DeviceName, std::string FileName) = 0;
+	virtual GizmoClass		onQueryDeviceType(std::string DeviceName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion, std::string FileName) = 0;
 	
 	// construction / deconstruction
 	GizmodEventHandlerInterface();
