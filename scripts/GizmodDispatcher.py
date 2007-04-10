@@ -23,6 +23,11 @@ from GizmoDeviceType import GizmoDeviceType
 class GizmodDispatcher(GizmodEventHandler):
 	"""
 	Main class that handles all of the incoming events
+	
+	The idea behind this class is to use it as nothing more than a dispatching
+	mechanism.  All the events get channeled from GizmoDaemon through here
+	and this class is intended merely to pass events off the appropriate
+	module.
 	"""
 	
 	############################
@@ -31,7 +36,7 @@ class GizmodDispatcher(GizmodEventHandler):
 
 	def getInitialized(self):
 		""" Gets whether or not the object has been initialized """
-		
+
 		return self.initialized
 
 	def initialize(self):
@@ -65,6 +70,8 @@ class GizmodDispatcher(GizmodEventHandler):
 		or when Gizmo Daemon detects a new device has been plugged in to the computer)
 		
 		This method should return the GizmoClass of the device
+
+		GizmoDeviceType is defined in GizmoDeviceType.py for convenience and modularity sake
 		"""
 		
 		return GizmoDeviceType(DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName).DeviceType
