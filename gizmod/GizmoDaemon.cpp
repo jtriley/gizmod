@@ -255,11 +255,11 @@ void GizmoDaemon::initPython() {
 		scope(GizmoDaemonModule).attr("Gizmod") = ptr(this);
 		
 		// Modify the PYTHONPATH so import's work
-		cdbg1 << "Modifying PYTHONPATH" << endl;
+		string PathInsertion = "import sys\nsys.path.insert(0, \"" + mConfigDir + "\")\n";
+		cdbg1 << "Modifying PYTHONPATH:\n" << PathInsertion << endl;
 		handle<> ignore_path_exec((PyRun_String(
-			"import sys\n"
-			"sys.path.insert(0, \"/home/tim/projects/gizmod/gizmod3/scripts/\")\n",
-			Py_file_input, MainNamespace.ptr(), MainNamespace.ptr())));		
+			PathInsertion.c_str(),
+			Py_file_input, MainNamespace.ptr(), MainNamespace.ptr())));
 		
 		// execute the main script code
 		string ScriptFile = mConfigDir + SCRIPT_DISPATCHER;
