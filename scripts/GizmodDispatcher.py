@@ -14,6 +14,7 @@
 ##########################
 
 from   GizmoDaemon import *
+from   GizmoDeviceType import GizmoDeviceType
 
 ############################
 # GizmodDispatcher Class definition
@@ -71,12 +72,16 @@ class GizmodDispatcher(GizmodEventHandler):
 	############################
 	# Private Functions
 	##########################
-
-	def __construct__(self):
+	
+	def __init__(self):
 		""" 
-		Default Constructor -- Use this rather than __init__
+		Default Constructor
 		"""
 
+		# MUST explicitely call the base's constructor since it's a C++ class
+		GizmodEventHandler.__init__(self)
+		
+		# module specific init code
 		self.initialized = False
 
 ############################

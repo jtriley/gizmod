@@ -13,6 +13,8 @@
 # Imports
 ##########################
 
+from GizmoDaemon import *
+
 ############################
 # GizmoDeviceType Class definition
 ##########################
@@ -39,8 +41,19 @@ class GizmoDeviceType:
 		"""
 		Calculate the device type from the device ID info
 		"""
-		print "onQueryDeviceType: " + self.DeviceName + " [" + self.FileName + "]"
-		self.DeviceType = GizmoClass.Standard
+		
+		#print "onQueryDeviceType: " + self.DeviceName + " [" + self.FileName + "]"
+		if self.DeviceName.lower().find("powermate") > -1 or \
+ 		   self.DeviceName.lower().find("soundknob") > -1:
+ 			self.DeviceType = GizmoClass.Powermate
+ 		elif self.DeviceName.lower().find("ati x10") > -1:
+	 		self.DeviceType = GizmoClass.ATIX10
+ 		elif self.DeviceName.lower().find("lirc") > -1:
+	 		self.DeviceType = GizmoClass.LIRC
+ 		elif self.DeviceName.lower().find("cpu") > -1:
+	 		self.DeviceType = GizmoClass.CPU
+	 	else:
+	 		self.DeviceType = GizmoClass.Standard
 
 	############################
 	# Private Functions
@@ -50,6 +63,7 @@ class GizmoDeviceType:
 		""" 
 		Default Constructor
 		"""
+		
 		self.DeviceName = DeviceName
 		self.DeviceIDBusType = DeviceIDBusType
 		self.DeviceIDVendor = DeviceIDVendor

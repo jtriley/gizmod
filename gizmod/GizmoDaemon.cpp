@@ -71,12 +71,6 @@ using namespace H;
 #define SCRIPT_DISPATCHER 	"GizmodDispatcher.py"
 
 /** 
- * \def   SCRIPT_DEVICETYPE
- * The path of the initial config script
- */
-#define SCRIPT_DEVICETYPE 	"GizmoDeviceType.py"
-
-/** 
  * \def   SCRIPT_USER
  * The path of the user config script that gets run after SCRIPT_DISPATCH
  */
@@ -100,7 +94,6 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	/// Default Constructor
 	GizmodEventHandlerInterfaceWrap(PyObject * self_) : self(self_) {}
 
-	void		__construct__()	 { return python::call_method<void>(self, "__construct__"); }
 	bool		getInitialized() { return python::call_method<bool>(self, "getInitialized"); }
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
 	void		onEvent(GizmoEventPowermate const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
@@ -261,6 +254,13 @@ void GizmoDaemon::initPython() {
 		// create a new object so the script can access this object
 		scope(GizmoDaemonModule).attr("Gizmod") = ptr(this);
 		
+		// Modify the PYTHONPATH so import's work
+		cdbg1 << "Modifying PYTHONPATH" << endl;
+		handle<> ignore_path_exec((PyRun_String(
+			"import sys\n"
+			"sys.path.insert(0, \"/home/tim/projects/gizmod/gizmod3/scripts/\")\n",
+			Py_file_input, MainNamespace.ptr(), MainNamespace.ptr())));		
+		
 		// execute the main script code
 		string ScriptFile = mConfigDir + SCRIPT_DISPATCHER;
 		cdbg << "Executing Dispatcher Python Script [" << ScriptFile << "]..." << endl;
@@ -272,7 +272,7 @@ void GizmoDaemon::initPython() {
 		
 		// Create the event dispatcher object so we can interact with it
 		cdbg1 << "Creating Dispatcher Object" << endl;
-		handle<> ignored((PyRun_String(
+		handle<> ignore_dispatcher_exec((PyRun_String(
 			"Dispatcher = GizmodDispatcher()\n",
 			Py_file_input, MainNamespace.ptr(), MainNamespace.ptr())));
 		
@@ -280,21 +280,13 @@ void GizmoDaemon::initPython() {
 		mpPyDispatcher = extract<GizmodEventHandlerInterface*>(MainNamespace["Dispatcher"]);
 		
 		// Initialize the dispatcher object
-		mpPyDispatcher->__construct__();
 		mpPyDispatcher->initialize();
+		/*
 		GizmoEventCPU e;
 		mpPyDispatcher->onEvent(&e);
 		cout << "Mod: " << e.getEventType() << endl;
-		
-		// execute the device type script code
-		ScriptFile = mConfigDir + SCRIPT_DEVICETYPE;
-		cdbg << "Executing DeviceType Python Script [" << ScriptFile << "]..." << endl;
-		ifScript = fopen(ScriptFile.c_str(), "r");
-		if (!ifScript)
-			throw H::Exception("Failed to Open Python Script [" + ScriptFile + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
-		PyRun_SimpleFile(ifScript, ScriptFile.c_str());
-		fclose(ifScript);
-					
+		*/
+							
 		// execute the user script code
 		ScriptFile = mConfigDir + SCRIPT_USER;
 		cdbg << "Executing User Python Script [" << ScriptFile << "]..." << endl;
@@ -304,7 +296,8 @@ void GizmoDaemon::initPython() {
 		PyRun_SimpleFile(ifScript, ScriptFile.c_str());
 		fclose(ifScript);
 	} catch (error_already_set) {
-		PyErr_Print();
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
 		throw H::Exception("Failed to Execute Python Script!", __FILE__, __FUNCTION__, __LINE__);
 	}
 }
@@ -443,9 +436,15 @@ void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee)
  * \param pWatchee The Watchee that triggered the event
  */
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
-	cout << "onFileEventRegister [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
-	GizmoClass Class = mpPyDispatcher->onQueryDeviceType(pWatchee->DeviceName, pWatchee->DeviceIDBusType, pWatchee->DeviceIDVendor, pWatchee->DeviceIDProduct, pWatchee->DeviceIDVersion, pWatchee->FileName);
-	cout << "CLASS: " << Class << endl;
+	cdbg << "New Dev ice Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+	try {
+		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(pWatchee->DeviceName, pWatchee->DeviceIDBusType, pWatchee->DeviceIDVendor, pWatchee->DeviceIDProduct, pWatchee->DeviceIDVersion, pWatchee->FileName);
+		cout << "CLASS: " << Class << endl;
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceType");
+	}
 }
 
 /**

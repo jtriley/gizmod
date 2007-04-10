@@ -50,16 +50,6 @@
 class GizmodEventHandlerInterface : public boost::noncopyable {
 public:
 	/**
-	 * \brief  Faked constructor for the Python object
-	 *
-	 * Use this as the Object's constructor rather than __init__
-	 * 
-	 * This is to work around oddities that happen when constructing
-	 * a Python object that uses a C++ class as its base
-	 */
-	virtual void			__construct__() = 0;
-	
-	/**
 	 * \brief  Get whether or not the object has been initialized
 	 * \return (bool) True if initialized
 	 */
