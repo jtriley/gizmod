@@ -92,7 +92,6 @@ private:
 	std::string			mEventsDir;		///< Event node directory
 	bool				mInitialized;		///< Has GizmoDaemon been properly initialized?
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
-	//__gnu_cxx::hash_map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
 	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
 };
 

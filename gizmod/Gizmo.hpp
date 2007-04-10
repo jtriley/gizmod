@@ -70,21 +70,23 @@ typedef enum {
  * \brief Base class of all Gizmos
  *
  * This class is the base of all Gizmos attached to the system.
- * Each gizmo must inherit this class
+ * Each Gizmo must inherit this class
  */
 class Gizmo {
 public:
 	// public functions
-	virtual std::string		getType() = 0;		///< Get the type of the gizmo
+	GizmoClass			getGizmoClass();		///< Get the class of the Gizmo
+	virtual std::string		getGizmoType() = 0;		///< Get the type of the Gizmo
 	
 	// construction / deconstruction
-	Gizmo();						///< Default Constructor
-	virtual ~Gizmo();					///< Destructor
+	Gizmo(GizmoClass Class);					///< Default Constructor
+	virtual ~Gizmo();						///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
+	GizmoClass			mClass;				///< Class of the Gizmo
 };
 
 #endif // __Gizmo_h

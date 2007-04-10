@@ -46,7 +46,8 @@ using namespace H;
 /**
  * \brief Gizmo Default Constructor
  */
-Gizmo::Gizmo() {
+Gizmo::Gizmo(GizmoClass Class) {
+	mClass = Class;
 }
 
 /**
@@ -58,3 +59,11 @@ Gizmo::~Gizmo() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Get the class of Gizmo
+ * \return GizmoClass of the Gizmo
+ */
+GizmoClass Gizmo::getGizmoClass() {
+	return mClass;
+}

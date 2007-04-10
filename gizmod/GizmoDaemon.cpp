@@ -29,6 +29,9 @@
 #include "GizmoDaemon.hpp"
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventCPU.hpp"
+#include "GizmoPowermate.hpp"
+#include "GizmoCPU.hpp"
+#include "GizmoStandard.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/Util.hpp"
@@ -436,10 +439,26 @@ void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee)
  * \param pWatchee The Watchee that triggered the event
  */
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
-	cdbg << "New Dev ice Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+	cdbg << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	try {
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(pWatchee->DeviceName, pWatchee->DeviceIDBusType, pWatchee->DeviceIDVendor, pWatchee->DeviceIDProduct, pWatchee->DeviceIDVersion, pWatchee->FileName);
-		cout << "CLASS: " << Class << endl;
+		switch (Class) {
+		case GIZMO_CLASS_STANDARD:
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard())));
+			break;
+		case GIZMO_CLASS_POWERMATE:
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoPowermate>(new GizmoPowermate())));
+			break;
+		case GIZMO_CLASS_LIRC:
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard())));
+			break;
+		case GIZMO_CLASS_ATIX10:
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard())));
+			break;
+		case GIZMO_CLASS_CPU:
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoCPU>(new GizmoCPU())));
+			break;
+		}
 	} catch (error_already_set) {
 		if (Debug::getDebugEnabled())
 			PyErr_Print();

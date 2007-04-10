@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoCPU.hpp
-*** \brief GizmoCPU class header
+*** \file  GizmoStandard.hpp
+*** \brief GizmoStandard class header
 ***
 *****************************************
   *****************************************
@@ -26,8 +26,8 @@
   
 */
 
-#ifndef __GizmoCPU_h
-#define __GizmoCPU_h
+#ifndef __GizmoStandard_h
+#define __GizmoStandard_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
@@ -44,19 +44,19 @@
 ///////////////////////////////////////
 
 /**
- * \class GizmoCPU
+ * \class GizmoStandard
  * \brief Powermate Gizmo
  *
- * This class contains all of the helper functions for making use of the Powermate
+ * This class contains all of the helper functions for making use of standard devices
  */
-class GizmoCPU : public Gizmo {
+class GizmoStandard : public Gizmo {
 public:
 	// public functions
 	std::string			getGizmoType();			///< Get the type of the Gizmo
 	
-	// construction / deconstruction
-	GizmoCPU();							///< Default Constructor
-	virtual ~GizmoCPU();						///< Destructor
+	// construction / deconstruction	
+	GizmoStandard();						///< Default Constructor
+	virtual ~GizmoStandard();					///< Destructor
 
 protected:
 	// private functions
@@ -64,4 +64,4 @@ protected:
 	// private member variables
 };
 
-#endif // __GizmoCPU_h
+#endif // __GizmoStandard_h

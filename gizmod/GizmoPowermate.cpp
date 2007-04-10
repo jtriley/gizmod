@@ -52,7 +52,7 @@ using namespace H;
 /**
  * \brief GizmoPowermate Default Constructor
  */
-GizmoPowermate::GizmoPowermate() {
+GizmoPowermate::GizmoPowermate() : Gizmo(GIZMO_CLASS_POWERMATE) {
 }
 
 /**

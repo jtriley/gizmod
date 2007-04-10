@@ -13,8 +13,8 @@
 # Imports
 ##########################
 
-from   GizmoDaemon import *
-from   GizmoDeviceType import GizmoDeviceType
+from GizmoDaemon import *
+from GizmoDeviceType import GizmoDeviceType
 
 ############################
 # GizmodDispatcher Class definition
@@ -78,10 +78,10 @@ class GizmodDispatcher(GizmodEventHandler):
 		Default Constructor
 		"""
 
-		# MUST explicitely call the base's constructor since it's a C++ class
+		# Must explicitely call the base's constructor
 		GizmodEventHandler.__init__(self)
 		
-		# module specific init code
+		# Module specific initialization
 		self.initialized = False
 
 ############################

@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoCPU.cpp
-*** \brief GizmoCPU class body 
+*** \file  GizmoStandard.cpp
+*** \brief GizmoStandard class body
 ***
 *****************************************
   *****************************************
@@ -26,7 +26,7 @@
   
 */
 
-#include "GizmoCPU.hpp"
+#include "GizmoStandard.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <boost/shared_ptr.hpp>
@@ -40,25 +40,25 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * \def   GIZMO_CPU_TYPE
+ * \def   GIZMO_STANDARD_TYPE
  * \brief String type of this gizmo
  */
-#define GIZMO_CPU_TYPE	"CPU"
+#define GIZMO_STANDARD_TYPE	"Standard"
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
 
 /**
- * \brief GizmoCPU Default Constructor
+ * \brief GizmoStandard Default Constructor
  */
-GizmoCPU::GizmoCPU() : Gizmo(GIZMO_CLASS_CPU) {
+GizmoStandard::GizmoStandard() : Gizmo(GIZMO_CLASS_STANDARD) {
 }
 
 /**
- * \brief GizmoCPU Destructor
+ * \brief GizmoStandard Destructor
  */
-GizmoCPU::~GizmoCPU() {
+GizmoStandard::~GizmoStandard() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -66,9 +66,9 @@ GizmoCPU::~GizmoCPU() {
 ///////////////////////////////////////
 
 /**
- * \brief Get the type of this Gizmo
+ * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
  */
-std::string GizmoCPU::getGizmoType() {
-	return GIZMO_CPU_TYPE;
+std::string GizmoStandard::getGizmoType() {
+	return GIZMO_STANDARD_TYPE;
 }
