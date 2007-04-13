@@ -45,7 +45,7 @@
 
 /**
  * \class GizmoStandard
- * \brief Powermate Gizmo
+ * \brief Standard Gizmos
  *
  * This class contains all of the helper functions for making use of standard devices
  */

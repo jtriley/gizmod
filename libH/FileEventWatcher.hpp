@@ -79,11 +79,15 @@ typedef enum {
 	WATCH_INOTIFY
 } FileDeviceType;
 
+//////////////////////////////////////////////////////////////////////////////
+// DeviceInfo Class Definition
+///////////////////////////////////////
+
 /**
- * \class FileWatchee
- * \brief Structure to hold information about file watchees
+ * \class DeviceInfo
+ * \brief Structure to hold information about devices
  */
-class FileWatchee {
+class DeviceInfo {
 public:
 	// public member variables
 	int				DeviceIDBusType;	///< Bus Type of the device
@@ -91,10 +95,28 @@ public:
 	int				DeviceIDVendor;		///< Vendor ID of the device
 	int				DeviceIDVersion;	///< Version of the device
 	std::string			DeviceName;		///< Name of the device
+	std::string			FileName;		///< Name of the file to watch
+		
+	// construction / deconstruction
+	DeviceInfo();						///< Default Constructor
+	DeviceInfo(std::string DeviceName, std::string FileName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion); ///< Init Constructor
+	virtual ~DeviceInfo();					///< Destructor
+};
+
+//////////////////////////////////////////////////////////////////////////////
+// FileWatchee Class Definition
+///////////////////////////////////////
+
+/**
+ * \class FileWatchee
+ * \brief Structure to hold information about file watchees
+ */
+class FileWatchee : public DeviceInfo {
+public:
+	// public member variables
 	FileDeviceType			DeviceType;		///< Type of the device
 	short				Events;			///< Raw event flag bitmask
 	int				fd;			///< File Descriptor of the opened file (poll)
-	std::string			FileName;		///< Name of the file to watch
 	FileWatchType			WatchType;		///< Method to watch the file with
 	int				wd;			///< Watch descriptor of the device (inotify)
 		
@@ -105,7 +127,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-// Class Definition
+// FileEventWatcher Class Definition
 ///////////////////////////////////////
 
 /**

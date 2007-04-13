@@ -46,10 +46,9 @@
 
 /**
  * \class GizmoEventPowermate
- * \brief Base class of all GizmoEventPowermates
+ * \brief Class for Powermate events
  *
- * This class is the base of all GizmoEventPowermates attached to the system.
- * Each GizmoEventPowermate must inherit this class
+ * This class is for all GizmoEventPowermates attached to the system.
  */
 class GizmoEventPowermate : public GizmoEvent {
 public:

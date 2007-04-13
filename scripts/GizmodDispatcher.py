@@ -64,17 +64,19 @@ class GizmodDispatcher(GizmodEventHandler):
 		
 		print "onEvent: " + Event.getEventType()
 		
-	def onQueryDeviceType(self, DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName):
+	def onQueryDeviceType(self, DeviceInformation):
 		"""
 		This method is triggered when a new device is being registered (either at startup
 		or when Gizmo Daemon detects a new device has been plugged in to the computer)
 		
+		For information regarding the DeviceInformation fields see the API documention for
+		H::DeviceInfo
+		
 		This method should return the GizmoClass of the device
-
-		GizmoDeviceType is defined in GizmoDeviceType.py for convenience and modularity sake
 		"""
 		
-		return GizmoDeviceType(DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName).DeviceType
+		# GizmoDeviceType is defined in GizmoDeviceType.py for convenience and modularity sake
+		return GizmoDeviceType(DeviceInformation).DeviceType
 
 	############################
 	# Private Functions

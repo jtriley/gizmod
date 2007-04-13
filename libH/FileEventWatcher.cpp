@@ -79,6 +79,34 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
+ * \brief DeviceInfo Default Constructor
+ */
+DeviceInfo::DeviceInfo() {
+	DeviceIDBusType = -1;
+	DeviceIDProduct = -1;
+	DeviceIDVendor = -1;
+	DeviceIDVersion = -1;	
+}
+
+/**
+ * \brief DeviceInfo Init Constructor
+ */
+DeviceInfo::DeviceInfo(std::string deviceName, std::string fileName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion) {
+	DeviceName = deviceName;
+	FileName = fileName;
+	DeviceIDBusType = deviceIDBusType;
+	DeviceIDVendor = deviceIDVendor;
+	DeviceIDProduct = deviceIDProduct;
+	DeviceIDVersion = deviceIDVersion;
+}
+
+/**
+ * \brief DeviceInfo Destructor
+ */
+DeviceInfo::~DeviceInfo() {
+}
+
+/**
  * \brief FileEventWatcher Default Constructor
  */
 FileEventWatcher::FileEventWatcher() {
@@ -100,11 +128,6 @@ FileEventWatcher::~FileEventWatcher() {
  * \brief FileWatchee Default Constructor
  */
 FileWatchee::FileWatchee() {
-	DeviceIDBusType = -1;
-	DeviceIDProduct = -1;
-	DeviceIDVendor = -1;
-	DeviceIDVersion = -1;
-
 	WatchType = WATCH_IN;
 	fd = -1;
 	Events = POLLIN;
@@ -113,12 +136,9 @@ FileWatchee::FileWatchee() {
 /**
  * \brief FileWatchee Init Constructor
  */
-FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion) {
-	DeviceIDBusType = deviceIDBusType;
-	DeviceIDProduct = deviceIDProduct;
-	DeviceIDVendor = deviceIDVendor;
-	DeviceIDVersion = deviceIDVersion;
-	FileName = fileName;
+FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion) :
+	DeviceInfo(deviceName, fileName, deviceIDBusType, deviceIDVendor, deviceIDProduct, deviceIDVersion)
+{
 	WatchType = watchType;
 	Events = events;
 	fd = fileDescriptor;
@@ -127,7 +147,6 @@ FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short ev
 		DeviceType = WATCH_INOTIFY;
 	else
 		DeviceType = WATCH_POLL;
-	DeviceName = deviceName;
 }
 
 /**

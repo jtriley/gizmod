@@ -45,9 +45,9 @@
 
 /**
  * \class GizmoCPU
- * \brief Powermate Gizmo
+ * \brief CPU Gizmo
  *
- * This class contains all of the helper functions for making use of the Powermate
+ * This class contains all of the helper functions for making use of CPUUsage
  */
 class GizmoCPU : public Gizmo {
 public:

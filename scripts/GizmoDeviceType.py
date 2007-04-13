@@ -37,20 +37,29 @@ class GizmoDeviceType:
 	# Public Functions
 	##########################
 	
-	def setDeviceType(self):
+	def setDeviceType(self, DeviceInfo):
 		"""
 		Calculate the device type from the device ID info
+
+		For information regarding the DeviceInformation fields see the API documention for
+		H::DeviceInfo, but the following fields are available:
+			- DeviceIDBusType;	< Bus Type of the device
+			- DeviceIDProduct;	< Product code of the device
+			- DeviceIDVendor;	< Vendor ID of the device
+			- DeviceIDVersion;	< Version of the device
+			- DeviceName;		< Name of the device
+			- FileName	 	< Name of the file to watch
 		"""
 		
 		#print "onQueryDeviceType: " + self.DeviceName + " [" + self.FileName + "]"
-		if self.DeviceName.lower().find("powermate") > -1 or \
- 		   self.DeviceName.lower().find("soundknob") > -1:
+		if DeviceInfo.DeviceName.lower().find("powermate") > -1 or \
+ 		   DeviceInfo.DeviceName.lower().find("soundknob") > -1:
  			self.DeviceType = GizmoClass.Powermate
- 		elif self.DeviceName.lower().find("ati x10") > -1:
+ 		elif DeviceInfo.DeviceName.lower().find("ati x10") > -1:
 	 		self.DeviceType = GizmoClass.ATIX10
- 		elif self.DeviceName.lower().find("lirc") > -1:
+ 		elif DeviceInfo.DeviceName.lower().find("lirc") > -1:
 	 		self.DeviceType = GizmoClass.LIRC
- 		elif self.DeviceName.lower().find("cpu") > -1:
+ 		elif DeviceInfo.DeviceName.lower().find("cpu") > -1:
 	 		self.DeviceType = GizmoClass.CPU
 	 	else:
 	 		self.DeviceType = GizmoClass.Standard
@@ -59,20 +68,16 @@ class GizmoDeviceType:
 	# Private Functions
 	##########################
 
-	def __init__(self, DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName):
+	def __init__(self, DeviceInformation):
 		""" 
 		Default Constructor
 		"""
 		
-		self.DeviceName = DeviceName
-		self.DeviceIDBusType = DeviceIDBusType
-		self.DeviceIDVendor = DeviceIDVendor
-		self.DeviceIDProduct = DeviceIDProduct
-		self.DeviceIDVersion = DeviceIDVersion
-		self.FileName = FileName
+		self.DeviceInfo = DeviceInformation
+		self.DeviceType = GizmoClass.Standard
 		
 		# set the device type from above info
-		self.setDeviceType()
+		self.setDeviceType(self.DeviceInfo)
 
 ############################
 # GizmoDeviceType class end

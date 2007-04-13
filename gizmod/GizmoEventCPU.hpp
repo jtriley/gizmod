@@ -46,10 +46,9 @@
 
 /**
  * \class GizmoEventCPU
- * \brief Base class of all GizmoEventCPUs
+ * \brief Class for CPU events
  *
- * This class is the base of all GizmoEventCPUs attached to the system.
- * Each GizmoEventCPU must inherit this class
+ * This class is for all GizmoEventCPUs attached to the system.
  */
 class GizmoEventCPU : public GizmoEvent {
 public:

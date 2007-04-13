@@ -101,7 +101,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
 	void		onEvent(GizmoEventPowermate const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	void		onEvent(GizmoEventCPU const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
-	GizmoClass	onQueryDeviceType(std::string DeviceName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion, std::string FileName) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceName, DeviceIDBusType, DeviceIDVendor, DeviceIDProduct, DeviceIDVersion, FileName); };
+	GizmoClass	onQueryDeviceType(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceInformation); };
 
 	PyObject * 	self;		///< Pointer to self
 };
@@ -135,14 +135,24 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
 		;
 
+	/// GizmoEventCPU Python Class Export
+ 	class_<GizmoEventCPU>("GizmoEventCPU")
+		GIZMO_EVENT_PYTHON_DEFS
+		;
+	
 	/// GizmoEventPowermate Python Class Export
 	class_<GizmoEventPowermate>("GizmoEventPowermate")
 		GIZMO_EVENT_PYTHON_DEFS
 		;
 
-	/// GizmoEventCPU Python Class Export
- 	class_<GizmoEventCPU>("GizmoEventCPU")
-		GIZMO_EVENT_PYTHON_DEFS
+	/// DeviceInfo Python Class Export
+	class_<DeviceInfo>("GizmoDeviceInfo")
+		.def_readonly("DeviceName", &DeviceInfo::DeviceName)
+		.def_readonly("DeviceIDBusType", &DeviceInfo::DeviceIDBusType)
+		.def_readonly("DeviceIDVendor", &DeviceInfo::DeviceIDVendor)
+		.def_readonly("DeviceIDProduct", &DeviceInfo::DeviceIDProduct)
+		.def_readonly("DeviceIDVersion", &DeviceInfo::DeviceIDVersion)
+		.def_readonly("FileName", &DeviceInfo::FileName)
 		;
 }
 
@@ -441,7 +451,7 @@ void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee)
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
 	cdbg << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	try {
-		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(pWatchee->DeviceName, pWatchee->DeviceIDBusType, pWatchee->DeviceIDVendor, pWatchee->DeviceIDProduct, pWatchee->DeviceIDVersion, pWatchee->FileName);
+		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);
 		switch (Class) {
 		case GIZMO_CLASS_STANDARD:
 			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard())));
