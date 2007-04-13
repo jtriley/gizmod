@@ -67,7 +67,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		is.  See the C++ API documention on the specific Gizmo* type for more details
 		"""
 		
-		print "onEvent: " + Event.getEventType() + " -- " + Gizmo.DeviceName + " : " + Gizmo.FileName
+		print "onEvent: " + Event.EventType + " -- " + Gizmo.DeviceName + " : " + Gizmo.FileName
 		
 	def onQueryDeviceType(self, DeviceInformation):
 		"""
