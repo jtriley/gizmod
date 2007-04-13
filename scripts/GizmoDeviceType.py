@@ -51,7 +51,7 @@ class GizmoDeviceType:
 			- FileName	 	< Name of the file to watch
 		"""
 		
-		#print "onQueryDeviceType: " + self.DeviceName + " [" + self.FileName + "]"
+		#print "onQueryDeviceType: " + DeviceInfo.DeviceName + " [" + DeviceInfo.FileName + "] Prod: " + str(hex(DeviceInfo.DeviceIDProduct))
 		if DeviceInfo.DeviceName.lower().find("powermate") > -1 or \
  		   DeviceInfo.DeviceName.lower().find("soundknob") > -1:
  			self.DeviceType = GizmoClass.Powermate
