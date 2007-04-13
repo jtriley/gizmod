@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoStandard.cpp
-*** \brief GizmoStandard class body
+*** \file  GizmoEventStandard.cpp
+*** \brief GizmoEventStandard class body
 ***
 *****************************************
   *****************************************
@@ -26,7 +26,7 @@
   
 */
 
-#include "GizmoStandard.hpp"
+#include "GizmoEventStandard.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <boost/shared_ptr.hpp>
@@ -40,25 +40,25 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * \def   GIZMO_STANDARD_TYPE
- * \brief String type of this gizmo
+ * \def   GIZMO_EVENT_STANDARD_TYPE
+ * \brief String type of this event
  */
-#define GIZMO_STANDARD_TYPE	"Standard"
+#define GIZMO_EVENT_STANDARD_TYPE	"Standard"
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
 
 /**
- * \brief GizmoStandard Default Constructor
+ * \brief GizmoEventStandard Default Constructor
  */
-GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo) {
+GizmoEventStandard::GizmoEventStandard() {
 }
 
 /**
- * \brief GizmoStandard Destructor
+ * \brief GizmoEventStandard Destructor
  */
-GizmoStandard::~GizmoStandard() {
+GizmoEventStandard::~GizmoEventStandard() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -69,6 +69,6 @@ GizmoStandard::~GizmoStandard() {
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
  */
-std::string GizmoStandard::getGizmoType() {
-	return GIZMO_STANDARD_TYPE;
+std::string GizmoEventStandard::getEventType() {
+	return GIZMO_EVENT_STANDARD_TYPE;
 }

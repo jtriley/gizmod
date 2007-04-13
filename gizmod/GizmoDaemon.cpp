@@ -27,8 +27,9 @@
 */
 
 #include "GizmoDaemon.hpp"
-#include "GizmoEventPowermate.hpp"
 #include "GizmoEventCPU.hpp"
+#include "GizmoEventPowermate.hpp"
+#include "GizmoEventStandard.hpp"
 #include "GizmoPowermate.hpp"
 #include "GizmoCPU.hpp"
 #include "GizmoStandard.hpp"
@@ -99,52 +100,18 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 
 	bool		getInitialized() { return python::call_method<bool>(self, "getInitialized"); }
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
-	void		onEvent(GizmoEventPowermate const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
-	void		onEvent(GizmoEventCPU const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
+	void		onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
+	void		onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
+	void		onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	GizmoClass	onQueryDeviceType(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceInformation); };
 
 	PyObject * 	self;		///< Pointer to self
 };
 
-/** 
- * \def   GIZMO_EVENT_PYTHON_DEFS
- * Macro for including the GizmoEvent base class functions in super classes
- */
-#define GIZMO_EVENT_PYTHON_DEFS \
-	.def("getEventType", &GizmoEvent::getEventType)
-
 /**
  * \brief Python module definition
  */
 BOOST_PYTHON_MODULE(GizmoDaemon) {
-	/// GizmoClass enum export
-	enum_<GizmoClass>("GizmoClass")
-		.value("CPU", 		GIZMO_CLASS_CPU)
-		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
-		.value("LIRC",	 	GIZMO_CLASS_LIRC)
-		.value("ATIX10",	GIZMO_CLASS_ATIX10)
-		.value("Standard", 	GIZMO_CLASS_STANDARD)
-		;
-			
-	/// GizmoDaemon Python Class Export
-	class_<GizmoDaemon>("PyGizmoDaemon")
-		.def("getVersion", & GizmoDaemon::getVersion)
-		;
-	
-	/// GizmodEventHandlerInterface Python Class Export	
-	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
-		;
-
-	/// GizmoEventCPU Python Class Export
- 	class_<GizmoEventCPU>("GizmoEventCPU")
-		GIZMO_EVENT_PYTHON_DEFS
-		;
-	
-	/// GizmoEventPowermate Python Class Export
-	class_<GizmoEventPowermate>("GizmoEventPowermate")
-		GIZMO_EVENT_PYTHON_DEFS
-		;
-
 	/// DeviceInfo Python Class Export
 	class_<DeviceInfo>("GizmoDeviceInfo")
 		.def_readonly("DeviceName", &DeviceInfo::DeviceName)
@@ -153,6 +120,59 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def_readonly("DeviceIDProduct", &DeviceInfo::DeviceIDProduct)
 		.def_readonly("DeviceIDVersion", &DeviceInfo::DeviceIDVersion)
 		.def_readonly("FileName", &DeviceInfo::FileName)
+		;
+	
+	/// Gizmo Python Class Export
+	class_< Gizmo, bases<DeviceInfo> >("Gizmo", init<GizmoClass, const DeviceInfo &>())
+		.def("getGizmoClass", &Gizmo::getGizmoClass)
+		.add_property("GizmoClass", &Gizmo::getGizmoClass)				
+		.def("getGizmoType", &Gizmo::getGizmoType)
+		.add_property("GizmoType", &Gizmo::getGizmoType)
+		;
+	
+	/// GizmoClass enum export
+	enum_<GizmoClass>("GizmoClass")
+		.value("CPU", 		GIZMO_CLASS_CPU)
+		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
+		.value("LIRC",	 	GIZMO_CLASS_LIRC)
+		.value("ATIX10",	GIZMO_CLASS_ATIX10)
+		.value("Standard", 	GIZMO_CLASS_STANDARD)
+		;	
+			
+	/// GizmoDaemon Python Class Export
+	class_<GizmoDaemon>("PyGizmoDaemon")
+		.def("getVersion", &GizmoDaemon::getVersion)
+		.add_property("Version", &GizmoDaemon::getVersion)
+		;
+		
+	/// GizmodEventHandlerInterface Python Class Export	
+	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
+		;
+
+	/// GizmoEvent Python Class Export
+ 	class_<GizmoEvent>("GizmoEvent")
+		.def("getEventType", &GizmoEvent::getEventType)
+		.add_property("EventType", &GizmoEvent::getEventType)
+		;
+	
+	/// GizmoEventCPU Python Class Export
+ 	class_< GizmoEventCPU, bases<GizmoEvent> >("GizmoEventCPU")
+		;
+	
+	/// GizmoEventPowermate Python Class Export
+	class_< GizmoEventPowermate, bases<GizmoEvent> >("GizmoEventPowermate")
+		;
+
+	/// GizmoEventPowermate Python Class Export
+	class_< GizmoEventStandard, bases<GizmoEvent> >("GizmoEventStandard")
+		;
+	
+	/// GizmoPowermate Python Class Export
+	class_< GizmoPowermate, bases<Gizmo> >("GizmoPowermate", init<const DeviceInfo &>())
+		;
+
+	/// GizmoStandard Python Class Export
+	class_< GizmoStandard, bases<Gizmo> >("GizmoStandard", init<const DeviceInfo &>())
 		;
 }
 
@@ -211,6 +231,9 @@ string GizmoDaemon::getProps() {
 
 /**
  * \brief Get the program's version information
+ *
+ * Note that this is also implemented in Python as a property so it can
+ * be accessed as a variable by referencing ".Version"
  */
 string GizmoDaemon::getVersion() {
 	return string(PACKAGE_VERSION);
@@ -294,11 +317,6 @@ void GizmoDaemon::initPython() {
 		
 		// Initialize the dispatcher object
 		mpPyDispatcher->initialize();
-		/*
-		GizmoEventCPU e;
-		mpPyDispatcher->onEvent(&e);
-		cout << "Mod: " << e.getEventType() << endl;
-		*/
 							
 		// execute the user script code
 		ScriptFile = mConfigDir + SCRIPT_USER;
@@ -445,6 +463,46 @@ void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee)
 }
 
 /**
+ * \brief Event triggered when data is waiting on a device
+ * \param pWatchee The Watchee that triggered the event
+ * \param pReadBuffer The data that was waiting on the device
+ */
+void GizmoDaemon::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost::shared_ptr< DynamicBuffer<char> > pReadBuffer) {
+	//cdbg << "Event Detected on Device [" << pWatchee->DeviceName << "] of Length [" << (int) pReadBuffer->length() << "]" << endl;
+	
+	// make sure the gizmo exists
+	shared_ptr<Gizmo> pUnknownGizmo = mGizmos[pWatchee->FileName];
+	if (!pUnknownGizmo) {
+		cdbg << "Unknown Event Detected on Device [" << pWatchee->DeviceName << "] of Length [" << (int) pReadBuffer->length() << "]" << endl;
+		return;
+	}
+		
+	// create the event and dispatch it
+	try {
+		switch (pUnknownGizmo->getGizmoClass()) {
+		case GIZMO_CLASS_STANDARD: {
+			GizmoEventStandard e;
+			mpPyDispatcher->onEvent(&e, static_cast<GizmoStandard const *>(pUnknownGizmo.get()));						
+			break; }
+		case GIZMO_CLASS_POWERMATE: {
+			GizmoEventPowermate e;
+			mpPyDispatcher->onEvent(&e, static_cast<GizmoPowermate const *>(pUnknownGizmo.get()));						
+			break; }
+		case GIZMO_CLASS_LIRC:
+			break;
+		case GIZMO_CLASS_ATIX10:
+			break;
+		case GIZMO_CLASS_CPU:
+			break;
+		}
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}
+}
+
+/**
  * \brief Event triggered when a new device is registered
  * \param pWatchee The Watchee that triggered the event
  */
@@ -454,19 +512,19 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);
 		switch (Class) {
 		case GIZMO_CLASS_STANDARD:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard())));
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard(*pWatchee))));
 			break;
 		case GIZMO_CLASS_POWERMATE:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoPowermate>(new GizmoPowermate())));
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoPowermate>(new GizmoPowermate(*pWatchee))));
 			break;
 		case GIZMO_CLASS_LIRC:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard())));
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard(*pWatchee))));
 			break;
 		case GIZMO_CLASS_ATIX10:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard())));
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard(*pWatchee))));
 			break;
 		case GIZMO_CLASS_CPU:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoCPU>(new GizmoCPU())));
+			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoCPU>(new GizmoCPU(*pWatchee))));
 			break;
 		}
 	} catch (error_already_set) {

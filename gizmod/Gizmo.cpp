@@ -39,6 +39,12 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
+/**
+ * \def   GIZMO_TYPE_UNSPECIFIED
+ * \brief String returned if a super class failed to reimplement getGizmoType
+ */
+#define GIZMO_TYPE_UNSPECIFIED	"Unspecified"
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -46,7 +52,9 @@ using namespace H;
 /**
  * \brief Gizmo Default Constructor
  */
-Gizmo::Gizmo(GizmoClass Class) {
+Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo) :
+	DeviceInfo(deviceInfo)
+{
 	mClass = Class;
 }
 
@@ -63,7 +71,21 @@ Gizmo::~Gizmo() {
 /**
  * \brief  Get the class of Gizmo
  * \return GizmoClass of the Gizmo
+ * 
+ * Note that this is also implemented in Python as a property so it can
+ * be accessed as a variable by referencing ".GizmoClass"
  */
 GizmoClass Gizmo::getGizmoClass() {
 	return mClass;
+}
+
+/**
+ * \brief  Get the type of Gizmo
+ * \return Type of the Gizmo
+ *
+ * Note that this is also implemented in Python as a property so it can
+ * be accessed as a variable by referencing ".GizmoType"
+ */
+std::string Gizmo::getGizmoType() {
+	return GIZMO_TYPE_UNSPECIFIED;
 }

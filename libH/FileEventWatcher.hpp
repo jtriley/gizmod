@@ -99,6 +99,7 @@ public:
 		
 	// construction / deconstruction
 	DeviceInfo();						///< Default Constructor
+	DeviceInfo(const DeviceInfo & DeviceInformation); 	///< Init Constructor
 	DeviceInfo(std::string DeviceName, std::string FileName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion); ///< Init Constructor
 	virtual ~DeviceInfo();					///< Destructor
 };
@@ -154,6 +155,7 @@ public:
 	virtual void			onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
 	virtual void			onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
 	virtual void			onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
+	virtual void			onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost::shared_ptr< DynamicBuffer<char> > pReadBuffer); ///< Event triggered when data is waiting on a device
 	virtual void			onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a new device is registered
 	void 				removeWatchee(boost::shared_ptr<FileWatchee> pWatchee); ///< Remove a Watchee from the list
 	void				stopWatchingForFileEvents();	///< Disable event watching

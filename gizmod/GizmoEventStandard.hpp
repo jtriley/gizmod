@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoPowermate.hpp
-*** \brief GizmoPowermate class header
+*** \file  GizmoEventStandard.hpp
+*** \brief GizmoEventStandard class header
 ***
 *****************************************
   *****************************************
@@ -26,14 +26,15 @@
   
 */
 
-#ifndef __GizmoPowermate_h
-#define __GizmoPowermate_h
+#ifndef __GizmoEventStandard_h
+#define __GizmoEventStandard_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "Gizmo.hpp"
+#include "GizmoEvent.hpp"
+#include <string>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -44,20 +45,19 @@
 ///////////////////////////////////////
 
 /**
- * \class GizmoPowermate
- * \brief Powermate Gizmo
+ * \class GizmoEventStandard
+ * \brief Class for Standard events
  *
- * This class contains all of the helper functions for making use of the Powermate
+ * This class is for all GizmoEventStandards attached to the system.
  */
-class GizmoPowermate : public Gizmo {
+class GizmoEventStandard : public GizmoEvent {
 public:
 	// public functions
-	unsigned char			getLEDValue();			///< Get the Powermate's LED value
-	std::string			getGizmoType();			///< Get the type of the Gizmo
+	std::string			getEventType();			///< Get the type of the Event
 	
-	// construction / deconstruction	
-	GizmoPowermate(const H::DeviceInfo & deviceInfo);		///< Default Constructor
-	virtual ~GizmoPowermate();					///< Destructor
+	// construction / deconstruction
+	GizmoEventStandard();						///< Default Constructor
+	virtual ~GizmoEventStandard();					///< Destructor
 
 protected:
 	// private functions
@@ -65,4 +65,4 @@ protected:
 	// private member variables
 };
 
-#endif // __GizmoPowermate_h
+#endif // __GizmoEventStandard_h

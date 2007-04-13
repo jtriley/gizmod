@@ -62,7 +62,7 @@ public:
 	// public functions
 	void			addToBuffer(const DataType * AddBuf, size_t BufLen); ///< Add data to the buffer
 	const DataType * 	getBuffer();			///< Get the buffer
-	size_t			getBufferLength();		///< Get the buffer length
+	size_t			length();			///< Get the buffer length
 
 	// construction / deconstruction
 	DynamicBuffer();					///< Default Constructor

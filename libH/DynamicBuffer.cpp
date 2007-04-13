@@ -93,7 +93,7 @@ const DataType * DynamicBuffer<DataType>::getBuffer() {
  * \return Length
  */
 template <class DataType>
-size_t DynamicBuffer<DataType>::getBufferLength() {
+size_t DynamicBuffer<DataType>::length() {
 	return mLength;
 }
 

@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "../libH/FileEventWatcher.hpp"
 #include <string>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,14 +73,14 @@ typedef enum {
  * This class is the base of all Gizmos attached to the system.
  * Each Gizmo must inherit this class
  */
-class Gizmo {
+class Gizmo : public H::DeviceInfo {
 public:
 	// public functions
 	GizmoClass			getGizmoClass();		///< Get the class of the Gizmo
-	virtual std::string		getGizmoType() = 0;		///< Get the type of the Gizmo
+	virtual std::string		getGizmoType();			///< Get the type of the Gizmo
 	
 	// construction / deconstruction
-	Gizmo(GizmoClass Class);					///< Default Constructor
+	Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo);	///< Default Constructor
 	virtual ~Gizmo();						///< Destructor
 
 protected:

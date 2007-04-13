@@ -33,9 +33,13 @@
 #include "config.h"
 #endif
 
-#include "GizmoEventPowermate.hpp"
 #include "GizmoEventCPU.hpp"
+#include "GizmoEventPowermate.hpp"
+#include "GizmoEventStandard.hpp"
 #include "Gizmo.hpp"
+#include "GizmoCPU.hpp"
+#include "GizmoPowermate.hpp"
+#include "GizmoStandard.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include <string>
 #include <boost/python.hpp>
@@ -66,11 +70,26 @@ public:
 	 */
 	virtual void			initialize() = 0; 		///< Initialization that gets called inside python to init python stuff
 		
-	/*
-	 * Event triggers
+	/**
+	 * \brief  CPU Event trigger
+	 * \param  Event The event information 
+	 * \param  Device The device that triggered the event
 	 */
-	virtual void			onEvent(GizmoEventPowermate const * Event) = 0; ///< Powermate Event trigger
-	virtual void			onEvent(GizmoEventCPU const * Event) = 0; ///< CPU Event trigger
+	virtual void			onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) = 0;
+	
+	/**
+	 * \brief  Powermate Event trigger
+	 * \param  Event The event information 
+	 * \param  Device The device that triggered the event
+	 */
+	virtual void			onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) = 0;
+		
+	/**
+	 * \brief  Standard Event trigger
+	 * \param  Event The event information 
+	 * \param  Device The device that triggered the event
+	 */
+	virtual void			onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device is being registered

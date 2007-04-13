@@ -52,7 +52,7 @@ using namespace H;
 /**
  * \brief GizmoCPU Default Constructor
  */
-GizmoCPU::GizmoCPU() : Gizmo(GIZMO_CLASS_CPU) {
+GizmoCPU::GizmoCPU(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_CPU, deviceInfo) {
 }
 
 /**

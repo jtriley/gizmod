@@ -55,7 +55,7 @@ public:
 	std::string			getGizmoType();			///< Get the type of the Gizmo
 	
 	// construction / deconstruction
-	GizmoCPU();							///< Default Constructor
+	GizmoCPU(const H::DeviceInfo & deviceInfo);			///< Default Constructor
 	virtual ~GizmoCPU();						///< Destructor
 
 protected:

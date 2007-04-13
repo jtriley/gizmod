@@ -66,6 +66,7 @@ public:
 	virtual void			onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
 	virtual void			onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
 	virtual void			onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
+	virtual void			onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, boost::shared_ptr< H::DynamicBuffer<char> > pReadBuffer); ///< Event triggered when data is waiting on a device
 	virtual void			onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a new device is registered
 	virtual void			onSignalSegv();		///< Signal handler for SEGV
 	virtual void			onSignalInt();		///< Signal handler for INT

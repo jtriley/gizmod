@@ -53,7 +53,7 @@
 class GizmoEvent {
 public:
 	// public functions
-	virtual std::string		getEventType() = 0;		///< Get the type of the Event
+	virtual std::string		getEventType();			///< Get the type of the Event
 	
 	// construction / deconstruction
 	GizmoEvent();							///< Default Constructor

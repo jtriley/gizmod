@@ -101,6 +101,18 @@ DeviceInfo::DeviceInfo(std::string deviceName, std::string fileName, int deviceI
 }
 
 /**
+ * \brief DeviceInfo Init Constructor
+ */
+DeviceInfo::DeviceInfo(const DeviceInfo & DeviceInformation) {
+	DeviceName = DeviceInformation.DeviceName;
+	FileName = DeviceInformation.FileName;
+	DeviceIDBusType = DeviceInformation.DeviceIDBusType;
+	DeviceIDVendor = DeviceInformation.DeviceIDVendor;
+	DeviceIDProduct = DeviceInformation.DeviceIDProduct;
+	DeviceIDVersion = DeviceInformation.DeviceIDVersion;
+}
+
+/**
  * \brief DeviceInfo Destructor
  */
 DeviceInfo::~DeviceInfo() {
@@ -409,7 +421,7 @@ void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 			try {
 				shared_ptr< DynamicBuffer<char> > pBuffer = readFromFile(item.fd);
 				if (pWatchee)
-					cdbg << "Event Detected on Device [" << pWatchee->DeviceName << "]" << endl;
+					onFileEventRead(pWatchee, pBuffer);
 			} catch (H::DeviceDisconnectException & e) {
 				if (pWatchee) {
 					onFileEventDisconnect(pWatchee);
@@ -446,6 +458,15 @@ void FileEventWatcher::onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee
  * \param pWatchee The Watchee that triggered the event
  */
 void FileEventWatcher::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee) {
+	// override me
+}
+
+/**
+ * \brief Event triggered when data is waiting on a device
+ * \param pWatchee The Watchee that triggered the event
+ * \param pReadBuffer The data that was waiting on the device
+ */
+void FileEventWatcher::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost::shared_ptr< DynamicBuffer<char> > pReadBuffer) {
 	// override me
 }
 
