@@ -23,14 +23,18 @@ class GizmoDeviceType:
 	"""
 	This class is responsible for telling GizmoDaemon what the class
 	of the devices are that are attached to the system.  Ie, if 
-	Gizmo Daemon deteces "KeyTronic Keyboard" this class should respond
+	Gizmo Daemon detects "KeyTronic Keyboard" this class should respond
 	by setting its type to Gizmod.GizmoClass.Standard -- See the C++ API
 	documention regarding Gizmo.hpp for a complete list (and description)
 	of the available enums.
 	
 	This is provided as a way of manually intervening in the device
 	registration process.  There are cases where certain devices enumerate
-	themselves with unintuitive descriptions such as "
+	themselves with unintuitive descriptions such as "InniTech 
+	Corp Device v.413" or <blank>.
+
+	There are a number of device identification fields available
+	include product and vendor codes.
 	"""
 	
 	############################
