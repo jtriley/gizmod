@@ -339,20 +339,16 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByWatchDescriptor(int
 /**
  * \brief  Read the input event waiting on a file descriptor
  * \param  fd The file descriptor
- * \return The results of the read (DynamicBuffer)
+ * \param  Buffer The buffer to place contents into
  */
-shared_ptr< DynamicBuffer<char> > FileEventWatcher::readFromFile(int fd) {
-	shared_ptr< DynamicBuffer<char> > pBuffer(new DynamicBuffer<char>);
-	
+void FileEventWatcher::readFromFile(int fd, DynamicBuffer<char> & Buffer) {
 	char ReadBuffer[READ_BUF_SIZE];
 	ssize_t BytesRead;
 	do {
 		if ((BytesRead = read(fd, ReadBuffer, READ_BUF_SIZE)) <= 0)
 			throw H::DeviceDisconnectException();
-		pBuffer->addToBuffer(ReadBuffer, BytesRead);
+		Buffer.addToBuffer(ReadBuffer, BytesRead);
 	} while (BytesRead == READ_BUF_SIZE);
-	
-	return pBuffer;
 }
 
 /**
@@ -419,9 +415,10 @@ void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 			if (!pWatchee)
 				cerr << "Unhandled file event on fd [" << item.fd << "]" << endl;
 			try {
-				shared_ptr< DynamicBuffer<char> > pBuffer = readFromFile(item.fd);
+				DynamicBuffer<char> Buffer;
+				readFromFile(item.fd, Buffer);
 				if (pWatchee)
-					onFileEventRead(pWatchee, pBuffer);
+					onFileEventRead(pWatchee, Buffer);
 			} catch (H::DeviceDisconnectException & e) {
 				if (pWatchee) {
 					onFileEventDisconnect(pWatchee);
@@ -464,9 +461,9 @@ void FileEventWatcher::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWat
 /**
  * \brief Event triggered when data is waiting on a device
  * \param pWatchee The Watchee that triggered the event
- * \param pReadBuffer The data that was waiting on the device
+ * \param ReadBuffer The data that was waiting on the device
  */
-void FileEventWatcher::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost::shared_ptr< DynamicBuffer<char> > pReadBuffer) {
+void FileEventWatcher::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer) {
 	// override me
 }
 

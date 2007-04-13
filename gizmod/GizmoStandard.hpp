@@ -34,6 +34,7 @@
 #endif
 
 #include "Gizmo.hpp"
+#include "GizmoLinuxInputDevice.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -49,10 +50,10 @@
  *
  * This class contains all of the helper functions for making use of standard devices
  */
-class GizmoStandard : public Gizmo {
+class GizmoStandard : public Gizmo, public GizmoLinuxInputDevice {
 public:
 	// public functions
-	std::string			getGizmoType();			///< Get the type of the Gizmo
+	virtual std::string		getGizmoType();			///< Get the type of the Gizmo
 	
 	// construction / deconstruction	
 	GizmoStandard(const H::DeviceInfo & deviceInfo);		///< Default Constructor

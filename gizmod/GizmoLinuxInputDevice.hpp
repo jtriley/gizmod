@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoEventStandard.hpp
-*** \brief GizmoEventStandard class header
+*** \file  GizmoLinuxInputDevice.hpp
+*** \brief GizmoLinuxInputDevice class header
 ***
 *****************************************
   *****************************************
@@ -26,17 +26,16 @@
   
 */
 
-#ifndef __GizmoEventStandard_h
-#define __GizmoEventStandard_h
+#ifndef __GizmoLinuxInputDevice_h
+#define __GizmoLinuxInputDevice_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "GizmoEvent.hpp"
-#include "GizmoLinuxInputEvent.hpp"
-#include <string>
-#include <boost/shared_ptr.hpp>
+#include "../libH/DynamicBuffer.hpp"
+#include <linux/input.h>
+#include <vector>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -47,31 +46,27 @@
 ///////////////////////////////////////
 
 /**
- * \class GizmoEventStandard
- * \brief Class for Standard events
- *
- * This class is for all GizmoEventStandards attached to the system.
+ * \class GizmoLinuxInputDevice
+ * \brief Wrapper for functions dealing with Linux Input Event Interface Devices
  */
-class GizmoEventStandard : public GizmoEvent, public GizmoLinuxInputEvent {
+class GizmoLinuxInputDevice {
 public:
 	// public functions
-	std::string			getEventType();			///< Get the type of the Event
-	
-	// static public functions
-	static void			buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventStandard> > & EventVector, H::DynamicBuffer<char> const & Buffer, bool SendNullEvents); ///< Build an event list from a read buffer
-	
+	bool				getSendNullEvents();		///< Get whether or not the Gizmo sends NULL events
+	void				setSendNullEvents(bool SendNull); ///< Set whether or not the Gizmo sends NULL events
+
 	// construction / deconstruction
-	GizmoEventStandard();						///< Default Constructor
-	GizmoEventStandard(struct input_event const & InputEvent);	///< Init Constructor
-	virtual ~GizmoEventStandard();					///< Destructor
+	GizmoLinuxInputDevice();					///< Default Constructor
+	virtual ~GizmoLinuxInputDevice();				///< Destructor
+
+	// static public functions
+	static void			buildInputEventsVectorFromBuffer(std::vector<struct input_event> & EventVector, H::DynamicBuffer<char> const & Buffer); ///< Build an event list from a read buffer
 
 protected:
 	// private functions
 	
 	// private member variables
-	
-	// static private functions
-	static void 			buildEventsVectorFromBufferFunctor(struct input_event & InputEvent, std::vector< boost::shared_ptr<GizmoEventStandard> > * pEventVector, bool SendNullEvents); ///< Functor for building the events list
+	bool				mSendNullEvents;		///< Send NULL events if the device creates them?
 };
 
-#endif // __GizmoEventStandard_h
+#endif // __GizmoLinuxInputDevice_h

@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoEventStandard.hpp
-*** \brief GizmoEventStandard class header
+*** \file  GizmoLinuxInputEvent.hpp
+*** \brief GizmoLinuxInputEvent class header
 ***
 *****************************************
   *****************************************
@@ -26,52 +26,53 @@
   
 */
 
-#ifndef __GizmoEventStandard_h
-#define __GizmoEventStandard_h
+#ifndef __GizmoLinuxInputEvent_h
+#define __GizmoLinuxInputEvent_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "GizmoEvent.hpp"
-#include "GizmoLinuxInputEvent.hpp"
-#include <string>
-#include <boost/shared_ptr.hpp>
+#include "../libH/DynamicBuffer.hpp"
+#include <linux/input.h>
+#include <vector>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
 ///////////////////////////////////////
+
+typedef struct GizmoTimeVal {
+	unsigned int Seconds;
+	unsigned int MicroSeconds;
+};
 	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
 ///////////////////////////////////////
 
 /**
- * \class GizmoEventStandard
- * \brief Class for Standard events
- *
- * This class is for all GizmoEventStandards attached to the system.
+ * \class GizmoLinuxInputEvent
+ * \brief Wrapper for functions dealing with Linux Input Event Interface Devices
  */
-class GizmoEventStandard : public GizmoEvent, public GizmoLinuxInputEvent {
+class GizmoLinuxInputEvent {
 public:
+	// public member variables
+	unsigned short			RawType;				///< Raw type of the event
+	unsigned short			RawCode;				///< Raw code of the event
+	int				RawValue;				///< Raw value of the event
+	GizmoTimeVal			TimeStamp;				///< Time stamp of the event
+	
 	// public functions
-	std::string			getEventType();			///< Get the type of the Event
-	
-	// static public functions
-	static void			buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventStandard> > & EventVector, H::DynamicBuffer<char> const & Buffer, bool SendNullEvents); ///< Build an event list from a read buffer
-	
+
 	// construction / deconstruction
-	GizmoEventStandard();						///< Default Constructor
-	GizmoEventStandard(struct input_event const & InputEvent);	///< Init Constructor
-	virtual ~GizmoEventStandard();					///< Destructor
+	GizmoLinuxInputEvent();							///< Default Constructor
+	GizmoLinuxInputEvent(struct input_event const & InputEvent);		///< Init Constructor
+	virtual ~GizmoLinuxInputEvent();					///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
-	
-	// static private functions
-	static void 			buildEventsVectorFromBufferFunctor(struct input_event & InputEvent, std::vector< boost::shared_ptr<GizmoEventStandard> > * pEventVector, bool SendNullEvents); ///< Functor for building the events list
 };
 
-#endif // __GizmoEventStandard_h
+#endif // __GizmoLinuxInputEvent_h

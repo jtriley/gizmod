@@ -19,9 +19,6 @@
 *** \author   Tim Burrell -- tim.burrell@gmail.com
 *** \version  3:0
 ***
-*** \todo     Code the entire program!
-*** \bug      Not done coding!
-***
 *** Gizmo Daemon -- Let your computer do what you want it to!
 ***
 *****************************************

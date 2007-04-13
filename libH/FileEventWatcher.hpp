@@ -155,7 +155,7 @@ public:
 	virtual void			onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
 	virtual void			onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
 	virtual void			onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
-	virtual void			onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost::shared_ptr< DynamicBuffer<char> > pReadBuffer); ///< Event triggered when data is waiting on a device
+	virtual void			onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer); ///< Event triggered when data is waiting on a device
 	virtual void			onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a new device is registered
 	void 				removeWatchee(boost::shared_ptr<FileWatchee> pWatchee); ///< Remove a Watchee from the list
 	void				stopWatchingForFileEvents();	///< Disable event watching
@@ -171,7 +171,7 @@ private:
 	void 				buildPollFDArrayFunctor(std::pair< int, boost::shared_ptr<FileWatchee> > WatcheePair); ///< Functor for building mPollFDs
 	FileWatchType 			getType(int Index);		///< Get the type of file event that happened on specified file
 	void 				handleEventsOnFile(struct pollfd & item); ///< Functor that handles file events after a poll()
-	boost::shared_ptr< H::DynamicBuffer<char> > readFromFile(int fd); ///< Read from file and return the contents in a vector
+	void				readFromFile(int fd, DynamicBuffer<char> & Buffer); ///< Read from file and return the contents in a vector
 	void 				removeAllWatchDescriptors();	///< Remove all watch descriptors
 	void 				removeWatchDescriptor(int wd);	///< Remove a watch descriptor
 	

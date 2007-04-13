@@ -27,9 +27,12 @@
 */
 
 #include "GizmoEventStandard.hpp"
+#include "GizmoLinuxInputDevice.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/Util.hpp"
 #include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
 
 using namespace std;
 using namespace boost;
@@ -56,6 +59,12 @@ GizmoEventStandard::GizmoEventStandard() {
 }
 
 /**
+ * \brief GizmoEventStandard Init Constructor
+ */
+GizmoEventStandard::GizmoEventStandard(struct input_event const & InputEvent) : GizmoLinuxInputEvent(InputEvent) {	
+}
+
+/**
  * \brief GizmoEventStandard Destructor
  */
 GizmoEventStandard::~GizmoEventStandard() {
@@ -64,6 +73,27 @@ GizmoEventStandard::~GizmoEventStandard() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Build an event vector from a read buffer
+ * \param  EventVector Reference to a vector which will contain the results
+ * \param  Buffer The bufer to convert into events
+ * \param  SendNullEvents Signals if NULL events should be passed onto the config script
+ */
+void GizmoEventStandard::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventStandard> > & EventVector, H::DynamicBuffer<char> const & Buffer, bool SendNullEvents) {
+	std::vector<struct input_event> InputEvents;
+	GizmoLinuxInputDevice::buildInputEventsVectorFromBuffer(InputEvents, Buffer);
+	apply_static_func_args(InputEvents, GizmoEventStandard::buildEventsVectorFromBufferFunctor, &EventVector, SendNullEvents);
+}
+
+/**
+ * \brief  Functor for building events from Linnux input_events
+ */
+void GizmoEventStandard::buildEventsVectorFromBufferFunctor(struct input_event & InputEvent, std::vector< boost::shared_ptr<GizmoEventStandard> > * pEventVector, bool SendNullEvents) {
+	if ( (!SendNullEvents) && (InputEvent.type == 0) && (InputEvent.code == 0) && (InputEvent.value == 0) )
+		return;
+	pEventVector->push_back(boost::shared_ptr<GizmoEventStandard>(new GizmoEventStandard(InputEvent)));
+}
 
 /**
  * \brief  Get the type of this Gizmo

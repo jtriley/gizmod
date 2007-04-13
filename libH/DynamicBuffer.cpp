@@ -31,6 +31,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+using namespace std;
+using namespace H;
+
 ////////////////////////////////////////////////////////////////////////////
 // Namespace
 ///////////////////////////////////////
@@ -42,7 +45,7 @@ namespace H {
 ///////////////////////////////////////
 
 /**
- * \brief Default Constructor
+ * \brief DynamicBuffer Default Constructor
  */
 template <class DataType>
 DynamicBuffer<DataType>::DynamicBuffer() {
@@ -51,13 +54,27 @@ DynamicBuffer<DataType>::DynamicBuffer() {
 }
 
 /**
- * \brief Destructor
+ * \brief DynamicBuffer Destructor
  */
 template <class DataType>
 DynamicBuffer<DataType>::~DynamicBuffer() {
 	if (mBuffer)
 		free(mBuffer);
 	mBuffer = NULL;
+}
+
+/**
+ * \brief DynamicBufferConverter Default Constructor
+ */
+template <class ConvertTo, class DataType>
+DynamicBufferConverter<ConvertTo, DataType>::DynamicBufferConverter() {
+}
+
+/**
+ * \brief DynamicBufferConverter Destructor
+ */
+template <class ConvertTo, class DataType>
+DynamicBufferConverter<ConvertTo, DataType>::~DynamicBufferConverter() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -80,11 +97,25 @@ void DynamicBuffer<DataType>::addToBuffer(const DataType * AddBuf, size_t BufLen
 }
 
 /**
+ * \brief Convert Buffer to a vector objects contained in the buffer
+ * \param ConvertedVector Result of the conversion
+ * \param Buffer Buffer to convert data from 
+ */
+template <class DataType, class ConvertTo>
+void DynamicBufferConverter<DataType, ConvertTo>::convert(std::vector<ConvertTo> & ConvertedVector, DynamicBuffer<DataType> const & Buffer) {
+	int NumItems = Buffer.length() / sizeof(ConvertTo);
+	ConvertedVector.resize(NumItems);
+	const char * tBuf = Buffer.getBuffer();
+	for (int lp = 0; lp < NumItems; lp ++)
+		memcpy(&ConvertedVector[lp], tBuf + (lp * sizeof(ConvertTo)), sizeof(ConvertTo));
+}
+
+/**
  * \brief  Get the buffer
  * \return The buffer itself
  */
 template <class DataType>
-const DataType * DynamicBuffer<DataType>::getBuffer() {
+const DataType * DynamicBuffer<DataType>::getBuffer() const {
 	return mBuffer;
 }
 
@@ -93,7 +124,7 @@ const DataType * DynamicBuffer<DataType>::getBuffer() {
  * \return Length
  */
 template <class DataType>
-size_t DynamicBuffer<DataType>::length() {
+size_t DynamicBuffer<DataType>::length() const {
 	return mLength;
 }
 

@@ -112,6 +112,23 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
  * \brief Python module definition
  */
 BOOST_PYTHON_MODULE(GizmoDaemon) {
+	/////////////////////////////////////////////////////////////////////
+	// Enum exports
+	///////////////////////////////////////
+	
+	/// GizmoClass enum export
+	enum_<GizmoClass>("GizmoClass")
+		.value("CPU", 		GIZMO_CLASS_CPU)
+		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
+		.value("LIRC",	 	GIZMO_CLASS_LIRC)
+		.value("ATIX10",	GIZMO_CLASS_ATIX10)
+		.value("Standard", 	GIZMO_CLASS_STANDARD)
+		;	
+	
+	/////////////////////////////////////////////////////////////////////
+	// General Class exports
+	///////////////////////////////////////
+	
 	/// DeviceInfo Python Class Export
 	class_<DeviceInfo>("GizmoDeviceInfo")
 		.def_readonly("DeviceName", &DeviceInfo::DeviceName)
@@ -129,22 +146,23 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getGizmoType", &Gizmo::getGizmoType)
 		.add_property("GizmoType", &Gizmo::getGizmoType)
 		;
-	
-	/// GizmoClass enum export
-	enum_<GizmoClass>("GizmoClass")
-		.value("CPU", 		GIZMO_CLASS_CPU)
-		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
-		.value("LIRC",	 	GIZMO_CLASS_LIRC)
-		.value("ATIX10",	GIZMO_CLASS_ATIX10)
-		.value("Standard", 	GIZMO_CLASS_STANDARD)
-		;	
-			
+				
 	/// GizmoDaemon Python Class Export
 	class_<GizmoDaemon>("PyGizmoDaemon")
 		.def("getVersion", &GizmoDaemon::getVersion)
 		.add_property("Version", &GizmoDaemon::getVersion)
 		;
+	
+	/// GizmoTimeVal Python Class Export
+	class_<GizmoTimeVal>("GizmoTimeVal")
+		.def_readonly("Seconds", &GizmoTimeVal::Seconds)
+		.def_readonly("MicroSeconds", &GizmoTimeVal::MicroSeconds)
+		;
 		
+	/////////////////////////////////////////////////////////////////////
+	// Event class exports
+	///////////////////////////////////////
+	
 	/// GizmodEventHandlerInterface Python Class Export	
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
 		;
@@ -159,13 +177,25 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
  	class_< GizmoEventCPU, bases<GizmoEvent> >("GizmoEventCPU")
 		;
 	
+	/// GizmoLinuxInputEvent Python Class Export
+	class_<GizmoLinuxInputEvent>("GizmoLinuxInputEvent")
+		.def_readonly("RawCode", &GizmoLinuxInputEvent::RawCode)
+		.def_readonly("RawType", &GizmoLinuxInputEvent::RawType)
+		.def_readonly("RawValue", &GizmoLinuxInputEvent::RawValue)
+		.def_readonly("TimeStamp", &GizmoLinuxInputEvent::TimeStamp)
+		;
+	
 	/// GizmoEventPowermate Python Class Export
-	class_< GizmoEventPowermate, bases<GizmoEvent> >("GizmoEventPowermate")
+	class_< GizmoEventPowermate, bases<GizmoEvent, GizmoLinuxInputEvent> >("GizmoEventPowermate")
 		;
 
 	/// GizmoEventPowermate Python Class Export
-	class_< GizmoEventStandard, bases<GizmoEvent> >("GizmoEventStandard")
+	class_< GizmoEventStandard, bases<GizmoEvent, GizmoLinuxInputEvent> >("GizmoEventStandard")
 		;
+		
+	/////////////////////////////////////////////////////////////////////
+	// Device class exports
+	///////////////////////////////////////
 	
 	/// GizmoPowermate Python Class Export
 	class_< GizmoPowermate, bases<Gizmo> >("GizmoPowermate", init<const DeviceInfo &>())
@@ -436,7 +466,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
  */
-void GizmoDaemon::onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
+void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	if (FileName.find("event") != 0) {
 		cout << "onFileEventCreate [" << FullPath << "]" << endl;
 		return;
@@ -450,7 +480,7 @@ void GizmoDaemon::onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
  */
-void GizmoDaemon::onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
+void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	cout << "onFileEventDelete [" << FullPath << "]" << endl;
 }
 
@@ -458,22 +488,20 @@ void GizmoDaemon::onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std
  * \brief Event triggered when a file is disconnected
  * \param pWatchee The Watchee that triggered the event
  */
-void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee) {
+void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee) {
 	cout << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 }
 
 /**
  * \brief Event triggered when data is waiting on a device
  * \param pWatchee The Watchee that triggered the event
- * \param pReadBuffer The data that was waiting on the device
+ * \param ReadBuffer The data that was waiting on the device
  */
-void GizmoDaemon::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost::shared_ptr< DynamicBuffer<char> > pReadBuffer) {
-	//cdbg << "Event Detected on Device [" << pWatchee->DeviceName << "] of Length [" << (int) pReadBuffer->length() << "]" << endl;
-	
+void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer) {
 	// make sure the gizmo exists
 	shared_ptr<Gizmo> pUnknownGizmo = mGizmos[pWatchee->FileName];
 	if (!pUnknownGizmo) {
-		cdbg << "Unknown Event Detected on Device [" << pWatchee->DeviceName << "] of Length [" << (int) pReadBuffer->length() << "]" << endl;
+		cdbg << "Unknown Event Detected on Device [" << pWatchee->DeviceName << "] of Length [" << (int) ReadBuffer.length() << "]" << endl;
 		return;
 	}
 		
@@ -481,12 +509,18 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost
 	try {
 		switch (pUnknownGizmo->getGizmoClass()) {
 		case GIZMO_CLASS_STANDARD: {
-			GizmoEventStandard e;
-			mpPyDispatcher->onEvent(&e, static_cast<GizmoStandard const *>(pUnknownGizmo.get()));						
+			std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
+			GizmoStandard * pGizmo = static_cast<GizmoStandard const *>(pUnknownGizmo.get());
+			GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
+			for (size_t lp = 0; lp < EventVector.size(); lp ++)
+				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			break; }
 		case GIZMO_CLASS_POWERMATE: {
-			GizmoEventPowermate e;
-			mpPyDispatcher->onEvent(&e, static_cast<GizmoPowermate const *>(pUnknownGizmo.get()));						
+			std::vector< boost::shared_ptr<GizmoEventPowermate> > EventVector;
+			GizmoPowermate * pGizmo = static_cast<GizmoPowermate const *>(pUnknownGizmo.get());
+			GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
+			for (size_t lp = 0; lp < EventVector.size(); lp ++)
+				mpPyDispatcher->onEvent(EventVector[lp].get(), static_cast<GizmoPowermate const *>(pUnknownGizmo.get()));
 			break; }
 		case GIZMO_CLASS_LIRC:
 			break;
@@ -506,7 +540,7 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, boost
  * \brief Event triggered when a new device is registered
  * \param pWatchee The Watchee that triggered the event
  */
-void GizmoDaemon::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
+void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee) {
 	cdbg << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	try {
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);

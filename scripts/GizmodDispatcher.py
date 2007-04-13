@@ -67,7 +67,8 @@ class GizmodDispatcher(GizmodEventHandler):
 		is.  See the C++ API documention on the specific Gizmo* type for more details
 		"""
 		
-		print "onEvent: " + Event.EventType + " -- " + Gizmo.DeviceName + " : " + Gizmo.FileName
+		if Event.EventType != "Powermate":
+			print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | c: " + str(hex(Event.RawCode)) +  " t: " + str(hex(Event.RawType)) +  " v: " + str(hex(Event.RawValue))  
 		
 	def onQueryDeviceType(self, DeviceInformation):
 		"""

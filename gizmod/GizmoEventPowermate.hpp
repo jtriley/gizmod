@@ -34,8 +34,9 @@
 #endif
 
 #include "GizmoEvent.hpp"
-#include "GizmoPowermate.hpp"
+#include "GizmoLinuxInputEvent.hpp"
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -51,19 +52,26 @@
  *
  * This class is for all GizmoEventPowermates attached to the system.
  */
-class GizmoEventPowermate : public GizmoEvent {
+class GizmoEventPowermate : public GizmoEvent, public GizmoLinuxInputEvent {
 public:
 	// public functions
 	std::string			getEventType();			///< Get the type of the Event
 	
+	// static public functions
+	static void			buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventPowermate> > & EventVector, H::DynamicBuffer<char> const & Buffer, bool SendNullEvents); ///< Build an event list from a read buffer
+	
 	// construction / deconstruction
 	GizmoEventPowermate();						///< Default Constructor
+	GizmoEventPowermate(struct input_event const & InputEvent);	///< Default Constructor
 	virtual ~GizmoEventPowermate();					///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
+	
+	// static private functions
+	static void 			buildEventsVectorFromBufferFunctor(struct input_event & InputEvent, std::vector< boost::shared_ptr<GizmoEventPowermate> > * pEventVector, bool SendNullEvents); ///< Functor for building the events list
 };
 
 #endif // __GizmoEventPowermate_h

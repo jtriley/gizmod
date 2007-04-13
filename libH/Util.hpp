@@ -36,7 +36,6 @@
 #include "Debug.hpp"
 #include <cstdlib>
 #include <iostream>
-#include <boost/any.hpp>
 #include <boost/function.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,7 +47,7 @@ namespace H {
 //////////////////////////////////////////////////////////////////////////////
 // Global Algorithms
 ///////////////////////////////////////
-	
+		
 /**
  * \brief  Apply function f to all elements in Object o
  * \param  object The object to apply functor to
@@ -88,6 +87,19 @@ inline Functor for_all(Object & object, Functor functor) {
  */
 #define apply_func_args(object, functor, functee, ...) \
 	for_all(object, boost::bind(functor, functee, _1, ## __VA_ARGS__))
+	
+/**
+ * \def    apply_static_func_args
+ * \brief  Apply a static function to a set or collection of items with arguments
+ * \param  object  The object to apply functor to
+ * \param  functor The function object that modifies each object
+ * \param  ...     User argument N to pass to Functor
+ * \return result of for_all()
+ *
+ * This is a short cut for H::for_all
+ */
+#define apply_static_func_args(object, functor, ...) \
+	for_all(object, boost::bind(functor, _1, ## __VA_ARGS__))
 
 /**
  * \def    sort_all

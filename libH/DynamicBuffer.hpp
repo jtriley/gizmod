@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include <vector>
 
 //////////////////////////////////////////////////////////////////////////////
 // Namespace
@@ -43,9 +44,9 @@ namespace H {
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs, enums, etc
 ///////////////////////////////////////
-
+	
 //////////////////////////////////////////////////////////////////////////////
-// Class Definition
+// DynamicBuffer Class Definition
 ///////////////////////////////////////
 
 /**
@@ -61,8 +62,8 @@ class DynamicBuffer {
 public:
 	// public functions
 	void			addToBuffer(const DataType * AddBuf, size_t BufLen); ///< Add data to the buffer
-	const DataType * 	getBuffer();			///< Get the buffer
-	size_t			length();			///< Get the buffer length
+	const DataType * 	getBuffer() const;		///< Get the buffer
+	size_t			length() const;			///< Get the buffer length
 
 	// construction / deconstruction
 	DynamicBuffer();					///< Default Constructor
@@ -72,6 +73,29 @@ private:
 	// private member variables
 	size_t			mLength;			///< Length of the buffer
 	DataType *		mBuffer;			///< The buffer itself
+};
+
+//////////////////////////////////////////////////////////////////////////////
+// DynamicBufferConverter Class Definition
+///////////////////////////////////////
+
+/**
+ * \class DynamicBufferConverter
+ * \brief Convert a Dynamic buffer to an array of structures or classes
+ */
+
+template <class DataType, class ConvertTo>
+class DynamicBufferConverter {
+public:
+	// public functions
+	static void 		convert(std::vector<ConvertTo> & ConvertedVector, DynamicBuffer<DataType> const & Buffer); ///< Convert Buffer to a vector objects contained in the buffer
+
+	// construction / deconstruction
+	DynamicBufferConverter();				///< Default Constructor
+	virtual ~DynamicBufferConverter();			///< Destructor
+	
+private:
+	// private member variables
 };
 
 //////////////////////////////////////////////////////////////////////////////
