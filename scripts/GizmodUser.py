@@ -17,8 +17,6 @@
 # - There exists an object "Gizmod" that is the main program core
 # - There exists an object "Dispatcher" that is defined in Gizmod.py as 
 #   class GizmodDispatcher
-# - Dispatcher has already had its "__construct__" and "initialize" 
-#   methods called
 
 print
 print "From Python to C++ Gizmod Version v" + str(Gizmod.getVersion())

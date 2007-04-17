@@ -78,6 +78,24 @@ public:
 	virtual void			onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) = 0;
 	
 	/**
+	 * \brief  Event triggered when device has been deregistered
+	 * \param  Device The device
+	 */
+	virtual void			onDeregisterDevice(GizmoCPU const * Device) = 0;
+	
+	/**
+	 * \brief  Event triggered when device has been deregistered
+	 * \param  Device The device
+	 */
+	virtual void			onDeregisterDevice(GizmoPowermate const * Device) = 0;
+		
+	/**
+	 * \brief  Event triggered when device has been deregistered
+	 * \param  Device The device
+	 */
+	virtual void			onDeregisterDevice(GizmoStandard const * Device) = 0;	
+	
+	/**
 	 * \brief  Powermate Event trigger
 	 * \param  Event The event information 
 	 * \param  Device The device that triggered the event
@@ -97,6 +115,24 @@ public:
 	 * \return The class of the device
 	 */
 	virtual GizmoClass		onQueryDeviceType(H::DeviceInfo const DeviceInformation) = 0;
+	
+	/**
+	 * \brief  Event triggered when a new device has been registered
+	 * \param  Device The device
+	 */
+	virtual void			onRegisterDevice(GizmoCPU const * Device) = 0;
+	
+	/**
+	 * \brief  Event triggered when a new device has been registered
+	 * \param  Device The device
+	 */
+	virtual void			onRegisterDevice(GizmoPowermate const * Device) = 0;
+		
+	/**
+	 * \brief  Event triggered when a new device has been registered
+	 * \param  Device The device
+	 */
+	virtual void			onRegisterDevice(GizmoStandard const * Device) = 0;	
 	
 	// construction / deconstruction
 	GizmodEventHandlerInterface();

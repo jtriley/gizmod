@@ -100,10 +100,16 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 
 	bool		getInitialized() { return python::call_method<bool>(self, "getInitialized"); }
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
+	void		onDeregisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
+	void		onDeregisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
+	void		onDeregisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	GizmoClass	onQueryDeviceType(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceInformation); };
+	void		onRegisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
+	void		onRegisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
+	void		onRegisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 
 	PyObject * 	self;		///< Pointer to self
 };
@@ -232,6 +238,50 @@ GizmoDaemon::~GizmoDaemon() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief Delete a Gizmo
+ * \param FileName The filename of the Gizmo to be deleted
+ */
+void GizmoDaemon::deleteGizmo(std::string FileName) {
+	// remove from map
+	shared_ptr<Gizmo> pGizmo = mGizmos[FileName];
+	if (!pGizmo) {
+		// not found -- unusual, but whatever
+		cdbg << "Tried to delete non-existent Gizmo [" << FileName << "]" << endl;
+		return; 
+	}
+	
+	// remove the gizmo
+	mGizmos.erase(FileName);
+	
+	// signal python script
+	try {
+		switch (pGizmo->getGizmoClass()) {
+		case GIZMO_CLASS_STANDARD:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
+			break;
+		case GIZMO_CLASS_POWERMATE: 
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoPowermate const *>(pGizmo.get()));
+			break; 
+ 		case GIZMO_CLASS_LIRC:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
+			break;
+		case GIZMO_CLASS_ATIX10:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
+			break;
+		case GIZMO_CLASS_CPU:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
+			break;
+		}		
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}
+		
+	cdbg << "Deleted Gizmo [" << FileName << "]" << endl;
+}
 
 /**
  * \brief Enter the main run loop
@@ -482,6 +532,7 @@ void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, 
  */
 void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	cout << "onFileEventDelete [" << FullPath << "]" << endl;
+	deleteGizmo(pWatchee->FileName);
 }
 
 /**
@@ -490,6 +541,7 @@ void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, 
  */
 void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee) {
 	cout << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+	deleteGizmo(pWatchee->FileName);
 }
 
 /**
@@ -545,21 +597,31 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 	try {
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);
 		switch (Class) {
-		case GIZMO_CLASS_STANDARD:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard(*pWatchee))));
-			break;
-		case GIZMO_CLASS_POWERMATE:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoPowermate>(new GizmoPowermate(*pWatchee))));
-			break;
-		case GIZMO_CLASS_LIRC:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard(*pWatchee))));
-			break;
-		case GIZMO_CLASS_ATIX10:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoStandard>(new GizmoStandard(*pWatchee))));
-			break;
-		case GIZMO_CLASS_CPU:
-			mGizmos.insert(make_pair(pWatchee->FileName, shared_ptr<GizmoCPU>(new GizmoCPU(*pWatchee))));
-			break;
+		case GIZMO_CLASS_STANDARD: {
+			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
+			mpPyDispatcher->onRegisterDevice(pGizmo.get());
+			break; }
+		case GIZMO_CLASS_POWERMATE: {
+			shared_ptr<GizmoPowermate> pGizmo(new GizmoPowermate(*pWatchee));
+			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
+			mpPyDispatcher->onRegisterDevice(pGizmo.get());
+			break; }
+		case GIZMO_CLASS_LIRC: {
+			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
+			mpPyDispatcher->onRegisterDevice(pGizmo.get());
+			break; }
+		case GIZMO_CLASS_ATIX10: {
+			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
+			mpPyDispatcher->onRegisterDevice(pGizmo.get());
+			break; }
+		case GIZMO_CLASS_CPU: {
+			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
+			mpPyDispatcher->onRegisterDevice(pGizmo.get());
+			break; }
 		}
 	} catch (error_already_set) {
 		if (Debug::getDebugEnabled())

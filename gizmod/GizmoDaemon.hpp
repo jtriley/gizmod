@@ -84,6 +84,7 @@ public:
 
 private:
 	// private functions
+	void 				deleteGizmo(std::string FileName); ///< Delete a Gizmo
 	std::string	 		getProps();		///< Get version information
 	void				initPython();		///< Initialize Python
 	void 				registerDevices();	///< Register all the attached system devices

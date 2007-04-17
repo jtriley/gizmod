@@ -15,6 +15,7 @@
 
 from GizmoDaemon import *
 from GizmoDeviceType import GizmoDeviceType
+from GizmoRegistrar import GizmoRegistrar
 
 ############################
 # GizmodDispatcher Class definition
@@ -48,6 +49,18 @@ class GizmodDispatcher(GizmodEventHandler):
 		print "GizmoDaemon Config Script v" + Gizmod.getVersion()  + " -- Initializing"
 		self.initialized = True
 		
+	def onDeregisterDevice(self, Device):
+		"""
+		This method is triggered when a device has been deregistered (either at shutdown
+		or when Gizmo Daemon detects a device has been disconnected from the computer)
+		
+		For information regarding the Device properties and methods see the API documention for
+		Gizmo* (GizmoStandard, GizmoPowermate, etc)
+		"""
+		
+		# GizmoRegistrar is defined in GizmoRegistrar.py for convenience and modularity sake
+		GizmoRegistrar(Device).handleDeviceRemoval()
+
 	def onEvent(self, Event, Gizmo):
 		"""
 		This method gets called whenever Gizmo Daemon detects an event from a device
@@ -83,6 +96,19 @@ class GizmodDispatcher(GizmodEventHandler):
 		
 		# GizmoDeviceType is defined in GizmoDeviceType.py for convenience and modularity sake
 		return GizmoDeviceType(DeviceInformation).DeviceType
+
+	def onRegisterDevice(self, Device):
+		"""
+		This method is triggered when a new device (of the type returned in onQueryDeviceType) 
+		has been registered (either at startup or when Gizmo Daemon detects a new device has 
+		been plugged in to the computer)
+		
+		For information regarding the Device properties and methods see the API documention for
+		Gizmo* (GizmoStandard, GizmoPowermate, etc)
+		"""
+		
+		# GizmoRegistrar is defined in GizmoRegistrar.py for convenience and modularity sake
+		GizmoRegistrar(Device).handleDeviceAddition()
 
 	############################
 	# Private Functions

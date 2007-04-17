@@ -63,7 +63,7 @@ class GizmoDeviceType:
 	 		self.DeviceType = GizmoClass.ATIX10
  		elif DeviceInfo.DeviceName.lower().find("lirc") > -1:
 	 		self.DeviceType = GizmoClass.LIRC
- 		elif DeviceInfo.DeviceName.lower().find("cpu") > -1:
+		elif DeviceInfo.DeviceName.lower().find("cpu") > -1:
 	 		self.DeviceType = GizmoClass.CPU
 	 	else:
 	 		self.DeviceType = GizmoClass.Standard

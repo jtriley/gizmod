@@ -30,6 +30,7 @@
 #include "Debug.hpp"
 #include "Exception.hpp"
 #include "Util.hpp"
+#include "UtilTime.hpp"
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -73,6 +74,18 @@ using namespace H;
  * \brief Default size of the device name buffer
  */
 #define DEVICE_NAME_BUF_SIZE	1024
+
+/**
+ * \def   RETRY_FAIL_WAIT_NSECS
+ * \brief Amount of nanoseconds to wait on an open of a new device before retrying
+ */
+#define RETRY_FAIL_WAIT_NSECS	100000000
+
+/**
+ * \def   MAX_RETRIES
+ * \brief Maximum number of retries when opening a new device
+ */
+#define MAX_RETRIES		5
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -231,8 +244,20 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 		strcpy(DeviceName, "Directory");
 	} else {	
 		// not a directory, open the device
-		if ((fd = open(FileName.c_str(), flags)) == -1)
-			throw H::Exception("Failed to Open file [" + FileName + "] with Mode [" + ModeString + "]", __FILE__, __FUNCTION__, __LINE__);
+		int retry;
+		for (retry = 0; retry < MAX_RETRIES; retry ++) {
+			if ((fd = open(FileName.c_str(), flags)) == -1) {
+				cdbg1 << "New Device [" << FileName << "] Open Failed -- Retrying" << endl;
+				UtilTime::nanoSleep(RETRY_FAIL_WAIT_NSECS);
+				continue;
+			}
+			break;
+		}
+		if (retry == MAX_RETRIES) {
+			//throw H::Exception("Failed to Open file [" + FileName + "] with Mode [" + ModeString + "]", __FILE__, __FUNCTION__, __LINE__);
+			cerr << "Failed to Open [" << FileName << "] with Mode [" << ModeString + "] -- Try disconnecting and reconnecting!" << endl;
+			return shared_ptr<FileWatchee>();
+		}
 		
 		// get the device name
 		if (ioctl(fd, EVIOCGNAME(sizeof(DeviceName)), DeviceName) < 0)
