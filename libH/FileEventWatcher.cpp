@@ -415,10 +415,15 @@ void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 					cout << "CloseNoWrite" << endl;
 				if (event->mask & IN_CREATE)
 					onFileEventCreate(pWatchee, pWatchee->FileName + "/" + event->name, event->name);
-				if (event->mask & IN_DELETE)
-					onFileEventDelete(pWatchee, pWatchee->FileName + "/" + event->name, event->name);
-				if (event->mask & IN_DELETE_SELF)
-					onFileEventDelete(pWatchee, pWatchee->FileName + "/" + event->name, event->name);
+				if ( (event->mask & IN_DELETE) || (event->mask & IN_DELETE_SELF) ) {
+					// pass in the actual watchee rather than the directory watchee
+					shared_ptr<FileWatchee> pActualWatchee = getWatcheeByPath(pWatchee->FileName + "/" + event->name);
+					if (!pActualWatchee) {
+						cdbg2 << "Delete inotify event on unhandled file: " << event->name << endl;
+						continue;
+					}
+					onFileEventDelete(pActualWatchee, pActualWatchee->FileName, event->name);
+				}
 				if (event->mask & IN_MODIFY)
 					cout << "Modify" << endl;
 				if (event->mask & IN_MOVE_SELF)

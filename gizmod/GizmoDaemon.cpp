@@ -531,8 +531,8 @@ void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, 
  * \param FileName The file name (relative ) of the new file
  */
 void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
-	cout << "onFileEventDelete [" << FullPath << "]" << endl;
-	deleteGizmo(pWatchee->FileName);
+	cout << "onFileEventDelete [" << FullPath << "] -- " << pWatchee->FileName << endl;
+	//deleteGizmo(pWatchee->FileName);
 }
 
 /**
