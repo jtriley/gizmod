@@ -35,6 +35,7 @@
 
 #include "GizmodEventHandlerInterface.hpp"
 #include "Gizmo.hpp"
+#include "X11FocusWatcher.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include <string>
