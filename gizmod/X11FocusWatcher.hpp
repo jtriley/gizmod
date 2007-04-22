@@ -75,6 +75,7 @@ public:
 
 	// construction / deconstruction
 	X11FocusEvent(X11FocusEventType eventType, std::string windowName, std::string windowNameFormal, std::string windowClass);
+	X11FocusEvent(X11FocusEvent const & Event);
 	virtual ~X11FocusEvent();
 
 private:
@@ -94,6 +95,7 @@ private:
 class X11FocusWatcher {
 public:	
 	// public functions
+	void				init();			///< Initialize (create a thread and watch)
 	virtual void			onFocusIn(X11FocusEvent const & Event); ///< Event triggered on a Focus In
 	virtual void			onFocusOut(X11FocusEvent const & Event); ///< Event triggered on a Focus Out
 	void 				shutdown();		///< Shutdown the thread that watches for focus changes
@@ -111,7 +113,6 @@ private:
 	void				closeDisplay();		///< Close the X11 display
 	X11FocusEvent			createFocusEvent(Window const & window, X11FocusEventType EventType); ///< Create a X11FocusEvent from a Window
 	std::string			getWindowName(Window const & window, bool recurse = true); ///< Get the string name of a window
-	void				init();			///< Initialize (create a thread and watch)
 	bool 				openDisplay(std::string DisplayName); ///< Open an X11 display
 	void 				setFocusEventMask();	///< Set all windows to report the FocusChange event mask
 	void				threadProc();		///< thread procedure

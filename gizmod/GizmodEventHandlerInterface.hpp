@@ -36,6 +36,7 @@
 #include "GizmoEventCPU.hpp"
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventStandard.hpp"
+#include "GizmoEventWindowFocus.hpp"
 #include "Gizmo.hpp"
 #include "GizmoCPU.hpp"
 #include "GizmoPowermate.hpp"
@@ -69,14 +70,7 @@ public:
 	 * It is defined in Gizmod.py in class GizmodDispatcher that inherits from GizmodEventHandler
 	 */
 	virtual void			initialize() = 0; 		///< Initialization that gets called inside python to init python stuff
-		
-	/**
-	 * \brief  CPU Event trigger
-	 * \param  Event The event information 
-	 * \param  Device The device that triggered the event
-	 */
-	virtual void			onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) = 0;
-	
+			
 	/**
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
@@ -96,6 +90,13 @@ public:
 	virtual void			onDeregisterDevice(GizmoStandard const * Device) = 0;	
 	
 	/**
+	 * \brief  CPU Event trigger
+	 * \param  Event The event information 
+	 * \param  Device The device that triggered the event
+	 */
+	virtual void			onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) = 0;
+	
+	/**
 	 * \brief  Powermate Event trigger
 	 * \param  Event The event information 
 	 * \param  Device The device that triggered the event
@@ -108,6 +109,12 @@ public:
 	 * \param  Device The device that triggered the event
 	 */
 	virtual void			onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) = 0;
+	
+	/**
+	 * \brief  Window Focus Event trigger
+	 * \param  Event The event information 
+	 */
+	virtual void			onEvent(GizmoEventWindowFocus const * Event) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device is being registered

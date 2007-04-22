@@ -30,6 +30,7 @@
 #include "GizmoEventCPU.hpp"
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventStandard.hpp"
+#include "GizmoEventWindowFocus.hpp"
 #include "GizmoPowermate.hpp"
 #include "GizmoCPU.hpp"
 #include "GizmoStandard.hpp"
@@ -112,6 +113,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
+	void		onEvent(GizmoEventWindowFocus const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	GizmoClass	onQueryDeviceType(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceInformation); };
 	void		onRegisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
@@ -135,7 +137,13 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.value("LIRC",	 	GIZMO_CLASS_LIRC)
 		.value("ATIX10",	GIZMO_CLASS_ATIX10)
 		.value("Standard", 	GIZMO_CLASS_STANDARD)
-		;	
+		;
+	
+	/// X11FocusEventType enum export
+	enum_<X11FocusEventType>("X11FocusEventType")
+		.value("FocusIn", 	X11FOCUSEVENT_IN)
+		.value("FocusOut", 	X11FOCUSEVENT_OUT)
+		;
 	
 	/////////////////////////////////////////////////////////////////////
 	// General Class exports
@@ -203,6 +211,18 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 
 	/// GizmoEventPowermate Python Class Export
 	class_< GizmoEventStandard, bases<GizmoEvent, GizmoLinuxInputEvent> >("GizmoEventStandard")
+		;
+			
+	/// X11FocusEvent Python Class Export
+	class_<X11FocusEvent>("X11FocusEvent", init<X11FocusEvent const &>())
+		.def_readonly("WindowEventType", &X11FocusEvent::EventType)
+		.def_readonly("WindowClass", &X11FocusEvent::WindowClass)
+		.def_readonly("WindowName", &X11FocusEvent::WindowName)
+		.def_readonly("WindowNameFormal", &X11FocusEvent::WindowNameFormal)
+		;
+	
+	/// GizmoEventWindowFocus Python Class Export
+	class_< GizmoEventWindowFocus, bases<X11FocusEvent, GizmoEvent> >("GizmoEventWindowFocus", init<X11FocusEvent const &>())
 		;
 		
 	/////////////////////////////////////////////////////////////////////
@@ -346,6 +366,9 @@ void GizmoDaemon::initGizmod() {
 	} catch (exception & e) {
 		throw H::Exception("Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
 	}
+	
+	// init the X11FocusWatcher
+	X11FocusWatcher::init();
 
 	// register all the devices
 	try {
@@ -647,8 +670,17 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
  * \param  Event The Focus Event
  */
 void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
-	// override me
-	cdbg << "Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
+	//cdbg << "Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
+	
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventWindowFocus FocusEvent(Event);
+		mpPyDispatcher->onEvent(&FocusEvent);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceType");
+	}
 }
 
 /**
@@ -656,8 +688,17 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
  * \param  Event The Focus Event
  */
 void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
-	// override me
-	cdbg << "Leaving Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
+	//cdbg << "Leaving Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
+
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventWindowFocus FocusEvent(Event);
+		mpPyDispatcher->onEvent(&FocusEvent);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceType");
+	}
 }
 
 /**

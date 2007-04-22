@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoLinuxInputEvent.hpp
-*** \brief GizmoLinuxInputEvent class header
+*** \file  GizmoEventWindowFocus.hpp
+*** \brief GizmoEventWindowFocus class header
 ***
 *****************************************
   *****************************************
@@ -26,52 +26,40 @@
   
 */
 
-#ifndef __GizmoLinuxInputEvent_h
-#define __GizmoLinuxInputEvent_h
+#ifndef __GizmoEventWindowFocus_h
+#define __GizmoEventWindowFocus_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "../libH/DynamicBuffer.hpp"
-#include <linux/input.h>
-#include <vector>
+#include "GizmoEvent.hpp"
+#include "X11FocusWatcher.hpp"
+#include <string>
+#include <boost/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
 ///////////////////////////////////////
-
-/**
- * \struct GizmoTimeVal
- * \brief  Wrapper for the C timeval struct (for exposure to Python)
- */
-typedef struct GizmoTimeVal {
-	unsigned int Seconds;							///< Time in Seconds
-	unsigned int MicroSeconds;						///< Time remaining (after Seconds) in MicroSeconds
-};
 	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
 ///////////////////////////////////////
 
 /**
- * \class GizmoLinuxInputEvent
- * \brief Wrapper for functions dealing with Linux Input Event Interface Devices
+ * \class GizmoEventWindowFocus
+ * \brief Class for WindowFocus events
+ *
+ * Raised when a Window Focus event is triggered
  */
-class GizmoLinuxInputEvent {
+class GizmoEventWindowFocus : public X11FocusEvent, public GizmoEvent {
 public:
-	// public member variables
-	unsigned short			RawType;				///< Raw type of the event
-	unsigned short			RawCode;				///< Raw code of the event
-	int				RawValue;				///< Raw value of the event
-	GizmoTimeVal			TimeStamp;				///< Time stamp of the event
-	
 	// public functions
-
+	std::string			getEventType();			///< Get the type of the Event
+		
 	// construction / deconstruction
-	GizmoLinuxInputEvent();							///< Default Constructor
-	GizmoLinuxInputEvent(struct input_event const & InputEvent);		///< Init Constructor
-	virtual ~GizmoLinuxInputEvent();					///< Destructor
+	GizmoEventWindowFocus(X11FocusEvent const & Event);		///< Default Constructor
+	virtual ~GizmoEventWindowFocus();				///< Destructor
 
 protected:
 	// private functions
@@ -79,4 +67,4 @@ protected:
 	// private member variables
 };
 
-#endif // __GizmoLinuxInputEvent_h
+#endif // __GizmoEventWindowFocus_h

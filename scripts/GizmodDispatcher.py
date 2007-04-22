@@ -61,7 +61,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		# GizmoRegistrar is defined in GizmoRegistrar.py for convenience and modularity sake
 		GizmoRegistrar(Device).handleDeviceRemoval()
 
-	def onEvent(self, Event, Gizmo):
+	def onEvent(self, Event, Gizmo = None):
 		"""
 		This method gets called whenever Gizmo Daemon detects an event from a device
 		 
@@ -80,7 +80,11 @@ class GizmodDispatcher(GizmodEventHandler):
 		is.  See the C++ API documention on the specific Gizmo* type for more details
 		"""
 		
-		if Event.EventType != "Powermate":
+		if Event.EventType == "WindowFocus":
+			print "onEvent: " + str(Event.EventType) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
+		elif Event.EventType == "Powermate":
+			pass
+		else:
 			print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | c: " + str(hex(Event.RawCode)) +  " t: " + str(hex(Event.RawType)) +  " v: " + str(hex(Event.RawValue))  
 		
 	def onQueryDeviceType(self, DeviceInformation):

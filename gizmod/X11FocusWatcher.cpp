@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  X11FocusWatcher.hpp
-*** \brief X11FocusWatcher header
+*** \file  X11FocusWatcher.cpp
+*** \brief X11FocusWatcher Class Body
 ***
 *****************************************
   *****************************************
@@ -67,7 +67,7 @@ int X11FocusWatcher::x11IOErrorHandler(Display * display) {
 ///////////////////////////////////////
 
 /** 
- * \brief  X11FocusEvent Default Constructor
+ * \brief  X11FocusEvent Init Constructor
  */
 X11FocusEvent::X11FocusEvent(X11FocusEventType eventType, std::string windowName, std::string windowNameFormal, std::string windowClass) {
 	EventType = eventType;
@@ -77,12 +77,21 @@ X11FocusEvent::X11FocusEvent(X11FocusEventType eventType, std::string windowName
 }
 
 /** 
+ * \brief  X11FocusEvent Init Constructor
+ */
+X11FocusEvent::X11FocusEvent(X11FocusEvent const & Event) {
+	EventType = Event.EventType;
+	WindowName = Event.WindowName;
+	WindowNameFormal = Event.WindowNameFormal;
+	WindowClass = Event.WindowClass;
+}
+
+/** 
  * \brief  X11FocusWatcher Default Constructor
  */
 X11FocusWatcher::X11FocusWatcher() : mThreadProc(this) {
 	mDisplay = NULL;
 	mWatching = false;
-	init();
 }
 
 /**
@@ -224,6 +233,8 @@ std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) 
  * \brief  Initialize the focus watcher (create a new thread and start watching)
  */
 void X11FocusWatcher::init() {
+	if (mWatching)
+		return;
 	boost::thread thrd(mThreadProc);
 }
 
