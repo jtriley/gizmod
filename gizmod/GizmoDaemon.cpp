@@ -671,7 +671,6 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
  */
 void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 	//cdbg << "Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
-	
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventWindowFocus FocusEvent(Event);
@@ -689,7 +688,6 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
  */
 void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
 	//cdbg << "Leaving Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
-
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventWindowFocus FocusEvent(Event);
