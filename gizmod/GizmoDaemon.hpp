@@ -43,6 +43,7 @@
 #include <map>
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef's Enums
@@ -57,7 +58,7 @@
  * \brief Main GizmoDaemon class
  * \todo  Replace for loops (in onFileEventRead) with boost::foreach when the new version comes out!
  */
-class GizmoDaemon : public H::FileEventWatcher, H::SignalHandler {
+class GizmoDaemon : public H::FileEventWatcher, H::SignalHandler, X11FocusWatcher {
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
@@ -70,6 +71,8 @@ public:
 	virtual void			onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
 	virtual void			onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer); ///< Event triggered when data is waiting on a device
 	virtual void			onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a new device is registered
+	virtual void			onFocusIn(X11FocusEvent const & Event); ///< Event triggered on a Focus In
+	virtual void			onFocusOut(X11FocusEvent const & Event); ///< Event triggered on a Focus Out
 	virtual void			onSignalSegv();		///< Signal handler for SEGV
 	virtual void			onSignalInt();		///< Signal handler for INT
 	virtual void			onSignalHup();		///< Signal handler for HUP
@@ -94,9 +97,12 @@ private:
 	// private member vars
 	std::string			mConfigDir;		///< Configuration scripts directory
 	std::string			mEventsDir;		///< Event node directory
+	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
 	bool				mInitialized;		///< Has GizmoDaemon been properly initialized?
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
-	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
+
+	// static private member vars
+	static boost::mutex		mMutexScript;		///< Mutex for the python script
 };
 
 #endif // __GizmoDaemon_h

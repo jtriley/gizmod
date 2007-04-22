@@ -28,6 +28,7 @@
 
 #include "X11FocusWatcher.hpp"
 #include "../libH/Debug.hpp"
+#include "../libH/Exception.hpp"
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
@@ -45,11 +46,17 @@ using namespace H;
 // Callbacks
 ///////////////////////////////////////
 
+/**
+ * \brief  Handle X11 errors
+ */
 int X11FocusWatcher::x11ErrorHandler(Display * display, XErrorEvent * error) {
 	// do nothing we don't care
 	return 0;
 }
 
+/**
+ * \brief  Handle X11 IO errors
+ */
 int X11FocusWatcher::x11IOErrorHandler(Display * display) {
 	// do nothing we don't care
 	return 0;
@@ -59,11 +66,34 @@ int X11FocusWatcher::x11IOErrorHandler(Display * display) {
 // Construction
 ///////////////////////////////////////
 
-X11FocusWatcher::X11FocusWatcher() {
-	m_Display = NULL;
-	m_WatchingDevice = false;
+/** 
+ * \brief  X11FocusEvent Default Constructor
+ */
+X11FocusEvent::X11FocusEvent(X11FocusEventType eventType, std::string windowName, std::string windowNameFormal, std::string windowClass) {
+	EventType = eventType;
+	WindowName = windowName;
+	WindowNameFormal = windowNameFormal;
+	WindowClass = windowClass;
 }
 
+/** 
+ * \brief  X11FocusWatcher Default Constructor
+ */
+X11FocusWatcher::X11FocusWatcher() : mThreadProc(this) {
+	mDisplay = NULL;
+	mWatching = false;
+	init();
+}
+
+/**
+ * \brief  X11FocusEvent Destructor
+ */
+X11FocusEvent::~X11FocusEvent() {
+}
+
+/**
+ * \brief  X11FocusWatcher Destructor
+ */
 X11FocusWatcher::~X11FocusWatcher() {
 	shutdown();
 }
@@ -72,64 +102,50 @@ X11FocusWatcher::~X11FocusWatcher() {
 // Class Body
 ///////////////////////////////////////
 
-bool X11FocusWatcher::checkEventsWaiting() {
-	//Debug::outDebug("X11FocusWatcher :: Watching Device Events...");
-	
-	m_WatchingDevice = true;
-	static std::string LastWin;
-	std::string WinName;
-	getForegroundWindowProperties(&WinName);
-	if (WinName == LastWin)
-		return false;
-
-	// window changed! notify
-	//onForegroundWindowChange(WinName);
-	LastWin = WinName;
-	
-	return true;
-}
-
+/**
+ * \brief  Close the X11 display
+ */
 void X11FocusWatcher::closeDisplay() {
- 	if (!m_Display)
+ 	if (!mDisplay)
 		return;
 
-	XCloseDisplay(m_Display);
-	m_Display = NULL;
-
-	cdbg << "X11FocusWatcher :: Display Closed" << endl;
+	XCloseDisplay(mDisplay);
+	mDisplay = NULL;
 }
 
-std::string X11FocusWatcher::getDeviceName() {
-	return "X11FocusWatcher";
-}
-
-bool X11FocusWatcher::getForegroundWindowProperties(std::string * WindowName) {
- 	if (!m_Display) {
-		*WindowName = "(not connected to X11)";
-		return false;
-	}
-
-	Window 		window;
-	int		revert_to_return;
-
-	XGetInputFocus(m_Display, &window, &revert_to_return);
-	*WindowName = getWindowName(window);
-
-	//Debug::outDebug("X11FocusWatcher :: Active Window = [0x%lx] [%s]", window, WindowName->getString());
-
-	return true;
-}
-
-/*
- * Routine to display a window id in dec/hex with name if window has one
- * Taken from xwininfo.c from xorg source, thanks xorg guys you rule!
- *
- * I modified it to correctly get the parent window if necessary
+/**
+ * \brief  Create a X11FocusEvent from a Window
+ * \param  window The Window to create an event from
+ * \return The event
  */
- 
-std::string X11FocusWatcher::getWindowName(Window window, bool recurse) {
+X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusEventType EventType) {
+	XClassHint * pClassHint;
+	pClassHint = XAllocClassHint();
+	
+	if (XGetClassHint(mDisplay, window, pClassHint) == 0)
+		throw H::Exception("Failed to create Window Event!", __FILE__, __FUNCTION__, __LINE__);
+	
+	X11FocusEvent Event = X11FocusEvent(EventType, getWindowName(window), pClassHint->res_name, pClassHint->res_class);
+	XFree(pClassHint->res_name);
+	XFree(pClassHint->res_class);
+	XFree(pClassHint);
+	return Event;
+}
+
+/**
+ * \brief  Get the name of a Window 
+ * \param  window The Window itself
+ * \param  recure Set to true if we should recurse on this window
+ * \return A string that contains the name of the window
+ *
+ * Routine to display a window id in dec/hex with name if window has one
+ * Taken from xwininfo.c from xorg source, thanks xorg guys!
+ *
+ * Modified to correctly get the parent window if necessary
+ */
+std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) {
 	XTextProperty tp;
-	Display * dpy = m_Display;
+	Display * dpy = mDisplay;
 	
 	if (!window) {
 		return "";
@@ -145,7 +161,7 @@ std::string X11FocusWatcher::getWindowName(Window window, bool recurse) {
 		unsigned int nChildren;
 		Window * children;
 		XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
-		XFree(children);
+		if (children) XFree(children);
 		if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
 			XFree((void*)tp.value);
 			return getWindowName(parent_ret, false);
@@ -167,10 +183,8 @@ std::string X11FocusWatcher::getWindowName(Window window, bool recurse) {
 		unsigned int nChildren;
 		Window * children;
 		XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
-		/* causes seg faults!
-		if ( (children) && (nChildren > 0) )
-			XFree(children);
-		*/
+		// FIXME may cause seg faults!
+		if (children) XFree(children);
 		if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
 			XFree((void*)tp.value);
 			return getWindowName(parent_ret, false);
@@ -206,51 +220,47 @@ std::string X11FocusWatcher::getWindowName(Window window, bool recurse) {
 	return "(unknown)";
 }
 
-bool X11FocusWatcher::init() {
-	if (!openDisplay(m_DisplayName)) {
-		cdbg << "X11FocusWatcher :: Failed to Open X11 Display [" << m_DisplayName << "]!" << endl;
-		return false;
-	}
-	
-	Window window;
-	int revert_to_return;
-	string WindowName;
-	while (1) {
-		XGetInputFocus(m_Display, &window, &revert_to_return);
-		XSelectInput(m_Display, window, FocusChangeMask);
-		WindowName = getWindowName(window);
-		
-		XEvent event;
-		XNextEvent(m_Display, &event);
-		switch (event.type) {
-		case FocusIn:
-			cout << "Current Focus: " << WindowName << endl;
-			break;
-		case FocusOut:
-			cout << "Leaving Focus: " << WindowName << endl;
-			break;
-		default:
-			cdbg << "Unkown Event Type: " << event.type << endl;		
-			break;
-		}
-	}
-
-	cdbg << "X11FocusWatcher :: X11 Input Plugin Initialized." << endl;
-	return true;
+/**
+ * \brief  Initialize the focus watcher (create a new thread and start watching)
+ */
+void X11FocusWatcher::init() {
+	boost::thread thrd(mThreadProc);
 }
 
+/**
+ * \brief  Event triggered on a Focus In
+ * \param  Event The Focus Event
+ */
+void X11FocusWatcher::onFocusIn(X11FocusEvent const & Event) {
+	// override me
+	cdbg << "X11FocusWatcher -- Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
+}
+
+/**
+ * \brief  Event triggered on a Focus In
+ * \param  Event The Focus Event
+ */
+void X11FocusWatcher::onFocusOut(X11FocusEvent const & Event) {
+	// override me
+	cdbg << "X11FocusWatcher -- Leaving Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
+}
+
+/** 
+ * \brief  Open an X11 Display
+ * \param  DisplayName The display to open (ie, "" for default, or ":1" for 1)
+ */
 bool X11FocusWatcher::openDisplay(std::string DisplayName) {
-	if (m_Display)
+	if (mDisplay)
 		closeDisplay();
 
 	if (DisplayName == "")
-		m_DisplayName = XDisplayName(NULL);
+		mDisplayName = XDisplayName(NULL);
 	else
-		m_DisplayName = DisplayName;
+		mDisplayName = DisplayName;
 
 
-	if ( (m_Display = XOpenDisplay(m_DisplayName.c_str())) == NULL ) {
-		cdbg << "X11FocusWatcher :: Unable to Open Display [" << m_DisplayName << "]" << endl;
+	if ( (mDisplay = XOpenDisplay(mDisplayName.c_str())) == NULL ) {
+		cdbg << "X11FocusWatcher :: Unable to Open Display [" << mDisplayName << "]" << endl;
 		return false;
 	}
 
@@ -259,17 +269,83 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 	// you have no idea how annoying this was to track down
 	XSetErrorHandler(x11ErrorHandler);
 	XSetIOErrorHandler(x11IOErrorHandler);
-
-	m_Screen = DefaultScreen(m_Display);
-	m_RootWindow = RootWindow(m_Display, m_Screen);
-
-	cdbg << "X11FocusWatcher :: Display Opened [" << m_DisplayName << "]" << endl;
+	mScreen = DefaultScreen(mDisplay);
 	
 	return true;
 }
 
+/**
+ * \brief  Set all windows to report the FocusChangeMask
+ */
+void X11FocusWatcher::setFocusEventMask() {
+	Window RootRet, ParentRet;
+	unsigned int nChildren;
+	Window * Children;
+	XQueryTree(mDisplay, RootWindow(mDisplay, mScreen), &RootRet, &ParentRet, &Children, &nChildren);
+	for (unsigned int lp = 0; lp < nChildren; lp ++)
+		XSelectInput(mDisplay, Children[lp], FocusChangeMask);		
+	if (Children)
+		XFree(Children);
+}
+
+/**
+ * \brief  Signal the watching thread to shut itself down
+ */
 void X11FocusWatcher::shutdown() {
-	cdbg << "X11FocusWatcher :: Shutting Down..." << endl;
-	m_WatchingDevice = false;
+	mWatching = false;
+}
+
+/** 
+ * \brief  The ThreadProc
+ *
+ * This is where all the magic happens
+ */
+void X11FocusWatcher::threadProc() {
+	if (!openDisplay(mDisplayName)) {
+		cdbg << "X11FocusWatcher :: Failed to Open X11 Display [" << mDisplayName << "]!" << endl;
+		return;
+	}
+	
+	Window window;
+	int revert_to_return;
+	string WindowName;
+	
+	// fire initial event
+	XGetInputFocus(mDisplay, &window, &revert_to_return);
+	try {
+		X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
+		onFocusIn(Event);
+	} catch (Exception e) {
+		cerr << e.getExceptionMessage() << endl;
+	}
+	
+	// Watch for focus changes	
+	mWatching = true;
+	while (mWatching) {
+		XGetInputFocus(mDisplay, &window, &revert_to_return);
+		setFocusEventMask();
+		WindowName = getWindowName(window);
+		
+		XEvent event;
+		XNextEvent(mDisplay, &event);
+		try {
+			switch (event.type) {
+			case FocusIn: {
+				X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
+				onFocusIn(Event);
+				break; }
+			case FocusOut: {
+				X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_OUT);
+				onFocusOut(Event);
+				break; }
+			default:
+				cdbg << "Unkown Event Type: " << event.type << endl;		
+				break;
+			}
+		} catch (Exception e) {
+			cerr << e.getExceptionMessage() << endl;
+		}
+	}
+
 	closeDisplay();
 }

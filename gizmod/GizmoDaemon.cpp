@@ -87,6 +87,12 @@ using namespace H;
 #define EVENT_NODE_DIR		"/dev/input"
 
 ////////////////////////////////////////////////////////////////////////////
+// Statics
+///////////////////////////////////////
+
+boost::mutex GizmoDaemon::mMutexScript;	///< Mutex for the python script
+
+////////////////////////////////////////////////////////////////////////////
 // C++ -> Python Exposures
 ///////////////////////////////////////
 
@@ -257,6 +263,7 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 	
 	// signal python script
 	try {
+		mutex::scoped_lock lock(mMutexScript);
 		switch (pGizmo->getGizmoClass()) {
 		case GIZMO_CLASS_STANDARD:
 			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
@@ -564,15 +571,19 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 			std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
 			GizmoStandard * pGizmo = static_cast<GizmoStandard const *>(pUnknownGizmo.get());
 			GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
-			for (size_t lp = 0; lp < EventVector.size(); lp ++)
+			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+				mutex::scoped_lock lock(mMutexScript);
 				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
+			}
 			break; }
 		case GIZMO_CLASS_POWERMATE: {
 			std::vector< boost::shared_ptr<GizmoEventPowermate> > EventVector;
 			GizmoPowermate * pGizmo = static_cast<GizmoPowermate const *>(pUnknownGizmo.get());
 			GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
-			for (size_t lp = 0; lp < EventVector.size(); lp ++)
+			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+				mutex::scoped_lock lock(mMutexScript);
 				mpPyDispatcher->onEvent(EventVector[lp].get(), static_cast<GizmoPowermate const *>(pUnknownGizmo.get()));
+			}
 			break; }
 		case GIZMO_CLASS_LIRC:
 			break;
@@ -595,6 +606,7 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee) {
 	cdbg << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	try {
+		mutex::scoped_lock lock(mMutexScript);
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);
 		switch (Class) {
 		case GIZMO_CLASS_STANDARD: {
@@ -628,6 +640,24 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 			PyErr_Print();
 		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceType");
 	}
+}
+
+/**
+ * \brief  Event triggered on a Focus In
+ * \param  Event The Focus Event
+ */
+void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
+	// override me
+	cdbg << "Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
+}
+
+/**
+ * \brief  Event triggered on a Focus In
+ * \param  Event The Focus Event
+ */
+void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
+	// override me
+	cdbg << "Leaving Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
 }
 
 /**
