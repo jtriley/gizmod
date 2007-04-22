@@ -69,7 +69,9 @@ class GizmodDispatcher(GizmodEventHandler):
 		so for example if it's a Powermate event the Event class will be "Powermate"
 		
 		Similarly the Gizmo object will of the class of the device that generated
-		the event. Ie, if it's a Powermate event the class will also be "Powermate"
+		the event. Ie, if it's a Powermate event the class will also be "Powermate".  If
+		there is no associated Gizmo (ie with WindowFocus events), this field will be
+		set to None.
 		
 		All Event classes share the same base "Event" class, and you can use the Event
 		class method "getEventType" (amongst others) to figure out what type of event it 

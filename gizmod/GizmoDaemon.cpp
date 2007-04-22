@@ -683,7 +683,7 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 }
 
 /**
- * \brief  Event triggered on a Focus In
+ * \brief  Event triggered on a Focus Out
  * \param  Event The Focus Event
  */
 void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
