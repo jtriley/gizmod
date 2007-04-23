@@ -55,7 +55,9 @@ GizmoLinuxInputEvent::GizmoLinuxInputEvent(struct input_event const & InputEvent
 	TimeStamp.MicroSeconds = InputEvent.time.tv_usec;
 	RawType = InputEvent.type;
 	RawCode = InputEvent.code;
-	RawValue = InputEvent.value;
+	Value = InputEvent.value;
+	Code = (GizmoKey) InputEvent.code;
+	Type = (GizmoEventType) InputEvent.type;
 }
 
 /**

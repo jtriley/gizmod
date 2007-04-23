@@ -145,6 +145,9 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.value("FocusOut", 	X11FOCUSEVENT_OUT)
 		;
 	
+	/// GizmoEventType and GizmoKey Python Enum Exposures
+	#include "GizmoKeyDefPythonExposures.hpp"	
+	
 	/////////////////////////////////////////////////////////////////////
 	// General Class exports
 	///////////////////////////////////////
@@ -196,13 +199,15 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// GizmoEventCPU Python Class Export
  	class_< GizmoEventCPU, bases<GizmoEvent> >("GizmoEventCPU")
 		;
-	
+			
 	/// GizmoLinuxInputEvent Python Class Export
 	class_<GizmoLinuxInputEvent>("GizmoLinuxInputEvent")
 		.def_readonly("RawCode", &GizmoLinuxInputEvent::RawCode)
 		.def_readonly("RawType", &GizmoLinuxInputEvent::RawType)
-		.def_readonly("RawValue", &GizmoLinuxInputEvent::RawValue)
+		.def_readonly("Value", &GizmoLinuxInputEvent::Value)
 		.def_readonly("TimeStamp", &GizmoLinuxInputEvent::TimeStamp)
+		.def_readonly("Code", &GizmoLinuxInputEvent::Code)
+		.def_readonly("Type", &GizmoLinuxInputEvent::Type)
 		;
 	
 	/// GizmoEventPowermate Python Class Export

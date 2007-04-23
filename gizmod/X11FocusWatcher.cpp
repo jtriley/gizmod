@@ -131,8 +131,11 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
 	XClassHint * pClassHint;
 	pClassHint = XAllocClassHint();
 	
-	if (XGetClassHint(mDisplay, window, pClassHint) == 0)
-		throw H::Exception("Failed to create Window Event!", __FILE__, __FUNCTION__, __LINE__);
+	if (XGetClassHint(mDisplay, window, pClassHint) == 0) {
+		cdbg << "X11FocusWatcher :: Failed to create Window Event!" << endl;
+		XFree(pClassHint);
+		return X11FocusEvent(EventType, getWindowName(window), "Unknown", "Unknown"); 
+	}
 	
 	X11FocusEvent Event = X11FocusEvent(EventType, getWindowName(window), pClassHint->res_name, pClassHint->res_class);
 	XFree(pClassHint->res_name);
@@ -323,12 +326,8 @@ void X11FocusWatcher::threadProc() {
 	
 	// fire initial event
 	XGetInputFocus(mDisplay, &window, &revert_to_return);
-	try {
-		X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
-		onFocusIn(Event);
-	} catch (Exception e) {
-		cerr << e.getExceptionMessage() << endl;
-	}
+	X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
+	onFocusIn(Event);
 	
 	// Watch for focus changes	
 	mWatching = true;
@@ -339,22 +338,18 @@ void X11FocusWatcher::threadProc() {
 		
 		XEvent event;
 		XNextEvent(mDisplay, &event);
-		try {
-			switch (event.type) {
-			case FocusIn: {
-				X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
-				onFocusIn(Event);
-				break; }
-			case FocusOut: {
-				X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_OUT);
-				onFocusOut(Event);
-				break; }
-			default:
-				cdbg << "Unkown Event Type: " << event.type << endl;		
-				break;
-			}
-		} catch (Exception e) {
-			cerr << e.getExceptionMessage() << endl;
+		switch (event.type) {
+		case FocusIn:
+			Event = createFocusEvent(window, X11FOCUSEVENT_IN);
+			onFocusIn(Event);
+			break; 
+		case FocusOut: 
+			Event = createFocusEvent(window, X11FOCUSEVENT_OUT);
+			onFocusOut(Event);
+			break; 
+		default:
+			cdbg << "Unkown Event Type: " << event.type << endl;		
+			break;
 		}
 	}
 

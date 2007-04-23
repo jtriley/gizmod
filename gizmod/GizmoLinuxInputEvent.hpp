@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "GizmoKeyDefs.hpp"
 #include "../libH/DynamicBuffer.hpp"
 #include <linux/input.h>
 #include <vector>
@@ -63,8 +64,10 @@ public:
 	// public member variables
 	unsigned short			RawType;				///< Raw type of the event
 	unsigned short			RawCode;				///< Raw code of the event
-	int				RawValue;				///< Raw value of the event
 	GizmoTimeVal			TimeStamp;				///< Time stamp of the event
+	GizmoKey			Code;					///< Human decipherable code of the event
+	GizmoEventType			Type;					///< Human decipherable type of the event
+	int				Value;					///< value of the event
 	
 	// public functions
 
