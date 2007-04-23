@@ -62,6 +62,15 @@ typedef enum {
 /**
  * \class  X11FocusEvent
  * \brief  Data structure that holds information about X11 Focus events
+ *
+ * Note that there is NO GUARANTEE that event orders are logical
+ * For example, FOCUS_IN events might occur BEFORE a FOCUS_OUT
+ * event, however, the events are true -- The current focus will
+ * always be the last event with a FOCUS_IN type.
+ *
+ * This is due to the way X (and your WM's focus stealing prevention)
+ * works (or perhaps doesn't work).
+ *
  */
 class X11FocusEvent {
 public:	

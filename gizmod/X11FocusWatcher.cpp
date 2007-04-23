@@ -42,7 +42,16 @@ using namespace H;
 // Typedef's, structs
 ///////////////////////////////////////
 
+/**
+ * \def    WINDOW_UNKNOWN
+ * \brief  Default text used to describe an unknown Window (Formal)
+ */
 #define WINDOW_UNKNOWN		"Unknown"
+
+/**
+ * \def    TITLE_UNKNOWN
+ * \brief  Default text used to describe an unknown Window (Title)
+ */
 #define TITLE_UNKNOWN		"(No Name)"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -150,7 +159,7 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
 /**
  * \brief  Get the name of a Window 
  * \param  window The Window itself
- * \param  recure Set to true if we should recurse on this window
+ * \param  recurse Set to true if we should recurse on this window
  * \return A string that contains the name of the window
  *
  * Routine to display a window id in dec/hex with name if window has one
