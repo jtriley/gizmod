@@ -42,6 +42,9 @@ using namespace H;
 // Typedef's, structs
 ///////////////////////////////////////
 
+#define WINDOW_UNKNOWN		"Unknown"
+#define TITLE_UNKNOWN		"(No Name)"
+
 ////////////////////////////////////////////////////////////////////////////
 // Callbacks
 ///////////////////////////////////////
@@ -90,6 +93,7 @@ X11FocusEvent::X11FocusEvent(X11FocusEvent const & Event) {
  * \brief  X11FocusWatcher Default Constructor
  */
 X11FocusWatcher::X11FocusWatcher() : mThreadProc(this) {
+	mCurrentWindow = -1;
 	mDisplay = NULL;
 	mWatching = false;
 }
@@ -132,9 +136,8 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
 	pClassHint = XAllocClassHint();
 	
 	if (XGetClassHint(mDisplay, window, pClassHint) == 0) {
-		cdbg << "X11FocusWatcher :: Failed to create Window Event!" << endl;
 		XFree(pClassHint);
-		return X11FocusEvent(EventType, getWindowName(window), "Unknown", "Unknown"); 
+		throw H::Exception("Failed to Create Focus Event!", __FILE__, __FUNCTION__, __LINE__);
 	}
 	
 	X11FocusEvent Event = X11FocusEvent(EventType, getWindowName(window), pClassHint->res_name, pClassHint->res_class);
@@ -154,6 +157,7 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
  * Taken from xwininfo.c from xorg source, thanks xorg guys!
  *
  * Modified to correctly get the parent window if necessary
+ * Also fixed several segfaults!
  */
 std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) {
 	XTextProperty tp;
@@ -171,7 +175,7 @@ std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) 
 		XFree(win_name);
 		Window root_ret, parent_ret;
 		unsigned int nChildren;
-		Window * children;
+		Window * children = NULL;
 		XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
 		if (children) XFree(children);
 		if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
@@ -180,7 +184,7 @@ std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) 
 		} else {
 			if (tp.value)
 				XFree((void*)tp.value);
-			return "(no name)";
+			return TITLE_UNKNOWN;
 		}
 	} else if (win_name) {
 		const std::string retStr = win_name;
@@ -193,17 +197,17 @@ std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) 
 			XFree((void*)tp.value);
 		Window root_ret, parent_ret;
 		unsigned int nChildren;
-		Window * children;
+		Window * children = NULL;
 		XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
-		// FIXME may cause seg faults!
 		if (children) XFree(children);
 		if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
-			XFree((void*)tp.value);
+			if (tp.value)
+				XFree((void*)tp.value);
 			return getWindowName(parent_ret, false);
 		} else {
 			if (tp.value)
 				XFree((void*)tp.value);
-			return "(no name)";
+			return TITLE_UNKNOWN;
 		}
 	} else if (tp.nitems > 0) {
 		std::string retStr;
@@ -226,10 +230,10 @@ std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) 
 	}
 #endif
 	else
-		return "(no name)";
+		return TITLE_UNKNOWN;
 	}
 	
-	return "(unknown)";
+	return WINDOW_UNKNOWN;
 }
 
 /**
@@ -291,10 +295,10 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 /**
  * \brief  Set all windows to report the FocusChangeMask
  */
-void X11FocusWatcher::setFocusEventMask() {
+void X11FocusWatcher::setFocusEventMasks() {
 	Window RootRet, ParentRet;
 	unsigned int nChildren;
-	Window * Children;
+	Window * Children = NULL;
 	XQueryTree(mDisplay, RootWindow(mDisplay, mScreen), &RootRet, &ParentRet, &Children, &nChildren);
 	for (unsigned int lp = 0; lp < nChildren; lp ++)
 		XSelectInput(mDisplay, Children[lp], FocusChangeMask);		
@@ -326,30 +330,52 @@ void X11FocusWatcher::threadProc() {
 	
 	// fire initial event
 	XGetInputFocus(mDisplay, &window, &revert_to_return);
-	X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
-	onFocusIn(Event);
+	try {
+		X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
+		onFocusIn(Event);
+	} catch (H::Exception e) {
+		cdbg2 << e.message() << endl;
+	}
 	
 	// Watch for focus changes	
 	mWatching = true;
 	while (mWatching) {
-		XGetInputFocus(mDisplay, &window, &revert_to_return);
-		setFocusEventMask();
-		WindowName = getWindowName(window);
+		// reset focus event masks
+		setFocusEventMasks();
 		
+		// get the next event
+		// manually check for focus changes since brand new windows 
+		// might not have the proper event focus mask yet
 		XEvent event;
-		XNextEvent(mDisplay, &event);
-		switch (event.type) {
-		case FocusIn:
-			Event = createFocusEvent(window, X11FOCUSEVENT_IN);
-			onFocusIn(Event);
-			break; 
-		case FocusOut: 
-			Event = createFocusEvent(window, X11FOCUSEVENT_OUT);
-			onFocusOut(Event);
-			break; 
-		default:
-			cdbg << "Unkown Event Type: " << event.type << endl;		
-			break;
+		XGetInputFocus(mDisplay, &window, &revert_to_return);
+		if (mCurrentWindow != window) {
+			event.type = FocusIn;
+			event.xany.window = window;
+		} else {
+			XNextEvent(mDisplay, &event);
+		}
+		
+		// handle the event
+		try {
+			switch (event.type) {
+			case FocusIn: {
+				// avoid duplicate events
+				if (mCurrentWindow == event.xany.window)
+					break;
+				X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_IN);
+				mCurrentWindow = event.xany.window;
+				onFocusIn(Event);
+				break; }
+			case FocusOut: {
+				X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_OUT);
+				onFocusOut(Event);
+				break; }
+			default:
+				cdbg << "Unkown Event Type: " << event.type << endl;		
+				break;
+			}
+		} catch (H::Exception e) {
+			cdbg2 << e.message() << endl;
 		}
 	}
 

@@ -88,9 +88,9 @@ class GizmodDispatcher(GizmodEventHandler):
 			pass
 		else:
 			if Event.Type == GizmoEventType.EV_KEY:
-				print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) +  " t: " + str(hex(Event.RawType)) +  " v: " + str(hex(Event.Value))
+				print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))
 			else:
-				print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] c: " + str(hex(Event.RawCode)) +  " t: " + str(hex(Event.RawType)) +  " v: " + str(hex(Event.Value))
+				print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] c: " + str(hex(Event.RawCode)) +  " Val: " + str(hex(Event.Value))
 		
 	def onQueryDeviceType(self, DeviceInformation):
 		"""
