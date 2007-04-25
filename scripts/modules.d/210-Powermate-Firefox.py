@@ -51,11 +51,13 @@ class PowermateFirefox:
 				else:
 					# scroll by pages
 					if Event.Value > 0:
-						Gizmod.Keyboards[0].createEvents(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN, 1, abs(Event.Value))
-						Gizmod.Keyboards[0].createEvents(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN, 0, abs(Event.Value))
+						for repeat in range(abs(Event.Value)):
+							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN, 1)
+							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN, 0)
 					else:
-						Gizmod.Keyboards[0].createEvents(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP, 1, abs(Event.Value))
-						Gizmod.Keyboards[0].createEvents(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP, 0, abs(Event.Value))
+						for repeat in range(abs(Event.Value)):
+							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP, 1)
+							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP, 0)
 				return True
 
 		return False
