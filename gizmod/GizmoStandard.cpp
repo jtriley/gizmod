@@ -53,7 +53,7 @@ using namespace H;
 /**
  * \brief GizmoStandard Default Constructor
  */
-GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo) {
+GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
 }
 
 /**
@@ -76,7 +76,7 @@ std::string GizmoStandard::getGizmoType() {
 
 /**
  * \brief  Process an event
- * \param  Event The event to process
+ * \param  pEvent The event to process
  */
 void GizmoStandard::processEvent(GizmoEvent * pEvent) {
 	GizmoEventStandard * pStandardEvent = static_cast<GizmoEventStandard *>(pEvent);

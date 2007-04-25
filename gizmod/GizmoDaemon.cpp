@@ -224,6 +224,12 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
  	class_< GizmoEventCPU, bases<GizmoEvent> >("GizmoEventCPU")
 		;
 			
+	/// GizmoLinuxInputDevice Python Class Export
+	class_<GizmoLinuxInputDevice>("GizmoLinuxInputDevice", init<int>())
+		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
+		.def("createEvents", &GizmoLinuxInputDevice::createEvents)
+		;
+	
 	/// GizmoLinuxInputEvent Python Class Export
 	class_<GizmoLinuxInputEvent>("GizmoLinuxInputEvent")
 		.def_readonly("RawCode", &GizmoLinuxInputEvent::RawCode)
@@ -259,11 +265,11 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	///////////////////////////////////////
 	
 	/// GizmoPowermate Python Class Export
-	class_< GizmoPowermate, bases<Gizmo> >("GizmoPowermate", init<const DeviceInfo &>())
+	class_< GizmoPowermate, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoPowermate", init<const DeviceInfo &>())
 		;
 
 	/// GizmoStandard Python Class Export
-	class_< GizmoStandard, bases<Gizmo> >("GizmoStandard", init<const DeviceInfo &>())
+	class_< GizmoStandard, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoStandard", init<const DeviceInfo &>())
 		;
 }
 
@@ -687,7 +693,7 @@ void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, 
  */
 void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	cout << "onFileEventDelete [" << FullPath << "] -- " << pWatchee->FileName << endl;
-	//deleteGizmo(pWatchee->FileName);
+	deleteGizmo(pWatchee->FileName);
 }
 
 /**

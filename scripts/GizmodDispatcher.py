@@ -132,7 +132,11 @@ class GizmodDispatcher(GizmodEventHandler):
 		
 		# Module specific initialization
 		self.initialized = False
-		self.userScripts = list()
+		self.userScripts = list()		# list of user scripts
+		
+		Gizmod.Keyboards = list()		# list of keyboards
+		Gizmod.Mice = list()			# list of mice
+		Gizmod.Powermates = list()		# list of Powermates
 
 ############################
 # GizmodDispatcher class end

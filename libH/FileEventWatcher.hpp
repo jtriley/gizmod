@@ -95,12 +95,13 @@ public:
 	int				DeviceIDVendor;		///< Vendor ID of the device
 	int				DeviceIDVersion;	///< Version of the device
 	std::string			DeviceName;		///< Name of the device
+	int				FileDescriptor;		///< File descriptor of th edevice
 	std::string			FileName;		///< Name of the file to watch
 		
 	// construction / deconstruction
 	DeviceInfo();						///< Default Constructor
 	DeviceInfo(const DeviceInfo & DeviceInformation); 	///< Init Constructor
-	DeviceInfo(std::string DeviceName, std::string FileName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion); ///< Init Constructor
+	DeviceInfo(std::string DeviceName, std::string FileName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion, int FileDescriptor); ///< Init Constructor
 	virtual ~DeviceInfo();					///< Destructor
 };
 

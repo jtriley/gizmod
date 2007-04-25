@@ -44,7 +44,8 @@ using namespace H;
 /**
  * \brief GizmoLinuxInputDevice Default Constructor
  */
-GizmoLinuxInputDevice::GizmoLinuxInputDevice() {
+GizmoLinuxInputDevice::GizmoLinuxInputDevice(int FD) {
+	mFD = FD;
 	mSendNullEvents = false;
 }
 
@@ -65,6 +66,51 @@ GizmoLinuxInputDevice::~GizmoLinuxInputDevice() {
  */
 void GizmoLinuxInputDevice::buildInputEventsVectorFromBuffer(std::vector<struct input_event> & EventVector, H::DynamicBuffer<char> const & Buffer) {
 	DynamicBufferConverter<char, struct input_event>::convert(EventVector, Buffer);
+}
+
+/**
+ * \brief  Create an event on the device
+ * \param  Type GizmoEventType of the event
+ * \param  Code GizmoKey (or other code) of the event
+ * \param  Value Value of the event
+ * \return True on success
+ *
+ * Note: Writes the event, and a NULL event to signal a refresh
+ */
+bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
+	struct input_event ev[2];
+	memset(&ev, 0, sizeof(struct input_event) * 2);
+	ev[0].type = Type;
+	ev[0].code = Code;
+	ev[0].value = Value;
+	if (write(mFD, &ev, sizeof(struct input_event) * 2) == -1)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Create multiple events on the device
+ * \param  Type GizmoEventType of the event
+ * \param  Code GizmoKey (or other code) of the event
+ * \param  Value Value of the event
+ * \param  NumWrites Number of time to write the event (default == 1)
+ * \return True on success
+ *
+ * Note: Writes the events, then a NULL event to signal a refresh
+ */
+bool GizmoLinuxInputDevice::createEvents(int Type, int Code, int Value, int NumWrites) {
+	struct input_event ev;
+	memset(&ev, 0, sizeof(struct input_event));
+	ev.type = Type;
+	ev.code = Code;
+	ev.value = Value;
+	for (int lp = 0; lp < NumWrites; lp ++) 
+		if (write(mFD, &ev, sizeof(struct input_event)) == -1)
+			return false;
+	memset(&ev, 0, sizeof(struct input_event));
+	if (write(mFD, &ev, sizeof(struct input_event)) == -1)
+		return false;
+	return true;
 }
 
 /**

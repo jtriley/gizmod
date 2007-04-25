@@ -58,6 +58,16 @@ typedef enum {
 } GizmoEventType;
 
 /**
+ * \enum  GizmoMouseAxis
+ * \brief Constants for the mouse axes
+ */
+typedef enum {
+	GIZMO_MOUSE_AXIS_X		= 0x00,
+	GIZMO_MOUSE_AXIS_Y		= 0x01,
+	GIZMO_MOUSE_AXIS_Z		= 0x08,
+} GizmoMouseAxis;
+
+/**
  * \enum  GizmoKey
  * \brief These are the key definitions that devices emit
  */

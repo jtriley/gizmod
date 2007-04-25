@@ -52,11 +52,13 @@
 class GizmoLinuxInputDevice {
 public:
 	// public functions
+	bool 				createEvent(int Type, int Code, int Value); ///< Write event to the device
+	bool 				createEvents(int Type, int Code, int Value, int NumWrites); ///< Write multiple similar events to the device
 	bool				getSendNullEvents();		///< Get whether or not the Gizmo sends NULL events
 	void				setSendNullEvents(bool SendNull); ///< Set whether or not the Gizmo sends NULL events
 
 	// construction / deconstruction
-	GizmoLinuxInputDevice();					///< Default Constructor
+	GizmoLinuxInputDevice(int FD);					///< Default Constructor
 	virtual ~GizmoLinuxInputDevice();				///< Destructor
 
 	// static public functions
@@ -66,6 +68,7 @@ protected:
 	// private functions
 	
 	// private member variables
+	int				mFD;				///< File descriptor of the device
 	bool				mSendNullEvents;		///< Send NULL events if the device creates them?
 };
 

@@ -104,13 +104,14 @@ DeviceInfo::DeviceInfo() {
 /**
  * \brief DeviceInfo Init Constructor
  */
-DeviceInfo::DeviceInfo(std::string deviceName, std::string fileName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion) {
+DeviceInfo::DeviceInfo(std::string deviceName, std::string fileName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion, int fileDescriptor) {
 	DeviceName = deviceName;
 	FileName = fileName;
 	DeviceIDBusType = deviceIDBusType;
 	DeviceIDVendor = deviceIDVendor;
 	DeviceIDProduct = deviceIDProduct;
 	DeviceIDVersion = deviceIDVersion;
+	FileDescriptor = fileDescriptor;
 }
 
 /**
@@ -123,6 +124,7 @@ DeviceInfo::DeviceInfo(const DeviceInfo & DeviceInformation) {
 	DeviceIDVendor = DeviceInformation.DeviceIDVendor;
 	DeviceIDProduct = DeviceInformation.DeviceIDProduct;
 	DeviceIDVersion = DeviceInformation.DeviceIDVersion;
+	FileDescriptor = DeviceInformation.FileDescriptor;
 }
 
 /**
@@ -162,7 +164,7 @@ FileWatchee::FileWatchee() {
  * \brief FileWatchee Init Constructor
  */
 FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion) :
-	DeviceInfo(deviceName, fileName, deviceIDBusType, deviceIDVendor, deviceIDProduct, deviceIDVersion)
+	DeviceInfo(deviceName, fileName, deviceIDBusType, deviceIDVendor, deviceIDProduct, deviceIDVersion, fileDescriptor)
 {
 	WatchType = watchType;
 	Events = events;

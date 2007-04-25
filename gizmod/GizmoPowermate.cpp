@@ -54,7 +54,7 @@ using namespace H;
 /**
  * \brief GizmoPowermate Default Constructor
  */
-GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo) {
+GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
 }
 
 /**
@@ -85,7 +85,7 @@ std::string GizmoPowermate::getGizmoType() {
 
 /**
  * \brief  Process an event
- * \param  Event The event to process
+ * \param  pEvent The event to process
  */
 void GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 	GizmoEventPowermate * pPowermateEvent = static_cast<GizmoEventPowermate *>(pEvent);

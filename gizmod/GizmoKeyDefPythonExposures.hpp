@@ -53,7 +53,17 @@ enum_<GizmoEventType>("GizmoEventType")
 	.value("EV_FF_STATUS",  	GIZMO_EV_FF_STATUS)		///< GIZMO_EV_FF_STATUS
 	.value("EV_MAX",        	GIZMO_EV_MAX)			///< GIZMO_EV_MAX
 	;
-
+	
+/**
+ * \brief GizmoMouseAxis Python enum export
+ */
+enum_<GizmoMouseAxis>("GizmoMouseAxis")
+	.value("X",        	GIZMO_MOUSE_AXIS_X)		///< GIZMO_MOUSE_AXIS_X
+	.value("Y",        	GIZMO_MOUSE_AXIS_Y)		///< GIZMO_MOUSE_AXIS_Y
+	.value("Z",     	GIZMO_MOUSE_AXIS_Z)		///< GIZMO_MOUSE_AXIS_Z
+	.value("WHEEL",     	GIZMO_MOUSE_AXIS_Z)		///< GIZMO_MOUSE_AXIS_Z
+	;
+	
 /**
  * \brief GizmoKey Python enum export
  */

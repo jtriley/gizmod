@@ -102,7 +102,7 @@ std::string Gizmo::getGizmoType() {
 
 /**
  * \brief  Process an event
- * \param  Event The event to process
+ * \param  pEvent The event to process
  */
 void Gizmo::processEvent(GizmoEvent * pEvent) {
 	// override me

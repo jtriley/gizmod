@@ -15,6 +15,9 @@
 
 from GizmoDaemon import *
 
+# list of devices to enumerate as mice
+POWERMATE_GIZMOS = ["powermate", "soundknob"]
+
 ############################
 # GizmoDeviceType Class definition
 ##########################
@@ -56,8 +59,7 @@ class GizmoDeviceType:
 		"""
 		
 		#print "onQueryDeviceType: " + DeviceInfo.DeviceName + " [" + DeviceInfo.FileName + "] Prod: " + str(hex(DeviceInfo.DeviceIDProduct))
-		if DeviceInfo.DeviceName.lower().find("powermate") > -1 or \
- 		   DeviceInfo.DeviceName.lower().find("soundknob") > -1:
+		if [i for i in POWERMATE_GIZMOS if DeviceInfo.DeviceName.lower().find(i) > -1]:
  			self.DeviceType = GizmoClass.Powermate
  		elif DeviceInfo.DeviceName.lower().find("ati x10") > -1:
 	 		self.DeviceType = GizmoClass.ATIX10
