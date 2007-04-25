@@ -98,6 +98,7 @@ private:
 	void 				loadUserScriptsFunctor(std::string UserScript); ///< Load user scripts functor
 	void 				registerDevices();	///< Register all the attached system devices
 	void				registerInputEventDevices(); ///< Register input event devices (/dev/input/*)
+	void 				registerLircDevice();	///< Register the LIRC device
 	
 	// private member vars
 	std::string			mConfigDir;		///< Configuration scripts directory
@@ -105,6 +106,7 @@ private:
 	std::string			mEventsDir;		///< Event node directory
 	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
 	bool				mInitialized;		///< Has GizmoDaemon been properly initialized?
+	std::string			mLircDev;		///< Lirc device node
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
 	boost::python::object		mPyMainModule;		///< The Python Main Module
 	boost::python::object		mPyMainNamespace;	///< The Python Main Namespace

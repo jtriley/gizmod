@@ -44,12 +44,13 @@ class PowermateFirefox:
 		   len(Gizmod.Mice) and len(Gizmod.Keyboards):
 		   	# Check for rotations
 			if Event.Type == GizmoEventType.EV_REL:
-				# scroll the window
+				# scroll the window slowly if the button isn't pressed
+				# and fast if the button is down
 				if not Gizmo.getKeyState(GizmoKey.BTN_0):
-					# scroll slowly
+					# scroll slowly (create a mouse wheel event)
 					Gizmod.Mice[0].createEvent(GizmoEventType.EV_REL, GizmoMouseAxis.WHEEL, -Event.Value)
 				else:
-					# scroll by pages
+					# scroll quickly (by pages using the page up / page down keys)
 					if Event.Value > 0:
 						for repeat in range(abs(Event.Value)):
 							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN, 1)
@@ -71,7 +72,7 @@ class PowermateFirefox:
 		Default Constructor
 		"""
 		
-		print "Registered User Script: " + self.__class__.__name__
+		print "Loaded User Script: " + self.__class__.__name__
 
 ############################
 # PowermateFirefox class end

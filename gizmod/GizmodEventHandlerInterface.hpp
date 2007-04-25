@@ -34,11 +34,13 @@
 #endif
 
 #include "GizmoEventCPU.hpp"
+#include "GizmoEventLIRC.hpp"
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventStandard.hpp"
 #include "GizmoEventWindowFocus.hpp"
 #include "Gizmo.hpp"
 #include "GizmoCPU.hpp"
+#include "GizmoLIRC.hpp"
 #include "GizmoPowermate.hpp"
 #include "GizmoStandard.hpp"
 #include "../libH/FileEventWatcher.hpp"
@@ -81,6 +83,12 @@ public:
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
 	 */
+	virtual void			onDeregisterDevice(GizmoLIRC const * Device) = 0;
+	
+	/**
+	 * \brief  Event triggered when device has been deregistered
+	 * \param  Device The device
+	 */
 	virtual void			onDeregisterDevice(GizmoPowermate const * Device) = 0;
 		
 	/**
@@ -95,6 +103,13 @@ public:
 	 * \param  Device The device that triggered the event
 	 */
 	virtual void			onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) = 0;
+	
+	/**
+	 * \brief  LIRC Event trigger
+	 * \param  Event The event information 
+	 * \param  Device The device that triggered the event
+	 */
+	virtual void			onEvent(GizmoEventLIRC const * Event, GizmoLIRC const * Device) = 0;
 	
 	/**
 	 * \brief  Powermate Event trigger
@@ -128,6 +143,12 @@ public:
 	 * \param  Device The device
 	 */
 	virtual void			onRegisterDevice(GizmoCPU const * Device) = 0;
+	
+	/**
+	 * \brief  Event triggered when a new device has been registered
+	 * \param  Device The device
+	 */
+	virtual void			onRegisterDevice(GizmoLIRC const * Device) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device has been registered

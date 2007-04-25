@@ -28,11 +28,13 @@
 
 #include "GizmoDaemon.hpp"
 #include "GizmoEventCPU.hpp"
+#include "GizmoEventLIRC.hpp"
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventStandard.hpp"
 #include "GizmoEventWindowFocus.hpp"
 #include "GizmoPowermate.hpp"
 #include "GizmoCPU.hpp"
+#include "GizmoLIRC.hpp"
 #include "GizmoStandard.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
@@ -45,6 +47,7 @@
 #include <boost/format.hpp>
 #include <boost/python.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <fcntl.h>
 
 using namespace std;
 using namespace boost;
@@ -93,6 +96,12 @@ using namespace H;
  */
 #define EVENT_NODE_DIR		"/dev/input"
 
+/** 
+ * \def   LIRC_DEV
+ * Default path to the LIRC device node
+ */
+#define LIRC_DEV		"/dev/lirc/0"
+
 ////////////////////////////////////////////////////////////////////////////
 // Statics
 ///////////////////////////////////////
@@ -114,14 +123,17 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	bool		getInitialized() { return python::call_method<bool>(self, "getInitialized"); }
 	void		initialize()	 { return python::call_method<void>(self, "initialize"); }
 	void		onDeregisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
+	void		onDeregisterDevice(GizmoLIRC const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onDeregisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onDeregisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
+	void		onEvent(GizmoEventLIRC const * Event, GizmoLIRC const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventWindowFocus const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	GizmoClass	onQueryDeviceType(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceInformation); };
 	void		onRegisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
+	void		onRegisterDevice(GizmoLIRC const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 
@@ -224,6 +236,11 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
  	class_< GizmoEventCPU, bases<GizmoEvent> >("GizmoEventCPU")
 		;
 			
+	/// GizmoEventPowermate Python Class Export
+	class_< GizmoEventLIRC, bases<GizmoEvent> >("GizmoEventLIRC")
+		.def_readonly("EventString", &GizmoEventLIRC::EventString)
+		;
+		
 	/// GizmoLinuxInputDevice Python Class Export
 	class_<GizmoLinuxInputDevice>("GizmoLinuxInputDevice", init<int>())
 		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
@@ -264,6 +281,10 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	// Device class exports
 	///////////////////////////////////////
 	
+	/// GizmoLIRC Python Class Export
+	class_< GizmoLIRC, bases<Gizmo> >("GizmoLIRC", init<const DeviceInfo &>())
+		;
+	
 	/// GizmoPowermate Python Class Export
 	class_< GizmoPowermate, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoPowermate", init<const DeviceInfo &>())
 		;
@@ -286,6 +307,7 @@ GizmoDaemon::GizmoDaemon() {
 	mConfigDir = SCRIPT_DIR;
 	mEventsDir = EVENT_NODE_DIR;
 	mInitialized = false;
+	mLircDev = LIRC_DEV;
 	mpPyDispatcher = NULL;
 }
 
@@ -327,12 +349,12 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoPowermate const *>(pGizmo.get()));
 			break; 
  		case GIZMO_CLASS_LIRC:
-			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
-			break;
-		case GIZMO_CLASS_ATIX10:
-			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoLIRC const *>(pGizmo.get()));
 			break;
 		case GIZMO_CLASS_CPU:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoCPU const *>(pGizmo.get()));
+			break;
+		case GIZMO_CLASS_ATIX10:
 			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
 			break;
 		}		
@@ -432,9 +454,6 @@ void GizmoDaemon::initGizmod() {
 		throw H::Exception("Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
 	}
 	
-	// init the X11FocusWatcher
-	X11FocusWatcher::init();
-
 	// register all the devices
 	try {
 		registerDevices();
@@ -448,7 +467,11 @@ void GizmoDaemon::initGizmod() {
 	} catch (H::Exception & e) {
 		cerr << e.getExceptionMessage() << endl;
 	}
+			
+	// init the X11FocusWatcher
+	X11FocusWatcher::init();
 	
+	// success
 	mInitialized = true;
 }
 
@@ -484,7 +507,7 @@ void GizmoDaemon::initPython() {
 		
 		// execute the main script code
 		string ScriptFile = mConfigDir + SCRIPT_DISPATCHER;
-		cdbg << "Executing Dispatcher Python Script [" << ScriptFile << "]..." << endl;
+		cdbg1 << "Executing Dispatcher Python Script [" << ScriptFile << "]..." << endl;
 		FILE * ifScript = fopen(ScriptFile.c_str(), "r");
 		if (!ifScript)
 			throw H::Exception("Failed to Open Python Script [" + ScriptFile + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
@@ -505,7 +528,7 @@ void GizmoDaemon::initPython() {
 							
 		// execute the user script code
 		ScriptFile = mConfigDir + SCRIPT_USER;
-		cdbg << "Executing User Python Script [" << ScriptFile << "]..." << endl;
+		cdbg1 << "Executing User Python Script [" << ScriptFile << "]..." << endl;
 		ifScript = fopen(ScriptFile.c_str(), "r");
 		if (!ifScript)
 			throw H::Exception("Failed to Open Python Script [" + ScriptFile + "] for Reading", __FILE__, __FUNCTION__, __LINE__);
@@ -541,6 +564,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	ConfigurationOptions.add_options()
 		("configdir,c",		value<string>(),	"Set config scripts directory") 
 		("eventsdir,e",		value<string>(),	"Set event node directory (default: " EVENT_NODE_DIR ")")
+		("lircdev,l",		value<string>(),	"Set LIRC device node (default: " LIRC_DEV ")")
 		;
         
         // hiGizmoDaemonn options
@@ -588,6 +612,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		return false;
 	}
 	if (VarMap.count("version")) {
+		cout << endl;
 		return false;
 	}
 	if (VarMap.count("debug")) {
@@ -609,6 +634,10 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		if (mEventsDir[mEventsDir.length() - 1] != '/')
 			mEventsDir += "/";
 		cdbg << "Event Node Directory set to [" << VarMap["eventsdir"].as<string>() << "]" << endl;
+	}
+	if (VarMap.count("lircdev")) {
+		mLircDev = VarMap["lircdev"].as<string>();
+		cdbg << "LIRC Device Node set to [" << VarMap["lircdev"].as<string>() << "]" << endl;
 	}
 
 	cout << endl;
@@ -641,6 +670,7 @@ void GizmoDaemon::loadUserScripts() {
 	// load the user scripts (and lock the mutex)
 	mutex::scoped_lock lock(mMutexScript);
 	apply_func(UserScripts, &GizmoDaemon::loadUserScriptsFunctor, this);
+	cout << endl;
 }
 
 /**
@@ -741,8 +771,16 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
-		case GIZMO_CLASS_LIRC:
-			break;
+		case GIZMO_CLASS_LIRC: {
+			std::vector< boost::shared_ptr<GizmoEventLIRC> > EventVector;
+			GizmoLIRC * pGizmo = static_cast<GizmoLIRC const *>(pUnknownGizmo.get());
+			GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
+			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+				mutex::scoped_lock lock(mMutexScript);
+				pGizmo->processEvent(EventVector[lp].get());
+				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
+			}
+			break; }
 		case GIZMO_CLASS_ATIX10:
 			break;
 		case GIZMO_CLASS_CPU:
@@ -760,7 +798,7 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
  * \param pWatchee The Watchee that triggered the event
  */
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee) {
-	cdbg << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+	cdbg1 << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);
@@ -776,7 +814,7 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
 		case GIZMO_CLASS_LIRC: {
-			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+			shared_ptr<GizmoLIRC> pGizmo(new GizmoLIRC(*pWatchee));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
@@ -910,19 +948,25 @@ void GizmoDaemon::onSignalUnknown(int Signal) {
  * and inserts them into Python for use by the user
  */
 void GizmoDaemon::registerDevices() {
-	cdbg << "Registering Devices..." << endl;
+	cdbg1 << "Registering Devices..." << endl;
 	
 	// register input event devices
 	registerInputEventDevices();
 	
+	// register the LIRC device
+	registerLircDevice();
+	
 	// register CPU usage device
+	//registerCPUDevice();
+	
+	cout << endl;
 }
 
 /**
  * \brief  Register all of the input event devices with Gizmo Daemon
  */
 void GizmoDaemon::registerInputEventDevices() {
-	cdbg << "Registering Input Event Devices in [" << mEventsDir << "]" << endl;
+	cdbg1 << "Registering Input Event Devices in [" << mEventsDir << "]" << endl;
 	path EventsDirPath(mEventsDir);
 	if (!filesystem::exists(EventsDirPath))
 		throw H::Exception("Input Event dir [" + mEventsDir + "] does NOT exist or permissions are wrong!", __FILE__, __FUNCTION__, __LINE__);
@@ -944,5 +988,28 @@ void GizmoDaemon::registerInputEventDevices() {
 	
 	// sort the list of input event nodes
 	sort_all(eventsFiles);
-	apply_func_args(eventsFiles, &FileEventWatcher::addFileToWatch, this, WATCH_INOUT);
+	apply_func_args(eventsFiles, &FileEventWatcher::addFileToWatch, this, WATCH_INOUT, "Unknown");
+}
+
+/**
+ * \brief  Register the LIRC device
+ */
+void GizmoDaemon::registerLircDevice() {
+	cdbg1 << "Registering LIRC device node [" << mLircDev << "]" << endl;
+	path LircDevPath(mLircDev);
+	if (!filesystem::exists(LircDevPath)) {
+		cdbg << "LIRC device node [" + mLircDev + "] does not exist -- disabling LIRC support" << endl;
+		return;
+	}
+	int tfd;
+	if ((tfd = open(mLircDev.c_str(), O_RDONLY)) == -1) {
+		cdbg << "Could not connect to LIRC device node [" + mLircDev + "] -- disabling LIRC support" << endl;
+		cdbg << "    - Check permissions" << endl;
+		cdbg << "    - Ensure lircd is not running" << endl;
+		return;
+	}
+	close(tfd);
+	
+	// register the directory itself
+	addFileToWatch(mLircDev, WATCH_IN, "LIRC");
 }

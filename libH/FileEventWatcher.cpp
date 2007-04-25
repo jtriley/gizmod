@@ -192,8 +192,9 @@ FileWatchee::~FileWatchee() {
  * \brief Add a file to watch for events
  * \param FileName Absolute path of the file to watch
  * \param WatchType Type of watch to perform on the file
+ * \param DefaultDeviceName Default device name if the device does not support having a name
  */
-boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string FileName, FileWatchType WatchType) {
+boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string FileName, FileWatchType WatchType, std::string DefaultDeviceName) {
 	// make sure we're not already watching this file
 	shared_ptr<FileWatchee> pDupWatchee = getWatcheeByPath(FileName);
 	if (pDupWatchee) {
@@ -262,12 +263,14 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 		}
 		
 		// get the device name
-		if (ioctl(fd, EVIOCGNAME(sizeof(DeviceName)), DeviceName) < 0)
-			throw H::Exception("Failed to Get Device Name for [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);
+		if (ioctl(fd, EVIOCGNAME(sizeof(DeviceName)), DeviceName) < 0) {
+			cdbg3 << "Failed to Get Device Name for [" + FileName + "]" << endl;
+			strcpy(DeviceName, DefaultDeviceName.c_str());
+		}
 		
 		// get the device id information
 		if (ioctl(fd, EVIOCGID, DeviceIDs) < 0)
-			throw H::Exception("Failed to Get Device IDs for [" + FileName + "]", __FILE__, __FUNCTION__, __LINE__);		
+			cdbg3 << "Failed to Get Device IDs for [" + FileName + "]" << endl;			
 	}
 	
 	cdbg1 << "Watching Device [" << FileName << "]: " << DeviceName << endl;
@@ -562,7 +565,7 @@ void FileEventWatcher::watchForFileEvents() {
 		return;
 	}
 	
-	cdbg << "FileEventWatcher :: Watching [" << (int) mPollFDs.size() << " Files] for Events..." << endl;
+	cdbg1 << "FileEventWatcher :: Watching [" << (int) mPollFDs.size() << " Files] for Events..." << endl;
 	mPolling = true;
 	while (mPolling) {
 		// poll the open files

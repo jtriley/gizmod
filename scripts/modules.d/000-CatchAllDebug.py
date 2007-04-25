@@ -14,6 +14,7 @@
 ##########################
 
 from GizmoDaemon import *
+import sys
 
 ############################
 # CatchAllDebug Class definition
@@ -34,8 +35,13 @@ class CatchAllDebug:
 		"""
 	
 		if Gizmod.DebugEnabled:
-			if Event.EventType == "WindowFocus":
+			if Event.Class == GizmoEventClass.WindowFocus:
 				print "onEvent: " + str(Event.EventType) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
+			elif Event.Class == GizmoEventClass.LIRC:
+				sys.stdout.write("onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(len(Event.EventString)) + "]")
+				for char in Event.EventString:
+					sys.stdout.write(" " + str(ord(char)))
+				sys.stdout.write("\n")
 			else:
 				if Event.Type == GizmoEventType.EV_KEY:
 					print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))
@@ -52,7 +58,7 @@ class CatchAllDebug:
 		Default Constructor
 		"""
 		
-		print "Registered User Script: " + self.__class__.__name__
+		print "Loaded User Script: " + self.__class__.__name__
 
 ############################
 # CatchAllDebug class end

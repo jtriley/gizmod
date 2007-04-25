@@ -46,7 +46,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		user specific initialization code to be executed during program startup.
 		"""
 
-		print "GizmoDaemon Config Script v" + Gizmod.getVersion()  + " -- Initializing"
+		#print "GizmoDaemon Config Script v" + Gizmod.getVersion()  + " -- Initializing"
 		self.initialized = True
 		
 	def onDeregisterDevice(self, Device):

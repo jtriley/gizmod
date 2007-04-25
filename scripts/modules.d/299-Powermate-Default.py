@@ -44,7 +44,7 @@ class PowermateDefault:
 		Default Constructor
 		"""
 		
-		print "Registered User Script: " + self.__class__.__name__
+		print "Loaded User Script: " + self.__class__.__name__
 
 ############################
 # PowermateDefault class end
