@@ -42,14 +42,14 @@ class GizmoRegistrar:
 		base on the actual type of the device.
 		"""
 
-		print "Register: " + self.Device.DeviceName
+		print "Registered Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 
 	def handleDeviceRemoval(self):
 		"""
 		Remove the appropriate device from our internal list of devices
 		"""
 
-		print "Remove: " + self.Device.DeviceName
+		print "Removed Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 		
 	############################
 	# Private Functions

@@ -52,7 +52,7 @@ using namespace H;
 /**
  * \brief GizmoEventCPU Default Constructor
  */
-GizmoEventCPU::GizmoEventCPU() {
+GizmoEventCPU::GizmoEventCPU() : GizmoEvent(GIZMO_EVENTCLASS_CPU) {
 }
 
 /**

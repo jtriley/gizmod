@@ -55,13 +55,13 @@ using namespace H;
 /**
  * \brief GizmoEventPowermate Default Constructor
  */
-GizmoEventPowermate::GizmoEventPowermate() {
+GizmoEventPowermate::GizmoEventPowermate() : GizmoEvent(GIZMO_EVENTCLASS_POWERMATE) {
 }
 
 /**
  * \brief GizmoEventPowermate Init Constructor
  */
-GizmoEventPowermate::GizmoEventPowermate(struct input_event const & InputEvent) : GizmoLinuxInputEvent(InputEvent) {
+GizmoEventPowermate::GizmoEventPowermate(struct input_event const & InputEvent) : GizmoEvent(GIZMO_EVENTCLASS_POWERMATE), GizmoLinuxInputEvent(InputEvent) {
 }
 
 /**

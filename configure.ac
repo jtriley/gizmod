@@ -134,6 +134,7 @@ AC_CONFIG_FILES([
 	libH/Makefile
 	gizmod/Makefile
 	scripts/Makefile
+	scripts/modules.d/Makefile
 ])
 AC_OUTPUT
 

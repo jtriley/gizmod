@@ -27,6 +27,8 @@
 */
 
 #include "GizmoPowermate.hpp"
+#include "GizmoEventPowermate.hpp"
+#include "GizmoKeyDefs.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <boost/shared_ptr.hpp>
@@ -79,4 +81,21 @@ unsigned char GizmoPowermate::getLEDValue() {
  */
 std::string GizmoPowermate::getGizmoType() {
 	return GIZMO_POWERMATE_TYPE;
+}
+
+/**
+ * \brief  Process an event
+ * \param  Event The event to process
+ */
+void GizmoPowermate::processEvent(GizmoEvent * pEvent) {
+	GizmoEventPowermate * pPowermateEvent = static_cast<GizmoEventPowermate *>(pEvent);
+	
+	switch (pPowermateEvent->Type) {
+	case EV_KEY:
+		setGizmoKeyState(pPowermateEvent->Code, pPowermateEvent->Value);
+		break;
+	default:
+		// do nothing
+		break;
+	}
 }

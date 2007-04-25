@@ -55,13 +55,13 @@ using namespace H;
 /**
  * \brief GizmoEventStandard Default Constructor
  */
-GizmoEventStandard::GizmoEventStandard() {
+GizmoEventStandard::GizmoEventStandard() : GizmoEvent(GIZMO_EVENTCLASS_STANDARD) {
 }
 
 /**
  * \brief GizmoEventStandard Init Constructor
  */
-GizmoEventStandard::GizmoEventStandard(struct input_event const & InputEvent) : GizmoLinuxInputEvent(InputEvent) {	
+GizmoEventStandard::GizmoEventStandard(struct input_event const & InputEvent) : GizmoEvent(GIZMO_EVENTCLASS_STANDARD), GizmoLinuxInputEvent(InputEvent) {
 }
 
 /**

@@ -1,1 +1,1 @@
-SUBDIRS=libH gizmod
+SUBDIRS=libH gizmod scripts scripts/modules.d

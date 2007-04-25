@@ -56,6 +56,7 @@ Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo) :
 	DeviceInfo(deviceInfo)
 {
 	mClass = Class;
+	memset(mKeyState, 0, sizeof(int) * GIZMO_KEY_MAX);
 }
 
 /**
@@ -80,6 +81,15 @@ GizmoClass Gizmo::getGizmoClass() {
 }
 
 /**
+ * \brief  Get the class of the Gizmo
+ * \param  Key The key to inquire upon
+ * \return The value of the button (0 == off, 1 == on, 2 == repeating)
+ */
+int Gizmo::getGizmoKeyState(GizmoKey Key) {
+	return mKeyState[Key];
+}
+
+/**
  * \brief  Get the type of Gizmo
  * \return Type of the Gizmo
  *
@@ -88,4 +98,21 @@ GizmoClass Gizmo::getGizmoClass() {
  */
 std::string Gizmo::getGizmoType() {
 	return GIZMO_TYPE_UNSPECIFIED;
+}
+
+/**
+ * \brief  Process an event
+ * \param  Event The event to process
+ */
+void Gizmo::processEvent(GizmoEvent * pEvent) {
+	// override me
+}
+
+/**
+ * \brief  Set a keystate of the Gizmo
+ * \param  Key The key to change states
+ * \param  State The new state (0 == off, 1 == on, 2 == repeating)
+ */
+void Gizmo::setGizmoKeyState(GizmoKey Key, int State) {
+	mKeyState[Key] = State;
 }

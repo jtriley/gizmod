@@ -52,7 +52,8 @@ using namespace H;
 /**
  * \brief GizmoEvent Default Constructor
  */
-GizmoEvent::GizmoEvent() {
+GizmoEvent::GizmoEvent(GizmoEventClass Class) {
+	mClass = Class;
 }
 
 /**
@@ -64,6 +65,17 @@ GizmoEvent::~GizmoEvent() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Get the class of Gizmo
+ * \return GizmoClass of the Gizmo
+ * 
+ * Note that this is also implemented in Python as a property so it can
+ * be accessed as a variable by referencing ".GizmoClass"
+ */
+GizmoEventClass GizmoEvent::getEventClass() {
+	return mClass;
+}
 
 /**
  * \brief  Get the type of Event

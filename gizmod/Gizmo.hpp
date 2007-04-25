@@ -33,6 +33,8 @@
 #include "config.h"
 #endif
 
+#include "GizmoEvent.hpp"
+#include "GizmoKeyDefs.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include <string>
 
@@ -77,7 +79,10 @@ class Gizmo : public H::DeviceInfo {
 public:
 	// public functions
 	GizmoClass			getGizmoClass();		///< Get the class of the Gizmo
+	int				getGizmoKeyState(GizmoKey Key);	///< Get a key state
 	virtual std::string		getGizmoType();			///< Get the type of the Gizmo
+	virtual void			processEvent(GizmoEvent * pEvent); ///< Process an event
+	void				setGizmoKeyState(GizmoKey Key, int State); ///< Set a keystate of the Gizmo
 	
 	// construction / deconstruction
 	Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo);	///< Default Constructor
@@ -88,6 +93,7 @@ protected:
 	
 	// private member variables
 	GizmoClass			mClass;				///< Class of the Gizmo
+	int				mKeyState[GIZMO_KEY_MAX];	///< Gizmos's key states
 };
 
 #endif // __Gizmo_h

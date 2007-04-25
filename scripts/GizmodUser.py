@@ -18,7 +18,7 @@
 # - There exists an object "Dispatcher" that is defined in Gizmod.py as 
 #   class GizmodDispatcher
 
-print
-print "From Python to C++ Gizmod Version v" + str(Gizmod.getVersion())
-print "Dispatcher Initialized from Python: " + str(Dispatcher.getInitialized())
-print 
+#print
+#print "From Python to C++ Gizmod Version v" + str(Gizmod.getVersion())
+#print "Dispatcher Initialized from Python: " + str(Dispatcher.getInitialized())
+#print 

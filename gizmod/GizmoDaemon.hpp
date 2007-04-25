@@ -62,6 +62,9 @@ class GizmoDaemon : public H::FileEventWatcher, H::SignalHandler, X11FocusWatche
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
+	X11FocusEvent 	 		getCurrentFocus();	///< Get currently focused window
+	bool				getDebugEnabled();	///< Is debug mode enabled?
+	GizmodEventHandlerInterface *	getDispatcher();	///< Get the event handler / dispatcher
 	boost::shared_ptr<Gizmo>	getGizmoByFileName(std::string FileName); ///< Get a Gizmo by its file name
 	std::string			getVersion();		///< Get version string
 	void				initGizmod();		///< Initialize GizmoDaemon Evolution
@@ -91,16 +94,21 @@ private:
 	void 				deleteGizmo(std::string FileName); ///< Delete a Gizmo
 	std::string	 		getProps();		///< Get version information
 	void				initPython();		///< Initialize Python
+	void 				loadUserScripts();	///< Load user scripts
+	void 				loadUserScriptsFunctor(std::string UserScript); ///< Load user scripts functor
 	void 				registerDevices();	///< Register all the attached system devices
 	void				registerInputEventDevices(); ///< Register input event devices (/dev/input/*)
 	
 	// private member vars
 	std::string			mConfigDir;		///< Configuration scripts directory
+	X11FocusEvent			mCurrentFocus;		///< Currently focused window
 	std::string			mEventsDir;		///< Event node directory
 	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
 	bool				mInitialized;		///< Has GizmoDaemon been properly initialized?
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
-
+	boost::python::object		mPyMainModule;		///< The Python Main Module
+	boost::python::object		mPyMainNamespace;	///< The Python Main Namespace
+	
 	// static private member vars
 	static boost::mutex		mMutexScript;		///< Mutex for the python script
 };

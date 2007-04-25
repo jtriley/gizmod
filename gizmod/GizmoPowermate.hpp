@@ -55,6 +55,7 @@ public:
 	// public functions
 	unsigned char			getLEDValue();			///< Get the Powermate's LED value
 	std::string			getGizmoType();			///< Get the type of the Gizmo
+	virtual void			processEvent(GizmoEvent * pEvent); ///< Process an event
 	
 	// construction / deconstruction	
 	GizmoPowermate(const H::DeviceInfo & deviceInfo);		///< Default Constructor

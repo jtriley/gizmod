@@ -27,6 +27,7 @@
 */
 
 #include "GizmoStandard.hpp"
+#include "GizmoEventStandard.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <boost/shared_ptr.hpp>
@@ -71,4 +72,21 @@ GizmoStandard::~GizmoStandard() {
  */
 std::string GizmoStandard::getGizmoType() {
 	return GIZMO_STANDARD_TYPE;
+}
+
+/**
+ * \brief  Process an event
+ * \param  Event The event to process
+ */
+void GizmoStandard::processEvent(GizmoEvent * pEvent) {
+	GizmoEventStandard * pStandardEvent = static_cast<GizmoEventStandard *>(pEvent);
+	
+	switch (pStandardEvent->Type) {
+	case EV_KEY:
+		setGizmoKeyState(pStandardEvent->Code, pStandardEvent->Value);
+		break;
+	default:
+		// do nothing
+		break;
+	}
 }

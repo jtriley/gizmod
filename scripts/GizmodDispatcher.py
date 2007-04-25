@@ -82,16 +82,15 @@ class GizmodDispatcher(GizmodEventHandler):
 		is.  See the C++ API documention on the specific Gizmo* type for more details
 		"""
 		
-		if Event.EventType == "WindowFocus":
-			print "onEvent: " + str(Event.EventType) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
-		elif Event.EventType == "Powermate":
-			pass
-		else:
-			if Event.Type == GizmoEventType.EV_KEY:
-				print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))
-			else:
-				print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] c: " + str(hex(Event.RawCode)) +  " Val: " + str(hex(Event.Value))
-		
+		# Pass on the event to the user scripts in order of their priority
+		#
+		# If a user script returns True (signalling that it has handled
+		# an event, then it is not passed on to further scripts and the event
+		# chain is stopped)
+		for UserScript in self.userScripts:
+			if UserScript.onEvent(Event, Gizmo):
+				break
+				
 	def onQueryDeviceType(self, DeviceInformation):
 		"""
 		This method is triggered when a new device is being registered (either at startup
@@ -133,6 +132,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		
 		# Module specific initialization
 		self.initialized = False
+		self.userScripts = list()
 
 ############################
 # GizmodDispatcher class end

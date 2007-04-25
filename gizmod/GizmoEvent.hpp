@@ -39,6 +39,30 @@
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
 ///////////////////////////////////////
+
+/**
+ * \enum  GizmoEventClass
+ * \brief These values tell GizmoDaemon what classes to use to represent the devices during events
+ *
+ * These values are repsented in Python by the same extension, under the enum class GizmoEventClass
+ * For example: GizmoEventClass.Standard, and GizmoEventClass.Powermate
+ *
+ * GIZMO_EVENTCLASS_STANDARD is the default class and is used for all devices except ones with
+ * 	special handlers
+ * GIZMO_EVENTCLASS_POWERMATE is the class used for Griffin PowerMate, and SoundKnob devices
+ * GIZMO_EVENTCLASS_LIRC is used with LIRC (Infrared) devices (such as remote controls)
+ * GIZMO_EVENTCLASS_ATIX10 is used with the ATI X10 RF remote control
+ * GIZMO_EVENTCLASS_WINDOWFOCUS is triggered when a Window Focus event happens
+ * GIZMO_EVENTCLASS_CPU is used with the CPU Usage device
+ */
+typedef enum {
+	GIZMO_EVENTCLASS_STANDARD,
+	GIZMO_EVENTCLASS_POWERMATE,
+	GIZMO_EVENTCLASS_LIRC,
+	GIZMO_EVENTCLASS_ATIX10,
+	GIZMO_EVENTCLASS_WINDOWFOCUS,
+	GIZMO_EVENTCLASS_CPU
+} GizmoEventClass;
 	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
@@ -54,16 +78,18 @@
 class GizmoEvent {
 public:
 	// public functions
+	GizmoEventClass			getEventClass();		///< Get the class of the Gizmo
 	virtual std::string		getEventType();			///< Get the type of the Event
 	
 	// construction / deconstruction
-	GizmoEvent();							///< Default Constructor
+	GizmoEvent(GizmoEventClass Class);				///< Default Constructor
 	virtual ~GizmoEvent();						///< Destructor
 	
 protected:
 	// private functions
 	
 	// private member variables
+	GizmoEventClass			mClass;				///< Class of the Gizmo
 };
 
 #endif // __GizmoEvent_h

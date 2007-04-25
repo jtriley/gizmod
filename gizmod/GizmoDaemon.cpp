@@ -70,6 +70,12 @@ using namespace H;
 #define SCRIPT_DIR		PACKAGE_PREFIX "/share/gizmo/scripts/"
 
 /** 
+ * \def   USER_SCRIPT_DIR
+ * The default path of the modules.d dir
+ */
+#define USER_SCRIPT_DIR		"modules.d"
+
+/** 
  * \def   SCRIPT_DISPATCHER
  * The path of the initial config script
  */
@@ -123,7 +129,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 };
 
 /**
- * \brief Python module definition
+ * \brief  Python module definition
  */
 BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/////////////////////////////////////////////////////////////////////
@@ -138,6 +144,16 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.value("ATIX10",	GIZMO_CLASS_ATIX10)
 		.value("Standard", 	GIZMO_CLASS_STANDARD)
 		;
+	
+	/// GizmoEventClass enum export
+	enum_<GizmoEventClass>("GizmoEventClass")
+		.value("CPU", 		GIZMO_EVENTCLASS_CPU)
+		.value("Powermate", 	GIZMO_EVENTCLASS_POWERMATE)
+		.value("LIRC",	 	GIZMO_EVENTCLASS_LIRC)
+		.value("ATIX10",	GIZMO_EVENTCLASS_ATIX10)
+		.value("WindowFocus",	GIZMO_EVENTCLASS_WINDOWFOCUS)
+		.value("Standard", 	GIZMO_EVENTCLASS_STANDARD)
+		;	
 	
 	/// X11FocusEventType enum export
 	enum_<X11FocusEventType>("X11FocusEventType")
@@ -165,13 +181,19 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// Gizmo Python Class Export
 	class_< Gizmo, bases<DeviceInfo> >("Gizmo", init<GizmoClass, const DeviceInfo &>())
 		.def("getGizmoClass", &Gizmo::getGizmoClass)
-		.add_property("GizmoClass", &Gizmo::getGizmoClass)				
+		.add_property("Class", &Gizmo::getGizmoClass)				
+		.def("getKeyState", &Gizmo::getGizmoKeyState)
 		.def("getGizmoType", &Gizmo::getGizmoType)
-		.add_property("GizmoType", &Gizmo::getGizmoType)
+		.add_property("Type", &Gizmo::getGizmoType)
+		.def("setKeyState", &Gizmo::setGizmoKeyState)
 		;
 				
 	/// GizmoDaemon Python Class Export
 	class_<GizmoDaemon>("PyGizmoDaemon")
+		.def("getCurrentFocus", &GizmoDaemon::getCurrentFocus)
+		.add_property("CurrentFocus", &GizmoDaemon::getCurrentFocus)
+		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)
+		.add_property("DebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.def("getVersion", &GizmoDaemon::getVersion)
 		.add_property("Version", &GizmoDaemon::getVersion)
 		;
@@ -191,7 +213,9 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 
 	/// GizmoEvent Python Class Export
- 	class_<GizmoEvent>("GizmoEvent")
+ 	class_<GizmoEvent>("GizmoEvent", init<GizmoEventClass>())
+		.def("getEventClass", &GizmoEvent::getEventClass)
+		.add_property("Class", &GizmoEvent::getEventClass)
 		.def("getEventType", &GizmoEvent::getEventType)
 		.add_property("EventType", &GizmoEvent::getEventType)
 		;
@@ -248,7 +272,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 ///////////////////////////////////////
 
 /**
- * \brief Default Constructor
+ * \brief  Default Constructor
  */
 GizmoDaemon::GizmoDaemon() {
 	cout << getProps();
@@ -260,7 +284,7 @@ GizmoDaemon::GizmoDaemon() {
 }
 
 /**
- * \brief Default Destructor
+ * \brief  Default Destructor
  */
 GizmoDaemon::~GizmoDaemon() {
 	cdbg << "GizmoDaemon Shutting Down..." << endl << endl;
@@ -271,8 +295,8 @@ GizmoDaemon::~GizmoDaemon() {
 ///////////////////////////////////////
 
 /**
- * \brief Delete a Gizmo
- * \param FileName The filename of the Gizmo to be deleted
+ * \brief  Delete a Gizmo
+ * \param  FileName The filename of the Gizmo to be deleted
  */
 void GizmoDaemon::deleteGizmo(std::string FileName) {
 	// remove from map
@@ -316,13 +340,43 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 }
 
 /**
- * \brief Enter the main run loop
+ * \brief  Enter the main run loop
  */
 void GizmoDaemon::enterLoop() {
 	if (!mInitialized)
 		throw H::Exception("You must initialize GizmoDaemon first!", __FILE__, __FUNCTION__, __LINE__);
 	
 	watchForFileEvents();
+}
+
+/**
+ * \brief  Get currently focused window
+ * \return The X11FocusEvent containing information about the currently focused window
+ * 
+ * Note that this is also implemented in Python as a property so it can
+ * be accessed as a variable by referencing ".CurrentFocus"
+ */
+X11FocusEvent GizmoDaemon::getCurrentFocus() {
+	return mCurrentFocus;
+}
+
+/**
+ * \brief  Return whether debug mode is enabled or not
+ * \return True if enabled
+ * 
+ * Note that this is also implemented in Python as a property so it can
+ * be accessed as a variable by referencing ".DebugEnabled"
+ */
+bool GizmoDaemon::getDebugEnabled() {
+	return Debug::getDebugEnabled();
+}
+
+/**
+ * \brief  Get the event handler / dispatcher
+ * \return The dispatcher
+ */
+GizmodEventHandlerInterface * GizmoDaemon::getDispatcher() {
+	return mpPyDispatcher;
 }
 
 /**
@@ -335,14 +389,14 @@ boost::shared_ptr<Gizmo> GizmoDaemon::getGizmoByFileName(std::string FileName) {
 }
 
 /**
- * \brief Get the program's propers
+ * \brief  Get the program's propers
  */
 string GizmoDaemon::getProps() {
 	return "\nGizmoDaemon v" + getVersion() + " -- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n";
 }
 
 /**
- * \brief Get the program's version information
+ * \brief  Get the program's version information
  *
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".Version"
@@ -382,6 +436,13 @@ void GizmoDaemon::initGizmod() {
 		throw e;
 	}
 	
+	// load the user scripts
+	try {
+		loadUserScripts();
+	} catch (H::Exception & e) {
+		cerr << e.getExceptionMessage() << endl;
+	}
+	
 	mInitialized = true;
 }
 
@@ -395,22 +456,25 @@ void GizmoDaemon::initPython() {
 		Py_Initialize();
 		
 		cdbg1 << "Initializing Python Environment..." << endl;
-		object MainModule((handle<>(borrowed(PyImport_AddModule("__main__")))));
-		object MainNamespace = MainModule.attr("__dict__");
+		//object MainModule((handle<>(borrowed(PyImport_AddModule("__main__")))));
+		mPyMainModule = object((handle<>(borrowed(PyImport_AddModule("__main__")))));
+		mPyMainNamespace = mPyMainModule.attr("__dict__");
 		
 		// add Gizmo Daemon module automatically to the namespace
 		object GizmoDaemonModule( (handle<>(PyImport_ImportModule("GizmoDaemon"))) );
-		MainNamespace["GizmoDaemon"] = GizmoDaemonModule;
+		mPyMainNamespace["GizmoDaemon"] = GizmoDaemonModule;
 		
 		// create a new object so the script can access this object
 		scope(GizmoDaemonModule).attr("Gizmod") = ptr(this);
 		
 		// Modify the PYTHONPATH so import's work
-		string PathInsertion = "import sys\nsys.path.insert(0, \"" + mConfigDir + "\")\n";
+		string PathInsertion = 
+			"import sys\nsys.path.insert(0, \"" + mConfigDir + "\")\n" +
+			"sys.path.insert(0, \"" + mConfigDir + USER_SCRIPT_DIR + "/\")\n";
 		cdbg1 << "Modifying PYTHONPATH:\n" << PathInsertion << endl;
 		handle<> ignore_path_exec((PyRun_String(
 			PathInsertion.c_str(),
-			Py_file_input, MainNamespace.ptr(), MainNamespace.ptr())));
+			Py_file_input, mPyMainNamespace.ptr(), mPyMainNamespace.ptr())));
 		
 		// execute the main script code
 		string ScriptFile = mConfigDir + SCRIPT_DISPATCHER;
@@ -424,11 +488,11 @@ void GizmoDaemon::initPython() {
 		// Create the event dispatcher object so we can interact with it
 		cdbg1 << "Creating Dispatcher Object" << endl;
 		handle<> ignore_dispatcher_exec((PyRun_String(
-			"Dispatcher = GizmodDispatcher()\n",
-			Py_file_input, MainNamespace.ptr(), MainNamespace.ptr())));
+			"Dispatcher = GizmodDispatcher()\nGizmod.Dispatcher = Dispatcher\n",
+			Py_file_input, mPyMainNamespace.ptr(), mPyMainNamespace.ptr())));
 		
 		// Grab the event dispatcher object so we can interact with it
-		mpPyDispatcher = extract<GizmodEventHandlerInterface*>(MainNamespace["Dispatcher"]);
+		mpPyDispatcher = extract<GizmodEventHandlerInterface*>(mPyMainNamespace["Dispatcher"]);
 		
 		// Initialize the dispatcher object
 		mpPyDispatcher->initialize();
@@ -546,6 +610,62 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 }
 
 /**
+ * \brief Load user scripts
+ */
+void GizmoDaemon::loadUserScripts() {
+	cdbg1 << "Loading User Scripts..." << endl;
+	
+	path UserScriptPath(mConfigDir + USER_SCRIPT_DIR);
+	if (!filesystem::exists(UserScriptPath))
+		throw H::Exception("User script directory [" + mConfigDir + USER_SCRIPT_DIR + "] does NOT exist or permissions are wrong!", __FILE__, __FUNCTION__, __LINE__);
+		
+	// now register the event nodes
+	// get a file listing
+	std::vector<string> UserScripts;
+	directory_iterator endItr;
+	for (directory_iterator iter(mConfigDir + USER_SCRIPT_DIR); iter != endItr; iter ++) {
+		if ( (!filesystem::is_directory(*iter)) && (!filesystem::symbolic_link_exists(*iter)) ) {
+			UserScripts.push_back(iter->leaf());
+		}
+	}
+	
+	// sort the list of input event nodes
+	sort_all(UserScripts);
+	
+	// load the user scripts (and lock the mutex)
+	mutex::scoped_lock lock(mMutexScript);
+	apply_func(UserScripts, &GizmoDaemon::loadUserScriptsFunctor, this);
+}
+
+/**
+ * \brief Load user scripts functor
+ * \param UserScript The user script to load
+ */
+void GizmoDaemon::loadUserScriptsFunctor(std::string UserScript) {
+	// Note: Mutex is already locked!
+	
+	// make sure it's a python script, and remove extension
+	size_t dotPos = UserScript.rfind(".py");
+	if ( (dotPos == string::npos) || (dotPos != UserScript.length() - 3) )
+		return;
+	UserScript = UserScript.substr(0, dotPos);
+	cdbg1 << "Importing User Script [" << UserScript << "]" << endl;
+	
+	// Import the module
+	try {
+		string ImportModuleString = "__import__(\"" + UserScript + "\")\n";
+		cdbg2 << "Executing Python Code: " << ImportModuleString << endl;
+		handle<> ignore_path_exec((PyRun_String(
+			ImportModuleString.c_str(),
+			Py_file_input, mPyMainNamespace.ptr(), mPyMainNamespace.ptr())));
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to Load User Script [" + UserScript + "]", __FILE__, __FUNCTION__, __LINE__);
+	}
+}
+
+/**
  * \brief Event triggered when a new file is created
  * \param pWatchee The Watchee that triggered the event
  * \param FullPath The full (absolute) path of the new file
@@ -591,7 +711,7 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 		cdbg << "Unknown Event Detected on Device [" << pWatchee->DeviceName << "] of Length [" << (int) ReadBuffer.length() << "]" << endl;
 		return;
 	}
-		
+				
 	// create the event and dispatch it
 	try {
 		switch (pUnknownGizmo->getGizmoClass()) {
@@ -601,6 +721,7 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 			GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
 			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
 				mutex::scoped_lock lock(mMutexScript);
+				pGizmo->processEvent(EventVector[lp].get());
 				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
@@ -610,7 +731,8 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 			GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
 			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
 				mutex::scoped_lock lock(mMutexScript);
-				mpPyDispatcher->onEvent(EventVector[lp].get(), static_cast<GizmoPowermate const *>(pUnknownGizmo.get()));
+				pGizmo->processEvent(EventVector[lp].get());
+				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
 		case GIZMO_CLASS_LIRC:
@@ -678,6 +800,7 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 	//cdbg << "Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
 	try {
 		mutex::scoped_lock lock(mMutexScript);
+		mCurrentFocus = Event;
 		GizmoEventWindowFocus FocusEvent(Event);
 		mpPyDispatcher->onEvent(&FocusEvent);
 	} catch (error_already_set) {

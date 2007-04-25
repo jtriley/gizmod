@@ -79,6 +79,16 @@ int X11FocusWatcher::x11IOErrorHandler(Display * display) {
 ///////////////////////////////////////
 
 /** 
+ * \brief  X11FocusEvent Default Constructor
+ */
+X11FocusEvent::X11FocusEvent() {
+	EventType = X11FOCUSEVENT_IN;
+	WindowName = TITLE_UNKNOWN;
+	WindowNameFormal = WINDOW_UNKNOWN;
+	WindowClass = WINDOW_UNKNOWN;
+}
+
+/** 
  * \brief  X11FocusEvent Init Constructor
  */
 X11FocusEvent::X11FocusEvent(X11FocusEventType eventType, std::string windowName, std::string windowNameFormal, std::string windowClass) {

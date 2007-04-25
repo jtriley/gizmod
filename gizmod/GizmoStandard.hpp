@@ -54,6 +54,7 @@ class GizmoStandard : public Gizmo, public GizmoLinuxInputDevice {
 public:
 	// public functions
 	virtual std::string		getGizmoType();			///< Get the type of the Gizmo
+	virtual void			processEvent(GizmoEvent * pEvent); ///< Process an event
 	
 	// construction / deconstruction	
 	GizmoStandard(const H::DeviceInfo & deviceInfo);		///< Default Constructor

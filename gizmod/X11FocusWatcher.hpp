@@ -83,6 +83,7 @@ public:
 	// public functions
 
 	// construction / deconstruction
+	X11FocusEvent();
 	X11FocusEvent(X11FocusEventType eventType, std::string windowName, std::string windowNameFormal, std::string windowClass);
 	X11FocusEvent(X11FocusEvent const & Event);
 	virtual ~X11FocusEvent();
