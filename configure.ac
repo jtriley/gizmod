@@ -135,6 +135,7 @@ AC_CONFIG_FILES([
 	gizmod/Makefile
 	scripts/Makefile
 	scripts/modules.d/Makefile
+	scripts/modules.d/devices.lirc/Makefile
 ])
 AC_OUTPUT
 

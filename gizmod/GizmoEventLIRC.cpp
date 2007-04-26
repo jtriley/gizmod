@@ -33,6 +33,7 @@
 #include "../libH/Util.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
+#include <bitset>
 
 using namespace std;
 using namespace boost;
@@ -62,7 +63,13 @@ GizmoEventLIRC::GizmoEventLIRC() : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
  * \brief GizmoEventLIRC Init Constructor
  */
 GizmoEventLIRC::GizmoEventLIRC(std::string const & InputEvent) : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
-	EventString = InputEvent;
+	LIRCData = InputEvent;
+	
+	// create the bitstring	
+	for (size_t lp = 0; lp < LIRCData.length(); lp++) {
+		bitset<8> bits(LIRCData[lp]);
+		LIRCDataBitString += bits.to_string();
+	}
 }
 
 /**
@@ -81,7 +88,8 @@ GizmoEventLIRC::~GizmoEventLIRC() {
  * \param  Buffer The bufer to convert into events
  */
 void GizmoEventLIRC::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventLIRC> > & EventVector, H::DynamicBuffer<char> const & Buffer) {
-	EventVector.push_back(boost::shared_ptr<GizmoEventLIRC>(new GizmoEventLIRC(Buffer.getBuffer())));
+	string LIRCData(Buffer.getBuffer(), Buffer.length());
+	EventVector.push_back(boost::shared_ptr<GizmoEventLIRC>(new GizmoEventLIRC(LIRCData)));
 }
 
 /**

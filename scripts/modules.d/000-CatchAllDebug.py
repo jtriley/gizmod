@@ -16,6 +16,8 @@
 from GizmoDaemon import *
 import sys
 
+ENABLED=True
+
 ############################
 # CatchAllDebug Class definition
 ##########################
@@ -38,9 +40,10 @@ class CatchAllDebug:
 			if Event.Class == GizmoEventClass.WindowFocus:
 				print "onEvent: " + str(Event.EventType) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
 			elif Event.Class == GizmoEventClass.LIRC:
-				sys.stdout.write("onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(len(Event.EventString)) + "]")
-				for char in Event.EventString:
-					sys.stdout.write(" " + str(ord(char)))
+				sys.stdout.write("onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(len(Event.LIRCData)) + "]")
+				for char in Event.LIRCData:
+					sys.stdout.write(" " + str(hex(ord(char))))
+				sys.stdout.write(" | " + Event.LIRCDataBitString)
 				sys.stdout.write("\n")
 			else:
 				if Event.Type == GizmoEventType.EV_KEY:
@@ -65,4 +68,5 @@ class CatchAllDebug:
 ##########################
 
 # register the user script
-Gizmod.Dispatcher.userScripts.append(CatchAllDebug())
+if ENABLED:
+	Gizmod.Dispatcher.userScripts.append(CatchAllDebug())

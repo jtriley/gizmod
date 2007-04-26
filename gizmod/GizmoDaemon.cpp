@@ -238,7 +238,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 			
 	/// GizmoEventPowermate Python Class Export
 	class_< GizmoEventLIRC, bases<GizmoEvent> >("GizmoEventLIRC")
-		.def_readonly("EventString", &GizmoEventLIRC::EventString)
+		.def_readonly("LIRCData", &GizmoEventLIRC::LIRCData)
+		.def_readonly("LIRCDataBitString", &GizmoEventLIRC::LIRCDataBitString)
 		;
 		
 	/// GizmoLinuxInputDevice Python Class Export
@@ -424,6 +425,32 @@ string GizmoDaemon::getProps() {
 }
 
 /**
+ * \brief  Get all the directories inside the user script dir
+ *
+ * This is for modifying the import path so that users can 
+ * create directories inside the user script dir of scripts
+ * to be imported
+ */
+std::string GizmoDaemon::getUserScriptDirPaths() {
+	string ret;
+	string UserScriptDir = mConfigDir + USER_SCRIPT_DIR;
+	cdbg1 << "Adding [" << UserScriptDir << "] to the System Path" << endl;
+	path UserScriptPath(UserScriptDir);
+	if (!filesystem::exists(UserScriptPath))
+		throw H::Exception("User Script dir [" + UserScriptDir + "] does NOT exist or permissions are wrong!", __FILE__, __FUNCTION__, __LINE__);
+		
+	// now register the event nodes
+	// get a file listing
+	directory_iterator endItr;
+	for (directory_iterator iter(UserScriptDir); iter != endItr; iter ++) {
+		if (filesystem::is_directory(*iter))
+			ret += "sys.path.insert(0, \"" + iter->string() + "\")\n";
+	}
+	
+	return ret;
+}
+
+/**
  * \brief  Get the program's version information
  *
  * Note that this is also implemented in Python as a property so it can
@@ -499,7 +526,8 @@ void GizmoDaemon::initPython() {
 		// Modify the PYTHONPATH so import's work
 		string PathInsertion = 
 			"import sys\nsys.path.insert(0, \"" + mConfigDir + "\")\n" +
-			"sys.path.insert(0, \"" + mConfigDir + USER_SCRIPT_DIR + "/\")\n";
+			"sys.path.insert(0, \"" + mConfigDir + USER_SCRIPT_DIR + "/\")\n" +
+			getUserScriptDirPaths();
 		cdbg1 << "Modifying PYTHONPATH:\n" << PathInsertion << endl;
 		handle<> ignore_path_exec((PyRun_String(
 			PathInsertion.c_str(),

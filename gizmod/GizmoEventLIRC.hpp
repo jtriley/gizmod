@@ -35,6 +35,7 @@
 
 #include "GizmoEvent.hpp"
 #include <string>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,7 +55,8 @@
 class GizmoEventLIRC : public GizmoEvent {
 public:
 	// public variables
-	std::string			EventString;			///< Event string
+	std::string			LIRCData;			///< Event string
+	std::string			LIRCDataBitString;		///< Event string as bits
 	
 	// public functions
 	std::string			getEventType();			///< Get the type of the Event

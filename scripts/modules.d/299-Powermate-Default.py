@@ -15,6 +15,8 @@
 
 from GizmoDaemon import *
 
+ENABLED=True
+
 ############################
 # PowermateDefault Class definition
 ##########################
@@ -51,4 +53,5 @@ class PowermateDefault:
 ##########################
 
 # register the user script
-Gizmod.Dispatcher.userScripts.append(PowermateDefault())
+if ENABLED:
+	Gizmod.Dispatcher.userScripts.append(PowermateDefault())

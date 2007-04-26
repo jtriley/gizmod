@@ -93,6 +93,7 @@ private:
 	// private functions
 	void 				deleteGizmo(std::string FileName); ///< Delete a Gizmo
 	std::string	 		getProps();		///< Get version information
+	std::string			getUserScriptDirPaths();///< Get all of the dirs inside the user script dir
 	void				initPython();		///< Initialize Python
 	void 				loadUserScripts();	///< Load user scripts
 	void 				loadUserScriptsFunctor(std::string UserScript); ///< Load user scripts functor

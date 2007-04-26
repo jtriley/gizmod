@@ -15,6 +15,7 @@
 
 from GizmoDaemon import *
 
+ENABLED=True
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 INTERESTED_WINDOWS = ["firefox"]
 
@@ -79,4 +80,5 @@ class PowermateFirefox:
 ##########################
 
 # register the user script
-Gizmod.Dispatcher.userScripts.append(PowermateFirefox())
+if ENABLED:
+	Gizmod.Dispatcher.userScripts.append(PowermateFirefox())
