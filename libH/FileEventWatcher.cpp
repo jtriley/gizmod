@@ -258,7 +258,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 		}
 		if (retry == MAX_RETRIES) {
 			//throw H::Exception("Failed to Open file [" + FileName + "] with Mode [" + ModeString + "]", __FILE__, __FUNCTION__, __LINE__);
-			cerr << "Failed to Open [" << FileName << "] with Mode [" << ModeString + "] -- Try disconnecting and reconnecting!" << endl;
+			cerr << "Failed to Open [" << FileName << "] for [" << ModeString + "] -- Check Permissions!" << endl;
 			return shared_ptr<FileWatchee>();
 		}
 		

@@ -30,11 +30,13 @@
 #include "GizmoEventCPU.hpp"
 #include "GizmoEventLIRC.hpp"
 #include "GizmoEventPowermate.hpp"
+#include "GizmoEventSoundCard.hpp"
 #include "GizmoEventStandard.hpp"
 #include "GizmoEventWindowFocus.hpp"
-#include "GizmoPowermate.hpp"
 #include "GizmoCPU.hpp"
 #include "GizmoLIRC.hpp"
+#include "GizmoPowermate.hpp"
+#include "GizmoSoundCard.hpp"
 #include "GizmoStandard.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
@@ -125,16 +127,19 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		onDeregisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onDeregisterDevice(GizmoLIRC const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onDeregisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
+	void		onDeregisterDevice(GizmoSoundCard const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onDeregisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onEvent(GizmoEventCPU const * Event, GizmoCPU const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventLIRC const * Event, GizmoLIRC const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
+	void		onEvent(GizmoEventSoundCard const * Event, GizmoSoundCard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventWindowFocus const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	GizmoClass	onQueryDeviceType(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceInformation); };
 	void		onRegisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoLIRC const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
+	void		onRegisterDevice(GizmoSoundCard const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 
 	PyObject * 	self;		///< Pointer to self
@@ -151,20 +156,20 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// GizmoClass enum export
 	enum_<GizmoClass>("GizmoClass")
 		.value("CPU", 		GIZMO_CLASS_CPU)
-		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
 		.value("LIRC",	 	GIZMO_CLASS_LIRC)
-		.value("ATIX10",	GIZMO_CLASS_ATIX10)
+		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
+		.value("SoundCard",	GIZMO_CLASS_SOUNDCARD)
 		.value("Standard", 	GIZMO_CLASS_STANDARD)
 		;
 	
 	/// GizmoEventClass enum export
 	enum_<GizmoEventClass>("GizmoEventClass")
 		.value("CPU", 		GIZMO_EVENTCLASS_CPU)
-		.value("Powermate", 	GIZMO_EVENTCLASS_POWERMATE)
 		.value("LIRC",	 	GIZMO_EVENTCLASS_LIRC)
-		.value("ATIX10",	GIZMO_EVENTCLASS_ATIX10)
-		.value("WindowFocus",	GIZMO_EVENTCLASS_WINDOWFOCUS)
+		.value("Powermate", 	GIZMO_EVENTCLASS_POWERMATE)
+		.value("SoundCard",	GIZMO_EVENTCLASS_SOUNDCARD)
 		.value("Standard", 	GIZMO_EVENTCLASS_STANDARD)
+		.value("WindowFocus",	GIZMO_EVENTCLASS_WINDOWFOCUS)
 		;	
 	
 	/// X11FocusEventType enum export
@@ -343,19 +348,19 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		switch (pGizmo->getGizmoClass()) {
-		case GIZMO_CLASS_STANDARD:
-			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
+		case GIZMO_CLASS_CPU:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoCPU const *>(pGizmo.get()));
+			break;
+ 		case GIZMO_CLASS_LIRC:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoLIRC const *>(pGizmo.get()));
 			break;
 		case GIZMO_CLASS_POWERMATE: 
 			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoPowermate const *>(pGizmo.get()));
 			break; 
- 		case GIZMO_CLASS_LIRC:
-			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoLIRC const *>(pGizmo.get()));
+		case GIZMO_CLASS_SOUNDCARD:
+			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoSoundCard const *>(pGizmo.get()));
 			break;
-		case GIZMO_CLASS_CPU:
-			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoCPU const *>(pGizmo.get()));
-			break;
-		case GIZMO_CLASS_ATIX10:
+		case GIZMO_CLASS_STANDARD:
 			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoStandard const *>(pGizmo.get()));
 			break;
 		}		
@@ -779,10 +784,12 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 	// create the event and dispatch it
 	try {
 		switch (pUnknownGizmo->getGizmoClass()) {
-		case GIZMO_CLASS_STANDARD: {
-			std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
-			GizmoStandard * pGizmo = static_cast<GizmoStandard const *>(pUnknownGizmo.get());
-			GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
+		case GIZMO_CLASS_CPU:
+			break;
+		case GIZMO_CLASS_LIRC: {
+			std::vector< boost::shared_ptr<GizmoEventLIRC> > EventVector;
+			GizmoLIRC * pGizmo = static_cast<GizmoLIRC const *>(pUnknownGizmo.get());
+			GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
 			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
 				mutex::scoped_lock lock(mMutexScript);
 				pGizmo->processEvent(EventVector[lp].get());
@@ -799,20 +806,26 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
-		case GIZMO_CLASS_LIRC: {
-			std::vector< boost::shared_ptr<GizmoEventLIRC> > EventVector;
-			GizmoLIRC * pGizmo = static_cast<GizmoLIRC const *>(pUnknownGizmo.get());
-			GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
+		case GIZMO_CLASS_SOUNDCARD: {
+			std::vector< boost::shared_ptr<GizmoEventSoundCard> > EventVector;
+			GizmoSoundCard * pGizmo = static_cast<GizmoSoundCard const *>(pUnknownGizmo.get());
+			//GizmoEventSoundCard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
 			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
 				mutex::scoped_lock lock(mMutexScript);
 				pGizmo->processEvent(EventVector[lp].get());
 				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
-		case GIZMO_CLASS_ATIX10:
-			break;
-		case GIZMO_CLASS_CPU:
-			break;
+		case GIZMO_CLASS_STANDARD: {
+			std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
+			GizmoStandard * pGizmo = static_cast<GizmoStandard const *>(pUnknownGizmo.get());
+			GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
+			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+				mutex::scoped_lock lock(mMutexScript);
+				pGizmo->processEvent(EventVector[lp].get());
+				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
+			}
+			break; }
 		}
 	} catch (error_already_set) {
 		if (Debug::getDebugEnabled())
@@ -831,13 +844,8 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);
 		switch (Class) {
-		case GIZMO_CLASS_STANDARD: {
+		case GIZMO_CLASS_CPU: {
 			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
-			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
-			mpPyDispatcher->onRegisterDevice(pGizmo.get());
-			break; }
-		case GIZMO_CLASS_POWERMATE: {
-			shared_ptr<GizmoPowermate> pGizmo(new GizmoPowermate(*pWatchee));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
@@ -846,12 +854,17 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
-		case GIZMO_CLASS_ATIX10: {
-			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+		case GIZMO_CLASS_POWERMATE: {
+			shared_ptr<GizmoPowermate> pGizmo(new GizmoPowermate(*pWatchee));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
-		case GIZMO_CLASS_CPU: {
+		case GIZMO_CLASS_SOUNDCARD: {
+			shared_ptr<GizmoSoundCard> pGizmo(new GizmoSoundCard(*pWatchee));
+			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
+			mpPyDispatcher->onRegisterDevice(pGizmo.get());
+			break; }
+		case GIZMO_CLASS_STANDARD: {
 			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());

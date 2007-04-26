@@ -49,19 +49,19 @@
  * These values are repsented in Python by the same extension, under the enum class GizmoClass
  * For example: Gizmod.GizmoClass.Standard, and Gizmod.GizmoClass.Powermate
  *
+ * GIZMO_CLASS_CPU is used with the CPU Usage device
+ * GIZMO_CLASS_LIRC is used with LIRC (Infrared) devices (such as remote controls)
+ * GIZMO_CLASS_POWERMATE is the class used for Griffin PowerMate, and SoundKnob devices
+ * GIZMO_CLASS_SOUNDCARD is used for sound card events
  * GIZMO_CLASS_STANDARD is the default class and is used for all devices except ones with
  * 	special handlers
- * GIZMO_CLASS_POWERMATE is the class used for Griffin PowerMate, and SoundKnob devices
- * GIZMO_CLASS_LIRC is used with LIRC (Infrared) devices (such as remote controls)
- * GIZMO_CLASS_ATIX10 is used with the ATI X10 RF remote control
- * GIZMO_CLASS_CPU is used with the CPU Usage device
  */
 typedef enum {
-	GIZMO_CLASS_STANDARD,
-	GIZMO_CLASS_POWERMATE,
+	GIZMO_CLASS_CPU,
 	GIZMO_CLASS_LIRC,
-	GIZMO_CLASS_ATIX10,
-	GIZMO_CLASS_CPU
+	GIZMO_CLASS_POWERMATE,
+	GIZMO_CLASS_SOUNDCARD,
+	GIZMO_CLASS_STANDARD
 } GizmoClass;
 	
 //////////////////////////////////////////////////////////////////////////////
