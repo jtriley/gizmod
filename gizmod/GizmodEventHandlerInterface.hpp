@@ -43,7 +43,6 @@
 #include "GizmoCPU.hpp"
 #include "GizmoLIRC.hpp"
 #include "GizmoPowermate.hpp"
-#include "GizmoSoundCard.hpp"
 #include "GizmoStandard.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include <string>
@@ -92,13 +91,7 @@ public:
 	 * \param  Device The device
 	 */
 	virtual void			onDeregisterDevice(GizmoPowermate const * Device) = 0;
-		
-	/**
-	 * \brief  Event triggered when device has been deregistered
-	 * \param  Device The device
-	 */
-	virtual void			onDeregisterDevice(GizmoSoundCard const * Device) = 0;	
-	
+			
 	/**
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
@@ -129,9 +122,8 @@ public:
 	/**
 	 * \brief  SoundCard Event trigger
 	 * \param  Event The event information 
-	 * \param  Device The device that triggered the event
 	 */
-	virtual void			onEvent(GizmoEventSoundCard const * Event, GizmoSoundCard const * Device) = 0;
+	virtual void			onEvent(GizmoEventSoundCard const * Event) = 0;
 	
 	/**
 	 * \brief  Standard Event trigger
@@ -176,13 +168,7 @@ public:
 	 * \param  Device The device
 	 */
 	virtual void			onRegisterDevice(GizmoStandard const * Device) = 0;	
-	
-	/**
-	 * \brief  Event triggered when a new device has been registered
-	 * \param  Device The device
-	 */
-	virtual void			onRegisterDevice(GizmoSoundCard const * Device) = 0;	
-	
+		
 	// construction / deconstruction
 	GizmodEventHandlerInterface();
 	virtual ~GizmodEventHandlerInterface();

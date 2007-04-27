@@ -79,6 +79,7 @@ public:
 	inline friend const Debug& 	operator << (const Debug & dbg, const std::string & s);
 	inline friend const Debug& 	operator << (const Debug & dbg, const char c);
 	inline friend const Debug& 	operator << (const Debug & dbg, const int d);
+	inline friend const Debug& 	operator << (const Debug & dbg, const size_t d);
 	inline friend const Debug& 	operator << (const Debug & dbg, const double lf);
 	inline friend const Debug& 	operator << (const Debug & dbg, std::ostream&(*f)(std::ostream&)); // for endl
 
@@ -126,6 +127,15 @@ inline const Debug& operator << (const Debug & dbg, const char c) {
  * Debug insertion operator for int
  */
 inline const Debug& operator << (const Debug & dbg, const int i) {
+	if (Debug::testPrint(dbg))
+		std::cout << i;
+	return dbg;
+}
+
+/**
+ * Debug insertion operator for size_t
+ */
+inline const Debug& operator << (const Debug & dbg, const size_t i) {
 	if (Debug::testPrint(dbg))
 		std::cout << i;
 	return dbg;

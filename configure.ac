@@ -20,7 +20,6 @@ AX_BOOST_BASE([1.33.1])
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED([PACKAGE_PREFIX], ["${prefix}"], [Package Prefix (--prefix)])
-
 AC_DEFINE_UNQUOTED([PACKAGE_SYSCONFDIR], ["$sysconfdir"], [system configuration directory] )
 AC_DEFINE([PACKAGE_WHIMSICAL_NAME], ["Harness the blue"], [Package Pet Name / Dedication])
 
@@ -119,6 +118,26 @@ AC_CHECK_HEADER(X11/Xatom.h, [
 LDFLAGS="${TEMPLDFLAGS}"
 AC_SUBST(X11_LIBS)
 
+#############################################################################
+##
+## Check for Alsa
+##
+
+ALSA_LIBS=""
+
+AC_CHECK_LIB(asound, snd_mixer_open, [
+	AC_DEFINE(HAVE_ASOUND, 1, [Use -lasound])
+	ALSA_LIBS="-lasound"
+	], AC_MSG_ERROR([You must have ALSA Installed!])
+	)
+
+AC_CHECK_HEADER(alsa/asoundlib.h, [
+	AC_DEFINE(HAVE_ASOUNDLIB_H, 1, [Has alsa/asoundlib.h])
+	], [
+	AC_MSG_ERROR([You must have the ALSA development headers installed!])
+	])
+	
+AC_SUBST(ALSA_LIBS)
 
 ##################
 

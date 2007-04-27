@@ -38,7 +38,7 @@ class CatchAllDebug:
 	
 		if Gizmod.DebugEnabled:
 			if Event.Class == GizmoEventClass.WindowFocus:
-				print "onEvent: " + str(Event.EventType) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
+				print "onEvent: " + Event.EventType + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
 			elif Event.Class == GizmoEventClass.LIRC:
 				sys.stdout.write("onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(len(Event.LIRCData)) + "]")
 				for char in Event.LIRCData:

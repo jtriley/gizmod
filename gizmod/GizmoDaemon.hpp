@@ -33,14 +33,15 @@
 #include "config.h"
 #endif
 
-#include "GizmodEventHandlerInterface.hpp"
+#include "Alsa.hpp"
 #include "Gizmo.hpp"
+#include "GizmodEventHandlerInterface.hpp"
 #include "X11FocusWatcher.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
-#include <string>
 #include <ext/hash_map>
 #include <map>
+#include <string>
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
@@ -58,7 +59,7 @@
  * \brief Main GizmoDaemon class
  * \todo  Replace for loops (in onFileEventRead) with boost::foreach when the new version comes out!
  */
-class GizmoDaemon : public H::FileEventWatcher, H::SignalHandler, X11FocusWatcher {
+class GizmoDaemon : public H::FileEventWatcher, private H::SignalHandler, public X11FocusWatcher, public Alsa {
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
