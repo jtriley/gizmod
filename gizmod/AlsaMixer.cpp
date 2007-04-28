@@ -49,15 +49,9 @@ using namespace H;
  */
 int AlsaMixer::MixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int EventMask) {
 	AlsaMixer * pAlsaMixer = static_cast<AlsaMixer *>(snd_mixer_elem_get_callback_private(MixerElement));
-	return pAlsaMixer->mixerElemCallback(MixerElement, EventMask);
-	/*
-	if (!ppAlsaMixer)
+	if (!pAlsaMixer)
 		return 0;
-	shared_ptr<AlsaMixer> & pAlsaMixer = *ppAlsaMixer;
-	if (pAlsaMixer)
-		return pAlsaMixer->mixerElemCallback(MixerElement, EventMask);
-	*/
-	return 0;
+	return pAlsaMixer->mixerElemCallback(MixerElement, EventMask);
 }
 
 /** 
