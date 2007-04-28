@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Alsa.hpp
-*** \brief Alsa header
+*** \file  AlsaEvent.hpp
+*** \brief AlsaEventheader
 ***
 *****************************************
   *****************************************
@@ -26,14 +26,13 @@
   
 */
 
-#ifndef __Alsa_h
-#define __Alsa_h
+#ifndef __AlsaEvent_h
+#define __AlsaEvent_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "AlsaSoundCard.hpp"
 #include <string>
 #include <vector>
 #include <alsa/asoundlib.h>
@@ -43,33 +42,39 @@
 // Typedefs
 ///////////////////////////////////////
 
+/**
+ * \enum   AlsaEventType
+ * \brief  Type that indicates the type of AlsaEvent
+ */
+typedef enum {
+	ALSAEVENT_MIXER_CHANGE
+} AlsaEventType;
+
 //////////////////////////////////////////////////////////////////////////////
-// Alsa Class Definition
+// AlsaEvent Class Definition
 ///////////////////////////////////////
 
 /**
- * \class  Alsa
- * \brief  Watches for focus changes on X11 windows
- *
- * Note this creates 1 thread per sound card!
+ * \class  AlsaEvent
+ * \brief  Data structure that holds information about Alsa events
  */
-class Alsa {
+class AlsaEvent {
 public:	
+	// public member variables
+	AlsaEventType			EventType;		///< The type of event
+	
 	// public functions
-	void				init();			///< Initialize Alsa
-	void				shutdown();		///< Shutdown the Alsa connection
 
 	// construction / deconstruction
-	Alsa();
-	virtual ~Alsa();
-	
-	// public static functions
+	AlsaEvent();
+	AlsaEvent(AlsaEventType eventType);
+	AlsaEvent(AlsaEvent const & Event);
+	virtual ~AlsaEvent();
 
 private:
 	// private functions
 		
 	// private member variables
-	std::vector< boost::shared_ptr<AlsaSoundCard> >	mSoundCards; ///< Vector of sound card control interface handles
 };
 
-#endif // __Alsa_h
+#endif // __AlsaEvent_h

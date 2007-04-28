@@ -34,6 +34,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xresource.h>
 #include <X11/keysym.h>
+#include <boost/thread/thread.hpp>
 
 using namespace std;
 using namespace H;

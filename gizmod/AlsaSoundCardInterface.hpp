@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Alsa.hpp
-*** \brief Alsa header
+*** \file  AlsaSoundCardInterface.hpp
+*** \brief AlsaSoundCardInterfaceheader
 ***
 *****************************************
   *****************************************
@@ -26,50 +26,45 @@
   
 */
 
-#ifndef __Alsa_h
-#define __Alsa_h
+#ifndef __AlsaSoundCardInterface_h
+#define __AlsaSoundCardInterface_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "AlsaSoundCard.hpp"
 #include <string>
-#include <vector>
-#include <alsa/asoundlib.h>
-#include <boost/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs
 ///////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
-// Alsa Class Definition
+// AlsaSoundCardInterface Class Definition
 ///////////////////////////////////////
 
 /**
- * \class  Alsa
- * \brief  Watches for focus changes on X11 windows
- *
- * Note this creates 1 thread per sound card!
+ * \class  AlsaSoundCardInterface
+ * \brief  Data structure that holds information about Alsa events
  */
-class Alsa {
+class AlsaSoundCardInterface {
 public:	
+	// public member variables
+	
 	// public functions
-	void				init();			///< Initialize Alsa
-	void				shutdown();		///< Shutdown the Alsa connection
+	virtual std::string		getCardHardwareID() = 0;	///< Get the card's hardware ID
+	virtual int			getCardID() = 0;		///< Get the card ID
+	virtual std::string		getCardName() = 0;		///< Get the name of the card
+	virtual std::string		getCardNameLong() = 0;		///< Get the long name of the card
 
 	// construction / deconstruction
-	Alsa();
-	virtual ~Alsa();
-	
-	// public static functions
+	AlsaSoundCardInterface();
+	virtual ~AlsaSoundCardInterface();
 
 private:
 	// private functions
 		
 	// private member variables
-	std::vector< boost::shared_ptr<AlsaSoundCard> >	mSoundCards; ///< Vector of sound card control interface handles
 };
 
-#endif // __Alsa_h
+#endif // __AlsaSoundCardInterface_h

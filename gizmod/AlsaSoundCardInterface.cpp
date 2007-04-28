@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Alsa.cpp
-*** \brief Alsa Class Body
+*** \file  AlsaSoundCardInterface.cpp
+*** \brief AlsaSoundCardInterface Class Body
 ***
 *****************************************
   *****************************************
@@ -26,15 +26,11 @@
   
 */
 
-#include "Alsa.hpp"
+#include "AlsaSoundCardInterface.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
-#include <boost/format.hpp>
-#include <boost/mem_fn.hpp>
-#include <boost/bind.hpp>
 
 using namespace std;
-using namespace boost;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -46,49 +42,17 @@ using namespace H;
 ///////////////////////////////////////
 
 /** 
- * \brief  Alsa Default Constructor
+ * \brief  AlsaSoundCardInterface Default Constructor
  */
-Alsa::Alsa() {
+AlsaSoundCardInterface::AlsaSoundCardInterface() {
 }
 
 /**
- * \brief  Alsa Destructor
+ * \brief  AlsaSoundCardInterface Destructor
  */
-Alsa::~Alsa() {
-	shutdown();
+AlsaSoundCardInterface::~AlsaSoundCardInterface() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
-
-/**
- * \brief Initialize ALSA
- */
-void Alsa::init() {
-	// first make sure the connections are closed
-	shutdown();
-	
-	// initialize
-	int ret = -1, CardID;
-	do {
-		// get the next sound card
-		if ((CardID = snd_card_next(&ret)) < 0) {
-			cerr << "Failed to Query Sound Card [" << ret + 1 << "] -- Error Code: " << CardID;
-			continue;
-		}
-		if (ret > -1) {
-			shared_ptr<AlsaSoundCard> pSoundCard = shared_ptr<AlsaSoundCard>(new AlsaSoundCard(CardID));
-			mSoundCards.push_back(pSoundCard);		
-		}
-	} while (ret != -1);
-}
-
-/**
- * \brief Shutdown the ALSA connection
- */
-void Alsa::shutdown() {
-	if (mSoundCards.size())
-		cdbg1 << "Shutting down [" << mSoundCards.size() << "] sound card connections..." << endl;
-	mSoundCards.clear();
-}

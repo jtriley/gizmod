@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  Alsa.hpp
-*** \brief Alsa header
+*** \file  AlsaMixer.hpp
+*** \brief AlsaMixer header
 ***
 *****************************************
   *****************************************
@@ -26,50 +26,54 @@
   
 */
 
-#ifndef __Alsa_h
-#define __Alsa_h
+#ifndef __AlsaMixer_h
+#define __AlsaMixer_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "AlsaSoundCard.hpp"
+#include "AlsaSoundCardInterface.hpp"
 #include <string>
 #include <vector>
 #include <alsa/asoundlib.h>
-#include <boost/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs
 ///////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
-// Alsa Class Definition
+// AlsaMixer Class Definition
 ///////////////////////////////////////
 
 /**
- * \class  Alsa
- * \brief  Watches for focus changes on X11 windows
- *
- * Note this creates 1 thread per sound card!
+ * \class  AlsaMixer
+ * \brief  Data structure that holds information about each Mixer element
  */
-class Alsa {
+class AlsaMixer{
 public:	
+	// public member variables
+	std::string			getMixerName();
+	
 	// public functions
-	void				init();			///< Initialize Alsa
-	void				shutdown();		///< Shutdown the Alsa connection
 
 	// construction / deconstruction
-	Alsa();
-	virtual ~Alsa();
+	AlsaMixer(AlsaSoundCardInterface * piSoundCard, snd_mixer_elem_t * MixerElement, std::string MixerName, std::string MixerNameUnique, unsigned int MixerID);
+	virtual ~AlsaMixer();
 	
 	// public static functions
+	static int 			MixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int EventMask); ///< Static mixer element callback
 
 private:
 	// private functions
+	int 				mixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int EventMask); ///< Mixer element callback
 		
 	// private member variables
-	std::vector< boost::shared_ptr<AlsaSoundCard> >	mSoundCards; ///< Vector of sound card control interface handles
+	snd_mixer_elem_t * 		mMixerElement;
+	std::string 			mMixerName;
+	std::string 			mMixerNameUnique;
+	unsigned int			mMixerID;
+	AlsaSoundCardInterface *	mpiSoundCard;
 };
 
-#endif // __Alsa_h
+#endif // __AlsaMixer_h
