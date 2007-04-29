@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  AlsaEvent.cpp
-*** \brief AlsaEvent Class Body
+*** \file  AlsaInterface.cpp
+*** \brief AlsaInterface Class Body
 ***
 *****************************************
   *****************************************
@@ -26,7 +26,7 @@
   
 */
 
-#include "AlsaEvent.hpp"
+#include "AlsaInterface.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 
@@ -42,51 +42,15 @@ using namespace H;
 ///////////////////////////////////////
 
 /** 
- * \brief  AlsaEvent Default Constructor
+ * \brief  AlsaInterface Default Constructor
  */
-AlsaEvent::AlsaEvent() {
-	Type = ALSAEVENT_ERROR;
-	Mask = 0;
-	IsActiveChanged = false;
-	ElementsChanged = false;
-	VolumePlaybackChanged = false;
-	VolumeCaptureChanged = false;
-	SwitchCaptureChanged = false;
-	SwitchPlaybackChanged = false;
-}
-
-/** 
- * \brief  AlsaEvent Init Constructor
- */
-AlsaEvent::AlsaEvent(AlsaEventType type, unsigned int mask) {
-	Type = type;
-	Mask = mask;
-	IsActiveChanged = false;
-	ElementsChanged = false;
-	VolumePlaybackChanged = false;
-	VolumeCaptureChanged = false;
-	SwitchCaptureChanged = false;
-	SwitchPlaybackChanged = false;
-}
-
-/** 
- * \brief  AlsaEvent Init Constructor
- */
-AlsaEvent::AlsaEvent(AlsaEvent const & Event) {
-	Type = Event.Type;
-	Mask = Event.Mask;
-	IsActiveChanged = Event.IsActiveChanged;
-	ElementsChanged = Event.ElementsChanged;
-	VolumePlaybackChanged = Event.VolumePlaybackChanged;
-	VolumeCaptureChanged = Event.VolumeCaptureChanged;
-	SwitchCaptureChanged = Event.SwitchCaptureChanged;
-	SwitchPlaybackChanged = Event.SwitchPlaybackChanged;
+AlsaInterface::AlsaInterface() {
 }
 
 /**
- * \brief  AlsaEvent Destructor
+ * \brief  AlsaInterface Destructor
  */
-AlsaEvent::~AlsaEvent() {
+AlsaInterface::~AlsaInterface() {
 }
 
 ////////////////////////////////////////////////////////////////////////////

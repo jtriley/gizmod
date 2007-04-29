@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "AlsaInterface.hpp"
 #include <string>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,16 +51,20 @@
 class AlsaSoundCardInterface {
 public:	
 	// public member variables
+	AlsaInterface *			getAlsa();			///< Get a pointer to the Alsa intantiation
 	
 	// public functions
-	virtual std::string		getCardHardwareID() = 0;	///< Get the card's hardware ID
-	virtual int			getCardID() = 0;		///< Get the card ID
-	virtual std::string		getCardName() = 0;		///< Get the name of the card
-	virtual std::string		getCardNameLong() = 0;		///< Get the long name of the card
+	virtual std::string		getCardHardwareID() const = 0;	///< Get the card's hardware ID
+	virtual int			getCardID() const = 0;		///< Get the card ID
+	virtual std::string		getCardName() const = 0;	///< Get the name of the card
+	virtual std::string		getCardNameLong()const  = 0;	///< Get the long name of the card
 
 	// construction / deconstruction
-	AlsaSoundCardInterface();
+	AlsaSoundCardInterface(AlsaInterface * piAlsa);
 	virtual ~AlsaSoundCardInterface();
+	
+protected:
+	AlsaInterface * 		mpiAlsa;			///< Pointer to the Alsa instance
 
 private:
 	// private functions

@@ -33,7 +33,9 @@
 #include "config.h"
 #endif
 
+#include "AlsaEvent.hpp"
 #include "AlsaSoundCard.hpp"
+#include "AlsaMixer.hpp"
 #include <string>
 #include <vector>
 #include <alsa/asoundlib.h>
@@ -49,14 +51,20 @@
 
 /**
  * \class  Alsa
- * \brief  Watches for focus changes on X11 windows
+ * \brief  OO Interface to ALSA
  *
- * Note this creates 1 thread per sound card!
+ * Note this creates 1 thread per sound card, and watches for mixer events
+ * on all sound cards and all sound card elements when initted
  */
-class Alsa {
+class Alsa : public AlsaInterface {
 public:	
 	// public functions
 	void				init();			///< Initialize Alsa
+	void				onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
+	void				onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
+	void				onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is detached
+	void				onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a new sound card is detected
+	void				onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a sound card is removed
 	void				shutdown();		///< Shutdown the Alsa connection
 
 	// construction / deconstruction

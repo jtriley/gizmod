@@ -44,7 +44,8 @@ using namespace H;
 /** 
  * \brief  AlsaSoundCardInterface Default Constructor
  */
-AlsaSoundCardInterface::AlsaSoundCardInterface() {
+AlsaSoundCardInterface::AlsaSoundCardInterface(AlsaInterface * piAlsa) {
+	mpiAlsa = piAlsa;
 }
 
 /**
@@ -56,3 +57,11 @@ AlsaSoundCardInterface::~AlsaSoundCardInterface() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Get a pointer to the Alsa intantiation
+ * \return Point to the AlsaInterface
+ */
+AlsaInterface * AlsaSoundCardInterface::getAlsa() {
+	return mpiAlsa;
+}

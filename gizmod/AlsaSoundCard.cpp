@@ -26,6 +26,7 @@
   
 */
 
+#include "Alsa.hpp"
 #include "AlsaSoundCard.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
@@ -86,10 +87,9 @@ int AlsaSoundCard::mixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, sn
 			cdbg << "Mixer [" << MixerNameUnique << "] Duplicated on Card [" << mCardName << "]" << endl;
 			return 0;
 		}
-		cdbg << "New Mixer [" << MixerNameUnique << "] on Card [" << mCardName << "]" << endl;
 		shared_ptr<AlsaMixer> pMixer(new AlsaMixer(this, MixerElement, MixerName, MixerNameUnique, MixerIndex));
 		mMixers.insert(make_pair(MixerNameUnique, pMixer));
-				
+						
 		// set the callback
 		snd_mixer_elem_set_callback_private(MixerElement, pMixer.get());
 		snd_mixer_elem_set_callback(MixerElement, AlsaMixer::MixerElemCallback);
@@ -104,7 +104,7 @@ int AlsaSoundCard::mixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, sn
 /** 
  * \brief  AlsaSoundCard Default Constructor
  */
-AlsaSoundCard::AlsaSoundCard(int CardID) : mThreadProc(this) {
+AlsaSoundCard::AlsaSoundCard(AlsaInterface * piAlsa, int CardID) : AlsaSoundCardInterface(piAlsa), mThreadProc(this) {
 	mCardID = CardID;
 	mCTLHandle = NULL;
 	mHWInfo = NULL;
@@ -128,7 +128,7 @@ AlsaSoundCard::~AlsaSoundCard() {
  * \brief  Get the card's hardware ID
  * \return Hardware ID
  */
-std::string AlsaSoundCard::getCardHardwareID() {
+std::string AlsaSoundCard::getCardHardwareID() const {
 	return mCardHWID;
 }
 
@@ -136,7 +136,7 @@ std::string AlsaSoundCard::getCardHardwareID() {
  * \brief  Get the card ID
  * \return Card ID
  */
-int AlsaSoundCard::getCardID() {
+int AlsaSoundCard::getCardID() const {
 	return mCardID;
 }
 
@@ -144,7 +144,7 @@ int AlsaSoundCard::getCardID() {
  * \brief  Get the name of the card
  * \return Card name
  */
-std::string AlsaSoundCard::getCardName() {
+std::string AlsaSoundCard::getCardName() const {
 	return mCardName;
 }
 
@@ -152,7 +152,7 @@ std::string AlsaSoundCard::getCardName() {
  * \brief  Get the long name of the card
  * \return Card's long name
  */
-std::string AlsaSoundCard::getCardNameLong() {
+std::string AlsaSoundCard::getCardNameLong() const {
 	return mCardNameLong;
 }
 
@@ -204,6 +204,9 @@ void AlsaSoundCard::init() {
 	if ((err = snd_mixer_selem_register(mMixerHandle, NULL, NULL)) < 0)
 		throw H::Exception("Could not Register Mixer on Card [" + mCardName + "] -- " + snd_strerror(err), __FILE__, __FUNCTION__, __LINE__);
 	
+	// fire the event
+	static_cast<Alsa *>(mpiAlsa)->onAlsaEventSoundCardAttach(AlsaEvent(ALSAEVENT_SOUNDCARD_ATTACH), *this);
+	
 	// set the callback
 	snd_mixer_set_callback_private(mMixerHandle, (void*) this);
 	snd_mixer_set_callback(mMixerHandle, MixerCallback);
@@ -221,12 +224,19 @@ void AlsaSoundCard::init() {
 void AlsaSoundCard::shutdown() {
 	cdbg1 << "Closing connection to Sound Card [" << mCardHWID << " - " << mCardName << "]" << endl;
 	mWatching = false;
-	
+			
+	// shut down alsa connection to the sound card
 	if (mMixerHandle)
 		snd_mixer_close(mMixerHandle); mMixerHandle = NULL;
 	
 	if (mCTLHandle)
 		snd_ctl_close(mCTLHandle); mCTLHandle = NULL;	
+	
+	// clear the mixers
+	mMixers.clear();	
+	
+	// fire the event
+	static_cast<Alsa *>(mpiAlsa)->onAlsaEventSoundCardDetach(AlsaEvent(ALSAEVENT_SOUNDCARD_DETACH), *this);	
 }
 
 /**

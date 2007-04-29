@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "AlsaInterface.hpp"
 #include "AlsaSoundCardInterface.hpp"
 #include "AlsaMixer.hpp"
 #include <string>
@@ -53,13 +54,13 @@ public:
 	// public member variables
 	
 	// public functions
-	std::string			getCardHardwareID();	///< Get the card's hardware ID
-	int				getCardID();		///< Get the card ID
-	std::string			getCardName();		///< Get the name of the card
-	std::string			getCardNameLong();	///< Get the long name of the card
+	std::string			getCardHardwareID() const;	///< Get the card's hardware ID
+	int				getCardID() const;		///< Get the card ID
+	std::string			getCardName() const;		///< Get the name of the card
+	std::string			getCardNameLong() const;	///< Get the long name of the card
 
 	// construction / deconstruction
-	AlsaSoundCard(int CardID);
+	AlsaSoundCard(AlsaInterface * piAlsa, int CardID);
 	virtual ~AlsaSoundCard();
 	
 	// public static functions
@@ -67,21 +68,21 @@ public:
 	
 private:
 	// private functions
-	void				init();			///< Initialize the AlsaSoundCard
+	void				init();				///< Initialize the AlsaSoundCard
 	int 				mixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, snd_mixer_elem_t * MixerElement); ///< Mixer callback
-	void				shutdown();		///< Shutdown the AlsaSoundCard connection
-	void				threadProc();		///< The thread procedure loop
+	void				shutdown();			///< Shutdown the AlsaSoundCard connection
+	void				threadProc();			///< The thread procedure loop
 		
 	// private member variables
-	int				mCardID;		///< ID of the card
-	std::string			mCardHWID;		///< Ascii HW ID of the card
-	std::string			mCardName;		///< Name of the card
-	std::string			mCardNameLong;		///< Long Name of the card
-	snd_ctl_t *			mCTLHandle;		///< Alsa control interface handle
-	snd_ctl_card_info_t * 		mHWInfo;		///< Alsa card hardware info
-	snd_mixer_t *			mMixerHandle;		///< Mixer handle
+	int				mCardID;			///< ID of the card
+	std::string			mCardHWID;			///< Ascii HW ID of the card
+	std::string			mCardName;			///< Name of the card
+	std::string			mCardNameLong;			///< Long Name of the card
+	snd_ctl_t *			mCTLHandle;			///< Alsa control interface handle
+	snd_ctl_card_info_t * 		mHWInfo;			///< Alsa card hardware info
+	snd_mixer_t *			mMixerHandle;			///< Mixer handle
 	std::map< std::string, boost::shared_ptr<AlsaMixer> > mMixers;	///< Map of the mixers (by index)
-	bool				mWatching;		///< Keep watching mixers?
+	bool				mWatching;			///< Keep watching mixers?
 
 	/**
 	 * Thread callback procedure struct

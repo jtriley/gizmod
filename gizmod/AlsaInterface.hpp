@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  AlsaEvent.hpp
-*** \brief AlsaEventheader
+*** \file  AlsaInterface.hpp
+*** \brief AlsaInterface header
 ***
 *****************************************
   *****************************************
@@ -26,64 +26,45 @@
   
 */
 
-#ifndef __AlsaEvent_h
-#define __AlsaEvent_h
+#ifndef __AlsaInterface_h
+#define __AlsaInterface_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include <string>
-#include <vector>
-#include <alsa/asoundlib.h>
-#include <boost/shared_ptr.hpp>
+/*
+#include "AlsaEvent.hpp"
+#include "AlsaSoundCard.hpp"
+#include "AlsaMixer.hpp"
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs
 ///////////////////////////////////////
 
-/**
- * \enum   AlsaEventType
- * \brief  Type that indicates the type of AlsaEvent
- */
-typedef enum {
-	ALSAEVENT_ERROR,
-	ALSAEVENT_SOUNDCARD_ATTACH,
-	ALSAEVENT_SOUNDCARD_DETACH,
-	ALSAEVENT_MIXERELEMENT_ATTACH,
-	ALSAEVENT_MIXERELEMENT_CHANGE,
-	ALSAEVENT_MIXERELEMENT_DETACH
-} AlsaEventType;
-
 //////////////////////////////////////////////////////////////////////////////
-// AlsaEvent Class Definition
+// AlsaInterface Class Definition
 ///////////////////////////////////////
 
 /**
- * \class  AlsaEvent
- * \brief  Data structure that holds information about Alsa events
+ * \class  AlsaInterface
+ * \brief  Interface to the Alsa class
  */
-class AlsaEvent {
+class AlsaInterface {
 public:	
-	// public member variables
-	AlsaEventType			Type;				///< The type of event
-	unsigned int			Mask;				///< Alsa event mask
-	
-	// event variables
-	bool				IsActiveChanged;		///< Has active changed
-	bool				ElementsChanged;		///< Has Number of mixer elements changed
-	bool				VolumePlaybackChanged;		///< Playback volume changed
-	bool				VolumeCaptureChanged;		///< Capture volume changed
-	bool				SwitchPlaybackChanged;		///< Playback switch changed
-	bool				SwitchCaptureChanged;		///< Capture switch changed
-		
 	// public functions
+	/*
+	virtual void			onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) = 0; ///< Triggered when a new sound card is detected
+	virtual void			onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) = 0; ///< Triggered when a sound card is removed
+	virtual void			onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) = 0; ///< Triggered when a mixer element is discovered
+	*/
 
 	// construction / deconstruction
-	AlsaEvent();
-	AlsaEvent(AlsaEventType type, unsigned int mask = 0);
-	AlsaEvent(AlsaEvent const & Event);
-	virtual ~AlsaEvent();
+	AlsaInterface();
+	virtual ~AlsaInterface();
+	
+	// public static functions
 
 private:
 	// private functions
@@ -91,4 +72,4 @@ private:
 	// private member variables
 };
 
-#endif // __AlsaEvent_h
+#endif // __AlsaInterface_h

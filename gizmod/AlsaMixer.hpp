@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "AlsaMixerElements.hpp"
 #include "AlsaSoundCardInterface.hpp"
 #include <string>
 #include <vector>
@@ -48,14 +49,15 @@
 
 /**
  * \class  AlsaMixer
- * \brief  Data structure that holds information about each Mixer element
+ * \brief  Data structure that holds information about each Mixer
  */
-class AlsaMixer{
+class AlsaMixer : public AlsaMixerElements {
 public:	
 	// public member variables
-	std::string			getMixerName();
 	
 	// public functions
+	std::string			getMixerName() const;		///< Get the unique name of the mixer	
+	std::string			getMixerNameShort() const;	///< Get the short name of the mixer (not unique)
 
 	// construction / deconstruction
 	AlsaMixer(AlsaSoundCardInterface * piSoundCard, snd_mixer_elem_t * MixerElement, std::string MixerName, std::string MixerNameUnique, unsigned int MixerID);
@@ -66,14 +68,18 @@ public:
 
 private:
 	// private functions
+	void				init();				///< Initialize the mixer
 	int 				mixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int EventMask); ///< Mixer element callback
+	void 				populateInfo();			///< Load the mixer up with data from the sound card
+	void				shutdown();			///< Shutdown the mixer
 		
 	// private member variables
-	snd_mixer_elem_t * 		mMixerElement;
-	std::string 			mMixerName;
-	std::string 			mMixerNameUnique;
-	unsigned int			mMixerID;
-	AlsaSoundCardInterface *	mpiSoundCard;
+	AlsaInterface *			mpiAlsa;			///< The Alsa object responsible for this mixer
+	snd_mixer_elem_t * 		mMixerElement;			///< The Alsa mixer element
+	std::string 			mMixerName;			///< Short name of the mixer
+	std::string 			mMixerNameUnique;		///< Unique name of the mixer
+	unsigned int			mMixerID;			///< ID of the mixer
+	AlsaSoundCardInterface *	mpiSoundCard;			///< Associated sound card
 };
 
 #endif // __AlsaMixer_h
