@@ -93,7 +93,7 @@ void Alsa::init() {
  */
 void Alsa::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	// override me
-	cdbg1 << "Mixer Element Attached [" << Mixer.getMixerName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+	cdbg1 << "Mixer Element Attached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
 }
 
 /**
@@ -105,9 +105,9 @@ void Alsa::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard 
 void Alsa::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	// override me
 	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) 
-		cdbg2 << "Mixer Element Changed [" << Mixer.getMixerName() << "] with Mask [" << stringconverter(Event.IsActiveChanged) << stringconverter(Event.ElementsChanged) << stringconverter(Event.VolumePlaybackChanged) << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
+		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << stringconverter(Event.IsActiveChanged) << stringconverter(Event.ElementsChanged) << stringconverter(Event.VolumePlaybackChanged) << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
 	else
-		cdbg2 << "Mixer Element Changed [" << Mixer.getMixerName() << "] with Mask [" << Event.Mask << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.Mask << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
 }
 
 /**
@@ -118,7 +118,7 @@ void Alsa::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard 
  */
 void Alsa::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	// override me
-	cdbg3 << "Mixer Element Detached [" << Mixer.getMixerName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+	cdbg3 << "Mixer Element Detached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
 }
 
 /**

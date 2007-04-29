@@ -112,7 +112,7 @@ AlsaMixer::~AlsaMixer() {
  * \brief  Get the unique name of the mixer
  * \return Unique mixer name
  */
-std::string AlsaMixer::getMixerName() const {
+std::string AlsaMixer::getName() const {
 	return mMixerNameUnique;
 }
 
@@ -120,7 +120,7 @@ std::string AlsaMixer::getMixerName() const {
  * \brief  Get the name of the mixer
  * \return Mixer name
  */
-std::string AlsaMixer::getMixerNameShort() const {
+std::string AlsaMixer::getNameShort() const {
 	return mMixerName;
 }
 
@@ -195,6 +195,94 @@ void AlsaMixer::populateInfo() {
 	} else {
 		SwitchCapture = false;
 	}
+}
+
+/**
+ * \brief  Set the capture switch
+ * \param  Enable Set to true if the switch should be enabled
+ * \return True on success
+ */
+bool AlsaMixer::setSwitchCapture(bool Enable) {
+	if (snd_mixer_selem_set_capture_switch_all(mMixerElement, Enable) < 0)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Set the playback switch
+ * \param  Enable Set to true if the switch should be enabled
+ * \return True on success
+ */
+bool AlsaMixer::setSwitchPlayback(bool Enable) {
+	if (snd_mixer_selem_set_playback_switch_all(mMixerElement, Enable) < 0)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Set the Capture volume
+ * \param  Volume Absolute volume level
+ * \return True on success
+ */
+bool AlsaMixer::setVolumeCapture(long Volume) {
+	if (snd_mixer_selem_set_capture_volume_all(mMixerElement, Volume) < 0)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Set the Capture volume as a percent
+ * \param  Percent Volume level percentage
+ * \return True on success
+ */
+bool AlsaMixer::setVolumeCapturePercent(float Percent) {
+	if (snd_mixer_selem_set_capture_volume_all(mMixerElement, (long) (Percent * VolumeCaptureMax) + VolumeCaptureMin) < 0)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Set the Capture volume as a dB
+ * \param  DB Volume level dB
+ * \return True on success
+ */
+bool AlsaMixer::setVolumeCaptureDB(long DB) {
+	if (snd_mixer_selem_set_capture_dB_all(mMixerElement, DB, 0) < 0)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Set the Playback volume
+ * \param  Volume Absolute volume level
+ * \return True on success
+ */
+bool AlsaMixer::setVolumePlayback(long Volume) {
+	if (snd_mixer_selem_set_playback_volume_all(mMixerElement, Volume) < 0)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Set the Playback volume as a percent
+ * \param  Percent Volume level percentage
+ * \return True on success
+ */
+bool AlsaMixer::setVolumePlaybackPercent(float Percent) {
+	if (snd_mixer_selem_set_playback_volume_all(mMixerElement, (long) (Percent * VolumePlaybackMax) + VolumePlaybackMin) < 0)
+		return false;
+	return true;
+}
+
+/**
+ * \brief  Set the Playback volume as a dB
+ * \param  DB Volume level dB
+ * \return True on success
+ */
+bool AlsaMixer::setVolumePlaybackDB(long DB) {
+	if (snd_mixer_selem_set_playback_dB_all(mMixerElement, DB, 0) < 0)
+		return false;
+	return true;
 }
 
 /**
