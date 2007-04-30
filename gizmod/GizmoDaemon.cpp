@@ -291,9 +291,14 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.add_property("Type", &Gizmo::getGizmoType)
 		.def("setKeyState", &Gizmo::setGizmoKeyState)
 		;
+		
+	/// X11FocusWatcher Python Class Export
+	class_<X11FocusWatcher>("X11FocusWatcher")
+		.def("isApplicationRunning", &X11FocusWatcher::isApplicationRunning)
+		;		
 				
 	/// GizmoDaemon Python Class Export
-	class_<GizmoDaemon, bases<Alsa> >("PyGizmoDaemon")
+	class_<GizmoDaemon, bases<Alsa, X11FocusWatcher> >("PyGizmoDaemon")
 		.def("getCurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.add_property("CurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)
@@ -363,7 +368,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def_readonly("WindowName", &X11FocusEvent::WindowName)
 		.def_readonly("WindowNameFormal", &X11FocusEvent::WindowNameFormal)
 		;
-	
+		
 	/// GizmoEventWindowFocus Python Class Export
 	class_< GizmoEventWindowFocus, bases<X11FocusEvent, GizmoEvent> >("GizmoEventWindowFocus", init<X11FocusEvent const &>())
 		;

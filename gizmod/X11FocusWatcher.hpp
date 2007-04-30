@@ -105,6 +105,7 @@ class X11FocusWatcher {
 public:	
 	// public functions
 	void				init();			///< Initialize (create a thread and watch)
+	bool				isApplicationRunning(std::string WindowTitle); ///< Is an application running? (by window title)
 	virtual void			onFocusIn(X11FocusEvent const & Event); ///< Event triggered on a Focus In
 	virtual void			onFocusOut(X11FocusEvent const & Event); ///< Event triggered on a Focus Out
 	void 				shutdown();		///< Shutdown the thread that watches for focus changes

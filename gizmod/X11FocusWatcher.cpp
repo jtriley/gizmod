@@ -29,6 +29,7 @@
 #include "X11FocusWatcher.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/stringconverter.hpp"
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
@@ -155,15 +156,19 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
 	XClassHint * pClassHint;
 	pClassHint = XAllocClassHint();
 	
+	X11FocusEvent Event;
 	if (XGetClassHint(mDisplay, window, pClassHint) == 0) {
+		// failed to get class information!
 		XFree(pClassHint);
-		throw H::Exception("Failed to Create Focus Event!", __FILE__, __FUNCTION__, __LINE__);
+		Event = X11FocusEvent(EventType, getWindowName(window), WINDOW_UNKNOWN, WINDOW_UNKNOWN);
+	} else {
+		// class information is available
+		Event = X11FocusEvent(EventType, getWindowName(window), pClassHint->res_name, pClassHint->res_class);
+		XFree(pClassHint->res_name);
+		XFree(pClassHint->res_class);
+		XFree(pClassHint);
 	}
 	
-	X11FocusEvent Event = X11FocusEvent(EventType, getWindowName(window), pClassHint->res_name, pClassHint->res_class);
-	XFree(pClassHint->res_name);
-	XFree(pClassHint->res_class);
-	XFree(pClassHint);
 	return Event;
 }
 
@@ -263,6 +268,26 @@ void X11FocusWatcher::init() {
 	if (mWatching)
 		return;
 	boost::thread thrd(mThreadProc);
+}
+
+/**
+ * \brief  Test is an application is running by checking for its window title
+ * \param  WindowTitle The title of the window to find
+ */
+bool X11FocusWatcher::isApplicationRunning(std::string WindowTitle) {
+	Window RootRet, ParentRet;
+	unsigned int nChildren;
+	Window * Children = NULL;
+	XQueryTree(mDisplay, RootWindow(mDisplay, mScreen), &RootRet, &ParentRet, &Children, &nChildren);
+	for (unsigned int lp = 0; lp < nChildren; lp ++) {
+		if (stringconverter::toLower(getWindowName(Children[lp])).find(stringconverter::toLower(WindowTitle)) != string::npos) {
+			XFree(Children);	
+			return true;
+		}
+	}
+	if (Children)
+		XFree(Children);
+	return false;
 }
 
 /**
@@ -376,26 +401,22 @@ void X11FocusWatcher::threadProc() {
 		}
 		
 		// handle the event
-		try {
-			switch (event.type) {
-			case FocusIn: {
-				// avoid duplicate events
-				if (mCurrentWindow == event.xany.window)
-					break;
-				X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_IN);
-				mCurrentWindow = event.xany.window;
-				onFocusIn(Event);
-				break; }
-			case FocusOut: {
-				X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_OUT);
-				onFocusOut(Event);
-				break; }
-			default:
-				cdbg << "Unkown Event Type: " << event.type << endl;		
+		switch (event.type) {
+		case FocusIn: {
+			// avoid duplicate events
+			if (mCurrentWindow == event.xany.window)
 				break;
-			}
-		} catch (H::Exception e) {
-			cdbg2 << e.message() << endl;
+			X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_IN);
+			mCurrentWindow = event.xany.window;
+			onFocusIn(Event);
+			break; }
+		case FocusOut: {
+			X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_OUT);
+			onFocusOut(Event);
+			break; }
+		default:
+			cdbg << "Unkown Event Type: " << event.type << endl;		
+			break;
 		}
 	}
 

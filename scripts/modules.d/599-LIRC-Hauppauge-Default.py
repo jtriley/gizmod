@@ -16,7 +16,7 @@
 from GizmoDaemon import *
 from Hauppauge import *
 
-ENABLED=True
+ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 
 ############################

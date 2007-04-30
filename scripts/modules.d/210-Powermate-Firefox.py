@@ -15,7 +15,7 @@
 
 from GizmoDaemon import *
 
-ENABLED=True
+ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 INTERESTED_WINDOWS = ["firefox"]
 

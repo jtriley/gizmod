@@ -15,7 +15,7 @@
 
 from GizmoDaemon import *
 
-ENABLED=True
+ENABLED = True
 
 ############################
 # PowermateDefault Class definition

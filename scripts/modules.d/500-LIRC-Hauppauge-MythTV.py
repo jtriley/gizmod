@@ -16,7 +16,7 @@
 from GizmoDaemon import *
 from Hauppauge import *
 
-ENABLED=True
+ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 INTERESTED_WINDOWS = ["mythfrontend"]
 
@@ -49,6 +49,12 @@ class LIRCHauppaugeMythTV(Hauppauge):
 		   	if KeyString == "Go":
 		   		return False
 		   	elif KeyString == "Power":
+		   		# start mythfront end if power button pressed
+		   		# if mythfrontend is open, kill it
+		   		if Gizmod.isApplicationRunning("mythfrontend"):
+		   			subprocess.Popen(["mythfrontend"])
+		   		else:
+		   			subprocess.Popen(["killall", "mythfrontend"])
 		   		return False
 		   	elif KeyString == "TV":
 		   		return False

@@ -16,7 +16,7 @@
 from GizmoDaemon import *
 import sys
 
-ENABLED=True
+ENABLED = True
 
 ############################
 # CatchAllDebug Class definition
