@@ -73,7 +73,9 @@ int AlsaMixer::mixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int E
 	// fire the event
 	AlsaEvent Event(ALSAEVENT_MIXERELEMENT_CHANGE, EventMask);
 	AlsaMixerElements::buildEventFromMixerStates(Event, OldState, *this);
-	static_cast<Alsa *>(mpiAlsa)->onAlsaEventMixerElementChange(Event, static_cast<AlsaSoundCard &>(*mpiSoundCard), *this);
+	Alsa * pAlsa = static_cast<Alsa *>(mpiAlsa);
+	pAlsa->_onAlsaEventMixerElementChange(Event, static_cast<AlsaSoundCard &>(*mpiSoundCard), *this);
+	pAlsa->onAlsaEventMixerElementChange(Event, static_cast<AlsaSoundCard &>(*mpiSoundCard), *this);
 	
 	// success
 	return 0;
@@ -255,8 +257,8 @@ bool AlsaMixer::setVolumeCapture(long Volume) {
 bool AlsaMixer::setVolumeCapturePercent(float Percent) {
 	if (Percent < 0.0f)
 		Percent = 0.0f;
-	else if (Percent > 1.0f)
-		Percent = 1.0f;
+	else if (Percent > 100.0f)
+		Percent = 100.0f;
 	if (snd_mixer_selem_set_capture_volume_all(mMixerElement, (long) (Percent / 100.0f * (VolumeCaptureMax - VolumeCaptureMin)) + VolumeCaptureMin) < 0)
 		return false;
 	populateInfo();
@@ -303,9 +305,10 @@ bool AlsaMixer::setVolumePlayback(long Volume) {
 bool AlsaMixer::setVolumePlaybackPercent(float Percent) {
 	if (Percent < 0.0f)
 		Percent = 0.0f;
-	else if (Percent > 1.0f)
-		Percent = 1.0f;
-	if (snd_mixer_selem_set_playback_volume_all(mMixerElement, (long) (Percent / 100.0f * (VolumePlaybackMax - VolumePlaybackMin)) + VolumePlaybackMin) < 0)
+	else if (Percent > 100.0f)
+		Percent = 100.0f;
+	long NewVolume = (long) (Percent / 100.0f * (VolumePlaybackMax - VolumePlaybackMin)) + VolumePlaybackMin;
+	if (snd_mixer_selem_set_playback_volume_all(mMixerElement, NewVolume) < 0)
 		return false;
 	populateInfo();
 	return true;

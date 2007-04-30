@@ -70,6 +70,11 @@ public:
 	std::string			getVersion();		///< Get version string
 	void				initGizmod();		///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
+	virtual void			onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
+	virtual void			onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
+	virtual void			onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is detached
+	virtual void			onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a new sound card is detected
+	virtual void			onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a sound card is removed
 	virtual void			onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a new file is created
 	virtual void			onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName); ///< Event triggered when a file is deleted
 	virtual void			onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a device is disconnected

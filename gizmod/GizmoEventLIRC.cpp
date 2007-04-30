@@ -43,12 +43,6 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
-/**
- * \def   GIZMO_EVENT_LIRC_TYPE
- * \brief String type of this event
- */
-#define GIZMO_EVENT_LIRC_TYPE	"LIRC"
-
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -90,12 +84,4 @@ GizmoEventLIRC::~GizmoEventLIRC() {
 void GizmoEventLIRC::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventLIRC> > & EventVector, H::DynamicBuffer<char> const & Buffer) {
 	string LIRCData(Buffer.getBuffer(), Buffer.length());
 	EventVector.push_back(boost::shared_ptr<GizmoEventLIRC>(new GizmoEventLIRC(LIRCData)));
-}
-
-/**
- * \brief  Get the type of this Gizmo
- * \return Type of the Gizmo
- */
-std::string GizmoEventLIRC::getEventType() {
-	return GIZMO_EVENT_LIRC_TYPE;
 }

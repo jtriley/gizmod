@@ -3,7 +3,7 @@
 #*************************************************************************
 #*** 
 #*** GizmoDaemon Config Script v3:0
-#*** 	GizmoDeviceType.py
+#*** 	GizmoDeviceClass.py
 #***
 #*****************************************
   #*****************************************
@@ -19,10 +19,10 @@ from GizmoDaemon import *
 POWERMATE_GIZMOS = ["powermate", "soundknob"]
 
 ############################
-# GizmoDeviceType Class definition
+# GizmoDeviceClass Class definition
 ##########################
 
-class GizmoDeviceType:
+class GizmoDeviceClass:
 	"""
 	This class is responsible for telling GizmoDaemon what the class
 	of the devices are that are attached to the system.  Ie, if 
@@ -44,7 +44,7 @@ class GizmoDeviceType:
 	# Public Functions
 	##########################
 	
-	def setDeviceType(self, DeviceInfo):
+	def setDeviceClass(self, DeviceInfo):
 		"""
 		Calculate the device type from the device ID info
 
@@ -60,15 +60,15 @@ class GizmoDeviceType:
 		
 		#print "onQueryDeviceType: " + DeviceInfo.DeviceName + " [" + DeviceInfo.FileName + "] Prod: " + str(hex(DeviceInfo.DeviceIDProduct))
 		if [i for i in POWERMATE_GIZMOS if DeviceInfo.DeviceName.lower().find(i) > -1]:
- 			self.DeviceType = GizmoClass.Powermate
+ 			self.DeviceClass = GizmoClass.Powermate
  		elif DeviceInfo.DeviceName.lower().find("ati x10") > -1:
-	 		self.DeviceType = GizmoClass.ATIX10
+	 		self.DeviceClass = GizmoClass.ATIX10
  		elif DeviceInfo.DeviceName.lower().find("lirc") > -1:
-	 		self.DeviceType = GizmoClass.LIRC
+	 		self.DeviceClass = GizmoClass.LIRC
 		elif DeviceInfo.DeviceName.lower().find("cpu") > -1:
-	 		self.DeviceType = GizmoClass.CPU
+	 		self.DeviceClass = GizmoClass.CPU
 	 	else:
-	 		self.DeviceType = GizmoClass.Standard
+	 		self.DeviceClass = GizmoClass.Standard
 
 	############################
 	# Private Functions
@@ -80,11 +80,11 @@ class GizmoDeviceType:
 		"""
 		
 		self.DeviceInfo = DeviceInformation
-		self.DeviceType = GizmoClass.Standard
+		self.DeviceClass = GizmoClass.Standard
 		
 		# set the device type from above info
-		self.setDeviceType(self.DeviceInfo)
+		self.setDeviceClass(self.DeviceInfo)
 
 ############################
-# GizmoDeviceType class end
+# GizmoDeviceClass class end
 ##########################

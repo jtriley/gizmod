@@ -31,6 +31,7 @@
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/stringconverter.hpp"
+#include "../libH/UtilTime.hpp"
 #include <boost/format.hpp>
 #include <boost/thread/thread.hpp>
 
@@ -47,6 +48,12 @@ using namespace H;
  * \brief  Text that gets applied if a card's name is not known
  */
 #define CARD_NAME_UNKNOWN	"Unknown"
+
+/**
+ * \def    ALSA_FAST_CALLS_BUG_DELAY
+ * \brief  Work around for a bug in Alsa
+ */
+#define ALSA_FAST_CALLS_BUG	5000000
 
 ////////////////////////////////////////////////////////////////////////////
 // Callbacks
@@ -226,6 +233,23 @@ void AlsaSoundCard::init() {
 	
 	// initialize the event handler thread
 	boost::thread thrd(mThreadProc);
+}
+
+/**
+ * \brief  Set all playback switches to Enabled
+ * \param  Enabled Value to set switches to 
+ */
+void AlsaSoundCard::setAllPlaybackSwitches(bool Enabled) {
+	map< string, shared_ptr<AlsaMixer> >::iterator iter;
+	for (iter = mMixers.begin(); iter != mMixers.end(); iter ++) {
+		shared_ptr<AlsaMixer> pMixer = iter->second;
+		if (pMixer->HasPlaybackSwitch) {
+			pMixer->setSwitchPlayback(Enabled);
+			// FIX for a nasty alsa bug!
+			if (ALSA_FAST_CALLS_BUG)
+				UtilTime::nanoSleep(ALSA_FAST_CALLS_BUG);
+		}
+	}
 }
 
 /**

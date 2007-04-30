@@ -38,6 +38,7 @@
 #include "AlsaMixer.hpp"
 #include <string>
 #include <vector>
+#include <list>
 #include <alsa/asoundlib.h>
 #include <boost/shared_ptr.hpp>
 
@@ -56,16 +57,20 @@
  * Note this creates 1 thread per sound card, and watches for mixer events
  * on all sound cards and all sound card elements when initted
  */
-class Alsa : public AlsaInterface {
+class Alsa : public AlsaInterface { friend class AlsaMixer;
 public:	
 	// public functions
 	void				init();			///< Initialize Alsa
-	AlsaSoundCard const *		getSoundCard(int Index); ///< Get a sound card by index 
-	void				onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
-	void				onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
-	void				onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is detached
-	void				onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a new sound card is detected
-	void				onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a sound card is removed
+	AlsaMixer const *		getDefaultMixerSwitch();///< Get the system's default mixer for muting
+	AlsaMixer const *		getDefaultMixerVolume();///< Get the system's default mixer for volume
+	AlsaSoundCard const *		getSoundCard(int Index);///< Get a sound card by index 
+	void				toggleMuteAllCards();	///< Toggle mute on all sound cards
+	virtual void			onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
+	virtual void			onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
+	virtual void			onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is detached
+	virtual void			onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a new sound card is detected
+	virtual void			onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Triggered when a sound card is removed
+	void				registerDefaultMixerPriority(std::string MixerName); ///< Register a default mixer priority
 	void				shutdown();		///< Shutdown the Alsa connection
 
 	// construction / deconstruction
@@ -76,8 +81,15 @@ public:
 
 private:
 	// private functions
+	void				_onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer & Mixer); ///< Triggered when a mixer element is discovered -- for internal use
 		
 	// private member variables
+	std::list<std::string>		mDefaultMixerPriorities;///< Default mixer priority list
+	int				mDefaultMixerVolumePriority; ///< Current priority of the default volume mixer
+	int				mDefaultMixerSwitchPriority; ///< Current priority of the default volume mixer
+	AlsaMixer *			mpDefaultMixerSwitch;	///< Default switch mixer
+	AlsaMixer *			mpDefaultMixerVolume;	///< Default volume mixer
+	bool				mMuted;			///< Global mute is on or off
 	std::vector< boost::shared_ptr<AlsaSoundCard> >	mSoundCards; ///< Vector of sound card control interface handles
 };
 

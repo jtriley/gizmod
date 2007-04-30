@@ -55,7 +55,6 @@
 class GizmoEventPowermate : public GizmoEvent, public GizmoLinuxInputEvent {
 public:
 	// public functions
-	std::string			getEventType();			///< Get the type of the Event
 	
 	// static public functions
 	static void			buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventPowermate> > & EventVector, H::DynamicBuffer<char> const & Buffer, bool SendNullEvents); ///< Build an event list from a read buffer

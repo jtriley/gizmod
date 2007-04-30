@@ -39,12 +39,6 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
-/**
- * \def   GIZMO_EVENT_TYPE_UNSPECIFIED
- * \brief String returned if a super class failed to reimplement getEventType
- */
-#define GIZMO_EVENT_TYPE_UNSPECIFIED	"Unspecified"
-
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -73,17 +67,6 @@ GizmoEvent::~GizmoEvent() {
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".GizmoClass"
  */
-GizmoEventClass GizmoEvent::getEventClass() {
+GizmoEventClass GizmoEvent::getClass() {
 	return mClass;
-}
-
-/**
- * \brief  Get the type of Event
- * \return Type of the Event
- *
- * Note that this is also implemented in Python as a property so it can
- * be accessed as a variable by referencing ".EventType"
- */
-std::string GizmoEvent::getEventType() {
-	return GIZMO_EVENT_TYPE_UNSPECIFIED;
 }

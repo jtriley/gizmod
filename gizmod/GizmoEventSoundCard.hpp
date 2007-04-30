@@ -53,7 +53,6 @@
 class GizmoEventSoundCard : public GizmoEvent {
 public:
 	// public functions
-	std::string			getEventType();			///< Get the type of the Event
 	
 	// construction / deconstruction
 	GizmoEventSoundCard();						///< Default Constructor

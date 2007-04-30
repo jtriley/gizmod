@@ -143,7 +143,7 @@ public:
 	 * \param  DeviceInformation The information about the device being registered
 	 * \return The class of the device
 	 */
-	virtual GizmoClass		onQueryDeviceType(H::DeviceInfo const DeviceInformation) = 0;
+	virtual GizmoClass		onQueryDeviceClass(H::DeviceInfo const DeviceInformation) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device has been registered

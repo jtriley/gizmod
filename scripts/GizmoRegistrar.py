@@ -15,14 +15,23 @@
 
 from GizmoDaemon import *
 
-# list of devices to enumerate as keyboards
+# List of devices to enumerate as keyboards
 KEYBOARD_GIZMOS = ["keyboard"]
 
-# list of devices to enumerate as mice
+# List of devices to enumerate as mice
 MOUSE_GIZMOS = ["mouse", "trackball", "touchpad"]
 
-# list of devices to enumerate as mice
+# List of devices to enumerate as mice
 POWERMATE_GIZMOS = ["powermate", "soundknob"]
+
+# Default mixer element preferences (in order of priority)
+# Gizmo Daemon will scan all of the specified DEFAULT_MIXERS and apply the first
+# one it finds from the list that has the needed control as the default mixing
+# device.  Ie, If DEFAULT_MIXERS = ["master", "pcm"] then if the Master mixing 
+# element has a playback volume, but no mute switch, and the PCM channel has 
+# playback # volume and a mute switch, Gizmod.DefaultMixerVolume will be the 
+# Master mixer, and Gizmod.DefaultMixerSwitch will be the PCM mixer.
+DEFAULT_MIXERS = ["master", "pcm", "front", "center", "side", "surround"]
 
 ############################
 # GizmoRegistrar Class definition
@@ -86,7 +95,6 @@ class GizmoRegistrar:
 		else:
 			print "Removed Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 			
-		
 	############################
 	# Private Functions
 	##########################
@@ -101,3 +109,6 @@ class GizmoRegistrar:
 ############################
 # GizmoRegistrar class end
 ##########################
+
+for Mixer in DEFAULT_MIXERS:
+	Gizmod.registerDefaultMixerPriority(Mixer)

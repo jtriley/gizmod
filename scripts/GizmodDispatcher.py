@@ -14,8 +14,8 @@
 ##########################
 
 from GizmoDaemon import *
-from GizmoDeviceType import GizmoDeviceType
-from GizmoRegistrar import GizmoRegistrar
+from GizmoDeviceClass import *
+from GizmoRegistrar import *
 
 ############################
 # GizmodDispatcher Class definition
@@ -91,7 +91,7 @@ class GizmodDispatcher(GizmodEventHandler):
 			if UserScript.onEvent(Event, Gizmo):
 				break
 				
-	def onQueryDeviceType(self, DeviceInformation):
+	def onQueryDeviceClass(self, DeviceInformation):
 		"""
 		This method is triggered when a new device is being registered (either at startup
 		or when Gizmo Daemon detects a new device has been plugged in to the computer)
@@ -103,7 +103,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		"""
 		
 		# GizmoDeviceType is defined in GizmoDeviceType.py for convenience and modularity sake
-		return GizmoDeviceType(DeviceInformation).DeviceType
+		return GizmoDeviceClass(DeviceInformation).DeviceClass
 
 	def onRegisterDevice(self, Device):
 		"""

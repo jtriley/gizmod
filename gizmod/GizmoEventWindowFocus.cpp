@@ -42,12 +42,6 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
-/**
- * \def   GIZMO_EVENT_WINDOWFOCUS_TYPE
- * \brief String type of this event
- */
-#define GIZMO_EVENT_WINDOWFOCUS_TYPE	"WindowFocus"
-
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -67,11 +61,3 @@ GizmoEventWindowFocus::~GizmoEventWindowFocus() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
-
-/**
- * \brief  Get the type of this Gizmo
- * \return Type of the Gizmo
- */
-std::string GizmoEventWindowFocus::getEventType() {
-	return GIZMO_EVENT_WINDOWFOCUS_TYPE;
-}

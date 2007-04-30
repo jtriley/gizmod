@@ -59,7 +59,6 @@ public:
 	std::string			LIRCDataBitString;		///< Event string as bits
 	
 	// public functions
-	std::string			getEventType();			///< Get the type of the Event
 	
 	// static public functions
 	static void			buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventLIRC> > & EventVector, H::DynamicBuffer<char> const & Buffer); ///< Build an event list from a read buffer

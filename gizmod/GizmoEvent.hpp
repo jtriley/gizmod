@@ -78,8 +78,7 @@ typedef enum {
 class GizmoEvent {
 public:
 	// public functions
-	GizmoEventClass			getEventClass();		///< Get the class of the Gizmo
-	virtual std::string		getEventType();			///< Get the type of the Event
+	GizmoEventClass			getClass();			///< Get the class of the Gizmo
 	
 	// construction / deconstruction
 	GizmoEvent(GizmoEventClass Class);				///< Default Constructor

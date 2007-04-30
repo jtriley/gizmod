@@ -53,8 +53,19 @@ namespace H {
  */
 class stringconverter : public std::string {
 public:	
+	// public functions
+	
+	// construction / deconstruction
 	stringconverter(int Value);
 	virtual ~stringconverter() throw() ;
+	
+	// static public functions
+	static std::string			toLower(std::string const & convertee);	///< Convert a string to lower case
+	static std::string			toUpper(std::string const & convertee);	///< Convert a string to upper case
+
+	// helper fucntions
+	struct ToLower { char operator() (char c) const  { return std::tolower(c); } }; ///< Helper for case conversions
+	struct ToUpper { char operator() (char c) const  { return std::toupper(c); } }; ///< Helper for case conversions
 };
 
 //////////////////////////////////////////////////////////////////////////////

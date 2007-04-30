@@ -103,6 +103,12 @@ using namespace H;
  */
 #define LIRC_DEV		"/dev/lirc/0"
 
+/** 
+ * \def   NO_GETTER
+ * Used when adding properties to pythong classes without a getter
+ */
+#define NO_GETTER		python::object()
+
 ////////////////////////////////////////////////////////////////////////////
 // Statics
 ///////////////////////////////////////
@@ -133,7 +139,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		onEvent(GizmoEventSoundCard const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	void		onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventWindowFocus const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
-	GizmoClass	onQueryDeviceType(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceType", DeviceInformation); };
+	GizmoClass	onQueryDeviceClass(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceClass", DeviceInformation); };
 	void		onRegisterDevice(GizmoCPU const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoLIRC const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
@@ -187,12 +193,58 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		 
 	/// AlsaMixerElements Python Class Export
 	class_<AlsaMixerElements>("AlsaMixerElements")
-		.def_readonly("VolumePlaybackPercent", &AlsaMixerElements::VolumePlaybackPercent)
+		.def_readonly("IsActive", &AlsaMixerElements::IsActive)
+		.def_readonly("HasCommonVolume", &AlsaMixerElements::HasCommonVolume)
+		.def_readonly("HasPlaybackVolume", &AlsaMixerElements::HasPlaybackVolume)
+		.def_readonly("HasPlaybackVolumeJoined", &AlsaMixerElements::HasPlaybackVolumeJoined)
+		.def_readonly("HasCaptureVolume", &AlsaMixerElements::HasCaptureVolume)
+		.def_readonly("HasCaptureVolumeJoined", &AlsaMixerElements::HasCaptureVolumeJoined)
+		.def_readonly("HasCommonSwitch", &AlsaMixerElements::HasCommonSwitch)
+		.def_readonly("HasPlaybackSwitch", &AlsaMixerElements::HasPlaybackSwitch)
+		.def_readonly("HasPlaybackSwitchJoined", &AlsaMixerElements::HasPlaybackSwitchJoined)
+		.def_readonly("HasCaptureSwitch", &AlsaMixerElements::HasCaptureSwitch)
+		.def_readonly("HasCaptureSwitchJoined", &AlsaMixerElements::HasCaptureSwitchJoined)
+		.def_readonly("HasCaptureSwitchExclusive", &AlsaMixerElements::HasCaptureSwitchExclusive)
+		.def_readonly("VolumeCapture", &AlsaMixerElements::VolumeCapture)
+		.def_readonly("VolumeCaptureMin", &AlsaMixerElements::VolumeCaptureMin)
+		.def_readonly("VolumeCaptureMax", &AlsaMixerElements::VolumeCaptureMax)
+		.def_readonly("VolumeCaptureDB", &AlsaMixerElements::VolumeCaptureDB)
+		.def_readonly("VolumeCaptureDBMin", &AlsaMixerElements::VolumeCaptureDBMin)
+		.def_readonly("VolumeCaptureDBMax", &AlsaMixerElements::VolumeCaptureDBMax)
+		.def_readonly("VolumeCapturePercent", &AlsaMixerElements::VolumeCapturePercent)	
+		.def_readonly("VolumePlayback", &AlsaMixerElements::VolumePlayback)
+		.def_readonly("VolumePlaybackMin", &AlsaMixerElements::VolumePlaybackMin)
+		.def_readonly("VolumePlaybackMax", &AlsaMixerElements::VolumePlaybackMax)
+		.def_readonly("VolumePlaybackDB", &AlsaMixerElements::VolumePlaybackDB)
+		.def_readonly("VolumePlaybackDBMin", &AlsaMixerElements::VolumePlaybackDBMin)
+		.def_readonly("VolumePlaybackDBMax", &AlsaMixerElements::VolumePlaybackDBMax)
+		.def_readonly("VolumePlaybackPercent", &AlsaMixerElements::VolumePlaybackPercent)	
+		.def_readonly("SwitchPlayback", &AlsaMixerElements::SwitchPlayback)
+		.def_readonly("SwitchCapture", &AlsaMixerElements::SwitchCapture)
 		;
 		 
 	/// AlsaMixer Python Class Export
 	class_< AlsaMixer, bases<AlsaMixerElements> >("AlsaMixer")
+		.def("getName", &AlsaMixer::getName)
+		.add_property("Name", &AlsaMixer::getName)
+		.def("getNameShort", &AlsaMixer::getNameShort)
+		.add_property("NameShort", &AlsaMixer::getNameShort)
+		.def("setSwitchCapture", &AlsaMixer::setSwitchCapture)
+		.add_property("SwitchCapture", &AlsaMixer::SwitchCapture, &AlsaMixer::setSwitchCapture)
+		.def("setSwitchPlayback", &AlsaMixer::setSwitchPlayback)
+		.add_property("SwitchPlayback", &AlsaMixer::SwitchPlayback, &AlsaMixer::setSwitchPlayback)
+		.def("setVolumeCapture", &AlsaMixer::setVolumeCapture)
+		.add_property("VolumeCapture", &AlsaMixer::VolumeCapture, &AlsaMixer::setVolumeCapture)
+		.def("setVolumeCapturePercent", &AlsaMixer::setVolumeCapturePercent)
+		.add_property("VolumeCapturePercent", &AlsaMixer::VolumeCapturePercent, &AlsaMixer::setVolumeCapturePercent)
+		.def("setVolumeCaptureDB", &AlsaMixer::setVolumeCaptureDB)
+		.add_property("VolumeCaptureDB", &AlsaMixer::VolumeCaptureDB, &AlsaMixer::setVolumeCaptureDB)
+		.def("setVolumePlayback", &AlsaMixer::setVolumePlayback)
+		.add_property("VolumePlayback", &AlsaMixer::VolumePlayback, &AlsaMixer::setVolumePlayback)
 		.def("setVolumePlaybackPercent", &AlsaMixer::setVolumePlaybackPercent)
+		.add_property("VolumePlaybackPercent", &AlsaMixer::VolumePlaybackPercent, &AlsaMixer::setVolumePlaybackPercent)
+		.def("setVolumePlaybackDB", &AlsaMixer::setVolumePlaybackDB)
+		.add_property("VolumePlaybackDB", &AlsaMixer::VolumePlaybackDB, &AlsaMixer::setVolumePlaybackDB)
 		;
 		 
 	/// AlsaSoundCard Python Class Export
@@ -206,11 +258,18 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getCardName", &AlsaSoundCard::getCardName)
 		.add_property("CardName", &AlsaSoundCard::getCardName)		
 		.def("getMixer", &AlsaSoundCard::getMixer, return_internal_reference<>())
+		.def("setAllPlaybackSwitches", &AlsaSoundCard::setAllPlaybackSwitches)
 		;
 	
 	/// Alsa Python Class Export
 	class_<Alsa>("Alsa")
+		.def("getDefaultMixerSwitch", &Alsa::getDefaultMixerSwitch, return_internal_reference<>())			
+		.add_property("DefaultMixerSwitch", make_function(&Alsa::getDefaultMixerSwitch, return_internal_reference<>()))
+		.def("getDefaultMixerVolume", &Alsa::getDefaultMixerVolume, return_internal_reference<>())
+		.add_property("DefaultMixerVolume", make_function(&Alsa::getDefaultMixerVolume, return_internal_reference<>()))
 		.def("getSoundCard", &Alsa::getSoundCard, return_internal_reference<>())
+		.def("registerDefaultMixerPriority", &Alsa::registerDefaultMixerPriority)
+		.def("toggleMuteAllCards", &Alsa::toggleMuteAllCards)
 		;
 				 
 	/// DeviceInfo Python Class Export
@@ -259,10 +318,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 
 	/// GizmoEvent Python Class Export
  	class_<GizmoEvent>("GizmoEvent", init<GizmoEventClass>())
-		.def("getEventClass", &GizmoEvent::getEventClass)
-		.add_property("Class", &GizmoEvent::getEventClass)
-		.def("getEventType", &GizmoEvent::getEventType)
-		.add_property("EventType", &GizmoEvent::getEventType)
+		.def("getClass", &GizmoEvent::getClass)
+		.add_property("Class", &GizmoEvent::getClass)
 		;
 	
 	/// GizmoEventCPU Python Class Export
@@ -767,6 +824,62 @@ void GizmoDaemon::loadUserScriptsFunctor(std::string UserScript) {
 }
 
 /**
+ * \brief  Triggered when a mixer element is discovered
+ * \param  Event The event
+ * \param  SoundCard The sound card that triggered the event
+ * \param  Mixer The mixer element that triggered the event
+ */
+void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
+	// override me
+	cdbg1 << "Mixer Element Attached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+}
+
+/**
+ * \brief  Triggered when a mixer element is changed
+ * \param  Event The event
+ * \param  SoundCard The sound card that triggered the event
+ * \param  Mixer The mixer element that triggered the event
+ */
+void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
+	// override me
+	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) 
+		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.IsActiveChanged << Event.ElementsChanged << Event.VolumePlaybackChanged << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
+	else
+		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.Mask << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+}
+
+/**
+ * \brief  Triggered when a mixer element is detached
+ * \param  Event The event
+ * \param  SoundCard The sound card that triggered the event
+ * \param  Mixer The mixer element that triggered the event
+ */
+void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
+	// override me
+	cdbg3 << "Mixer Element Detached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+}
+
+/**
+ * \brief  Triggered when a new sound card is detected
+ * \param  Event The event
+ * \param  SoundCard The sound card that triggered the event
+ */
+void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
+	// override me
+	cdbg << "Attached to Sound Card [" << SoundCard.getCardHardwareID() << "] -- " << SoundCard.getCardName() << endl;
+}
+
+/**
+ * \brief  Triggered when a sound card is removed
+ * \param  Event The event
+ * \param  SoundCard The sound card that triggered the event
+ */
+void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
+	// override me
+	cdbg1 << "Sound Card Detached [" << SoundCard.getCardHardwareID() << "] -- " << SoundCard.getCardName() << endl;
+}
+
+/**
  * \brief Event triggered when a new file is created
  * \param pWatchee The Watchee that triggered the event
  * \param FullPath The full (absolute) path of the new file
@@ -864,7 +977,7 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 	cdbg1 << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	try {
 		mutex::scoped_lock lock(mMutexScript);
-		GizmoClass Class = mpPyDispatcher->onQueryDeviceType(*pWatchee);
+		GizmoClass Class = mpPyDispatcher->onQueryDeviceClass(*pWatchee);
 		switch (Class) {
 		case GIZMO_CLASS_CPU: {
 			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
@@ -890,7 +1003,7 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 	} catch (error_already_set) {
 		if (Debug::getDebugEnabled())
 			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceType");
+		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceClass");
 	}
 }
 
@@ -908,7 +1021,7 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 	} catch (error_already_set) {
 		if (Debug::getDebugEnabled())
 			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceType");
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
 	}
 }
 
@@ -925,7 +1038,7 @@ void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
 	} catch (error_already_set) {
 		if (Debug::getDebugEnabled())
 			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceType");
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
 	}
 }
 

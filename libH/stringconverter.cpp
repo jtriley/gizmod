@@ -29,6 +29,7 @@
 #include "stringconverter.hpp"
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 using namespace H;
@@ -60,3 +61,22 @@ stringconverter::~stringconverter() throw() {
 // Class Body
 ///////////////////////////////////////
 
+/**
+ * \brief  Convert a string to lower case
+ * \param  convertee string to be converted
+ */
+std::string stringconverter::toLower(std::string const & convertee) {
+	string t = convertee;
+	transform(t.begin(), t.end(), t.begin(), ToLower());
+	return t;
+}
+
+/**
+ * \brief  Convert a string to upper case
+ * \param  convertee string to be converted
+ */
+std::string stringconverter::toUpper(std::string const & convertee) {
+	string t = convertee;
+	transform(t.begin(), t.end(), t.begin(), ToUpper());
+	return t;
+}

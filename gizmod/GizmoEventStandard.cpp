@@ -42,12 +42,6 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
-/**
- * \def   GIZMO_EVENT_STANDARD_TYPE
- * \brief String type of this event
- */
-#define GIZMO_EVENT_STANDARD_TYPE	"Standard"
-
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -93,12 +87,4 @@ void GizmoEventStandard::buildEventsVectorFromBufferFunctor(struct input_event &
 	if ( (!SendNullEvents) && (InputEvent.type == 0) && (InputEvent.code == 0) && (InputEvent.value == 0) )
 		return;
 	pEventVector->push_back(boost::shared_ptr<GizmoEventStandard>(new GizmoEventStandard(InputEvent)));
-}
-
-/**
- * \brief  Get the type of this Gizmo
- * \return Type of the Gizmo
- */
-std::string GizmoEventStandard::getEventType() {
-	return GIZMO_EVENT_STANDARD_TYPE;
 }

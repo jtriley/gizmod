@@ -39,12 +39,6 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
-/**
- * \def   GIZMO_EVENT_SOUNDCARD_TYPE
- * \brief String type of this event
- */
-#define GIZMO_EVENT_SOUNDCARD_TYPE	"SoundCard"
-
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -64,11 +58,3 @@ GizmoEventSoundCard::~GizmoEventSoundCard() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
-
-/**
- * \brief  Get the type of this Gizmo
- * \return Type of the Gizmo
- */
-std::string GizmoEventSoundCard::getEventType() {
-	return GIZMO_EVENT_SOUNDCARD_TYPE;
-}

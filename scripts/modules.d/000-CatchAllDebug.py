@@ -38,18 +38,18 @@ class CatchAllDebug:
 	
 		if Gizmod.DebugEnabled:
 			if Event.Class == GizmoEventClass.WindowFocus:
-				print "onEvent: " + Event.EventType + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
+				print "onEvent: " + str(Event.Class) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
 			elif Event.Class == GizmoEventClass.LIRC:
-				sys.stdout.write("onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(len(Event.LIRCData)) + "]")
+				sys.stdout.write("onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(len(Event.LIRCData)) + "]")
 				for char in Event.LIRCData:
 					sys.stdout.write(" " + str(hex(ord(char))))
 				sys.stdout.write(" | " + Event.LIRCDataBitString)
 				sys.stdout.write("\n")
 			else:
 				if Event.Type == GizmoEventType.EV_KEY:
-					print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))
+					print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))
 				else:
-					print "onEvent: " + Event.EventType + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] c: " + str(hex(Event.RawCode)) +  " Val: " + str(hex(Event.Value))					
+					print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] c: " + str(hex(Event.RawCode)) +  " Val: " + str(hex(Event.Value))					
 		return False
 			
 	############################

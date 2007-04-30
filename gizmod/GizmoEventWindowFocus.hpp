@@ -63,7 +63,6 @@
 class GizmoEventWindowFocus : public X11FocusEvent, public GizmoEvent {
 public:
 	// public functions
-	std::string			getEventType();			///< Get the type of the Event
 		
 	// construction / deconstruction
 	GizmoEventWindowFocus(X11FocusEvent const & Event);		///< Default Constructor
