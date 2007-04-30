@@ -58,6 +58,7 @@ public:
 	int				getCardID() const;		///< Get the card ID
 	std::string			getCardName() const;		///< Get the name of the card
 	std::string			getCardNameLong() const;	///< Get the long name of the card
+	AlsaMixer const *		getMixer(std::string Name);	///< Get a mixer by name
 
 	// construction / deconstruction
 	AlsaSoundCard(AlsaInterface * piAlsa, int CardID);

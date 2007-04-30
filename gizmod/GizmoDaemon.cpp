@@ -180,7 +180,39 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/////////////////////////////////////////////////////////////////////
 	// General Class exports
 	///////////////////////////////////////
+				 	
+	/// AlsaInterface Python Class Export
+	class_<AlsaInterface>("AlsaInterface")
+		;
+		 
+	/// AlsaMixerElements Python Class Export
+	class_<AlsaMixerElements>("AlsaMixerElements")
+		.def_readonly("VolumePlaybackPercent", &AlsaMixerElements::VolumePlaybackPercent)
+		;
+		 
+	/// AlsaMixer Python Class Export
+	class_< AlsaMixer, bases<AlsaMixerElements> >("AlsaMixer")
+		.def("setVolumePlaybackPercent", &AlsaMixer::setVolumePlaybackPercent)
+		;
+		 
+	/// AlsaSoundCard Python Class Export
+	class_<AlsaSoundCard>("AlsaSoundCard", init<AlsaInterface *, int>())
+		.def("getCardHardwareID", &AlsaSoundCard::getCardHardwareID)
+		.add_property("CardHardwareID", &AlsaSoundCard::getCardHardwareID)
+		.def("getCardID", &AlsaSoundCard::getCardID)
+		.add_property("CardID", &AlsaSoundCard::getCardID)
+		.def("getCardNameLong", &AlsaSoundCard::getCardNameLong)
+		.add_property("CardNameLong", &AlsaSoundCard::getCardNameLong)
+		.def("getCardName", &AlsaSoundCard::getCardName)
+		.add_property("CardName", &AlsaSoundCard::getCardName)		
+		.def("getMixer", &AlsaSoundCard::getMixer, return_internal_reference<>())
+		;
 	
+	/// Alsa Python Class Export
+	class_<Alsa>("Alsa")
+		.def("getSoundCard", &Alsa::getSoundCard, return_internal_reference<>())
+		;
+				 
 	/// DeviceInfo Python Class Export
 	class_<DeviceInfo>("GizmoDeviceInfo")
 		.def_readonly("DeviceName", &DeviceInfo::DeviceName)
@@ -202,7 +234,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 				
 	/// GizmoDaemon Python Class Export
-	class_<GizmoDaemon>("PyGizmoDaemon")
+	class_<GizmoDaemon, bases<Alsa> >("PyGizmoDaemon")
 		.def("getCurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.add_property("CurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)

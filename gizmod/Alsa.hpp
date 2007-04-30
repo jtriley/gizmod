@@ -60,6 +60,7 @@ class Alsa : public AlsaInterface {
 public:	
 	// public functions
 	void				init();			///< Initialize Alsa
+	AlsaSoundCard const *		getSoundCard(int Index); ///< Get a sound card by index 
 	void				onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
 	void				onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
 	void				onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is detached

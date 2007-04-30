@@ -68,6 +68,7 @@ public:
 	bool				setVolumePlaybackDB(long DB);	///< Set the playback dB
 
 	// construction / deconstruction
+	AlsaMixer();
 	AlsaMixer(AlsaSoundCardInterface * piSoundCard, snd_mixer_elem_t * MixerElement, std::string MixerName, std::string MixerNameUnique, unsigned int MixerID);
 	virtual ~AlsaMixer();
 	

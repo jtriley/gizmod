@@ -86,9 +86,15 @@ class LIRCHauppaugeDefault(Hauppauge):
 		   	elif KeyString == "Menu":
 		   		return False
 		   	elif KeyString == "VolUp":
-		   		return False
+		   		print "VolUp"
+		   		Mixer = Gizmod.getSoundCard(0).getMixer("PCM")
+		   		Mixer.setVolumePlaybackPercent(Mixer.VolumePlaybackPercent + 1.0)
+		   		return True
 		   	elif KeyString == "VolDown":
-		   		return False
+		   		Mixer = Gizmod.getSoundCard(0).getMixer("PCM")
+		   		print "VolDown " + str(Mixer.VolumePlaybackPercent)
+		   		Mixer.setVolumePlaybackPercent(Mixer.VolumePlaybackPercent - 1.0)
+		   		return True
 		   	elif KeyString == "Prev.Ch":
 				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_BACKSPACE, 1)
 				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_BACKSPACE, 0)

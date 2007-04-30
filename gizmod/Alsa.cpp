@@ -64,7 +64,16 @@ Alsa::~Alsa() {
 ///////////////////////////////////////
 
 /**
- * \brief Initialize ALSA
+ * \brief  Get a sound card by index
+ */
+AlsaSoundCard const * Alsa::getSoundCard(int Index) {
+	if ( (Index < 0) || (size_t(Index) >= mSoundCards.size()) )
+		return NULL;
+	return mSoundCards[Index].get();
+}
+
+/**
+ * \brief  Initialize ALSA
  */
 void Alsa::init() {
 	// first make sure the connections are closed

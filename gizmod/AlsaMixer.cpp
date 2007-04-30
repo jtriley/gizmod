@@ -86,6 +86,16 @@ int AlsaMixer::mixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int E
 /** 
  * \brief  AlsaMixer Default Constructor
  */
+AlsaMixer::AlsaMixer() {
+	mpiAlsa = NULL;
+	mpiSoundCard = NULL;
+	mMixerElement = NULL;
+	mMixerID = -1;
+}	
+
+/** 
+ * \brief  AlsaMixer Default Constructor
+ */
 AlsaMixer::AlsaMixer(AlsaSoundCardInterface * piSoundCard, snd_mixer_elem_t * MixerElement, std::string MixerName, std::string MixerNameUnique, unsigned int MixerID) {
 	mpiAlsa = piSoundCard->getAlsa();
 	mpiSoundCard = piSoundCard;
@@ -205,6 +215,7 @@ void AlsaMixer::populateInfo() {
 bool AlsaMixer::setSwitchCapture(bool Enable) {
 	if (snd_mixer_selem_set_capture_switch_all(mMixerElement, Enable) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 
@@ -216,6 +227,7 @@ bool AlsaMixer::setSwitchCapture(bool Enable) {
 bool AlsaMixer::setSwitchPlayback(bool Enable) {
 	if (snd_mixer_selem_set_playback_switch_all(mMixerElement, Enable) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 
@@ -225,8 +237,13 @@ bool AlsaMixer::setSwitchPlayback(bool Enable) {
  * \return True on success
  */
 bool AlsaMixer::setVolumeCapture(long Volume) {
+	if (Volume < VolumeCaptureMin)
+		Volume = VolumeCaptureMin;
+	else if (Volume > VolumeCaptureMax)
+		Volume = VolumeCaptureMax;
 	if (snd_mixer_selem_set_capture_volume_all(mMixerElement, Volume) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 
@@ -236,8 +253,13 @@ bool AlsaMixer::setVolumeCapture(long Volume) {
  * \return True on success
  */
 bool AlsaMixer::setVolumeCapturePercent(float Percent) {
-	if (snd_mixer_selem_set_capture_volume_all(mMixerElement, (long) (Percent * VolumeCaptureMax) + VolumeCaptureMin) < 0)
+	if (Percent < 0.0f)
+		Percent = 0.0f;
+	else if (Percent > 1.0f)
+		Percent = 1.0f;
+	if (snd_mixer_selem_set_capture_volume_all(mMixerElement, (long) (Percent / 100.0f * (VolumeCaptureMax - VolumeCaptureMin)) + VolumeCaptureMin) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 
@@ -247,8 +269,13 @@ bool AlsaMixer::setVolumeCapturePercent(float Percent) {
  * \return True on success
  */
 bool AlsaMixer::setVolumeCaptureDB(long DB) {
+	if (DB < VolumeCaptureDBMin)
+		DB = VolumeCaptureDBMin;
+	else if (DB > VolumeCaptureDBMax)
+		DB = VolumeCaptureDBMax;
 	if (snd_mixer_selem_set_capture_dB_all(mMixerElement, DB, 0) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 
@@ -258,8 +285,13 @@ bool AlsaMixer::setVolumeCaptureDB(long DB) {
  * \return True on success
  */
 bool AlsaMixer::setVolumePlayback(long Volume) {
+	if (Volume < VolumePlaybackMin)
+		Volume = VolumePlaybackMin;
+	else if (Volume > VolumePlaybackMax)
+		Volume = VolumePlaybackMax;
 	if (snd_mixer_selem_set_playback_volume_all(mMixerElement, Volume) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 
@@ -269,8 +301,13 @@ bool AlsaMixer::setVolumePlayback(long Volume) {
  * \return True on success
  */
 bool AlsaMixer::setVolumePlaybackPercent(float Percent) {
-	if (snd_mixer_selem_set_playback_volume_all(mMixerElement, (long) (Percent * VolumePlaybackMax) + VolumePlaybackMin) < 0)
+	if (Percent < 0.0f)
+		Percent = 0.0f;
+	else if (Percent > 1.0f)
+		Percent = 1.0f;
+	if (snd_mixer_selem_set_playback_volume_all(mMixerElement, (long) (Percent / 100.0f * (VolumePlaybackMax - VolumePlaybackMin)) + VolumePlaybackMin) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 
@@ -280,8 +317,13 @@ bool AlsaMixer::setVolumePlaybackPercent(float Percent) {
  * \return True on success
  */
 bool AlsaMixer::setVolumePlaybackDB(long DB) {
+	if (DB < VolumePlaybackDBMin)
+		DB = VolumePlaybackDBMin;
+	else if (DB > VolumePlaybackDBMax)
+		DB = VolumePlaybackDBMax;
 	if (snd_mixer_selem_set_playback_dB_all(mMixerElement, DB, 0) < 0)
 		return false;
+	populateInfo();
 	return true;
 }
 

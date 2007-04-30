@@ -157,6 +157,16 @@ std::string AlsaSoundCard::getCardNameLong() const {
 }
 
 /**
+ * \brief  Get a mixer element by index
+ * \return The requested AlsaMixer
+ */
+AlsaMixer const * AlsaSoundCard::getMixer(std::string Name) {
+	if (!mMixers.count(Name))
+		return NULL;
+	return mMixers[Name].get();
+}
+
+/**
  * \brief  Initialize The AlsaSoundCard
  */
 void AlsaSoundCard::init() {
