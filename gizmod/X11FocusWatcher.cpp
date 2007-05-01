@@ -160,10 +160,10 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
 	if (XGetClassHint(mDisplay, window, pClassHint) == 0) {
 		// failed to get class information!
 		XFree(pClassHint);
-		Event = X11FocusEvent(EventType, getWindowName(window), WINDOW_UNKNOWN, WINDOW_UNKNOWN);
+		Event = X11FocusEvent(EventType, getWindowName(mDisplay, window), WINDOW_UNKNOWN, WINDOW_UNKNOWN);
 	} else {
 		// class information is available
-		Event = X11FocusEvent(EventType, getWindowName(window), pClassHint->res_name, pClassHint->res_class);
+		Event = X11FocusEvent(EventType, getWindowName(mDisplay, window), pClassHint->res_name, pClassHint->res_class);
 		XFree(pClassHint->res_name);
 		XFree(pClassHint->res_class);
 		XFree(pClassHint);
@@ -174,6 +174,7 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
 
 /**
  * \brief  Get the name of a Window 
+ * \param  dpy The Display 
  * \param  window The Window itself
  * \param  recurse Set to true if we should recurse on this window
  * \return A string that contains the name of the window
@@ -184,80 +185,81 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
  * Modified to correctly get the parent window if necessary
  * Also fixed several segfaults!
  */
-std::string X11FocusWatcher::getWindowName(Window const & window, bool recurse) {
+std::string X11FocusWatcher::getWindowName(Display * dpy, Window const & window, bool recurse) {
 	XTextProperty tp;
-	Display * dpy = mDisplay;
-	
 	if (!window) {
 		return "";
 	} else {
 		if (window == RootWindow(dpy, XDefaultScreen(dpy))) {
 			return "(root window)";
-	}
-#ifdef NO_I18N
-	char * win_name;
-	if (!XFetchName(dpy, window, &win_name)) { /* Get window name if any */
-		XFree(win_name);
-		Window root_ret, parent_ret;
-		unsigned int nChildren;
-		Window * children = NULL;
-		XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
-		if (children) XFree(children);
-		if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
-			XFree((void*)tp.value);
-			return getWindowName(parent_ret, false);
-		} else {
-			if (tp.value)
-				XFree((void*)tp.value);
+		}
+		#ifdef NO_I18N
+			char * win_name;
+			if (!XFetchName(dpy, window, &win_name)) { /* Get window name if any */
+				XFree(win_name);
+				Window root_ret, parent_ret;
+				unsigned int nChildren;
+				Window * children = NULL;
+				XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
+				if (children) 
+					XFree(children);
+				if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
+					XFree((void*)tp.value);
+					return getWindowName(parent_ret, false);
+				} else {
+					if (tp.value)
+						XFree((void*)tp.value);
+					return TITLE_UNKNOWN;
+				}
+			} else if (win_name) {
+				const std::string retStr = win_name;
+				XFree(win_name);
+				return retStr;
+			}
+		#else
+			if (!XGetWMName(dpy, window, &tp)) { // Get window name if any
+				if (tp.value)
+					XFree((void*)tp.value);
+				Window root_ret, parent_ret;
+				unsigned int nChildren;
+				Window * children = NULL;
+				XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
+				if (children) 
+					XFree(children);
+				if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
+					if (tp.value)
+						XFree((void*)tp.value);
+					return getWindowName(dpy, parent_ret, false);
+				} else {
+					if (tp.value)
+						XFree((void*)tp.value);
+					return TITLE_UNKNOWN;
+				}
+			} else if (tp.nitems > 0) {
+				std::string retStr;
+				int count = 0, i, ret;
+				char **list = NULL;
+				ret = XmbTextPropertyToTextList(dpy, &tp, &list, &count);
+				if((ret == Success || ret > 0) && list != NULL) {
+					for(i=0; i<count; i++)
+						retStr += (const char *) list[i];
+					XFree((void*)tp.value);
+					XFreeStringList(list);
+					return retStr;
+				} else {
+					XFree((void*)tp.value);
+					if (list)
+						XFreeStringList(list);
+					retStr = (const char *) tp.value;
+					return retStr;
+				}
+			}
+		#endif
+		else {
 			return TITLE_UNKNOWN;
 		}
-	} else if (win_name) {
-		const std::string retStr = win_name;
-		XFree(win_name);
-		return retStr;
-	}
-#else
-	if (!XGetWMName(dpy, window, &tp)) { // Get window name if any
-		if (tp.value)
-			XFree((void*)tp.value);
-		Window root_ret, parent_ret;
-		unsigned int nChildren;
-		Window * children = NULL;
-		XQueryTree(dpy, window, &root_ret, &parent_ret, &children, &nChildren);
-		if (children) XFree(children);
-		if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
-			if (tp.value)
-				XFree((void*)tp.value);
-			return getWindowName(parent_ret, false);
-		} else {
-			if (tp.value)
-				XFree((void*)tp.value);
-			return TITLE_UNKNOWN;
-		}
-	} else if (tp.nitems > 0) {
-		std::string retStr;
-		int count = 0, i, ret;
-		char **list = NULL;
-		ret = XmbTextPropertyToTextList(dpy, &tp, &list, &count);
-		if((ret == Success || ret > 0) && list != NULL) {
-			for(i=0; i<count; i++)
-				retStr += (const char *) list[i];
-			XFree((void*)tp.value);
-			XFreeStringList(list);
-			return retStr;
-		} else {
-			XFree((void*)tp.value);
-			if (list)
-				XFreeStringList(list);
-			retStr = (const char *) tp.value;
-			return retStr;
-		}
-	}
-#endif
-	else
-		return TITLE_UNKNOWN;
-	}
-	
+	}	
+
 	return WINDOW_UNKNOWN;
 }
 
@@ -273,20 +275,29 @@ void X11FocusWatcher::init() {
 /**
  * \brief  Test is an application is running by checking for its window title
  * \param  WindowTitle The title of the window to find
+ *
+ * Note this opens a new display so that the focus watcher
+ * can remain using single threaded X11
  */
 bool X11FocusWatcher::isApplicationRunning(std::string WindowTitle) {
+	Display * Dsp;
+	if ( (Dsp = XOpenDisplay(mDisplayName.c_str())) == NULL )
+		return false;
+	
 	Window RootRet, ParentRet;
 	unsigned int nChildren;
 	Window * Children = NULL;
-	XQueryTree(mDisplay, RootWindow(mDisplay, mScreen), &RootRet, &ParentRet, &Children, &nChildren);
+	XQueryTree(Dsp, RootWindow(Dsp, DefaultScreen(Dsp)), &RootRet, &ParentRet, &Children, &nChildren);
 	for (unsigned int lp = 0; lp < nChildren; lp ++) {
-		if (stringconverter::toLower(getWindowName(Children[lp])).find(stringconverter::toLower(WindowTitle)) != string::npos) {
+		if (stringconverter::toLower(getWindowName(Dsp, Children[lp])).find(stringconverter::toLower(WindowTitle)) != string::npos) {
 			XFree(Children);	
+			XCloseDisplay(Dsp);
 			return true;
 		}
 	}
 	if (Children)
 		XFree(Children);
+	XCloseDisplay(Dsp);
 	return false;
 }
 
@@ -320,7 +331,6 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 		mDisplayName = XDisplayName(NULL);
 	else
 		mDisplayName = DisplayName;
-
 
 	if ( (mDisplay = XOpenDisplay(mDisplayName.c_str())) == NULL ) {
 		cdbg << "X11FocusWatcher :: Unable to Open Display [" << mDisplayName << "]" << endl;

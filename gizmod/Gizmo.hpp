@@ -79,7 +79,7 @@ public:
 	GizmoClass			getGizmoClass();		///< Get the class of the Gizmo
 	int				getGizmoKeyState(GizmoKey Key);	///< Get a key state
 	virtual std::string		getGizmoType();			///< Get the type of the Gizmo
-	virtual void			processEvent(GizmoEvent * pEvent); ///< Process an event
+	virtual bool			processEvent(GizmoEvent * pEvent); ///< Process an event
 	void				setGizmoKeyState(GizmoKey Key, int State); ///< Set a keystate of the Gizmo
 	
 	// construction / deconstruction

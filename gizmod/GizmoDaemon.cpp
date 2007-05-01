@@ -340,10 +340,11 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// GizmoLinuxInputDevice Python Class Export
 	class_<GizmoLinuxInputDevice>("GizmoLinuxInputDevice", init<int>())
 		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
+		.def("createEventPress", &GizmoLinuxInputDevice::createEventPress)
 		.def("createEvents", &GizmoLinuxInputDevice::createEvents)
 		;
 	
-	/// GizmoLinuxInputEvent Python Class Export
+	/// GizmoLinuxInputEvent Python Class Export 
 	class_<GizmoLinuxInputEvent>("GizmoLinuxInputEvent")
 		.def_readonly("RawCode", &GizmoLinuxInputEvent::RawCode)
 		.def_readonly("RawType", &GizmoLinuxInputEvent::RawType)
@@ -379,6 +380,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	
 	/// GizmoLIRC Python Class Export
 	class_< GizmoLIRC, bases<Gizmo> >("GizmoLIRC", init<const DeviceInfo &>())
+		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
+		.def("setMinimumTimeBetweenEvents", &GizmoLIRC::setMinimumTimeBetweenEvents)
 		;
 	
 	/// GizmoPowermate Python Class Export
@@ -942,8 +945,8 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 			GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
 			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
 				mutex::scoped_lock lock(mMutexScript);
-				pGizmo->processEvent(EventVector[lp].get());
-				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
+				if (pGizmo->processEvent(EventVector[lp].get()))
+					mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
 		case GIZMO_CLASS_POWERMATE: {
@@ -952,8 +955,8 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 			GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
 			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
 				mutex::scoped_lock lock(mMutexScript);
-				pGizmo->processEvent(EventVector[lp].get());
-				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
+				if (pGizmo->processEvent(EventVector[lp].get()))
+					mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
 		case GIZMO_CLASS_STANDARD: {
@@ -962,8 +965,8 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 			GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
 			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
 				mutex::scoped_lock lock(mMutexScript);
-				pGizmo->processEvent(EventVector[lp].get());
-				mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
+				if (pGizmo->processEvent(EventVector[lp].get()))
+					mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
 			}
 			break; }
 		}

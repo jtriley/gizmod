@@ -53,6 +53,7 @@ class GizmoLinuxInputDevice {
 public:
 	// public functions
 	bool 				createEvent(int Type, int Code, int Value); ///< Write event to the device
+	bool 				createEventPress(int Type, int Code); ///< Write a "press" event to the device (two events, with value 1, then 0)
 	bool 				createEvents(int Type, int Code, int Value, int NumWrites); ///< Write multiple similar events to the device
 	bool				getSendNullEvents();		///< Get whether or not the Gizmo sends NULL events
 	void				setSendNullEvents(bool SendNull); ///< Set whether or not the Gizmo sends NULL events

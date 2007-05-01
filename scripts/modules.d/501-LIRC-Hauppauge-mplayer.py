@@ -3,7 +3,7 @@
 #*************************************************************************
 #*** 
 #*** GizmoDaemon Config Script v3:0
-#*** 	LIRCHauppauge Default config
+#*** 	LIRCHauppauge Mplayer config
 #***
 #*****************************************
   #*****************************************
@@ -19,15 +19,15 @@ import subprocess
 
 ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
-POWER_APPLICATION = "mythfrontend"
+INTERESTED_WINDOWS = ["mplayer"]
 
 ############################
-# LIRCHauppaugeDefault Class definition
+# LIRCHauppaugeMplayer Class definition
 ##########################
 
-class LIRCHauppaugeDefault(Hauppauge):
+class LIRCHauppaugeMplayer(Hauppauge):
 	"""
-	Default Event mapping for LIRC with the Hauppauge remote
+	Event mapping for LIRC when using Mplayer with the Hauppauge remote
 	"""
 	
 	############################
@@ -42,31 +42,39 @@ class LIRCHauppaugeDefault(Hauppauge):
 		# if the event class is in INTERESTED_CLASSES and the active window is
 		# one of INTERESTED_WINDOWS and there is a keyboard and mouse attached 
 		# then process the event
-		if Event.Class in INTERESTED_CLASSES and len(Gizmod.Mice) and len(Gizmod.Keyboards):
+		if Event.Class in INTERESTED_CLASSES and \
+		   [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] and \
+		   len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	KeyString = self.getKeyString(Event)
 		   	if KeyString == "Go":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_A)
+		   		return True
 		   	elif KeyString == "Power":
-		   		if not Gizmod.isApplicationRunning(POWER_APPLICATION):
-		   			subprocess.Popen([POWER_APPLICATION])
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
 		   		return True
 		   	elif KeyString == "TV":
-		   		return False
-		   	elif KeyString == "Videos":
-		   		return False
-		   	elif KeyString == "Music":
-		   		return False
-		   	elif KeyString == "Pictures":
-		   		subprocess.Popen(["xset", "dpms", "force", "off"])
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_B)
 		   		return True
-		   	elif KeyString == "Guide":
+		   	elif KeyString == "Videos":
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_V)
+		   		return True
+		   	elif KeyString == "Music":		   	
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 1)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SLASH)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 0)
+		   		return True
+		   	elif KeyString == "Pictures":
 		   		return False
+		   	elif KeyString == "Guide":
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_S)
+		   		return True
 		   	elif KeyString == "Up":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_UP)
 		   		return True
 		   	elif KeyString == "Radio":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_N)
+		   		return True
 		   	elif KeyString == "Left":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFT)
 		   		return True
@@ -77,48 +85,57 @@ class LIRCHauppaugeDefault(Hauppauge):
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHT)
 		   		return True
 		   	elif KeyString == "Back/Exit":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESCAPE)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
 		   		return True
 		   	elif KeyString == "Down":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
 		   		return True
 		   	elif KeyString == "Menu":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_O)
+		   		return True
 		   	elif KeyString == "VolUp":
-		   		if Gizmod.DefaultMixerVolume:
-		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent + 5
-		   		return True
+		   		return False
 		   	elif KeyString == "VolDown":
-		   		if Gizmod.DefaultMixerVolume:
-		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent - 5
-		   		return True
+		   		return False
 		   	elif KeyString == "Prev.Ch":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_BACKSPACE)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_H)
 		   		return True
 		   	elif KeyString == "Mute":
-	   			Gizmod.toggleMuteAllCards()
-		   		return True
+		   		return False
 		   	elif KeyString == "ChUp":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_UP)
+		   		return True
 		   	elif KeyString == "ChDown":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
+		   		return True
 		   	elif KeyString == "Rec":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_R)
+		   		return True
 		   	elif KeyString == "Stop":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_S)
+		   		return True
 		   	elif KeyString == "Rewind":
-		   		return False
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 1)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_COMMA)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 0)
+		   		return True
 		   	elif KeyString == "Play":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+		   		return True
 		   	elif KeyString == "FastForward":
-		   		return False
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 1)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOT)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 0)
+		   		return True
 		   	elif KeyString == "Replay":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
+		   		return True
 		   	elif KeyString == "Pause":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_P)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
 		   		return True
 		   	elif KeyString == "Skip":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
+		   		return True
 		   	elif KeyString == "1":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_1)
 		   		return True
@@ -147,23 +164,24 @@ class LIRCHauppaugeDefault(Hauppauge):
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_9)
 		   		return True
 		   	elif KeyString == "*":
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTMETA, 1)
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_F12)
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTMETA, 0)
-		   		return True
+		   		return False
 		   	elif KeyString == "0":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_0)
 		   		return True
 		   	elif KeyString == "#":
 		   		return False
 		   	elif KeyString == "Red":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_END)
+		   		return True
 		   	elif KeyString == "Green":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_HOME)
+		   		return True
 		   	elif KeyString == "Yellow":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_C)
+		   		return True
 		   	elif KeyString == "Blue":
-		   		return False
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_I)
+		   		return True
 		   	else:
 		   		# unmatched event, keep processing
 				return False				
@@ -183,9 +201,9 @@ class LIRCHauppaugeDefault(Hauppauge):
 		print "Loaded User Script: " + self.__class__.__name__
 
 ############################
-# LIRCHauppaugeDefault class end
+# LIRCHauppaugeMplayer class end
 ##########################
 
 # register the user script
 if ENABLED:
-	Gizmod.Dispatcher.userScripts.append(LIRCHauppaugeDefault())
+	Gizmod.Dispatcher.userScripts.append(LIRCHauppaugeMplayer())

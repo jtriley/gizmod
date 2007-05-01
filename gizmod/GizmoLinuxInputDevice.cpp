@@ -89,6 +89,23 @@ bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
 }
 
 /**
+ * \brief  Create a key press event on the device
+ * \param  Type GizmoEventType of the event
+ * \param  Code GizmoKey (or other code) of the event
+ * \return True on success
+ *
+ * This creates two events, to simulate a key press
+ * First send event with value 1, then value 0
+ */
+bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
+	if (!createEvent(Type, Code, 1))
+		return false;
+	if (!createEvent(Type, Code, 0))
+		return false;
+	return true;
+}
+
+/**
  * \brief  Create multiple events on the device
  * \param  Type GizmoEventType of the event
  * \param  Code GizmoKey (or other code) of the event

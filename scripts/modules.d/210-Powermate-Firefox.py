@@ -54,12 +54,10 @@ class PowermateFirefox:
 					# scroll quickly (by pages using the page up / page down keys)
 					if Event.Value > 0:
 						for repeat in range(abs(Event.Value)):
-							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN, 1)
-							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN, 0)
+							Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
 					else:
 						for repeat in range(abs(Event.Value)):
-							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP, 1)
-							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP, 0)
+							Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
 				return True
 
 		return False

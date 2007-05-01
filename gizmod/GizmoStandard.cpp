@@ -77,8 +77,9 @@ std::string GizmoStandard::getGizmoType() {
 /**
  * \brief  Process an event
  * \param  pEvent The event to process
+ * \return True on if the event should get passed on to the script
  */
-void GizmoStandard::processEvent(GizmoEvent * pEvent) {
+bool GizmoStandard::processEvent(GizmoEvent * pEvent) {
 	GizmoEventStandard * pStandardEvent = static_cast<GizmoEventStandard *>(pEvent);
 	
 	switch (pStandardEvent->Type) {
@@ -89,4 +90,6 @@ void GizmoStandard::processEvent(GizmoEvent * pEvent) {
 		// do nothing
 		break;
 	}
+	
+	return true;
 }

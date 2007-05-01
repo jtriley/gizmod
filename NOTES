@@ -1,7 +1,0 @@
-- register each device as (for ex) Gizmod.Powermate1, Gizmod.Gizmo1, etc
-- upon connect / disconnect, re-evaluate device allocations
-- dynamically load user scripts
-	- 00-GUI-All.py
-	- 01-LIRC-MythTV.py
-	- 05-Powermate-MythTV.py
-	- 07-Powermate-Firefox.py

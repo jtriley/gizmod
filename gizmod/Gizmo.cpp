@@ -103,9 +103,11 @@ std::string Gizmo::getGizmoType() {
 /**
  * \brief  Process an event
  * \param  pEvent The event to process
+ * \return True on if the event should get passed on to the script
  */
-void Gizmo::processEvent(GizmoEvent * pEvent) {
+bool Gizmo::processEvent(GizmoEvent * pEvent) {
 	// override me
+	return true;
 }
 
 /**

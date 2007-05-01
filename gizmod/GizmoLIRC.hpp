@@ -52,17 +52,22 @@
 class GizmoLIRC : public Gizmo {
 public:
 	// public functions
-	virtual std::string		getGizmoType();			///< Get the type of the Gizmo
-	virtual void			processEvent(GizmoEvent * pEvent); ///< Process an event
+	virtual std::string		getGizmoType();		///< Get the type of the Gizmo
+	virtual bool 			processEvent(GizmoEvent * pEvent); ///< Process an event
 	
 	// construction / deconstruction	
 	GizmoLIRC(const H::DeviceInfo & deviceInfo);		///< Default Constructor
 	virtual ~GizmoLIRC();					///< Destructor
 
+	// static public functions
+	static void			setMinimumTimeBetweenEvents(float Seconds); ///< Set the minimum time between events
+	
 protected:
 	// private functions
 	
 	// private member variables
+	unsigned long			mLastEventTime;		///< Time of last event
+	static float			mMinTimeBetweenEvents;	///< Minimum time between events (smooth out trigger happy controllers)
 };
 
 #endif // __GizmoLIRC_h

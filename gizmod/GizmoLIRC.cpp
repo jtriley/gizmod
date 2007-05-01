@@ -27,9 +27,9 @@
 */
 
 #include "GizmoLIRC.hpp"
-//#include "GizmoEventLIRC.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/UtilTime.hpp"
 #include <boost/shared_ptr.hpp>
 
 using namespace std;
@@ -45,6 +45,12 @@ using namespace H;
  * \brief String type of this gizmo
  */
 #define GIZMO_LIRC_TYPE	"LIRC"
+	
+////////////////////////////////////////////////////////////////////////////
+// Type Defs
+///////////////////////////////////////
+
+float GizmoLIRC::mMinTimeBetweenEvents = 0.15f;
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -54,6 +60,7 @@ using namespace H;
  * \brief GizmoLIRC Default Constructor
  */
 GizmoLIRC::GizmoLIRC(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_LIRC, deviceInfo)  {
+	mLastEventTime = UtilTime::getTicks();
 }
 
 /**
@@ -77,18 +84,24 @@ std::string GizmoLIRC::getGizmoType() {
 /**
  * \brief  Process an event
  * \param  pEvent The event to process
+ * \return True on if the event should get passed on to the script
+*/
+bool GizmoLIRC::processEvent(GizmoEvent * pEvent) {
+	float TimeBetweenEvents = float(UtilTime::getTicks() - mLastEventTime) / 1000000.0f;
+	if (TimeBetweenEvents <= mMinTimeBetweenEvents)
+		return false;
+	cdbg5 << "LIRC Time Between Events: " << TimeBetweenEvents << " Seconds" << endl;
+	mLastEventTime = UtilTime::getTicks();
+	return true;
+}
+
+/**
+ * \brief  Set the minimum time between events
+ * \param  Seconds The time in seconds
+ *
+ * This is for remotes that are a bit jittery, or trigger happy.
+ * Set this to an appropriate value (issue -V 5 to see the timings)
  */
-void GizmoLIRC::processEvent(GizmoEvent * pEvent) {
-	/*
-	GizmoEventLIRC * pLIRCEvent = static_cast<GizmoEventLIRC *>(pEvent);
-	
-	switch (pLIRCEvent->Type) {
-	case EV_KEY:
-		setGizmoKeyState(pLIRCEvent->Code, pLIRCEvent->Value);
-		break;
-	default:
-		// do nothing
-		break;
-	}
-	*/
+void GizmoLIRC::setMinimumTimeBetweenEvents(float Seconds) {
+	mMinTimeBetweenEvents = Seconds;
 }

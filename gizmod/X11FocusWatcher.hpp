@@ -122,7 +122,7 @@ private:
 	// private functions
 	void				closeDisplay();		///< Close the X11 display
 	X11FocusEvent			createFocusEvent(Window const & window, X11FocusEventType EventType); ///< Create a X11FocusEvent from a Window
-	std::string			getWindowName(Window const & window, bool recurse = true); ///< Get the string name of a window
+	static std::string		getWindowName(Display * dpy, Window const & window, bool recurse = true); ///< Get the string name of a window
 	bool 				openDisplay(std::string DisplayName); ///< Open an X11 display
 	void 				setFocusEventMasks();	///< Set all windows to report the FocusChange event mask
 	void				threadProc();		///< thread procedure

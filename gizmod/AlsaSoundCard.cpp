@@ -50,7 +50,7 @@ using namespace H;
 #define CARD_NAME_UNKNOWN	"Unknown"
 
 /**
- * \def    ALSA_FAST_CALLS_BUG_DELAY
+ * \def    ALSA_FAST_CALLS_BUG
  * \brief  Work around for a bug in Alsa
  */
 #define ALSA_FAST_CALLS_BUG	5000000

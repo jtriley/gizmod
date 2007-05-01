@@ -74,7 +74,6 @@ protected:
 	// private member variables
 	
 	// static private functions
-	static void 			buildEventsVectorFromBufferFunctor(struct input_event & InputEvent, std::vector< boost::shared_ptr<GizmoEventLIRC> > * pEventVector); ///< Functor for building the events list
 };
 
 #endif // __GizmoEventLIRC_h

@@ -86,8 +86,9 @@ std::string GizmoPowermate::getGizmoType() {
 /**
  * \brief  Process an event
  * \param  pEvent The event to process
+ * \return True on if the event should get passed on to the script
  */
-void GizmoPowermate::processEvent(GizmoEvent * pEvent) {
+bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 	GizmoEventPowermate * pPowermateEvent = static_cast<GizmoEventPowermate *>(pEvent);
 	
 	switch (pPowermateEvent->Type) {
@@ -98,4 +99,6 @@ void GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 		// do nothing
 		break;
 	}
+	
+	return true;
 }

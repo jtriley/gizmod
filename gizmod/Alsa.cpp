@@ -243,6 +243,6 @@ void Alsa::shutdown() {
  */
 void Alsa::toggleMuteAllCards() {
 	for (size_t lp = 0; lp < mSoundCards.size(); lp ++)
-		mSoundCards[lp]->setAllPlaybackSwitches(!mMuted);
+		mSoundCards[lp]->setAllPlaybackSwitches(mMuted);
 	mMuted = !mMuted;
 }
