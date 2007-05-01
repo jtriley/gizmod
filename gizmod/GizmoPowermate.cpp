@@ -54,7 +54,8 @@ using namespace H;
 /**
  * \brief GizmoPowermate Default Constructor
  */
-GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
+GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
+	mRotated = false;
 }
 
 /**
@@ -79,8 +80,16 @@ unsigned char GizmoPowermate::getLEDValue() {
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
  */
-std::string GizmoPowermate::getGizmoType() {
+std::string GizmoPowermate::getType() {
 	return GIZMO_POWERMATE_TYPE;
+}
+
+/**
+ * \brief  Get whether or not the dial has rotated since the last button event
+ * \return True if the dial has moved
+ */
+bool GizmoPowermate::getRotated() {
+	return mRotated;
 }
 
 /**
@@ -92,8 +101,13 @@ bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 	GizmoEventPowermate * pPowermateEvent = static_cast<GizmoEventPowermate *>(pEvent);
 	
 	switch (pPowermateEvent->Type) {
+	case EV_REL:
+		mRotated = true;
+		break;
 	case EV_KEY:
-		setGizmoKeyState(pPowermateEvent->Code, pPowermateEvent->Value);
+		setKeyState(pPowermateEvent->Code, pPowermateEvent->Value);
+		if (pPowermateEvent->Value)
+			mRotated = false;
 		break;
 	default:
 		// do nothing

@@ -52,10 +52,12 @@ using namespace H;
 /**
  * \brief Gizmo Default Constructor
  */
-Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo) :
+Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) :
 	DeviceInfo(deviceInfo)
 {
 	mClass = Class;
+	mDeviceID = DeviceID;
+	mDeviceClassID = DeviceClassID;
 	memset(mKeyState, 0, sizeof(int) * GIZMO_KEY_MAX);
 }
 
@@ -76,16 +78,38 @@ Gizmo::~Gizmo() {
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".GizmoClass"
  */
-GizmoClass Gizmo::getGizmoClass() {
+GizmoClass Gizmo::getClass() {
 	return mClass;
 }
+
+/**
+ * \brief  Get the Device ID
+ * \return The Device ID
+ *
+ * This is the unique Device ID of the Gizmo
+ */
+int Gizmo::getDeviceID() {
+	return mDeviceID;
+}
+
+/**
+ * \brief  Get the Device Class ID
+ * \return The Device Class ID
+ *
+ * Each Gizmo in this GizmoClass will have an ID that is unique only amongst this class.
+ *
+ * Effectively this can be used to find out which Powermate device an event belongs to, and so forth.
+ */
+int Gizmo::getDeviceClassID() {
+	return mDeviceClassID;
+} 
 
 /**
  * \brief  Get the class of the Gizmo
  * \param  Key The key to inquire upon
  * \return The value of the button (0 == off, 1 == on, 2 == repeating)
  */
-int Gizmo::getGizmoKeyState(GizmoKey Key) {
+int Gizmo::getKeyState(GizmoKey Key) {
 	return mKeyState[Key];
 }
 
@@ -96,7 +120,7 @@ int Gizmo::getGizmoKeyState(GizmoKey Key) {
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".GizmoType"
  */
-std::string Gizmo::getGizmoType() {
+std::string Gizmo::getType() {
 	return GIZMO_TYPE_UNSPECIFIED;
 }
 
@@ -115,6 +139,6 @@ bool Gizmo::processEvent(GizmoEvent * pEvent) {
  * \param  Key The key to change states
  * \param  State The new state (0 == off, 1 == on, 2 == repeating)
  */
-void Gizmo::setGizmoKeyState(GizmoKey Key, int State) {
+void Gizmo::setKeyState(GizmoKey Key, int State) {
 	mKeyState[Key] = State;
 }

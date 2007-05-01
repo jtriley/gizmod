@@ -62,10 +62,8 @@ public:
 	bool				setSwitchPlayback(bool Enable);	///< Set the playback switch
 	bool				setVolumeCapture(long Volume); 	///< Set the Capture volume
 	bool				setVolumeCapturePercent(float Percent); ///< Set the Capture volume as a percent
-	bool				setVolumeCaptureDB(long DB);	///< Set the Capture dB
 	bool				setVolumePlayback(long Volume); ///< Set the playback volume 
 	bool				setVolumePlaybackPercent(float Percent); ///< Set the playback volume as a percent
-	bool				setVolumePlaybackDB(long DB);	///< Set the playback dB
 
 	// construction / deconstruction
 	AlsaMixer();

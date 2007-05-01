@@ -67,17 +67,11 @@ public:
 	long				VolumePlayback;			///< Playback volume
 	long				VolumePlaybackMin;		///< Min playback volume
 	long				VolumePlaybackMax;		///< Max playback volume
-	long				VolumePlaybackDB;		///< Playback volume
-	long				VolumePlaybackDBMin;		///< Min playback dB 
-	long				VolumePlaybackDBMax;		///< Max playback dB 
 	float				VolumePlaybackPercent;		///< Percent playback volume
 	
 	long				VolumeCapture;			///< Capture volume
 	long				VolumeCaptureMin;		///< Min Capture volume
 	long				VolumeCaptureMax;		///< Max Capture volume
-	long				VolumeCaptureDB;		///< Capture volume
-	long				VolumeCaptureDBMin;		///< Min Capture dB 
-	long				VolumeCaptureDBMax;		///< Max Capture dB 
 	float				VolumeCapturePercent;		///< Percent Capture volume
 	
 	bool				SwitchPlayback;			///< Value of the playback switch

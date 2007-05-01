@@ -52,7 +52,7 @@ using namespace H;
 /**
  * \brief GizmoCPU Default Constructor
  */
-GizmoCPU::GizmoCPU(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_CPU, deviceInfo) {
+GizmoCPU::GizmoCPU(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_CPU, deviceInfo, DeviceID, DeviceClassID) {
 }
 
 /**
@@ -69,6 +69,6 @@ GizmoCPU::~GizmoCPU() {
  * \brief Get the type of this Gizmo
  * \return Type of the Gizmo
  */
-std::string GizmoCPU::getGizmoType() {
+std::string GizmoCPU::getType() {
 	return GIZMO_CPU_TYPE;
 }

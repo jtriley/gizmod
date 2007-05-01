@@ -59,7 +59,7 @@ float GizmoLIRC::mMinTimeBetweenEvents = 0.15f;
 /**
  * \brief GizmoLIRC Default Constructor
  */
-GizmoLIRC::GizmoLIRC(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_LIRC, deviceInfo)  {
+GizmoLIRC::GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_LIRC, deviceInfo, DeviceID, DeviceClassID)  {
 	mLastEventTime = UtilTime::getTicks();
 }
 
@@ -77,7 +77,7 @@ GizmoLIRC::~GizmoLIRC() {
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
  */
-std::string GizmoLIRC::getGizmoType() {
+std::string GizmoLIRC::getType() {
 	return GIZMO_LIRC_TYPE;
 }
 

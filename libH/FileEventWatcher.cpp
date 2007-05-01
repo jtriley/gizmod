@@ -530,11 +530,15 @@ void FileEventWatcher::removeAllWatchDescriptors() {
  * \param pWatchee The watchee to remove
  */
 void FileEventWatcher::removeWatchee(boost::shared_ptr<FileWatchee> pWatchee) {
+	if (!pWatchee)
+		return;
 	map< int, shared_ptr<FileWatchee> >::iterator iter;
 	bool removed = false;
 	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
+		if (!iter->second)
+			continue;
 		if (iter->second->fd == pWatchee->fd) {
-			cdbg << "Removed Watchee [" << pWatchee->FileName << "]" << endl;
+			cdbg4 << "Removed Watchee [" << pWatchee->FileName << "]" << endl;
 			mWatchees.erase(iter);
 			removed = true;
 			break;

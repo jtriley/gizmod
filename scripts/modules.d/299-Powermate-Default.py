@@ -14,6 +14,7 @@
 ##########################
 
 from GizmoDaemon import *
+import time
 
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 ENABLED = True
@@ -46,7 +47,7 @@ class PowermateDefault:
 			   			Gizmod.DefaultMixerVolume.VolumePlayback = Gizmod.DefaultMixerVolume.VolumePlayback + Event.Value
 				else:
 					# scroll quickly (by pages using the page up / page down keys)
-					if Event.Value > 0:
+					if Event.Value < 0:
 						for repeat in range(abs(Event.Value)):
 							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTCTRL, 1)
 							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTALT, 1)
@@ -62,7 +63,7 @@ class PowermateDefault:
 							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTCTRL, 0)
 				return True
 			elif Event.Type == GizmoEventType.EV_KEY:
-				if Event.Value == 1:
+				if Event.Value == 0 and not Gizmo.Rotated:
 					Gizmod.toggleMuteAllCards()
 		return False
 		

@@ -210,16 +210,10 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def_readonly("VolumeCapture", &AlsaMixerElements::VolumeCapture)
 		.def_readonly("VolumeCaptureMin", &AlsaMixerElements::VolumeCaptureMin)
 		.def_readonly("VolumeCaptureMax", &AlsaMixerElements::VolumeCaptureMax)
-		.def_readonly("VolumeCaptureDB", &AlsaMixerElements::VolumeCaptureDB)
-		.def_readonly("VolumeCaptureDBMin", &AlsaMixerElements::VolumeCaptureDBMin)
-		.def_readonly("VolumeCaptureDBMax", &AlsaMixerElements::VolumeCaptureDBMax)
 		.def_readonly("VolumeCapturePercent", &AlsaMixerElements::VolumeCapturePercent)	
 		.def_readonly("VolumePlayback", &AlsaMixerElements::VolumePlayback)
 		.def_readonly("VolumePlaybackMin", &AlsaMixerElements::VolumePlaybackMin)
 		.def_readonly("VolumePlaybackMax", &AlsaMixerElements::VolumePlaybackMax)
-		.def_readonly("VolumePlaybackDB", &AlsaMixerElements::VolumePlaybackDB)
-		.def_readonly("VolumePlaybackDBMin", &AlsaMixerElements::VolumePlaybackDBMin)
-		.def_readonly("VolumePlaybackDBMax", &AlsaMixerElements::VolumePlaybackDBMax)
 		.def_readonly("VolumePlaybackPercent", &AlsaMixerElements::VolumePlaybackPercent)	
 		.def_readonly("SwitchPlayback", &AlsaMixerElements::SwitchPlayback)
 		.def_readonly("SwitchCapture", &AlsaMixerElements::SwitchCapture)
@@ -239,14 +233,10 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.add_property("VolumeCapture", &AlsaMixer::VolumeCapture, &AlsaMixer::setVolumeCapture)
 		.def("setVolumeCapturePercent", &AlsaMixer::setVolumeCapturePercent)
 		.add_property("VolumeCapturePercent", &AlsaMixer::VolumeCapturePercent, &AlsaMixer::setVolumeCapturePercent)
-		.def("setVolumeCaptureDB", &AlsaMixer::setVolumeCaptureDB)
-		.add_property("VolumeCaptureDB", &AlsaMixer::VolumeCaptureDB, &AlsaMixer::setVolumeCaptureDB)
 		.def("setVolumePlayback", &AlsaMixer::setVolumePlayback)
 		.add_property("VolumePlayback", &AlsaMixer::VolumePlayback, &AlsaMixer::setVolumePlayback)
 		.def("setVolumePlaybackPercent", &AlsaMixer::setVolumePlaybackPercent)
 		.add_property("VolumePlaybackPercent", &AlsaMixer::VolumePlaybackPercent, &AlsaMixer::setVolumePlaybackPercent)
-		.def("setVolumePlaybackDB", &AlsaMixer::setVolumePlaybackDB)
-		.add_property("VolumePlaybackDB", &AlsaMixer::VolumePlaybackDB, &AlsaMixer::setVolumePlaybackDB)
 		;
 		 
 	/// AlsaSoundCard Python Class Export
@@ -287,26 +277,36 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 	
 	/// Gizmo Python Class Export
-	class_< Gizmo, bases<DeviceInfo> >("Gizmo", init<GizmoClass, const DeviceInfo &>())
-		.def("getGizmoClass", &Gizmo::getGizmoClass)
-		.add_property("Class", &Gizmo::getGizmoClass)				
-		.def("getKeyState", &Gizmo::getGizmoKeyState)
-		.def("getGizmoType", &Gizmo::getGizmoType)
-		.add_property("Type", &Gizmo::getGizmoType)
-		.def("setKeyState", &Gizmo::setGizmoKeyState)
+	class_< Gizmo, bases<DeviceInfo> >("Gizmo", init<GizmoClass, const DeviceInfo &, int, int>())
+		.def("getClass", &Gizmo::getClass)
+		.add_property("Class", &Gizmo::getClass)				
+		.def("getDeviceID", &Gizmo::getDeviceID)
+		.add_property("DeviceID", &Gizmo::getDeviceID)
+		.def("getDeviceClassID", &Gizmo::getDeviceClassID)
+		.add_property("DeviceClassID", &Gizmo::getDeviceClassID)
+		.def("getKeyState", &Gizmo::getKeyState)
+		.def("getType", &Gizmo::getType)
+		.add_property("Type", &Gizmo::getType)
+		.def("setKeyState", &Gizmo::setKeyState)
 		;
 		
 	/// X11FocusWatcher Python Class Export
 	class_<X11FocusWatcher>("X11FocusWatcher")
 		.def("isApplicationRunning", &X11FocusWatcher::isApplicationRunning)
 		;		
+	
+	/// Processes Python Class Export
+	class_<Processes>("Processes")
+		.def("isProcessRunning", &Processes::isProcessRunning)
+		;		
 				
 	/// GizmoDaemon Python Class Export
-	class_<GizmoDaemon, bases<Alsa, X11FocusWatcher> >("PyGizmoDaemon")
+	class_<GizmoDaemon, bases<Alsa, X11FocusWatcher, Processes> >("PyGizmoDaemon")
 		.def("getCurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.add_property("CurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.add_property("DebugEnabled", &GizmoDaemon::getDebugEnabled)
+		.def("getNumGizmosByClass", &GizmoDaemon::getNumGizmosByClass)
 		.def("getVersion", &GizmoDaemon::getVersion)
 		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
 		.add_property("Version", &GizmoDaemon::getVersion)
@@ -384,17 +384,19 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	///////////////////////////////////////
 	
 	/// GizmoLIRC Python Class Export
-	class_< GizmoLIRC, bases<Gizmo> >("GizmoLIRC", init<const DeviceInfo &>())
+	class_< GizmoLIRC, bases<Gizmo> >("GizmoLIRC", init<const DeviceInfo &, int, int>())
 		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
 		.def("setMinimumTimeBetweenEvents", &GizmoLIRC::setMinimumTimeBetweenEvents)
 		;
 	
 	/// GizmoPowermate Python Class Export
-	class_< GizmoPowermate, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoPowermate", init<const DeviceInfo &>())
+	class_< GizmoPowermate, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoPowermate", init<const DeviceInfo &, int, int>())
+		.def("getRotated", &GizmoPowermate::getRotated)
+		.add_property("Rotated", &GizmoPowermate::getRotated)
 		;
 
 	/// GizmoStandard Python Class Export
-	class_< GizmoStandard, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoStandard", init<const DeviceInfo &>())
+	class_< GizmoStandard, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoStandard", init<const DeviceInfo &, int, int>())
 		;
 }
 
@@ -446,7 +448,7 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 	// signal python script
 	try {
 		mutex::scoped_lock lock(mMutexScript);
-		switch (pGizmo->getGizmoClass()) {
+		switch (pGizmo->getClass()) {
 		case GIZMO_CLASS_CPU:
 			mpPyDispatcher->onDeregisterDevice(static_cast<GizmoCPU const *>(pGizmo.get()));
 			break;
@@ -516,6 +518,45 @@ GizmodEventHandlerInterface * GizmoDaemon::getDispatcher() {
  */
 boost::shared_ptr<Gizmo> GizmoDaemon::getGizmoByFileName(std::string FileName) {
 	return mGizmos[FileName];
+}
+
+/**
+ * \brief  Get the number of Gizmos of a particular class
+ * \param  Class The desired class
+ * \return The number of Gizmos
+ */
+int GizmoDaemon::getNumGizmosByClass(GizmoClass Class) {
+	int Count = 0;
+	for (map< string, shared_ptr<Gizmo> >::iterator iter = mGizmos.begin(); iter != mGizmos.end(); iter ++) {
+		shared_ptr<Gizmo> pGizmo = iter->second;
+		if ( (pGizmo.get() != NULL) && (pGizmo->getClass() == Class) )
+			Count ++;
+	}
+	return Count;
+}
+
+/**
+ * \brief  Get a Gizmo Class ID
+ * \param  Class The desired class
+ * \return The Class ID
+ */
+int GizmoDaemon::getGizmoClassID(GizmoClass Class) {
+	vector<bool> IDs;
+	int tot = getNumGizmosByClass(Class);
+	IDs.resize(tot + 1, false);
+	
+	for (map< string, shared_ptr<Gizmo> >::iterator iter = mGizmos.begin(); iter != mGizmos.end(); iter ++) {
+		shared_ptr<Gizmo> pGizmo = iter->second;
+		if ( (pGizmo.get() != NULL) && (pGizmo->getClass() == Class) )
+			IDs[pGizmo->getDeviceClassID()] = true;
+	}
+	
+	for (size_t lp = 0; lp < IDs.size(); lp ++) {		
+		if (!IDs[lp])
+			return lp;
+	}
+
+	return tot;
 }
 
 /**
@@ -946,7 +987,7 @@ void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, 
  * \param FileName The file name (relative ) of the new file
  */
 void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
-	cout << "onFileEventDelete [" << FullPath << "] -- " << pWatchee->FileName << endl;
+	cdbg5 << "onFileEventDelete [" << FullPath << "] -- " << pWatchee->FileName << endl;
 	deleteGizmo(pWatchee->FileName);
 }
 
@@ -955,7 +996,7 @@ void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, 
  * \param pWatchee The Watchee that triggered the event
  */
 void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee) {
-	cout << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
+	cdbg5 << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	deleteGizmo(pWatchee->FileName);
 }
 
@@ -974,7 +1015,7 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 				
 	// create the event and dispatch it
 	try {
-		switch (pUnknownGizmo->getGizmoClass()) {
+		switch (pUnknownGizmo->getClass()) {
 		case GIZMO_CLASS_CPU:
 			break;
 		case GIZMO_CLASS_LIRC: {
@@ -1026,22 +1067,22 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 		GizmoClass Class = mpPyDispatcher->onQueryDeviceClass(*pWatchee);
 		switch (Class) {
 		case GIZMO_CLASS_CPU: {
-			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee, mGizmos.size(), getGizmoClassID(GIZMO_CLASS_CPU)));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
 		case GIZMO_CLASS_LIRC: {
-			shared_ptr<GizmoLIRC> pGizmo(new GizmoLIRC(*pWatchee));
+			shared_ptr<GizmoLIRC> pGizmo(new GizmoLIRC(*pWatchee, mGizmos.size(), getGizmoClassID(GIZMO_CLASS_LIRC)));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
 		case GIZMO_CLASS_POWERMATE: {
-			shared_ptr<GizmoPowermate> pGizmo(new GizmoPowermate(*pWatchee));
+			shared_ptr<GizmoPowermate> pGizmo(new GizmoPowermate(*pWatchee, mGizmos.size(), getGizmoClassID(GIZMO_CLASS_POWERMATE)));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }
 		case GIZMO_CLASS_STANDARD: {
-			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee));
+			shared_ptr<GizmoStandard> pGizmo(new GizmoStandard(*pWatchee, mGizmos.size(), getGizmoClassID(GIZMO_CLASS_STANDARD)));
 			mGizmos.insert(make_pair(pWatchee->FileName, pGizmo));
 			mpPyDispatcher->onRegisterDevice(pGizmo.get());
 			break; }

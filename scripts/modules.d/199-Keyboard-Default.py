@@ -37,9 +37,9 @@ class KeyboardDefault:
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
 		
-		# if the event class is in INTERESTED_CLASSES and there 
-		# is a keyboard and mouse attached then process the event
-		if Event.Class in INTERESTED_CLASSES and len(Gizmod.Mice) and len(Gizmod.Keyboards):
+		# if the event is not a key release and the class is in INTERESTED_CLASSES 
+		# and there is a keyboard and mouse attached then process the event
+		if Event.Class in INTERESTED_CLASSES and Event.Value != 0 and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	if Event.Code == GizmoKey.KEY_EJECTCD or \
 		   	   Event.Code == GizmoKey.KEY_EJECTCLOSECD:
@@ -53,6 +53,9 @@ class KeyboardDefault:
 	   			subprocess.Popen(["mount", "/mnt/cdrom"])
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_WWW:
+	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_F12:
 	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_VOLUMEUP:

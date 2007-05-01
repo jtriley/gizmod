@@ -53,7 +53,7 @@ using namespace H;
 /**
  * \brief GizmoStandard Default Constructor
  */
-GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
+GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
 }
 
 /**
@@ -70,7 +70,7 @@ GizmoStandard::~GizmoStandard() {
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
  */
-std::string GizmoStandard::getGizmoType() {
+std::string GizmoStandard::getType() {
 	return GIZMO_STANDARD_TYPE;
 }
 
@@ -84,7 +84,7 @@ bool GizmoStandard::processEvent(GizmoEvent * pEvent) {
 	
 	switch (pStandardEvent->Type) {
 	case EV_KEY:
-		setGizmoKeyState(pStandardEvent->Code, pStandardEvent->Value);
+		setKeyState(pStandardEvent->Code, pStandardEvent->Value);
 		break;
 	default:
 		// do nothing

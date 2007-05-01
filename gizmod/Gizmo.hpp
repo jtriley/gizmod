@@ -76,14 +76,16 @@ typedef enum {
 class Gizmo : public H::DeviceInfo {
 public:
 	// public functions
-	GizmoClass			getGizmoClass();		///< Get the class of the Gizmo
-	int				getGizmoKeyState(GizmoKey Key);	///< Get a key state
-	virtual std::string		getGizmoType();			///< Get the type of the Gizmo
+	virtual GizmoClass		getClass();			///< Get the class of the Gizmo
+	int				getDeviceID();			///< Get the Device ID
+	int				getDeviceClassID();		///< Get the Device Class ID
+	virtual int			getKeyState(GizmoKey Key);	///< Get a key state
+	virtual std::string		getType();			///< Get the type of the Gizmo
 	virtual bool			processEvent(GizmoEvent * pEvent); ///< Process an event
-	void				setGizmoKeyState(GizmoKey Key, int State); ///< Set a keystate of the Gizmo
+	void				setKeyState(GizmoKey Key, int State); ///< Set a keystate of the Gizmo
 	
 	// construction / deconstruction
-	Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo);	///< Default Constructor
+	Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
 	virtual ~Gizmo();						///< Destructor
 
 protected:
@@ -91,6 +93,8 @@ protected:
 	
 	// private member variables
 	GizmoClass			mClass;				///< Class of the Gizmo
+	int 				mDeviceID;			///< Unique ID of the device
+	int				mDeviceClassID;			///< ID of the device in its class
 	int				mKeyState[GIZMO_KEY_MAX];	///< Gizmos's key states
 };
 

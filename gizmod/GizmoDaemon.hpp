@@ -37,6 +37,7 @@
 #include "Gizmo.hpp"
 #include "GizmodEventHandlerInterface.hpp"
 #include "X11FocusWatcher.hpp"
+#include "Processes.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include <ext/hash_map>
@@ -59,7 +60,13 @@
  * \brief Main GizmoDaemon class
  * \todo  Replace for loops (in onFileEventRead) with boost::foreach when the new version comes out!
  */
-class GizmoDaemon : public H::FileEventWatcher, private H::SignalHandler, public X11FocusWatcher, public Alsa {
+class GizmoDaemon : 
+	public H::FileEventWatcher, 
+	private H::SignalHandler, 
+	public X11FocusWatcher, 
+	public Alsa,
+	public Processes
+{
 public:
 	// public functions
 	void				enterLoop();		///< Enter the main run loop
@@ -67,6 +74,7 @@ public:
 	bool				getDebugEnabled();	///< Is debug mode enabled?
 	GizmodEventHandlerInterface *	getDispatcher();	///< Get the event handler / dispatcher
 	boost::shared_ptr<Gizmo>	getGizmoByFileName(std::string FileName); ///< Get a Gizmo by its file name
+	int 				getNumGizmosByClass(GizmoClass Class); ///< Get number of Gizmos of a particular class
 	std::string			getVersion();		///< Get version string
 	void				initGizmod();		///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
@@ -99,6 +107,7 @@ public:
 private:
 	// private functions
 	void 				deleteGizmo(std::string FileName); ///< Delete a Gizmo
+	int 				getGizmoClassID(GizmoClass Class); ///< Get number of Gizmos of a particular class
 	std::string	 		getProps();		///< Get version information
 	std::string			getUserScriptDirPaths();///< Get all of the dirs inside the user script dir
 	void				initPython();		///< Initialize Python

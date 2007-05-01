@@ -54,17 +54,19 @@ class GizmoPowermate : public Gizmo, public GizmoLinuxInputDevice {
 public:
 	// public functions
 	unsigned char			getLEDValue();			///< Get the Powermate's LED value
-	std::string			getGizmoType();			///< Get the type of the Gizmo
+	virtual std::string		getType();			///< Get the type of the Gizmo
+	bool				getRotated();			///< Has the dial rotated since last press?
 	virtual bool			processEvent(GizmoEvent * pEvent); ///< Process an event
 	
 	// construction / deconstruction	
-	GizmoPowermate(const H::DeviceInfo & deviceInfo);		///< Default Constructor
+	GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
 	virtual ~GizmoPowermate();					///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
+	bool				mRotated;			///< Has the dial rotated since last click
 };
 
 #endif // __GizmoPowermate_h

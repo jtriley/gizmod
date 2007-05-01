@@ -1,2 +1,2 @@
-check what window manager is running
-if kwin, try sending global notification events ie to amarok
+BUGS:
+	- hotplugging devices, fileevent watcher, segfaults sometimes!?

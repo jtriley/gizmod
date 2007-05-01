@@ -52,10 +52,10 @@
 class GizmoCPU : public Gizmo {
 public:
 	// public functions
-	std::string			getGizmoType();			///< Get the type of the Gizmo
+	virtual std::string		getType();			///< Get the type of the Gizmo
 	
 	// construction / deconstruction
-	GizmoCPU(const H::DeviceInfo & deviceInfo);			///< Default Constructor
+	GizmoCPU(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
 	virtual ~GizmoCPU();						///< Destructor
 
 protected:

@@ -58,17 +58,11 @@ AlsaMixerElements::AlsaMixerElements() {
 	VolumePlayback = 0;
 	VolumePlaybackMin = 0;
 	VolumePlaybackMax = 0;
-	VolumePlaybackDB = 0;
-	VolumePlaybackDBMin = 0;
-	VolumePlaybackDBMax = 0;
 	VolumePlaybackPercent = 0.0f;
 
 	VolumeCapture = 0;
 	VolumeCaptureMin = 0;
 	VolumeCaptureMax = 0;
-	VolumeCaptureDB = 0;
-	VolumeCaptureDBMin = 0;
-	VolumeCaptureDBMax = 0;
 	VolumeCapturePercent = 0.0f;
 	
 	SwitchPlayback = false;
@@ -95,17 +89,11 @@ AlsaMixerElements::AlsaMixerElements(AlsaMixerElements const & Init) {
 	VolumePlayback = Init.VolumePlayback;
 	VolumePlaybackMin = Init.VolumePlaybackMin;
 	VolumePlaybackMax = Init.VolumePlaybackMax;
-	VolumePlaybackDB = Init.VolumePlaybackDB;
-	VolumePlaybackDBMin = Init.VolumePlaybackDBMin;
-	VolumePlaybackDBMax = Init.VolumePlaybackDBMax;
 	VolumePlaybackPercent = Init.VolumePlaybackPercent;
 
 	VolumeCapture = Init.VolumeCapture;
 	VolumeCaptureMin = Init.VolumeCaptureMin;
 	VolumeCaptureMax = Init.VolumeCaptureMax;
-	VolumeCaptureDB = Init.VolumeCaptureDB;
-	VolumeCaptureDBMin = Init.VolumeCaptureDBMin;
-	VolumeCaptureDBMax = Init.VolumeCaptureDBMax;
 	VolumeCapturePercent = Init.VolumeCapturePercent;
 
 	SwitchPlayback = Init.SwitchPlayback;

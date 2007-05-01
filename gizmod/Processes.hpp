@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoLIRC.hpp
-*** \brief GizmoLIRC class header
+*** \file  Processes.hpp
+*** \brief Processes class header
 ***
 *****************************************
   *****************************************
@@ -26,48 +26,38 @@
   
 */
 
-#ifndef __GizmoLIRC_h
-#define __GizmoLIRC_h
+#ifndef __Processes_h
+#define __Processes_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "Gizmo.hpp"
-
-//////////////////////////////////////////////////////////////////////////////
-// Typedef, enum's
-///////////////////////////////////////
+#include <string>
 	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
 ///////////////////////////////////////
 
 /**
- * \class GizmoLIRC
- * \brief LIRC Gizmos
- *
- * This class contains all of the helper functions for making use of LIRC devices
+ * \class Processes
+ * \brief Base class for functions related to operating system processes
  */
-class GizmoLIRC : public Gizmo {
+class Processes {
 public:
 	// public functions
-	virtual std::string		getType();		///< Get the type of the Gizmo
-	virtual bool 			processEvent(GizmoEvent * pEvent); ///< Process an event
-	
-	// construction / deconstruction	
-	GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
-	virtual ~GizmoLIRC();					///< Destructor
 
-	// static public functions
-	static void			setMinimumTimeBetweenEvents(float Seconds); ///< Set the minimum time between events
+	// construction / deconstruction
+	Processes();							///< Default Constructor
+	virtual ~Processes();						///< Destructor
 	
+	// public static functions
+	int			isProcessRunning(std::string ProcessName); ///< Check is a process is running
+
 protected:
 	// private functions
 	
 	// private member variables
-	unsigned long			mLastEventTime;		///< Time of last event
-	static float			mMinTimeBetweenEvents;	///< Minimum time between events (smooth out trigger happy controllers)
 };
 
-#endif // __GizmoLIRC_h
+#endif // __Processes_h
