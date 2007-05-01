@@ -86,6 +86,14 @@ AlsaMixer const * Alsa::getDefaultMixerVolume() {
 }
 
 /**
+ * \brief  Get the number of sound cards attached
+ * \return The number of sound cards
+ */
+size_t Alsa::getNumSoundCards() {
+	return mSoundCards.size();
+}
+
+/**
  * \brief  Get a sound card by index
  */
 AlsaSoundCard const * Alsa::getSoundCard(int Index) {
@@ -110,8 +118,13 @@ void Alsa::init() {
 			continue;
 		}
 		if (ret > -1) {
-			shared_ptr<AlsaSoundCard> pSoundCard = shared_ptr<AlsaSoundCard>(new AlsaSoundCard(this, CardID));
-			mSoundCards.push_back(pSoundCard);
+			try {
+				shared_ptr<AlsaSoundCard> pSoundCard = shared_ptr<AlsaSoundCard>(new AlsaSoundCard(this, CardID));
+				mSoundCards.push_back(pSoundCard);
+			} catch (H::Exception & e) {
+				// error occured, do not add the sound card
+				cdbg1 << e.getExceptionMessage() << endl;
+			}
 		}
 	} while (ret != -1);
 }

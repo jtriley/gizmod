@@ -271,6 +271,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getDefaultMixerVolume", &Alsa::getDefaultMixerVolume, return_internal_reference<>())
 		.add_property("DefaultMixerVolume", make_function(&Alsa::getDefaultMixerVolume, return_internal_reference<>()))
 		.def("getSoundCard", &Alsa::getSoundCard, return_internal_reference<>())
+		.def("getNumSoundCards", &Alsa::getNumSoundCards)
 		.def("registerDefaultMixerPriority", &Alsa::registerDefaultMixerPriority)
 		.def("toggleMuteAllCards", &Alsa::toggleMuteAllCards)
 		;

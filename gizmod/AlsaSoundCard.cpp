@@ -189,17 +189,17 @@ void AlsaSoundCard::init() {
 		cdbg << "AlsaSoundCard already watching!!" << endl;
 		return;
 	}
-		 
+			 
 	// set hardware identifier
 	mCardHWID = str(format("hw:%1%") % mCardID);
-	
+		
 	// get the card name
 	char * Name;
 	if (snd_card_get_name(mCardID, &Name) == -1) {
 		mCardName = CARD_NAME_UNKNOWN;
 		cdbg << "Failed to retreive name of Sound Card [" << mCardID << "]" << endl;
 	} else
-		mCardName = Name;
+		mCardName = Name;		
 
 	// long name
 	if (snd_card_get_longname(mCardID, &Name) == -1) {
@@ -208,7 +208,13 @@ void AlsaSoundCard::init() {
 	} else
 		mCardNameLong = Name;
 			
-		
+	// check for duplicate sound cards
+	Alsa * pAlsa = static_cast<Alsa *>(mpiAlsa);
+	for (size_t lp = 0; lp < pAlsa->getNumSoundCards(); lp ++)
+		if ( (pAlsa->getSoundCard(lp)->getCardHardwareID() == mCardHWID) &&
+		     (pAlsa->getSoundCard(lp)->getCardNameLong() == mCardNameLong) )
+			throw H::Exception("Duplicate Alsa Sound Card Detected!", __FILE__, __FUNCTION__, __LINE__);
+
 	// initialize
 	cdbg1 << "Initializing Connection to Sound Card [" << mCardName << "]" << endl;	
 	int err;

@@ -63,6 +63,7 @@ public:
 	void				init();			///< Initialize Alsa
 	AlsaMixer const *		getDefaultMixerSwitch();///< Get the system's default mixer for muting
 	AlsaMixer const *		getDefaultMixerVolume();///< Get the system's default mixer for volume
+	size_t				getNumSoundCards();	///< Get the number of sound cards attached
 	AlsaSoundCard const *		getSoundCard(int Index);///< Get a sound card by index 
 	void				toggleMuteAllCards();	///< Toggle mute on all sound cards
 	virtual void			onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
