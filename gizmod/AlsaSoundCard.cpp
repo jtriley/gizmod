@@ -174,6 +174,14 @@ AlsaMixer const * AlsaSoundCard::getMixer(std::string Name) {
 }
 
 /**
+ * \brief  Get the number of mixers on the sound card
+ * \return The number of mixers 
+ */
+size_t AlsaSoundCard::getNumMixers() {
+	return mMixers.size();
+}
+
+/**
  * \brief  Initialize The AlsaSoundCard
  */
 void AlsaSoundCard::init() {

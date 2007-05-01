@@ -224,7 +224,7 @@ void Alsa::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard con
  * and Gizmod.DefaultMixerSwitch will be the PCM mixer.
  */
 void Alsa::registerDefaultMixerPriority(std::string MixerName) {
-	cdbg << "Registering Default Mixer Priority: " << MixerName << endl;
+	cdbg1 << "Registering Default Mixer Priority: " << MixerName << endl;
 	mDefaultMixerPriorities.push_back(MixerName);
 }
 

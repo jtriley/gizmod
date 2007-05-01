@@ -260,6 +260,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getCardName", &AlsaSoundCard::getCardName)
 		.add_property("CardName", &AlsaSoundCard::getCardName)		
 		.def("getMixer", &AlsaSoundCard::getMixer, return_internal_reference<>())
+		.def("getNumMixers", &AlsaSoundCard::getNumMixers)
 		.def("setAllPlaybackSwitches", &AlsaSoundCard::setAllPlaybackSwitches)
 		;
 	

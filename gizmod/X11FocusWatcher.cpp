@@ -333,7 +333,7 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 		mDisplayName = DisplayName;
 
 	if ( (mDisplay = XOpenDisplay(mDisplayName.c_str())) == NULL ) {
-		cdbg << "X11FocusWatcher :: Unable to Open Display [" << mDisplayName << "]" << endl;
+		cerr << "Unable to Open X11 Display [" << (mDisplayName == "" ? "Default" : mDisplayName) << "] -- Per application mappings will not work!" << endl;
 		return false;
 	}
 
@@ -374,10 +374,8 @@ void X11FocusWatcher::shutdown() {
  * This is where all the magic happens
  */
 void X11FocusWatcher::threadProc() {
-	if (!openDisplay(mDisplayName)) {
-		cdbg << "X11FocusWatcher :: Failed to Open X11 Display [" << mDisplayName << "]!" << endl;
+	if (!openDisplay(mDisplayName))
 		return;
-	}
 	
 	Window window;
 	int revert_to_return;

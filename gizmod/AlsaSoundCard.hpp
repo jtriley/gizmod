@@ -59,6 +59,7 @@ public:
 	std::string			getCardName() const;		///< Get the name of the card
 	std::string			getCardNameLong() const;	///< Get the long name of the card
 	AlsaMixer const *		getMixer(std::string Name);	///< Get a mixer by name
+	size_t				getNumMixers();			///< Get the number of mixers on the sound card
 	void				setAllPlaybackSwitches(bool Enabled); ///< Set all playback switches to Enabled
 
 	// construction / deconstruction
