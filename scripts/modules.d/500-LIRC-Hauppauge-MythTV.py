@@ -27,7 +27,7 @@ INTERESTED_WINDOWS = ["mythfrontend"]
 
 class LIRCHauppaugeMythTV(Hauppauge):
 	"""
-	Event mapping for LIRC when using MythTV with the Hauppauge remote
+	MythTV LIRC Event Mapping for the Hauppauge remote
 	"""
 	
 	############################
@@ -202,7 +202,7 @@ class LIRCHauppaugeMythTV(Hauppauge):
 		"""
 		
 		Hauppauge.__init__(self)
-		print "Loaded User Script: " + self.__class__.__name__
+		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
 # LIRCHauppaugeMythTV class end

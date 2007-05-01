@@ -25,7 +25,7 @@ INTERESTED_CLASSES = [GizmoEventClass.Standard]
 
 class KeyboardDefault:
 	"""
-	Default event mapping for fancy keyboards 
+	Default Fancy Keyboard Event Mapping
 	"""
 	
 	############################
@@ -95,7 +95,7 @@ class KeyboardDefault:
 		Default Constructor
 		"""
 		
-		print "Loaded User Script: " + self.__class__.__name__
+		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
 # KeyboardDefault class end

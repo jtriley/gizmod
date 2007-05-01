@@ -48,6 +48,8 @@
 #include <boost/format.hpp>
 #include <boost/python.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <fcntl.h>
 
 using namespace std;
@@ -304,6 +306,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.add_property("DebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.def("getVersion", &GizmoDaemon::getVersion)
+		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
 		.add_property("Version", &GizmoDaemon::getVersion)
 		;
 	
@@ -516,7 +519,7 @@ boost::shared_ptr<Gizmo> GizmoDaemon::getGizmoByFileName(std::string FileName) {
  * \brief  Get the program's propers
  */
 string GizmoDaemon::getProps() {
-	return "\nGizmoDaemon v" + getVersion() + " -- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n";
+	return "\nGizmoDaemon v" + getVersion() + " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n-----------\n";
 }
 
 /**
@@ -778,7 +781,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
  * \brief Load user scripts
  */
 void GizmoDaemon::loadUserScripts() {
-	cdbg1 << "Loading User Scripts..." << endl;
+	cout << "Loading User Scripts:" << endl << endl;
 	
 	path UserScriptPath(mConfigDir + USER_SCRIPT_DIR);
 	if (!filesystem::exists(UserScriptPath))
@@ -829,6 +832,39 @@ void GizmoDaemon::loadUserScriptsFunctor(std::string UserScript) {
 			PyErr_Print();
 		throw H::Exception("Failed to Load User Script [" + UserScript + "]", __FILE__, __FUNCTION__, __LINE__);
 	}
+}
+
+/**
+ * \brief  Scripts can call this to print a nice looking init string
+ * \param  Width Placement positions
+ * \param  Text1 Text field 1
+ * \param  Text2 Text field 2
+ * \param  Text3 Text field 3
+ */
+void GizmoDaemon::printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3) {
+	replace_all(Text1, "\n", ""); 
+	replace_all(Text2, "\n", ""); 
+	replace_all(Text2, "\n", "");
+	trim(Text1); 
+	trim(Text2); 
+	trim(Text3);
+	switch (Width) {
+	case 0:
+		Width = 12;
+		break;
+	case 1:
+		Width = 22;
+		break;
+	}
+	int StartPos = Width - Text1.length();
+	for (int lp = 0; lp < StartPos; lp ++)
+		cout << " ";
+	cout << Text1;
+	if (Text2 != "")
+		cout << " - " << Text2;
+	if (Text3 != "")
+		cout << " [" << Text3 << "]";
+	cout << endl;
 }
 
 /**
@@ -1127,7 +1163,7 @@ void GizmoDaemon::onSignalUnknown(int Signal) {
  * and inserts them into Python for use by the user
  */
 void GizmoDaemon::registerDevices() {
-	cdbg1 << "Registering Devices..." << endl;
+	cout << "Registering Devices:" << endl << endl;
 	
 	// register input event devices
 	registerInputEventDevices();

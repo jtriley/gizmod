@@ -90,6 +90,7 @@ public:
 	virtual void			onSignalTerm();		///< Signal handler for TERM
 	virtual void			onSignalStop();		///< Signal handler for STOP
 	virtual void			onSignalUnknown(int Signal); ///< Signal handler for Unknown Signals
+	void 				printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3); ///< Print a nice looking init string
 		
 	// construction / deconstruction
 	GizmoDaemon();						///< Default Constructor

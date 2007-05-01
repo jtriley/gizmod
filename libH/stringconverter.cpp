@@ -30,8 +30,10 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <boost/algorithm/string/case_conv.hpp>
 
 using namespace std;
+using namespace boost;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ stringconverter::~stringconverter() throw() {
  */
 std::string stringconverter::toLower(std::string const & convertee) {
 	string t = convertee;
-	transform(t.begin(), t.end(), t.begin(), ToLower());
+	boost::to_lower(t);
 	return t;
 }
 
@@ -77,6 +79,6 @@ std::string stringconverter::toLower(std::string const & convertee) {
  */
 std::string stringconverter::toUpper(std::string const & convertee) {
 	string t = convertee;
-	transform(t.begin(), t.end(), t.begin(), ToUpper());
+	boost::to_upper(t);
 	return t;
 }

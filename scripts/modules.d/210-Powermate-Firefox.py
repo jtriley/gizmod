@@ -25,7 +25,7 @@ INTERESTED_WINDOWS = ["firefox"]
 
 class PowermateFirefox:
 	"""
-	Event mapping for the Powermate when using Firefox
+	Firefox Powermate Event Mapping
 	"""
 	
 	############################
@@ -71,7 +71,7 @@ class PowermateFirefox:
 		Default Constructor
 		"""
 		
-		print "Loaded User Script: " + self.__class__.__name__
+		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
 # PowermateFirefox class end

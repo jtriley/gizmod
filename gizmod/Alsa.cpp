@@ -33,6 +33,7 @@
 #include <boost/format.hpp>
 #include <boost/mem_fn.hpp>
 #include <boost/bind.hpp>
+#include <string>
 
 using namespace std;
 using namespace boost;

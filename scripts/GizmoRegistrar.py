@@ -61,16 +61,16 @@ class GizmoRegistrar:
 		"""
 
 		if [i for i in KEYBOARD_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
-			print "Registered Keyboard Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
+			Gizmod.printNiceScriptInit(0, "Keyboard", self.Device.DeviceName, self.Device.FileName)
 			Gizmod.Keyboards.append(self.Device)
 		elif [i for i in MOUSE_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
-			print "Registered Mouse Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
+			Gizmod.printNiceScriptInit(0, "Mouse", self.Device.DeviceName, self.Device.FileName)
 			Gizmod.Mice.append(self.Device)
 		elif [i for i in POWERMATE_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
-			print "Registered Powermate Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
+			Gizmod.printNiceScriptInit(0, "Powermate", self.Device.DeviceName, self.Device.FileName)
 			Gizmod.Powermates.append(self.Device)
 		else:
-			print "Registered Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
+			Gizmod.printNiceScriptInit(0, "Standard", self.Device.DeviceName, self.Device.FileName)
 
 	def handleDeviceRemoval(self):
 		"""

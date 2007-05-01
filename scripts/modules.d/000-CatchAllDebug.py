@@ -24,7 +24,7 @@ ENABLED = True
 
 class CatchAllDebug:
 	"""
-	CatchAll Event mapping
+	CatchAll Event Mapping for Testing
 	"""
 	
 	############################
@@ -61,7 +61,7 @@ class CatchAllDebug:
 		Default Constructor
 		"""
 		
-		print "Loaded User Script: " + self.__class__.__name__
+		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
 # CatchAllDebug class end

@@ -62,12 +62,6 @@ public:
 	// static public functions
 	static std::string			toLower(std::string const & convertee);	///< Convert a string to lower case
 	static std::string			toUpper(std::string const & convertee);	///< Convert a string to upper case
-
-	/// Helper for ToLower case conversions
-	struct ToLower { /** Conver to Lower */ char operator() (char c) const  { return std::tolower(c); } };
-	
-	///< Helper for ToUpper case conversions
-	struct ToUpper { /** Conver to Upper */ char operator() (char c) const  { return std::toupper(c); } };
 };
 
 //////////////////////////////////////////////////////////////////////////////

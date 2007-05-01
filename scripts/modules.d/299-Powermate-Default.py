@@ -24,7 +24,7 @@ ENABLED = True
 
 class PowermateDefault:
 	"""
-	Default Event mapping for the Powermate
+	Default Powermate Event Mapping
 	"""
 	
 	############################
@@ -75,7 +75,7 @@ class PowermateDefault:
 		Default Constructor
 		"""
 		
-		print "Loaded User Script: " + self.__class__.__name__
+		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
 # PowermateDefault class end

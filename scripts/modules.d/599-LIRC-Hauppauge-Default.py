@@ -27,7 +27,7 @@ POWER_APPLICATION = "mythfrontend"
 
 class LIRCHauppaugeDefault(Hauppauge):
 	"""
-	Default Event mapping for LIRC with the Hauppauge remote
+	Default LIRC Event Mapping for the Hauppauge remote
 	"""
 	
 	############################
@@ -77,7 +77,7 @@ class LIRCHauppaugeDefault(Hauppauge):
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHT)
 		   		return True
 		   	elif KeyString == "Back/Exit":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESCAPE)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
 		   		return True
 		   	elif KeyString == "Down":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
@@ -180,7 +180,7 @@ class LIRCHauppaugeDefault(Hauppauge):
 		"""
 		
 		Hauppauge.__init__(self)
-		print "Loaded User Script: " + self.__class__.__name__
+		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
 # LIRCHauppaugeDefault class end

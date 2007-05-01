@@ -16,6 +16,7 @@
 from GizmoDaemon import *
 from Hauppauge import *
 import subprocess
+import sys
 
 ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
@@ -27,7 +28,7 @@ INTERESTED_WINDOWS = ["mplayer"]
 
 class LIRCHauppaugeMplayer(Hauppauge):
 	"""
-	Event mapping for LIRC when using Mplayer with the Hauppauge remote
+	MPlayer LIRC Event Mapping for the Hauppauge remote
 	"""
 	
 	############################
@@ -198,7 +199,7 @@ class LIRCHauppaugeMplayer(Hauppauge):
 		"""
 		
 		Hauppauge.__init__(self)
-		print "Loaded User Script: " + self.__class__.__name__
+		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
 # LIRCHauppaugeMplayer class end
