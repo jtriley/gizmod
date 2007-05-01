@@ -73,7 +73,7 @@ using namespace H;
  * \def   SCRIPT_DIR
  * The default path of the config file
  */
-#define SCRIPT_DIR		PACKAGE_PREFIX "/share/gizmo/scripts/"
+#define SCRIPT_DIR		PACKAGE_SYSCONFDIR "/gizmod/"
 
 /** 
  * \def   USER_SCRIPT_DIR
@@ -407,6 +407,7 @@ GizmoDaemon::GizmoDaemon() {
 	cout << getProps();
 	
 	mConfigDir = SCRIPT_DIR;
+	replace_all(mConfigDir, "${prefix}", PACKAGE_PREFIX);
 	mEventsDir = EVENT_NODE_DIR;
 	mInitialized = false;
 	mLircDev = LIRC_DEV;
@@ -617,7 +618,6 @@ void GizmoDaemon::initPython() {
 		Py_Initialize();
 		
 		cdbg1 << "Initializing Python Environment..." << endl;
-		//object MainModule((handle<>(borrowed(PyImport_AddModule("__main__")))));
 		mPyMainModule = object((handle<>(borrowed(PyImport_AddModule("__main__")))));
 		mPyMainNamespace = mPyMainModule.attr("__dict__");
 		
