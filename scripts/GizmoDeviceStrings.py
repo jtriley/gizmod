@@ -30,7 +30,7 @@ ATIX10_GIZMOS = ["x10 wireless technology"]
 KEYBOARD_GIZMOS = ["keyboard"]
 
 # List of devices to enumerate as mice
-MOUSE_GIZMOS = ["mouse", "trackball", "touchpad"]
+MOUSE_GIZMOS = ["mouse", "trackball", "touchpad", "logitech usb receiver"]
 
 # list of devices to enumerate as ATI X10 RF remotes
 LIRC_GIZMOS = ["lirc"]

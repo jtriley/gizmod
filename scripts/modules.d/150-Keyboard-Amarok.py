@@ -37,6 +37,9 @@ class KeyboardAmarok:
 		"""
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
+
+		if Event.Class in INTERESTED_CLASSES:
+			print "DEBUG c: " + str(Event.Class) + " v: " + str(Event.Value) + " a: " + str(Gizmod.isProcessRunning(INTERESTED_APPLICATION)) + " m: " + str(len(Gizmod.Mice)) + str(len(Gizmod.Keyboards))
 		
 		# if the event is not a key release and the class is in INTERESTED_CLASSES 
 		# and amarok is running and there is a keyboard and mouse attached then process the event
@@ -44,10 +47,10 @@ class KeyboardAmarok:
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	if Event.Code == GizmoKey.KEY_VOLUMEUP:
-	   			Gizmod.AmarokMixerVolume.VolumePlayback = Gizmod.AmarokMixerVolume.VolumePlayback + 1
+	   			Gizmod.DefaultMixerVolume.VolumePlayback = Gizmod.DefaultMixerVolume.VolumePlayback + 1
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_VOLUMEDOWN:
-	   			Gizmod.AmarokMixerVolume.VolumePlayback = Gizmod.AmarokMixerVolume.VolumePlayback - 1
+	   			Gizmod.DefaultMixerVolume.VolumePlayback = Gizmod.DefaultMixerVolume.VolumePlayback - 1
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_MUTE:
 	   			Gizmod.toggleMuteAllCards()
