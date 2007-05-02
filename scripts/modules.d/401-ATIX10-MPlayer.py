@@ -44,8 +44,40 @@ class ATIX10MPlayer:
 		   and [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] \
 		   and Event.Value != 0 and len(Gizmod.Keyboards) and len(Gizmod.Mice):
 			# process the key
-		   	if Event.Code == GizmoKey.KEY_WWW:
-	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
+		   	if Event.Code == GizmoKey.KEY_POWER:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_PAUSE:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_PLAY:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_STOP:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_BOOKMARKS:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_V)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_EDIT:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_O)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_REWIND:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_FORWARD:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_COFFEE:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_Q)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_C:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_MINUS)
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_D:
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 1)
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_EQUAL)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 0)
 		   		return True
 		   	else:
 		   		# unmatched event, keep processing

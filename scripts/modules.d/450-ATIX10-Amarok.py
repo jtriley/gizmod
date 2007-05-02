@@ -43,8 +43,26 @@ class ATIX10Amarok:
 		if Event.Class in INTERESTED_CLASSES and Event.Value != 0 and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \
 		   and len(Gizmod.Keyboards) and len(Gizmod.Mice):
 			# process the key
-		   	if Event.Code == GizmoKey.KEY_WWW:
-	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
+		   	if Event.Code == GizmoKey.KEY_PAUSE:
+			   	subprocess.Popen(["amarok", "--play-pause"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_PLAY:
+			   	subprocess.Popen(["amarok", "--play-pause"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_STOP:
+			   	subprocess.Popen(["amarok", "--stop"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_LEFT:
+			   	subprocess.Popen(["amarok", "--previous"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_REWIND:
+			   	subprocess.Popen(["amarok", "--previous"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_RIGHT:
+			   	subprocess.Popen(["amarok", "--next"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_FORWARD:
+			   	subprocess.Popen(["amarok", "--next"])
 		   		return True
 		   	else:
 		   		# unmatched event, keep processing
