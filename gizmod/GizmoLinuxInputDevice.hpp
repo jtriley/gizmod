@@ -33,7 +33,9 @@
 #include "config.h"
 #endif
 
+
 #include "../libH/DynamicBuffer.hpp"
+#include "../libH/FileEventWatcher.hpp"
 #include <linux/input.h>
 #include <vector>
 
@@ -56,10 +58,12 @@ public:
 	bool 				createEventPress(int Type, int Code); ///< Write a "press" event to the device (two events, with value 1, then 0)
 	bool 				createEvents(int Type, int Code, int Value, int NumWrites); ///< Write multiple similar events to the device
 	bool				getSendNullEvents();		///< Get whether or not the Gizmo sends NULL events
+	bool 				grabExclusiveAccess(bool Grab); ///< Grab a device for exlusive access (or ungrab)
+	bool 				remapKey(int CurCode, int NewCode); /// Remap a key on the device
 	void				setSendNullEvents(bool SendNull); ///< Set whether or not the Gizmo sends NULL events
 
 	// construction / deconstruction
-	GizmoLinuxInputDevice(int FD);					///< Default Constructor
+	GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo);	///< Default Constructor
 	virtual ~GizmoLinuxInputDevice();				///< Destructor
 
 	// static public functions
@@ -69,7 +73,7 @@ protected:
 	// private functions
 	
 	// private member variables
-	int				mFD;				///< File descriptor of the device
+	H::DeviceInfo 			mDeviceInfo;			///< Info about the device
 	bool				mSendNullEvents;		///< Send NULL events if the device creates them?
 };
 

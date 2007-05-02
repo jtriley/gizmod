@@ -53,7 +53,7 @@ using namespace H;
 /**
  * \brief GizmoStandard Default Constructor
  */
-GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
+GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
 }
 
 /**

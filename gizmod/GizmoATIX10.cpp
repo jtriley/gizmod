@@ -53,7 +53,7 @@ using namespace H;
 /**
  * \brief GizmoATIX10 Default Constructor
  */
-GizmoATIX10::GizmoATIX10(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_ATIX10, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
+GizmoATIX10::GizmoATIX10(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_ATIX10, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
 }
 
 /**

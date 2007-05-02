@@ -350,10 +350,12 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 		
 	/// GizmoLinuxInputDevice Python Class Export
-	class_<GizmoLinuxInputDevice>("GizmoLinuxInputDevice", init<int>())
+	class_<GizmoLinuxInputDevice>("GizmoLinuxInputDevice", init<const DeviceInfo &>())
 		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
 		.def("createEventPress", &GizmoLinuxInputDevice::createEventPress)
 		.def("createEvents", &GizmoLinuxInputDevice::createEvents)
+		.def("grabExclusiveAccess", &GizmoLinuxInputDevice::grabExclusiveAccess)
+		.def("remapKey", &GizmoLinuxInputDevice::remapKey)
 		;
 	
 	/// GizmoLinuxInputEvent Python Class Export 

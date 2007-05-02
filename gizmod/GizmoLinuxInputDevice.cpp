@@ -44,8 +44,8 @@ using namespace H;
 /**
  * \brief GizmoLinuxInputDevice Default Constructor
  */
-GizmoLinuxInputDevice::GizmoLinuxInputDevice(int FD) {
-	mFD = FD;
+GizmoLinuxInputDevice::GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo) {
+	mDeviceInfo= DeviceInfo;
 	mSendNullEvents = false;
 }
 
@@ -83,7 +83,7 @@ bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
 	ev[0].type = Type;
 	ev[0].code = Code;
 	ev[0].value = Value;
-	if (write(mFD, &ev, sizeof(struct input_event) * 2) == -1)
+	if (write(mDeviceInfo.FileDescriptor, &ev, sizeof(struct input_event) * 2) == -1)
 		return false;
 	return true;
 }
@@ -122,10 +122,10 @@ bool GizmoLinuxInputDevice::createEvents(int Type, int Code, int Value, int NumW
 	ev.code = Code;
 	ev.value = Value;
 	for (int lp = 0; lp < NumWrites; lp ++) 
-		if (write(mFD, &ev, sizeof(struct input_event)) == -1)
+		if (write(mDeviceInfo.FileDescriptor, &ev, sizeof(struct input_event)) == -1)
 			return false;
 	memset(&ev, 0, sizeof(struct input_event));
-	if (write(mFD, &ev, sizeof(struct input_event)) == -1)
+	if (write(mDeviceInfo.FileDescriptor, &ev, sizeof(struct input_event)) == -1)
 		return false;
 	return true;
 }
@@ -136,6 +136,45 @@ bool GizmoLinuxInputDevice::createEvents(int Type, int Code, int Value, int NumW
  */
 bool GizmoLinuxInputDevice::getSendNullEvents() {
 	return mSendNullEvents;
+}
+
+/** 
+ * \brief  Set a device's exlusive access property
+ * \param  Grab Enable exlusive access if Grab is true
+ * \return True on success
+ *
+ * When a device is in exlusive access mode only gizmod will
+ * receive events from it.  This allows intercepting the events
+ * without the rest of the system knowing about them, and they
+ * can then be translated into other events by issuing createEvent calls
+ */
+bool GizmoLinuxInputDevice::grabExclusiveAccess(bool Grab) {
+	if (ioctl(mDeviceInfo.FileDescriptor, EVIOCGRAB, Grab ? 1 : 0)) {
+		cerr << "Device [" << mDeviceInfo.DeviceName <<"] Exclusive Access Grab Failed!" << endl;
+		return false;
+	}
+
+	cdbg << "Device [" << mDeviceInfo.DeviceName <<"] Exclusive Access Granted" << endl;
+	return true;
+}
+
+/**
+ * \brief  Remap a key on the input device
+ * \param  CurCode Key to change the mapping of
+ * \param  NewCode New code of the key
+ * \return True on success
+ */
+bool GizmoLinuxInputDevice::remapKey(int CurCode, int NewCode) {
+	int codes[2];
+	codes[0] = CurCode;
+	codes[1] = NewCode;
+	if (ioctl(mDeviceInfo.FileDescriptor, EVIOCSKEYCODE, codes)) {
+		cerr << "Device [" << mDeviceInfo.DeviceName <<"] Failed to Remap Key [" << CurCode << "]" << " to [" << NewCode << "]" << endl;
+		return false;
+	}
+
+	cdbg << "Device [" << mDeviceInfo.DeviceName <<"] Key [" << CurCode << "]" << " Remapped to [" << NewCode << "]" << endl;
+	return true;
 }
 
 /**

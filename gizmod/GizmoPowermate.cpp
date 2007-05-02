@@ -54,7 +54,7 @@ using namespace H;
 /**
  * \brief GizmoPowermate Default Constructor
  */
-GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo.FileDescriptor) {
+GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
 	mRotated = false;
 }
 
