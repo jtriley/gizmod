@@ -154,26 +154,8 @@ void X11FocusWatcher::closeDisplay() {
  * \return The event
  */
 X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusEventType EventType) {
-	/*
-	XClassHint * pClassHint;
-	pClassHint = XAllocClassHint();
-	
-	X11FocusEvent Event;
-	if (XGetClassHint(mDisplay, window, pClassHint) == 0) {
-		// failed to get class information!
-		XFree(pClassHint);
-		Event = X11FocusEvent(EventType, getWindowName(mDisplay, window), WINDOW_UNKNOWN, WINDOW_UNKNOWN);
-	} else {
-		// class information is available
-		Event = X11FocusEvent(EventType, getWindowName(mDisplay, window), pClassHint->res_name, pClassHint->res_class);
-		XFree(pClassHint->res_name);
-		XFree(pClassHint->res_class);
-		XFree(pClassHint);
-	}
-	*/
 	tuple<string, string, string> WindowInfo = getWindowName(mDisplay, window);
 	X11FocusEvent Event(EventType, WindowInfo.get<0>(), WindowInfo.get<1>(), WindowInfo.get<2>());
-	
 	return Event;
 }
 
@@ -196,7 +178,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 	string WindowNameFormal = WINDOW_UNKNOWN;
 	string WindowClass = WINDOW_UNKNOWN;
 	if (!window) {
-		return tuple<string, string, string>("", "", "");
+		return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 	} else {
 		if (window == RootWindow(dpy, XDefaultScreen(dpy)))
 			return tuple<string, string, string>("(root window)", "(root window)", "(root window)");
