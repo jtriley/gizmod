@@ -43,9 +43,9 @@ class LIRCHauppaugeMPlayer(Hauppauge):
 		# if the event class is in INTERESTED_CLASSES and the active window is
 		# one of INTERESTED_WINDOWS and there is a keyboard and mouse attached 
 		# then process the event
-		if Event.Class in INTERESTED_CLASSES and \
-		   [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] and \
-		   len(Gizmod.Mice) and len(Gizmod.Keyboards):
+		if Event.Class in INTERESTED_CLASSES \
+		   and [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] \
+		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	KeyString = self.getKeyString(Event)
 		   	if KeyString == "Go":

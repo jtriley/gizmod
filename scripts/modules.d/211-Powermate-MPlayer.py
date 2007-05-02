@@ -40,9 +40,9 @@ class PowermateMPlayer:
 		# if the event class is in INTERESTED_CLASSES and the active window is
 		# one of INTERESTED_WINDOWS and there is a keyboard and mouse attached 
 		# then process the event
-		if Event.Class in INTERESTED_CLASSES and \
-		   [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] and \
-		   len(Gizmod.Mice) and len(Gizmod.Keyboards):
+		if Event.Class in INTERESTED_CLASSES \
+		   and [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] \
+		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 		   	# Only interact with Amarok if it's the first Powermate
 		  	if Gizmo.DeviceClassID == 0:
 			   	# Check for rotations

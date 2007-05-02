@@ -55,6 +55,8 @@ class GizmoRegistrar:
 		elif [i for i in ATIX10_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
 			Gizmod.printNiceScriptInit(0, "ATI X10", self.Device.DeviceName, self.Device.FileName)
 			Gizmod.ATIX10Remotes.append(self.Device)
+			# set exlusive mode
+			self.Device.grabExlusiveAccess(True)
 		else:
 			Gizmod.printNiceScriptInit(0, "Standard", self.Device.DeviceName, self.Device.FileName)
 
@@ -79,6 +81,8 @@ class GizmoRegistrar:
 					Gizmod.Powermates.remove(item)
 					print "Removed Powermate Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 		elif [i for i in ATIX10_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+			# unset exlusive mode
+			self.Device.grabExlusiveAccess(False)
 			for item in Gizmod.ATIX10Remotes:
 				if item.FileName == self.Device.FileName:
 					Gizmod.ATIX10Remotes.remove(item)

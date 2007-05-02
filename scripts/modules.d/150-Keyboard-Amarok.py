@@ -94,7 +94,7 @@ class KeyboardAmarok:
 
 	def __init__(self):
 		""" 
-		Amarok Constructor
+		Default Constructor
 		"""
 		
 		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
