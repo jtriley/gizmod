@@ -3,7 +3,7 @@
 #*************************************************************************
 #*** 
 #*** GizmoDaemon Config Script v3:0
-#*** 	LIRCHauppauge Mplayer config
+#*** 	LIRCHauppauge MPlayer config
 #***
 #*****************************************
   #*****************************************
@@ -23,10 +23,10 @@ INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 INTERESTED_WINDOWS = ["mplayer"]
 
 ############################
-# LIRCHauppaugeMplayer Class definition
+# LIRCHauppaugeMPlayer Class definition
 ##########################
 
-class LIRCHauppaugeMplayer(Hauppauge):
+class LIRCHauppaugeMPlayer(Hauppauge):
 	"""
 	MPlayer LIRC Event Mapping for the Hauppauge remote
 	"""
@@ -202,9 +202,9 @@ class LIRCHauppaugeMplayer(Hauppauge):
 		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
-# LIRCHauppaugeMplayer class end
+# LIRCHauppaugeMPlayer class end
 ##########################
 
 # register the user script
 if ENABLED:
-	Gizmod.Dispatcher.userScripts.append(LIRCHauppaugeMplayer())
+	Gizmod.Dispatcher.userScripts.append(LIRCHauppaugeMPlayer())

@@ -55,9 +55,6 @@ class KeyboardDefault:
 		   	elif Event.Code == GizmoKey.KEY_WWW:
 	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
 		   		return True
-		   	elif Event.Code == GizmoKey.KEY_F12:
-	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
-		   		return True
 		   	elif Event.Code == GizmoKey.KEY_VOLUMEUP:
 	   			Gizmod.DefaultMixerVolume.VolumePlayback = Gizmod.DefaultMixerVolume.VolumePlayback + 1
 		   		return True
