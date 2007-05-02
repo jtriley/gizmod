@@ -46,7 +46,7 @@ class KeyboardDefault:
 	   			subprocess.Popen(["eject", "/dev/dvd"])
 	   			subprocess.Popen(["eject", "/dev/cdrom"])
 		   		return True
-		   	if Event.Code == GizmoKey.KEY_CLOSECD:
+		   	elif Event.Code == GizmoKey.KEY_CLOSECD:
 	   			subprocess.Popen(["mount", "/media/dvd"])
 	   			subprocess.Popen(["mount", "/media/cdrom"])
 	   			subprocess.Popen(["mount", "/mnt/dvd"])

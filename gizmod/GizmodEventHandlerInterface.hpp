@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "GizmoEventATIX10.hpp"
 #include "GizmoEventCPU.hpp"
 #include "GizmoEventLIRC.hpp"
 #include "GizmoEventPowermate.hpp"
@@ -40,6 +41,7 @@
 #include "GizmoEventStandard.hpp"
 #include "GizmoEventWindowFocus.hpp"
 #include "Gizmo.hpp"
+#include "GizmoATIX10.hpp"
 #include "GizmoCPU.hpp"
 #include "GizmoLIRC.hpp"
 #include "GizmoPowermate.hpp"
@@ -78,6 +80,12 @@ public:
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
 	 */
+	virtual void			onDeregisterDevice(GizmoATIX10 const * Device) = 0;	
+	
+	/**
+	 * \brief  Event triggered when device has been deregistered
+	 * \param  Device The device
+	 */
 	virtual void			onDeregisterDevice(GizmoCPU const * Device) = 0;
 	
 	/**
@@ -97,6 +105,13 @@ public:
 	 * \param  Device The device
 	 */
 	virtual void			onDeregisterDevice(GizmoStandard const * Device) = 0;	
+	
+	/**
+	 * \brief  ATI X10 Event trigger
+	 * \param  Event The event information 
+	 * \param  Device The device that triggered the event
+	 */
+	virtual void			onEvent(GizmoEventATIX10 const * Event, GizmoATIX10 const * Device) = 0;
 	
 	/**
 	 * \brief  CPU Event trigger
@@ -144,6 +159,12 @@ public:
 	 * \return The class of the device
 	 */
 	virtual GizmoClass		onQueryDeviceClass(H::DeviceInfo const DeviceInformation) = 0;
+	
+	/**
+	 * \brief  Event triggered when a new device has been registered
+	 * \param  Device The device
+	 */
+	virtual void			onRegisterDevice(GizmoATIX10 const * Device) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device has been registered

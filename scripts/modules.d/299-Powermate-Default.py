@@ -16,8 +16,8 @@
 from GizmoDaemon import *
 import time
 
-INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 ENABLED = True
+INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 
 ############################
 # PowermateDefault Class definition

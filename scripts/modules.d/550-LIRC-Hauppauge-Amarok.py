@@ -17,9 +17,9 @@ from GizmoDaemon import *
 from Hauppauge import *
 import subprocess
 
+ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 INTERESTED_APPLICATION = "amarokapp"
-ENABLED = True
 
 ############################
 # LIRCHauppaugeAmarok Class definition

@@ -14,24 +14,7 @@
 ##########################
 
 from GizmoDaemon import *
-
-# List of devices to enumerate as keyboards
-KEYBOARD_GIZMOS = ["keyboard"]
-
-# List of devices to enumerate as mice
-MOUSE_GIZMOS = ["mouse", "trackball", "touchpad"]
-
-# List of devices to enumerate as mice
-POWERMATE_GIZMOS = ["powermate", "soundknob"]
-
-# Default mixer element preferences (in order of priority)
-# Gizmo Daemon will scan all of the specified DEFAULT_MIXERS and apply the first
-# one it finds from the list that has the needed control as the default mixing
-# device.  Ie, If DEFAULT_MIXERS = ["master", "pcm"] then if the Master mixing 
-# element has a playback volume, but no mute switch, and the PCM channel has 
-# playback # volume and a mute switch, Gizmod.DefaultMixerVolume will be the 
-# Master mixer, and Gizmod.DefaultMixerSwitch will be the PCM mixer.
-DEFAULT_MIXERS = ["master", "pcm", "front", "center", "side", "surround"]
+from GizmoDeviceStrings import *
 
 ############################
 # GizmoRegistrar Class definition
@@ -69,6 +52,9 @@ class GizmoRegistrar:
 		elif [i for i in POWERMATE_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
 			Gizmod.printNiceScriptInit(0, "Powermate", self.Device.DeviceName, self.Device.FileName)
 			Gizmod.Powermates.append(self.Device)
+		elif [i for i in ATIX10_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+			Gizmod.printNiceScriptInit(0, "ATI X10", self.Device.DeviceName, self.Device.FileName)
+			Gizmod.ATIX10Remotes.append(self.Device)
 		else:
 			Gizmod.printNiceScriptInit(0, "Standard", self.Device.DeviceName, self.Device.FileName)
 
@@ -92,6 +78,11 @@ class GizmoRegistrar:
 				if item.FileName == self.Device.FileName:
 					Gizmod.Powermates.remove(item)
 					print "Removed Powermate Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
+		elif [i for i in ATIX10_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+			for item in Gizmod.ATIX10Remotes:
+				if item.FileName == self.Device.FileName:
+					Gizmod.ATIX10Remotes.remove(item)
+					print "Removed ATI X10 Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 		else:
 			print "Removed Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 			

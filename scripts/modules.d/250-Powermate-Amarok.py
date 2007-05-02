@@ -16,9 +16,9 @@
 from GizmoDaemon import *
 import subprocess
 
+ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 INTERESTED_APPLICATION = "amarokapp"
-ENABLED = True
 
 ############################
 # PowermateAmarok Class definition

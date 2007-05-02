@@ -137,6 +137,7 @@ class GizmodDispatcher(GizmodEventHandler):
 		Gizmod.Keyboards = list()		# list of keyboards
 		Gizmod.Mice = list()			# list of mice
 		Gizmod.Powermates = list()		# list of Powermates
+		Gizmod.ATIX10Remotes = list()		# list of ATI X10 Remotes
 
 ############################
 # GizmodDispatcher class end
