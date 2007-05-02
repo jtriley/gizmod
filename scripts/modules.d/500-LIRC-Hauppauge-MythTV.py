@@ -20,6 +20,7 @@ import subprocess
 ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 INTERESTED_WINDOWS = ["mythfrontend"]
+POWER_APPLICATION = "mythfrontend"
 
 ############################
 # LIRCHauppaugeMythTV Class definition
@@ -39,6 +40,17 @@ class LIRCHauppaugeMythTV(Hauppauge):
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
 		
+		# check for power button
+		# if pressed and mythfrontend isn't running, then launch it
+		# also return False so that other scripts may make use of the power
+		# button as well
+		if Event.Class in INTERESTED_CLASSES \
+		   and self.getKeyString(Event) == "Power" \
+		   and Gizmod.isProcessRunning(POWER_APPLICATION) < 0:
+   			subprocess.Popen([POWER_APPLICATION])
+   			Gizmod.updateProcessTree() # force an instantaneous process tree update
+	   		return False
+
 		# if the event class is in INTERESTED_CLASSES and the active window is
 		# one of INTERESTED_WINDOWS and there is a keyboard and mouse attached 
 		# then process the event

@@ -34,9 +34,39 @@
 #endif
 
 #include <string>
+#include <map>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
+
+//////////////////////////////////////////////////////////////////////////////
+// Process Class Definition
+///////////////////////////////////////
+
+/**
+ * \class Process
+ * \brief Class that holds info about each process
+ */
+class Process {
+public:
+	// public member variables
+	std::string			Name;				///< Name of the process
+	unsigned int			PID;				///< Process ID
+	std::string			State;				///< State of the process
+	
+	// public functions
+
+	// construction / deconstruction
+	Process();							///< Default Constructor
+	virtual ~Process();						///< Destructor
+	
+private:
+	// private functions
+	
+	// private member variables
+};
 	
 //////////////////////////////////////////////////////////////////////////////
-// Class Definition
+// Processes Class Definition
 ///////////////////////////////////////
 
 /**
@@ -46,18 +76,24 @@
 class Processes {
 public:
 	// public functions
+	static void		updateProcessTree();			///< Force an update of the process tree
+	static void		setTimeBetweenUpdates(float Seconds);	///< Time between updates in seconds
 
 	// construction / deconstruction
 	Processes();							///< Default Constructor
 	virtual ~Processes();						///< Destructor
 	
 	// public static functions
-	int			isProcessRunning(std::string ProcessName); ///< Check is a process is running
+	static int		isProcessRunning(std::string ProcessName); ///< Check is a process is running
 
-protected:
+private:
 	// private functions
 	
 	// private member variables
+	static unsigned long	mLastUpdateTime;			///< Time of last tree update
+	static unsigned long	mMsBetweenUpdates;			///< Time between updates
+	static boost::mutex	mMutexUpdate;				///< Update mutex, to make thread safe
+	static std::map< std::string, boost::shared_ptr<Process> > mProcesses;	///< Process map shared between all instances
 };
 
 #endif // __Processes_h

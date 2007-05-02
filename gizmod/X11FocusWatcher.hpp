@@ -40,6 +40,7 @@
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
 #include <string>
+#include <boost/tuple/tuple.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs
@@ -80,6 +81,11 @@ public:
 	std::string			WindowClass;		///< Class of the Window
 	
 	// public functions
+	bool				isNull();		///< Check if the event is a useless event
+
+	// operators
+	bool 				operator != (X11FocusEvent const & Event); ///< != operator
+	bool				operator == (X11FocusEvent const & Event); ///< == operator
 
 	// construction / deconstruction
 	X11FocusEvent();
@@ -122,7 +128,7 @@ private:
 	// private functions
 	void				closeDisplay();		///< Close the X11 display
 	X11FocusEvent			createFocusEvent(Window const & window, X11FocusEventType EventType); ///< Create a X11FocusEvent from a Window
-	static std::string		getWindowName(Display * dpy, Window const & window, bool recurse = true); ///< Get the string name of a window
+	static boost::tuple<std::string, std::string, std::string> getWindowName(Display * dpy, Window const & window, bool recurse = true); ///< Get the string name and class hints of a window
 	bool 				openDisplay(std::string DisplayName); ///< Open an X11 display
 	void 				setFocusEventMasks();	///< Set all windows to report the FocusChange event mask
 	void				threadProc();		///< thread procedure
@@ -131,6 +137,8 @@ private:
 	Window				mCurrentWindow;		///< Current foreground window
 	Display	*			mDisplay;		///< X11 Display
 	std::string			mDisplayName;		///< Name of the display to open
+	X11FocusEvent			mLastEventIn;		///< Last in event
+	X11FocusEvent			mLastEventOut;		///< Last out event
 	int				mScreen;		///< X11 Screen
 	bool				mWatching;		///< Should we continue to watch the active window?
 	

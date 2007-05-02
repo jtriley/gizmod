@@ -29,6 +29,7 @@
 #include "Processes.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/UtilTime.hpp"
 #include <fstream>
 #include <iostream>
 #include <boost/filesystem/operations.hpp>
@@ -49,7 +50,22 @@ using namespace H;
  * \def    PROC_PATH
  * \brief  Path to /proc
  */
-#define PROC_PATH	"/proc"
+#define PROC_PATH		"/proc"
+
+/**
+ * \def    DEFAULT_UPDATE_DELAY
+ * \brief  The default amount of time between process tree rebuilds
+ */
+#define DEFAULT_UPDATE_DELAY	2500000
+
+////////////////////////////////////////////////////////////////////////////
+// Statics 
+///////////////////////////////////////
+	
+mutex Processes::mMutexUpdate;					  ///< Update mutex, to make thread safe
+map< string, shared_ptr<Process> > Processes::mProcesses;	  ///< Process map shared between all instances
+unsigned long Processes::mLastUpdateTime = 0;  			  ///< Time of last tree update
+unsigned long Processes::mMsBetweenUpdates = DEFAULT_UPDATE_DELAY; ///< Time between updates
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -59,12 +75,27 @@ using namespace H;
  * \brief Processes Default Constructor
  */
 Processes::Processes() {
+	// update the process tree if necessary
+	isProcessRunning("");
+}
+
+/**
+ * \brief Process Default Constructor
+ */
+Process::Process() {
+	PID = -1;
 }
 
 /**
  * \brief Processes Destructor
  */
 Processes::~Processes() {
+}
+
+/**
+ * \brief Process Destructor
+ */
+Process::~Process() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -77,12 +108,45 @@ Processes::~Processes() {
  * \return PID of the process if found, or a negative value if not found
  */
 int Processes::isProcessRunning(std::string ProcessName) {
-	if (!filesystem::exists(path(PROC_PATH)))
+	if (UtilTime::getTicks() - mLastUpdateTime >= mMsBetweenUpdates)
+		updateProcessTree();
+	
+	// lock the processes
+	mutex::scoped_lock lock(mMutexUpdate);
+	
+	shared_ptr<Process> pProcess = mProcesses[ProcessName];
+	if ( (!pProcess) || (pProcess->State == "Z") )
 		return -1;
+	else
+		return pProcess->PID;
+}
+
+/**
+ * \brief  Set the time between updates in seconds
+ * \param  Seconds Number of seconds between updates
+ */
+void Processes::setTimeBetweenUpdates(float Seconds) {
+	mMsBetweenUpdates = (unsigned long) (Seconds * 1000000.0f);
+}
+
+/**
+ * \brief  Force an update of the process tree
+ */
+void Processes::updateProcessTree() {
+	cdbg5 << "Building Process Tree" << endl;
+	if (!filesystem::exists(path(PROC_PATH))) {
+		cdbg << "Error Building Process Tree!" << endl;
+		return;
+	}
+	
+	// lock the processes
+	mutex::scoped_lock lock(mMutexUpdate);
+	
+	// clear out the process list
+	mProcesses.clear();
 		
 	// now register the event nodes
 	// get a file listing
-	int pid = -1;
 	directory_iterator endItr;
 	for (directory_iterator iter(PROC_PATH); iter != endItr; iter ++) {
 		string StatPath = iter->string() + "/stat";
@@ -93,23 +157,34 @@ int Processes::isProcessRunning(std::string ProcessName) {
 					continue;
 				string Line;
 				getline(StatFile, Line);
-				tokenizer<> tok(Line);
+				typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+				char_separator<char> Separators(" ");
+				tokenizer tok(Line, Separators);
+				shared_ptr<Process> pProcess = shared_ptr<Process>(new Process);
 				int count = 0;
-				for(tokenizer<>::iterator iter = tok.begin(); iter!= tok.end(); iter ++, count ++) {
+				for(tokenizer::iterator iter = tok.begin(); iter!= tok.end(); iter ++, count ++) {
+					bool BreakFor = false;
 					switch (count) {
 					case 0:
 						try {
-							pid = lexical_cast<int>(*iter);
+							pProcess->PID = lexical_cast<int>(*iter);
 						} catch (bad_lexical_cast const & e) {
 							// unable to convert
-							continue;
+							BreakFor = true;
 						}
 						break;
 					case 1:
-						if (ProcessName ==  *iter)
-							return pid;
+						pProcess->Name = iter->substr(1, iter->length() - 2);
+						break;
+					case 2:
+						pProcess->State = *iter;
+						mProcesses.insert(make_pair(pProcess->Name, pProcess));
+						BreakFor = true;
 						break;
 					}
+					
+					if (BreakFor)
+						break;
 				}
 			}
 		} catch (filesystem_error const & e) {
@@ -117,5 +192,6 @@ int Processes::isProcessRunning(std::string ProcessName) {
 		}
 	}
 	
-	return -1;
+	// update the time
+	mLastUpdateTime = UtilTime::getTicks();	
 }

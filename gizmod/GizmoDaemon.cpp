@@ -305,6 +305,9 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// Processes Python Class Export
 	class_<Processes>("Processes")
 		.def("isProcessRunning", &Processes::isProcessRunning)
+			.staticmethod("isProcessRunning")
+		.def("updateProcessTree", &Processes::updateProcessTree)
+			.staticmethod("updateProcessTree")
 		;		
 				
 	/// GizmoDaemon Python Class Export

@@ -19,7 +19,6 @@ import subprocess
 
 ENABLED = True
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
-POWER_APPLICATION = "mythfrontend"
 
 ############################
 # LIRCHauppaugeDefault Class definition
@@ -48,9 +47,7 @@ class LIRCHauppaugeDefault(Hauppauge):
 		   	if KeyString == "Go":
 		   		return False
 		   	elif KeyString == "Power":
-		   		if not Gizmod.isApplicationRunning(POWER_APPLICATION):
-		   			subprocess.Popen([POWER_APPLICATION])
-		   		return True
+		   		return False
 		   	elif KeyString == "TV":
 		   		return False
 		   	elif KeyString == "Videos":

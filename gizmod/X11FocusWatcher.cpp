@@ -38,6 +38,7 @@
 #include <boost/thread/thread.hpp>
 
 using namespace std;
+using namespace boost;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -153,6 +154,7 @@ void X11FocusWatcher::closeDisplay() {
  * \return The event
  */
 X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusEventType EventType) {
+	/*
 	XClassHint * pClassHint;
 	pClassHint = XAllocClassHint();
 	
@@ -168,12 +170,15 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
 		XFree(pClassHint->res_class);
 		XFree(pClassHint);
 	}
+	*/
+	tuple<string, string, string> WindowInfo = getWindowName(mDisplay, window);
+	X11FocusEvent Event(EventType, WindowInfo.get<0>(), WindowInfo.get<1>(), WindowInfo.get<2>());
 	
 	return Event;
 }
 
 /**
- * \brief  Get the name of a Window 
+ * \brief  Get the name and class hints of a Window 
  * \param  dpy The Display 
  * \param  window The Window itself
  * \param  recurse Set to true if we should recurse on this window
@@ -185,14 +190,16 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
  * Modified to correctly get the parent window if necessary
  * Also fixed several segfaults!
  */
-std::string X11FocusWatcher::getWindowName(Display * dpy, Window const & window, bool recurse) {
+boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowName(Display * dpy, Window const & window, bool recurse) {
 	XTextProperty tp;
+	string WindowName = TITLE_UNKNOWN;
+	string WindowNameFormal = WINDOW_UNKNOWN;
+	string WindowClass = WINDOW_UNKNOWN;
 	if (!window) {
-		return "";
+		return tuple<string, string, string>("", "", "");
 	} else {
-		if (window == RootWindow(dpy, XDefaultScreen(dpy))) {
-			return "(root window)";
-		}
+		if (window == RootWindow(dpy, XDefaultScreen(dpy)))
+			return tuple<string, string, string>("(root window)", "(root window)", "(root window)");
 		#ifdef NO_I18N
 			char * win_name;
 			if (!XFetchName(dpy, window, &win_name)) { /* Get window name if any */
@@ -209,12 +216,30 @@ std::string X11FocusWatcher::getWindowName(Display * dpy, Window const & window,
 				} else {
 					if (tp.value)
 						XFree((void*)tp.value);
-					return TITLE_UNKNOWN;
+					XFree(win_name);
+					XClassHint * pClassHint = XAllocClassHint();
+					if (XGetClassHint(dpy, window, pClassHint) > 0) {
+						WindowNameFormal = pClassHint->res_name;
+						WindowClass = pClassHint->res_class;  
+						XFree(pClassHint->res_name);
+						XFree(pClassHint->res_class);
+					}
+					XFree(pClassHint);
+					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				}
 			} else if (win_name) {
 				const std::string retStr = win_name;
 				XFree(win_name);
-				return retStr;
+				XClassHint * pClassHint = XAllocClassHint();
+				if (XGetClassHint(dpy, window, pClassHint) > 0) {
+					WindowNameFormal = pClassHint->res_name;
+					WindowClass = pClassHint->res_class;  
+					XFree(pClassHint->res_name);
+					XFree(pClassHint->res_class);
+				}
+				XFree(pClassHint);
+				WindowName = retStr;
+				return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 			}
 		#else
 			if (!XGetWMName(dpy, window, &tp)) { // Get window name if any
@@ -233,9 +258,26 @@ std::string X11FocusWatcher::getWindowName(Display * dpy, Window const & window,
 				} else {
 					if (tp.value)
 						XFree((void*)tp.value);
-					return TITLE_UNKNOWN;
+					XClassHint * pClassHint = XAllocClassHint();
+					if (XGetClassHint(dpy, window, pClassHint) > 0) {
+						WindowNameFormal = pClassHint->res_name;
+						WindowClass = pClassHint->res_class;  
+						XFree(pClassHint->res_name);
+						XFree(pClassHint->res_class);
+					}
+					XFree(pClassHint);
+					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				}
-			} else if (tp.nitems > 0) {
+			} else if (tp.nitems > 0) {				
+				XClassHint * pClassHint = XAllocClassHint();
+				if (XGetClassHint(dpy, window, pClassHint) > 0) {
+					WindowNameFormal = pClassHint->res_name;
+					WindowClass = pClassHint->res_class;  
+					XFree(pClassHint->res_name);
+					XFree(pClassHint->res_class);
+				}
+				XFree(pClassHint);
+				
 				std::string retStr;
 				int count = 0, i, ret;
 				char **list = NULL;
@@ -245,22 +287,24 @@ std::string X11FocusWatcher::getWindowName(Display * dpy, Window const & window,
 						retStr += (const char *) list[i];
 					XFree((void*)tp.value);
 					XFreeStringList(list);
-					return retStr;
+					WindowName = retStr;
+					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				} else {
 					XFree((void*)tp.value);
 					if (list)
 						XFreeStringList(list);
 					retStr = (const char *) tp.value;
-					return retStr;
+					WindowName = retStr;
+					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				}
 			}
 		#endif
 		else {
-			return TITLE_UNKNOWN;
+			return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 		}
 	}	
 
-	return WINDOW_UNKNOWN;
+	return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 }
 
 /**
@@ -289,7 +333,8 @@ bool X11FocusWatcher::isApplicationRunning(std::string WindowTitle) {
 	Window * Children = NULL;
 	XQueryTree(Dsp, RootWindow(Dsp, DefaultScreen(Dsp)), &RootRet, &ParentRet, &Children, &nChildren);
 	for (unsigned int lp = 0; lp < nChildren; lp ++) {
-		if (stringconverter::toLower(getWindowName(Dsp, Children[lp])).find(stringconverter::toLower(WindowTitle)) != string::npos) {
+		tuple<string, string, string> WindowInfo = getWindowName(Dsp, Children[lp]);
+		if (stringconverter::toLower(WindowInfo.get<0>()).find(stringconverter::toLower(WindowTitle)) != string::npos) {
 			XFree(Children);	
 			XCloseDisplay(Dsp);
 			return true;
@@ -300,6 +345,16 @@ bool X11FocusWatcher::isApplicationRunning(std::string WindowTitle) {
 	XCloseDisplay(Dsp);
 	return false;
 }
+
+/**
+ * \brief  Check if the event is a useless event
+ * \return Check if the event is a null event
+ */
+bool X11FocusEvent::isNull() {
+	if ( (WindowName == TITLE_UNKNOWN) && (WindowNameFormal == WINDOW_UNKNOWN) && (WindowClass == WINDOW_UNKNOWN) )
+		return true;
+	return false;
+} 
 
 /**
  * \brief  Event triggered on a Focus In
@@ -348,6 +403,32 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 }
 
 /**
+ * \brief  != operator
+ * \param  Event The test event
+ */
+bool X11FocusEvent::operator != (X11FocusEvent const & Event) {
+	if ( (EventType == Event.EventType) &&
+	     (WindowClass == Event.WindowClass) &&
+	     (WindowName == Event.WindowName) &&
+	     (WindowNameFormal == Event.WindowNameFormal) )
+		return false;
+	return true;
+}
+
+/**
+ * \brief  == operator
+ * \param  Event The test event
+ */
+bool X11FocusEvent::operator == (X11FocusEvent const & Event) {
+	if ( (EventType == Event.EventType) &&
+	     (WindowClass == Event.WindowClass) &&
+	     (WindowName == Event.WindowName) &&
+	     (WindowNameFormal == Event.WindowNameFormal) )
+		return true;
+	return false;
+}
+
+/**
  * \brief  Set all windows to report the FocusChangeMask
  */
 void X11FocusWatcher::setFocusEventMasks() {
@@ -374,22 +455,16 @@ void X11FocusWatcher::shutdown() {
  * This is where all the magic happens
  */
 void X11FocusWatcher::threadProc() {
-	if (!openDisplay(mDisplayName))
+	// open the display
+	if ( (!openDisplay(mDisplayName)) || (mWatching) )
 		return;
-	
+		
+	// init
+	mWatching = true;
 	Window window;
 	int revert_to_return;
 	string WindowName;
-	
-	// fire initial event
-	XGetInputFocus(mDisplay, &window, &revert_to_return);
-	try {
-		X11FocusEvent Event = createFocusEvent(window, X11FOCUSEVENT_IN);
-		onFocusIn(Event);
-	} catch (H::Exception e) {
-		cdbg2 << e.message() << endl;
-	}
-	
+		
 	// Watch for focus changes	
 	mWatching = true;
 	while (mWatching) {
@@ -415,12 +490,18 @@ void X11FocusWatcher::threadProc() {
 			if (mCurrentWindow == event.xany.window)
 				break;
 			X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_IN);
-			mCurrentWindow = event.xany.window;
-			onFocusIn(Event);
+			if ( (!Event.isNull()) && (Event != mLastEventIn) ) {
+				mCurrentWindow = event.xany.window;
+				onFocusIn(Event);
+				mLastEventIn = Event;
+			}
 			break; }
 		case FocusOut: {
 			X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_OUT);
-			onFocusOut(Event);
+			if ( (!Event.isNull()) && (Event != mLastEventOut) ) {
+				onFocusOut(Event);
+				mLastEventOut = Event;
+			}
 			break; }
 		default:
 			cdbg << "Unkown Event Type: " << event.type << endl;		
@@ -428,5 +509,6 @@ void X11FocusWatcher::threadProc() {
 		}
 	}
 
+	// we're shuttind down! close the display
 	closeDisplay();
 }

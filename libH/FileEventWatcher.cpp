@@ -602,7 +602,7 @@ void FileEventWatcher::watchForFileEvents() {
 			}
 			
 			// error
-			cerr << "Poll error: " << strerror(errno) << endl;
+			cdbg1 << "Poll error: " << strerror(errno) << endl;
 			continue;
 		}
 						
