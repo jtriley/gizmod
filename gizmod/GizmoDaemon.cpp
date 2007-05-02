@@ -435,15 +435,14 @@ GizmoDaemon::~GizmoDaemon() {
  */
 void GizmoDaemon::deleteGizmo(std::string FileName) {
 	// remove from map
-	shared_ptr<Gizmo> pGizmo = mGizmos[FileName];
-	if (!pGizmo) {
+	if (!mGizmos.count(FileName)) {
 		// not found -- unusual, but whatever
 		cdbg << "Tried to delete non-existent Gizmo [" << FileName << "]" << endl;
 		return; 
 	}
-	
-	// remove the gizmo
-	mGizmos.erase(FileName);
+		
+	// get the Gizmo
+	shared_ptr<Gizmo> pGizmo = mGizmos[FileName];
 	
 	// signal python script
 	try {
@@ -468,7 +467,9 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
 	}
 		
-	cdbg << "Deleted Gizmo [" << FileName << "]" << endl;
+	// remove the gizmo
+	mGizmos.erase(FileName);
+	cdbg2 << "Deleted Gizmo [" << FileName << "]" << endl;
 }
 
 /**

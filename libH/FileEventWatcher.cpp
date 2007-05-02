@@ -306,7 +306,7 @@ void FileEventWatcher::buildPollFDArrayFromWatchees() {
  */
 void FileEventWatcher::buildPollFDArrayFunctor(std::pair< int, boost::shared_ptr<FileWatchee> > WatcheePair) {
 	boost::shared_ptr<FileWatchee> pWatchee = WatcheePair.second;
-	if (pWatchee->fd < 0)
+	if ( (!pWatchee) || (pWatchee->fd < 0) )
 		return;
 	
 	// Add the new watchee to the list
@@ -350,9 +350,15 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByFileDescriptor(int 
 boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByPath(std::string FileName) {
 	map< int, shared_ptr<FileWatchee> >::iterator iter;
 	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
-		if (iter->second->FileName == FileName)
-			return iter->second;
+		shared_ptr<FileWatchee> pWatchee = iter->second;
+		if (!pWatchee) {
+			mWatchees.erase(iter);
+			continue;
+		}
+		if (pWatchee->FileName == FileName)
+			return pWatchee;
 	}
+	
 	// not found, return null shared pointer
 	return shared_ptr<FileWatchee>();
 }
@@ -387,7 +393,9 @@ void FileEventWatcher::readFromFile(int fd, DynamicBuffer<char> & Buffer) {
  */
 void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 	if (item.fd == mInotifyFD) {
-		if (item.revents & POLLIN) {			
+		if (item.revents & POLLERR) {
+			cdbg << "Error detected on inotify device" << endl;
+		} else if ( (item.revents & POLLIN) || (item.revents & POLLPRI) ) {
 			// read from the inotify device
 			char ReadBuffer[NOTIFY_READ_BUF_SIZE];
 			int BytesRead = read(mInotifyFD, ReadBuffer, NOTIFY_READ_BUF_SIZE);
@@ -443,19 +451,32 @@ void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 					cout << "Unmount" << endl;
 			}
 		}
-	} else {
-		if (item.revents & POLLIN) {
+	} else if (item.fd >= 0) {
+		if (item.revents & POLLERR) {
+			shared_ptr<FileWatchee> pWatchee = getWatcheeByFileDescriptor(item.fd);
+			if (pWatchee) {
+				cdbg5 << "Error detected on poll device: " << item.fd << " -- " << pWatchee->FileName << endl;
+				onFileEventDisconnect(pWatchee);
+				removeWatchee(pWatchee);			
+			} else {
+				cdbg5 << "Error detected on poll device: " << item.fd << endl;
+				buildPollFDArrayFromWatchees();
+			}
+		} else if ( (item.revents & POLLIN) || (item.revents & POLLPRI) ) {
 			// poll device, try to read from it
 			shared_ptr<FileWatchee> pWatchee = getWatcheeByFileDescriptor(item.fd);
-			if (!pWatchee)
-				cerr << "Unhandled file event on fd [" << item.fd << "]" << endl;
+			if (!pWatchee) {
+				cdbg5 << "Unhandled file event on fd [" << item.fd << "]" << endl;
+				buildPollFDArrayFromWatchees();
+				return;
+			}
 			try {
 				DynamicBuffer<char> Buffer;
 				readFromFile(item.fd, Buffer);
 				if (pWatchee)
 					onFileEventRead(pWatchee, Buffer);
 			} catch (H::DeviceDisconnectException & e) {
-				if (pWatchee) {
+				if ( (pWatchee) && (pWatchee->DeviceType == WATCH_POLL) ) {
 					onFileEventDisconnect(pWatchee);
 					removeWatchee(pWatchee);
 				} else
@@ -573,8 +594,18 @@ void FileEventWatcher::watchForFileEvents() {
 	mPolling = true;
 	while (mPolling) {
 		// poll the open files
-		poll(&mPollFDs[0], mPollFDs.size(), -1);
-				
+		int ret;
+		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), -1)) <= 0) {
+			if (ret == 0) {
+				// timeout occured, loop again
+				continue;
+			}
+			
+			// error
+			cerr << "Poll error: " << strerror(errno) << endl;
+			continue;
+		}
+						
 		// file events have happened, check for them and dispatch
 		apply_func(mPollFDs, &FileEventWatcher::handleEventsOnFile, this);
 	}
