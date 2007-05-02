@@ -69,7 +69,7 @@ class ATIX10Default:
 			   		return True
 			   	else:
 			   		# directly translate all other events
-					Gizmod.Keyboards[0].createEvent(Event.Type, Event.Key, Event.Value)
+					Gizmod.Keyboards[0].createEvent(Event.Type, Event.Code, Event.Value)
 					return True
 		# event not of interest
 		return False

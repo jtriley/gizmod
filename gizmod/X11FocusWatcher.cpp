@@ -169,8 +169,8 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
  * Routine to display a window id in dec/hex with name if window has one
  * Taken from xwininfo.c from xorg source, thanks xorg guys!
  *
- * Modified to correctly get the parent window if necessary
- * Also fixed several segfaults!
+ * Modified to correctly get the parent window if necessary, as well
+ * as window class and formal name information
  */
 boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowName(Display * dpy, Window const & window, bool recurse) {
 	XTextProperty tp;
