@@ -57,7 +57,6 @@ class ATIX10MythTV:
 		   and Event.Value != 0 and len(Gizmod.Keyboards) and len(Gizmod.Mice):
 			# process the key
 		   	if Event.Code == GizmoKey.KEY_POWER:
-		   		# start mythfront end if power button pressed
 		   		# if mythfrontend is open, kill it
 	   			subprocess.Popen(["killall", "mythfrontend"])
 		   		return True

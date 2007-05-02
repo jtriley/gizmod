@@ -63,7 +63,6 @@ class LIRCHauppaugeMythTV(Hauppauge):
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_A)
 		   		return True
 		   	elif KeyString == "Power":
-		   		# start mythfront end if power button pressed
 		   		# if mythfrontend is open, kill it
 	   			subprocess.Popen(["killall", "mythfrontend"])
 		   		return True
