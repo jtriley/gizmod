@@ -64,7 +64,6 @@ class PowermateVisualizer:
 			   and Gizmod.DefaultMixerVolume \
 			   and Event.Mixer.Name == Gizmod.DefaultMixerVolume.Name:
 				self.__applyVisualizationVolume()
-
 			# check for switch changed
 			if Event.SwitchPlaybackChanged \
 			   and Gizmod.DefaultMixerSwitch \
