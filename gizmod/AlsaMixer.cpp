@@ -64,21 +64,31 @@ int AlsaMixer::MixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int E
  * Handle the mixer element event
  */
 int AlsaMixer::mixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int EventMask) {
-	// remember the old state
-	AlsaMixerElements OldState(*this);
-	
 	// grab new info from the sound card
 	populateInfo();
 	
 	// fire the event
 	AlsaEvent Event(ALSAEVENT_MIXERELEMENT_CHANGE, EventMask);
-	AlsaMixerElements::buildEventFromMixerStates(Event, OldState, *this);
+	AlsaMixerElements::buildEventFromMixerStates(Event, mOldState, *this);
 	Alsa * pAlsa = static_cast<Alsa *>(mpiAlsa);
 	pAlsa->_onAlsaEventMixerElementChange(Event, static_cast<AlsaSoundCard &>(*mpiSoundCard), *this);
 	pAlsa->onAlsaEventMixerElementChange(Event, static_cast<AlsaSoundCard &>(*mpiSoundCard), *this);
 	
+	// remember the old state
+	mOldState = *this;
+	
 	// success
 	return 0;
+}
+
+/** 
+ * \brief  Signal a manual mixer event
+ * \return 0 on success otherwise a negative error code
+ *
+ * Handle a manual mixer element event
+ */
+int AlsaMixer::signalMixerEvent() {
+	return mixerElemCallback(mMixerElement, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -234,6 +244,7 @@ bool AlsaMixer::setSwitchCapture(bool Enable) {
 	if (snd_mixer_selem_set_capture_switch_all(mMixerElement, Enable) < 0)
 		return false;
 	SwitchCapture = Enable;
+	mpiSoundCard->addManualUpdater(this);
 	return true;
 }
 
@@ -246,6 +257,7 @@ bool AlsaMixer::setSwitchPlayback(bool Enable) {
 	if (snd_mixer_selem_set_playback_switch_all(mMixerElement, Enable) < 0)
 		return false;
 	SwitchPlayback = Enable;
+	mpiSoundCard->addManualUpdater(this);
 	return true;
 }
 
@@ -263,6 +275,7 @@ bool AlsaMixer::setVolumeCapture(long Volume) {
 		return false;
 	VolumeCapture = Volume;
 	VolumeCapturePercent = float(VolumeCapture - VolumeCaptureMin) / float(VolumeCaptureMax - VolumeCaptureMin) * 100.0f;
+	mpiSoundCard->addManualUpdater(this);	
 	return true;
 }
 
@@ -298,6 +311,7 @@ bool AlsaMixer::setVolumePlayback(long Volume) {
 		return false;
 	VolumePlayback = Volume;
 	VolumePlaybackPercent = float(VolumePlayback - VolumePlaybackMin) / float(VolumePlaybackMax - VolumePlaybackMin) * 100.0f;
+	mpiSoundCard->addManualUpdater(this);
 	return true;
 }
 
@@ -316,6 +330,7 @@ bool AlsaMixer::setVolumePlaybackPercent(float Percent) {
 		return false;
 	VolumePlaybackPercent = Percent;
 	VolumePlayback = NewVolume;
+	mpiSoundCard->addManualUpdater(this);
 	return true;
 }
 

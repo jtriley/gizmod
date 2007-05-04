@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "AlsaMixerInterface.hpp"
 #include "AlsaMixerElements.hpp"
 #include "AlsaSoundCardInterface.hpp"
 #include <string>
@@ -51,7 +52,7 @@
  * \class  AlsaMixer
  * \brief  Data structure that holds information about each Mixer
  */
-class AlsaMixer : public AlsaMixerElements {
+class AlsaMixer : public AlsaMixerInterface, public AlsaMixerElements {
 public:	
 	// public member variables
 	
@@ -64,6 +65,7 @@ public:
 	bool				setVolumeCapturePercent(float Percent); ///< Set the Capture volume as a percent
 	bool				setVolumePlayback(long Volume); ///< Set the playback volume 
 	bool				setVolumePlaybackPercent(float Percent); ///< Set the playback volume as a percent
+	int 				signalMixerEvent();		///< Signal a manual mixer event
 
 	// construction / deconstruction
 	AlsaMixer();
@@ -86,6 +88,7 @@ private:
 	std::string 			mMixerName;			///< Short name of the mixer
 	std::string 			mMixerNameUnique;		///< Unique name of the mixer
 	unsigned int			mMixerID;			///< ID of the mixer
+	AlsaMixerElements 		mOldState;			///< Old state of the mixer
 	AlsaSoundCardInterface *	mpiSoundCard;			///< Associated sound card
 };
 

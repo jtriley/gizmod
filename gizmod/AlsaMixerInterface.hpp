@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  AlsaSoundCardInterface.hpp
-*** \brief AlsaSoundCardInterfaceheader
+*** \file  AlsaMixerInterface.hpp
+*** \brief AlsaMixerInterfaceheader
 ***
 *****************************************
   *****************************************
@@ -26,55 +26,46 @@
   
 */
 
-#ifndef __AlsaSoundCardInterface_h
-#define __AlsaSoundCardInterface_h
+#ifndef __AlsaMixerInterface_h
+#define __AlsaMixerInterface_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #include "AlsaInterface.hpp"
-#include "AlsaMixerInterface.hpp"
 #include <string>
-#include <list>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs
 ///////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
-// AlsaSoundCardInterface Class Definition
+// AlsaMixerInterface Class Definition
 ///////////////////////////////////////
 
 /**
- * \class  AlsaSoundCardInterface
+ * \class  AlsaMixerInterface
  * \brief  Data structure that holds information about Alsa events
  */
-class AlsaSoundCardInterface {
+class AlsaMixerInterface {
 public:	
 	// public member variables
-	void				addManualUpdater(AlsaMixerInterface * pMixer); ///< Add a mixer to the manual update list
-	AlsaInterface *			getAlsa();			///< Get a pointer to the Alsa intantiation
 	
 	// public functions
-	virtual std::string		getCardHardwareID() const = 0;	///< Get the card's hardware ID
-	virtual int			getCardID() const = 0;		///< Get the card ID
-	virtual std::string		getCardName() const = 0;	///< Get the name of the card
-	virtual std::string		getCardNameLong()const  = 0;	///< Get the long name of the card
+	virtual int 			signalMixerEvent() = 0;		///< Signal a manual mixer event
 
 	// construction / deconstruction
-	AlsaSoundCardInterface(AlsaInterface * piAlsa);
-	virtual ~AlsaSoundCardInterface();
+	AlsaMixerInterface();
+	virtual ~AlsaMixerInterface();
 	
 protected:
 	// protected member variables
-	AlsaInterface * 		mpiAlsa;			///< Pointer to the Alsa instance
-	std::list<AlsaMixerInterface *> mUpdateList;			///< List of Mixers that need manual events fired
-	
+
 private:
 	// private functions
 		
 	// private member variables
 };
 
-#endif // __AlsaSoundCardInterface_h
+#endif // __AlsaMixerInterface_h

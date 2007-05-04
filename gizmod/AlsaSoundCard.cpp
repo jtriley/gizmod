@@ -297,6 +297,14 @@ void AlsaSoundCard::threadProc() {
 	int err;
 	mWatching = true;
 	while (mWatching) {
+		// check for manual mixer events
+		if (mUpdateList.size()) {
+			for (list<AlsaMixerInterface *>::iterator iter = mUpdateList.begin(); iter != mUpdateList.end(); iter ++) 
+				(*iter)->signalMixerEvent();
+			mUpdateList.clear();
+		}
+		
+		// wait for the next event
 		if ((err = snd_mixer_wait(mMixerHandle, -1)) < 0) {
 			cout << "test err: " << snd_strerror(err) << endl;
 		} else {

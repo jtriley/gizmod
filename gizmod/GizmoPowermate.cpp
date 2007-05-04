@@ -174,8 +174,8 @@ bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 
 /**
  * \brief  Set the hardware pulsing state of the Powermate's LED
- * \param  Level The Level of the Pulsing (0x80 is a good value)
- * \param  PulseSpeed Speed of the pulsing
+ * \param  Level The Level of the Pulsing (255 is a good value)
+ * \param  PulseSpeed Speed of the pulsing (255-270 are good values)
  * \param  PulseTable Type of the pulsing
  */
 void GizmoPowermate::pulseLED(int Level, int PulseSpeed, int PulseTable) {

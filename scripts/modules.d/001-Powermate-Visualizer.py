@@ -55,15 +55,21 @@ class PowermateVisualizer:
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
 		
-		# check for volume events
+		# check for mixer events
 		if self.Visualization == VisualizationType.Volume \
 		   and Event.Class == GizmoEventClass.SoundCard \
-		   and Event.Type == AlsaEventType.MixerElementChange \
-		   and Event.VolumePlaybackChanged \
-		   and Gizmod.DefaultMixerVolume \
-		   and Event.Mixer.Name == Gizmod.DefaultMixerVolume.Name:
-		   	print "test"
-			self.__applyVisualizationVolume()
+		   and Event.Type == AlsaEventType.MixerElementChange:
+		   	# check for volume changed
+			if Event.VolumePlaybackChanged \
+			   and Gizmod.DefaultMixerVolume \
+			   and Event.Mixer.Name == Gizmod.DefaultMixerVolume.Name:
+				self.__applyVisualizationVolume()
+
+			# check for switch changed
+			if Event.SwitchPlaybackChanged \
+			   and Gizmod.DefaultMixerSwitch \
+			   and Event.Mixer.Name == Gizmod.DefaultMixerSwitch.Name:
+				self.__applyVisualizationVolume()
 
 		return False
 					
@@ -81,8 +87,15 @@ class PowermateVisualizer:
 			return
 			
 		# update the Powermates' LEDs
-		for Powermate in Gizmod.Powermates:
-			Powermate.LEDPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent	
+		if Gizmod.DefaultMixerSwitch.SwitchPlayback:
+			# if not muted set LED to volume level
+			for Powermate in Gizmod.Powermates:
+				Powermate.LEDPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent	
+		else:
+			# if muted pulse the led
+			for Powermate in Gizmod.Powermates:
+				Powermate.pulseLED(255, 257, 2)
+			
 
 	def __init__(self):
 		""" 

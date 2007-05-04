@@ -447,6 +447,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getLEDPercent", &GizmoPowermate::getLEDPercent)		
 		.def("getLEDPulseAsleep", &GizmoPowermate::getLEDPulseAsleep)
 		.def("getRotated", &GizmoPowermate::getRotated)
+		.def("pulseLED", &GizmoPowermate::pulseLED)
 		.def("setLED", &GizmoPowermate::setLED)
 		.def("setLEDPercent", &GizmoPowermate::setLEDPercent)
 		.def("setLEDPulseAsleep", &GizmoPowermate::setLEDPulseAsleep)
