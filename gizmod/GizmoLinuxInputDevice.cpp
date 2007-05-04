@@ -29,6 +29,7 @@
 #include "GizmoLinuxInputDevice.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/UtilTime.hpp"
 
 using namespace std;
 using namespace H;
@@ -47,6 +48,8 @@ using namespace H;
 GizmoLinuxInputDevice::GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo) {
 	mDeviceInfo= DeviceInfo;
 	mSendNullEvents = false;
+	mLastEventTime = 0;
+	mMinTimeBetweenEvents = 0.0f;
 }
 
 /**
@@ -159,6 +162,17 @@ bool GizmoLinuxInputDevice::grabExclusiveAccess(bool Grab) {
 }
 
 /**
+ * \brief  Should we process the event based on the minimum time between events?
+ * \return True if we should, false if not
+ */
+bool GizmoLinuxInputDevice::processEvent() {
+	if (UtilTime::getTicks() - mLastEventTime < mMinTimeBetweenEvents)
+		return false;
+	mLastEventTime = UtilTime::getTicks();
+	return true;
+}
+
+/**
  * \brief  Remap a key on the input device
  * \param  CurCode Key to change the mapping of
  * \param  NewCode New code of the key
@@ -175,6 +189,17 @@ bool GizmoLinuxInputDevice::remapKey(int CurCode, int NewCode) {
 
 	cdbg << "Device [" << mDeviceInfo.DeviceName <<"] Key [" << CurCode << "]" << " Remapped to [" << NewCode << "]" << endl;
 	return true;
+}
+
+/**
+ * \brief  Set the minimum time between events
+ * \param  Seconds The time in seconds
+ *
+ * This is for remotes that are a bit jittery, or trigger happy.
+ * Set this to an appropriate value (issue -V 5 to see the timings)
+ */
+void GizmoLinuxInputDevice::setMinimumTimeBetweenEvents(float Seconds) {
+	mMinTimeBetweenEvents = Seconds;
 }
 
 /**

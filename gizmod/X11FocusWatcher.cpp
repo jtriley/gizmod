@@ -29,6 +29,7 @@
 #include "X11FocusWatcher.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/UtilTime.hpp"
 #include "../libH/stringconverter.hpp"
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -419,7 +420,7 @@ void X11FocusWatcher::setFocusEventMasks() {
 	Window * Children = NULL;
 	XQueryTree(mDisplay, RootWindow(mDisplay, mScreen), &RootRet, &ParentRet, &Children, &nChildren);
 	for (unsigned int lp = 0; lp < nChildren; lp ++)
-		XSelectInput(mDisplay, Children[lp], FocusChangeMask);		
+		XSelectInput(mDisplay, Children[lp], FocusChangeMask);
 	if (Children)
 		XFree(Children);
 }

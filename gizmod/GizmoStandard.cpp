@@ -80,6 +80,9 @@ std::string GizmoStandard::getType() {
  * \return True on if the event should get passed on to the script
  */
 bool GizmoStandard::processEvent(GizmoEvent * pEvent) {
+	if (!GizmoLinuxInputDevice::processEvent())
+		return false;
+	
 	GizmoEventStandard * pStandardEvent = static_cast<GizmoEventStandard *>(pEvent);
 	
 	switch (pStandardEvent->Type) {

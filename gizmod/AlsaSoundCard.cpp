@@ -271,8 +271,10 @@ void AlsaSoundCard::setAllPlaybackSwitches(bool Enabled) {
  */
 void AlsaSoundCard::shutdown() {
 	cdbg1 << "Closing connection to Sound Card [" << mCardHWID << " - " << mCardName << "]" << endl;
-	mWatching = false;
 			
+	// wait for the thread to exit
+	mWatching = false;
+	
 	// shut down alsa connection to the sound card
 	if (mMixerHandle)
 		snd_mixer_close(mMixerHandle); mMixerHandle = NULL;

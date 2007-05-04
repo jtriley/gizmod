@@ -61,6 +61,7 @@ public:
 	AlsaMixer const *		getMixer(std::string Name);	///< Get a mixer by name
 	size_t				getNumMixers();			///< Get the number of mixers on the sound card
 	void				setAllPlaybackSwitches(bool Enabled); ///< Set all playback switches to Enabled
+	void				shutdown();			///< Shutdown the AlsaSoundCard connection
 
 	// construction / deconstruction
 	AlsaSoundCard(AlsaInterface * piAlsa, int CardID);
@@ -73,7 +74,6 @@ private:
 	// private functions
 	void				init();				///< Initialize the AlsaSoundCard
 	int 				mixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, snd_mixer_elem_t * MixerElement); ///< Mixer callback
-	void				shutdown();			///< Shutdown the AlsaSoundCard connection
 	void				threadProc();			///< The thread procedure loop
 		
 	// private member variables
@@ -90,17 +90,22 @@ private:
 	/**
 	 * Thread callback procedure struct
 	 */
-	struct AlsaEventsThreadProc {
-		AlsaEventsThreadProc(AlsaSoundCard * pSoundCard) : mpSoundCard(pSoundCard) {};
+	struct AlsaSoundCardThreadProc {
+		AlsaSoundCardThreadProc(AlsaSoundCard * pAlsaSoundCard) : mpAlsaSoundCard(pAlsaSoundCard) {
+			mpAlsaSoundCard->mThreading = false;
+		};
 		
 		/// Thread proc
 		void operator()() {
-			mpSoundCard->threadProc();
+			mpAlsaSoundCard->mThreading = true;
+			mpAlsaSoundCard->threadProc();
+			mpAlsaSoundCard->mThreading = false;
 		}
 		
-		AlsaSoundCard * 	mpSoundCard;		///< The associated SoundCard
+		AlsaSoundCard * 	mpAlsaSoundCard;		///< The associated SoundCard
 	};		
-	AlsaEventsThreadProc		mThreadProc;		///< The thread procedure instance
+	bool				mThreading;			///< Variable to keep track if we're threading or not
+	AlsaSoundCardThreadProc		mThreadProc;			///< The thread procedure instance	
 };
 
 #endif // __AlsaSoundCard_h

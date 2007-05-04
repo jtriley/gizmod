@@ -153,6 +153,9 @@ bool GizmoPowermate::getRotated() {
  * \return True on if the event should get passed on to the script
  */
 bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
+	if (!GizmoLinuxInputDevice::processEvent())
+		return false;
+	
 	GizmoEventPowermate * pPowermateEvent = static_cast<GizmoEventPowermate *>(pEvent);
 	
 	switch (pPowermateEvent->Type) {

@@ -46,6 +46,12 @@ using namespace H;
  */
 #define GIZMO_ATIX10_TYPE	"ATIX10"
 
+/**
+ * \def   GIZMO_ATIX10_EVENTDELAY
+ * \brief Default minimum time between ATIX10 events
+ */
+#define GIZMO_ATIX10_EVENTDELAY	0.15f
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -54,6 +60,7 @@ using namespace H;
  * \brief GizmoATIX10 Default Constructor
  */
 GizmoATIX10::GizmoATIX10(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_ATIX10, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
+	setMinimumTimeBetweenEvents(GIZMO_ATIX10_EVENTDELAY);
 }
 
 /**
@@ -80,6 +87,9 @@ std::string GizmoATIX10::getType() {
  * \return True on if the event should get passed on to the script
  */
 bool GizmoATIX10::processEvent(GizmoEvent * pEvent) {
+	if (!GizmoLinuxInputDevice::processEvent())
+		return false;
+	
 	GizmoEventATIX10 * pATIX10Event = static_cast<GizmoEventATIX10 *>(pEvent);
 	
 	switch (pATIX10Event->Type) {

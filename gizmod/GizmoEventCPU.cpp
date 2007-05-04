@@ -46,7 +46,7 @@ using namespace H;
 /**
  * \brief GizmoEventCPU Default Constructor
  */
-GizmoEventCPU::GizmoEventCPU() : GizmoEvent(GIZMO_EVENTCLASS_CPU) {
+GizmoEventCPU::GizmoEventCPU() : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE) {
 }
 
 /**

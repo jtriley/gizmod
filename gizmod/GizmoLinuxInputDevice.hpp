@@ -59,7 +59,9 @@ public:
 	bool 				createEvents(int Type, int Code, int Value, int NumWrites); ///< Write multiple similar events to the device
 	bool				getSendNullEvents();		///< Get whether or not the Gizmo sends NULL events
 	bool 				grabExclusiveAccess(bool Grab); ///< Grab a device for exlusive access (or ungrab)
+	bool				processEvent();			///< Should we process the event based on the minimum time between events?
 	bool 				remapKey(int CurCode, int NewCode); /// Remap a key on the device
+	void				setMinimumTimeBetweenEvents(float Seconds); ///< Set the minimum time between events
 	void				setSendNullEvents(bool SendNull); ///< Set whether or not the Gizmo sends NULL events
 
 	// construction / deconstruction
@@ -74,6 +76,8 @@ protected:
 	
 	// private member variables
 	H::DeviceInfo 			mDeviceInfo;			///< Info about the device
+	unsigned long			mLastEventTime;			///< Time of last event
+	float				mMinTimeBetweenEvents;		///< Minimum time between events (smooth out trigger happy controllers)
 	bool				mSendNullEvents;		///< Send NULL events if the device creates them?
 };
 

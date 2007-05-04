@@ -1,17 +1,19 @@
-    /**
+    /**   
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoCPU.hpp
-*** \brief GizmoCPU class header
+*** \file  Average.hpp
+*** \brief Average class header file
 ***
 *****************************************
   *****************************************
     **/
-  
+
 /*
   
   Copyright (c) 2007, Tim Burrell
+  Initial version Copyright (c) 2005, Alexander Kroeller
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at 
@@ -26,42 +28,57 @@
   
 */
 
-#ifndef __GizmoCPU_h
-#define __GizmoCPU_h
+#ifndef __Average_h
+#define __Average_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "Gizmo.hpp"
+#include <vector>
 
 //////////////////////////////////////////////////////////////////////////////
-// Typedef, enum's
+// Namespace
 ///////////////////////////////////////
-	
+
+/**
+ * \namespace H
+ * \brief     H namespace
+ *
+ * All code in the H namespace gets its inspiration from the best movie ever made:
+ *    Hackers
+ */
+namespace H {
+
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
 ///////////////////////////////////////
 
 /**
- * \class GizmoCPU
- * \brief CPU Gizmo
- *
- * This class contains all of the helper functions for making use of CPUUsage
+ * \class Average
+ * \brief Class for averaging things out over a number of iterations
  */
-class GizmoCPU : public Gizmo {
+class Average {
 public:
 	// public functions
-	virtual std::string		getType();			///< Get the type of the Gizmo
+	void 				push(double Value);		///< Push a value
+	double 				average();			///< Get the average
 	
-	// construction / deconstruction
-	GizmoCPU(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
-	virtual ~GizmoCPU();						///< Destructor
+	// construct / deconstruction
+	Average(int Size = 10);						///< Init constructor
+	virtual ~Average();						///< Destructor
 
-protected:
-	// private functions
-	
+private:
 	// private member variables
+   	std::vector<double>		mValues;			///< Averaged values
+   	size_t     			mHeadIdx;			///< Current location in the circular buffer
+   	double  			mSum;				///< Sum of the Average
+   	size_t				mFillState;			///< Current fill state
 };
 
-#endif // __GizmoCPU_h
+//////////////////////////////////////////////////////////////////////////////
+
+} // H namespace
+
+#endif // __Average_h
+

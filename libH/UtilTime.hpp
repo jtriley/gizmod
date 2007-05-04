@@ -57,6 +57,7 @@ public:
 	static unsigned long	getTicks();				///< get the current number of cpu ticks in usecs
 	static int 		nanoSleep(int nanoSecs);		///< sleep a number of nanoseconds
 	static int 		nanoSleepSecs(int seconds);		///< sleep a number of seconds
+	static void		sleep(float Seconds);			///< sleep a number of seconds (expressed as a float)
 	void			updateElapsedTimer();			///< update the time duration watcher
 	
 	UtilTime();

@@ -50,7 +50,6 @@
  * For example: Gizmod.GizmoClass.Standard, and Gizmod.GizmoClass.Powermate
  *
  * GIZMO_CLASS_ATIX10 is used with ATI X10 RF Remotes
- * GIZMO_CLASS_CPU is used with the CPU Usage device
  * GIZMO_CLASS_LIRC is used with LIRC (Infrared) devices (such as remote controls)
  * GIZMO_CLASS_POWERMATE is the class used for Griffin PowerMate, and SoundKnob devices
  * GIZMO_CLASS_STANDARD is the default class and is used for all devices except ones with
@@ -58,7 +57,6 @@
  */
 typedef enum {
 	GIZMO_CLASS_ATIX10,
-	GIZMO_CLASS_CPU,
 	GIZMO_CLASS_LIRC,
 	GIZMO_CLASS_POWERMATE,
 	GIZMO_CLASS_STANDARD

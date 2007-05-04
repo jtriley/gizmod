@@ -95,6 +95,9 @@ class ATIX10MythTV:
 		   	elif Event.Code == GizmoKey.KEY_CHANNELDOWN:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
 		   		return True
+		   	elif Event.Code == GizmoKey.KEY_OK:
+				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
+		   		return True
 		   	elif Event.Code == GizmoKey.KEY_1:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_1)
 		   		return True

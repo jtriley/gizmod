@@ -48,7 +48,7 @@
  * For example: GizmoEventClass.Standard, and GizmoEventClass.Powermate
  *
  * GIZMO_EVENTCLASS_ATIX10 is used with ATI X10 RF Remotes
- * GIZMO_EVENTCLASS_CPU is used with the CPU Usage device
+ * GIZMO_EVENTCLASS_CPUUSAGE is used for CPU Usage events
  * GIZMO_EVENTCLASS_LIRC is used with LIRC (Infrared) devices (such as remote controls)
  * GIZMO_EVENTCLASS_POWERMATE is the class used for Griffin PowerMate, and SoundKnob devices
  * GIZMO_EVENTCLASS_SOUNDCARD is used for sound card event
@@ -58,7 +58,7 @@
  */
 typedef enum {
 	GIZMO_EVENTCLASS_ATIX10,
-	GIZMO_EVENTCLASS_CPU,
+	GIZMO_EVENTCLASS_CPUUSAGE,
 	GIZMO_EVENTCLASS_LIRC,
 	GIZMO_EVENTCLASS_POWERMATE,
 	GIZMO_EVENTCLASS_SOUNDCARD,

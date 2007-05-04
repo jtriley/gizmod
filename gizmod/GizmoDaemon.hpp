@@ -38,6 +38,7 @@
 #include "GizmodEventHandlerInterface.hpp"
 #include "X11FocusWatcher.hpp"
 #include "Processes.hpp"
+#include "CPUUsage.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include <ext/hash_map>
@@ -65,7 +66,8 @@ class GizmoDaemon :
 	private H::SignalHandler, 
 	public X11FocusWatcher, 
 	public Alsa,
-	public Processes
+	public Processes,
+	public CPUUsage
 {
 public:
 	// public functions

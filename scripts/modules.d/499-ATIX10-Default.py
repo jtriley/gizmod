@@ -67,6 +67,9 @@ class ATIX10Default:
 			   	elif Event.Code == GizmoKey.KEY_MUTE:
 		   			Gizmod.toggleMuteAllCards()
 			   		return True
+			   	elif Event.Code == GizmoKey.KEY_OK:
+					Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
+			   		return True
 			   	else:
 			   		# directly translate all other events
 					Gizmod.Keyboards[0].createEvent(Event.Type, Event.Code, Event.Value)

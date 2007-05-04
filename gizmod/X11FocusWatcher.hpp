@@ -146,16 +146,21 @@ private:
 	 * Thread callback procedure struct
 	 */
 	struct X11FocusWatcherThreadProc {
-		X11FocusWatcherThreadProc(X11FocusWatcher * pWatcher) : mpWatcher(pWatcher) {};
+		X11FocusWatcherThreadProc(X11FocusWatcher * pX11FocusWatcher) : mpX11FocusWatcher(pX11FocusWatcher) {
+			mpX11FocusWatcher->mThreading = false;
+		};
 		
 		/// Thread proc
 		void operator()() {
-			mpWatcher->threadProc();
+			mpX11FocusWatcher->mThreading = true;
+			mpX11FocusWatcher->threadProc();
+			mpX11FocusWatcher->mThreading = false;
 		}
 		
-		X11FocusWatcher * 	mpWatcher;		///< The associated focus watcher
+		X11FocusWatcher * 		mpX11FocusWatcher;///< The associated SoundCard
 	};		
-	X11FocusWatcherThreadProc	mThreadProc;		///< The thread procedure instance
+	bool					mThreading;	///< Variable to keep track if we're threading or not
+	X11FocusWatcherThreadProc		mThreadProc;	///< The thread procedure instance	
 };
 
 #endif // __X11FocusWatcher_h

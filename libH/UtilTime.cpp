@@ -84,6 +84,7 @@ unsigned long UtilTime::getElapsedTime() {
 
 /**
  * \brief  wrapper for nanosleep
+ * \param  nanoSecs Time to sleep in nanoseconds
  * \return actual time slept
  * 
  * sleep a number of nanoseconds
@@ -120,6 +121,25 @@ int UtilTime::nanoSleepSecs(int nanoSecs) {
 	nanosleep(&sleepTime, &sleepRet);
 	
 	return sleepRet.tv_nsec;
+}
+
+/**
+ * \brief  Sleep a number of seconds (wrapper for nanosleep)
+ * \param  Seconds Time to sleep in seconds
+ * 
+ * Sleep a number of seconds (precise to the nanosecond)
+ */
+void UtilTime::sleep(float Seconds) {
+	struct 	timespec sleepTime;
+	struct 	timespec sleepRet;
+	
+	int IntSecs = (int) Seconds;
+	float Remainder = float(IntSecs) - Seconds;
+
+	sleepTime.tv_sec = IntSecs;
+	sleepTime.tv_nsec = (long) (Remainder * 1000000000);
+	
+	nanosleep(&sleepTime, &sleepRet);
 }
 
 /**

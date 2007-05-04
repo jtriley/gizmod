@@ -1,9 +1,9 @@
-    /**
+    /**   
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoCPU.cpp
-*** \brief GizmoCPU class body 
+*** \file  Average.cpp
+*** \brief Average class body file
 ***
 *****************************************
   *****************************************
@@ -12,6 +12,8 @@
 /*
   
   Copyright (c) 2007, Tim Burrell
+  Initial version Copyright (c) 2005, Alexander Kroeller
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at 
@@ -26,39 +28,37 @@
   
 */
 
-#include "GizmoCPU.hpp"
-#include "../libH/Debug.hpp"
-#include "../libH/Exception.hpp"
-#include <boost/shared_ptr.hpp>
+#include "Average.hpp"
 
-using namespace std;
-using namespace boost;
-using namespace H;
-
-////////////////////////////////////////////////////////////////////////////
-// Type Defs
+//////////////////////////////////////////////////////////////////////////////
+// Namespace
 ///////////////////////////////////////
 
-/**
- * \def   GIZMO_CPU_TYPE
- * \brief String type of this gizmo
- */
-#define GIZMO_CPU_TYPE	"CPU"
+using namespace std;
+using namespace H;
+
+//////////////////////////////////////////////////////////////////////////////
+// Typedefs, enums, etc
+///////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
 
 /**
- * \brief GizmoCPU Default Constructor
+ * \brief  Default Constructor
  */
-GizmoCPU::GizmoCPU(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_CPU, deviceInfo, DeviceID, DeviceClassID) {
+Average::Average(int Size) {
+	mValues.resize(Size);
+	mHeadIdx = 0;
+	mSum = 0.0;
+	mFillState = 0;
 }
 
 /**
- * \brief GizmoCPU Destructor
+ * \brief  Destructor
  */
-GizmoCPU::~GizmoCPU() {
+Average::~Average() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -66,9 +66,28 @@ GizmoCPU::~GizmoCPU() {
 ///////////////////////////////////////
 
 /**
- * \brief Get the type of this Gizmo
- * \return Type of the Gizmo
+ * \brief  Push a value to be averaged
+ * \param  Value The value
  */
-std::string GizmoCPU::getType() {
-	return GIZMO_CPU_TYPE;
+void Average::push(double Value) {
+	if (mFillState == mValues.size()) {
+		mSum += Value - mValues[mHeadIdx];
+		mValues[mHeadIdx] = Value;
+	} else {
+		++ mFillState;
+		mSum += Value;
+		mValues[mHeadIdx] = Value;
+	}
+	mHeadIdx = (mHeadIdx + 1) % mValues.size();
+}
+
+/**
+ * \brief  Get the average
+ * \return The average of all pushed values
+ */
+double Average::average(void) {
+   if (mFillState == 0)
+      return 0.0;
+   else
+      return mSum / double(mFillState);
 }

@@ -145,6 +145,10 @@ void Processes::updateProcessTree() {
 	// clear out the process list
 	mProcesses.clear();
 		
+	// create some data structures for parsing the info
+	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+	char_separator<char> Separators(" ");
+	
 	// now register the event nodes
 	// get a file listing
 	directory_iterator endItr;
@@ -152,13 +156,11 @@ void Processes::updateProcessTree() {
 		string StatPath = iter->string() + "/stat";
 		try {
 			if ( (filesystem::is_directory(*iter)) && (filesystem::exists(path(StatPath))) ) {
-				std::ifstream StatFile(StatPath.c_str());
+				ifstream StatFile(StatPath.c_str());
 				if (!StatFile.is_open())
 					continue;
 				string Line;
 				getline(StatFile, Line);
-				typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-				char_separator<char> Separators(" ");
 				tokenizer tok(Line, Separators);
 				shared_ptr<Process> pProcess = shared_ptr<Process>(new Process);
 				int count = 0;

@@ -76,8 +76,6 @@ private:
 class Processes {
 public:
 	// public functions
-	static void		updateProcessTree();			///< Force an update of the process tree
-	static void		setTimeBetweenUpdates(float Seconds);	///< Time between updates in seconds
 
 	// construction / deconstruction
 	Processes();							///< Default Constructor
@@ -85,6 +83,8 @@ public:
 	
 	// public static functions
 	static int		isProcessRunning(std::string ProcessName); ///< Check is a process is running
+	static void		setTimeBetweenUpdates(float Seconds);	///< Time between updates in seconds
+	static void		updateProcessTree();			///< Force an update of the process tree
 
 private:
 	// private functions
