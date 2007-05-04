@@ -95,39 +95,6 @@ class ATIX10MythTV:
 		   	elif Event.Code == GizmoKey.KEY_CHANNELDOWN:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
 		   		return True
-		   	elif Event.Code == GizmoKey.KEY_OK:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_1:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_1)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_2:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_2)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_3:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_3)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_4:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_4)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_5:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_5)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_6:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_6)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_7:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_7)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_8:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_8)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_9:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_9)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_0:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_0)
-		   		return True
 		   	elif Event.Code == GizmoKey.KEY_MENU:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_M)
 		   		return True
@@ -142,21 +109,6 @@ class ATIX10MythTV:
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_COFFEE:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_LEFT:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFT)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_RIGHT:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHT)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_UP:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_UP)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_DOWN:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_ENTER:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_FRONT:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_HOME)
