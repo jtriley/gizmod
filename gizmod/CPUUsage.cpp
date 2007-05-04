@@ -216,5 +216,8 @@ void CPUUsage::updateUsageStats() {
 				
 		mCPUUsage[CurCPU] = (Total - Fields[3] - Fields[4]) / Total;
 		mCPUUsageAvg[CurCPU].push(mCPUUsage[CurCPU]);
+		
+		// fire the event
+		//onCPUUsage(
 	} while (CurCPU < mCPUUsage.size());
 }

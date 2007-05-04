@@ -167,7 +167,7 @@ bool GizmoLinuxInputDevice::grabExclusiveAccess(bool Grab) {
  */
 bool GizmoLinuxInputDevice::processEvent() {
 	if (UtilTime::getTicks() - mLastEventTime < mMinTimeBetweenEvents) {
-		cout << "Event Blocked" << endl;
+		cout << "Event Blocked: " << UtilTime::getTicks() - mLastEventTime << " of " << mMinTimeBetweenEvents << endl;
 		return false;
 	}
 	cout << "Time: " << UtilTime::getTicks() - mLastEventTime << " of " << mMinTimeBetweenEvents << endl;
