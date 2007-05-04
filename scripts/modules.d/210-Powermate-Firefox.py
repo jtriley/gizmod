@@ -43,22 +43,24 @@ class PowermateFirefox:
 		if Event.Class in INTERESTED_CLASSES \
 		   and [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] \
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
-		   	# Check for rotations
-			if Event.Type == GizmoEventType.EV_REL:
-				# scroll the window slowly if the button isn't pressed
-				# and fast if the button is down
-				if not Gizmo.getKeyState(GizmoKey.BTN_0):
-					# scroll slowly (create a mouse wheel event)
-					Gizmod.Mice[0].createEvent(GizmoEventType.EV_REL, GizmoMouseAxis.WHEEL, -Event.Value)
-				else:
-					# scroll quickly (by pages using the page up / page down keys)
-					if Event.Value > 0:
-						for repeat in range(abs(Event.Value)):
-							Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
+		   	# Only interact with Firefox if it's the first Powermate
+		  	if Gizmo.DeviceClassID == 0:
+			   	# Check for rotations
+				if Event.Type == GizmoEventType.EV_REL:
+					# scroll the window slowly if the button isn't pressed
+					# and fast if the button is down
+					if not Gizmo.getKeyState(GizmoKey.BTN_0):
+						# scroll slowly (create a mouse wheel event)
+						Gizmod.Mice[0].createEvent(GizmoEventType.EV_REL, GizmoMouseAxis.WHEEL, -Event.Value)
 					else:
-						for repeat in range(abs(Event.Value)):
-							Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
-				return True
+						# scroll quickly (by pages using the page up / page down keys)
+						if Event.Value > 0:
+							for repeat in range(abs(Event.Value)):
+								Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
+						else:
+							for repeat in range(abs(Event.Value)):
+								Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
+					return True
 
 		return False
 	

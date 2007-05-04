@@ -36,20 +36,39 @@ class CatchAllDebug:
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
 	
-		if Gizmod.DebugEnabled:
-			if Event.Class == GizmoEventClass.WindowFocus:
-				print "onEvent: " + str(Event.Class) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
-			elif Event.Class == GizmoEventClass.LIRC:
-				sys.stdout.write("onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(len(Event.LIRCData)) + "]")
-				for char in Event.LIRCData:
-					sys.stdout.write(" " + str(hex(ord(char))))
-				sys.stdout.write(" | " + Event.LIRCDataBitString)
+		# if debug mode isn't enabled, don't bother!
+		if not Gizmod.DebugEnabled:
+			return False
+
+		# debug mode enabled so print the event
+		if Event.Class == GizmoEventClass.WindowFocus:
+			print "onEvent: " + str(Event.Class) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
+		elif Event.Class == GizmoEventClass.LIRC:
+			sys.stdout.write("onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(len(Event.LIRCData)) + "]")
+			for char in Event.LIRCData:
+				sys.stdout.write(" " + str(hex(ord(char))))
+			sys.stdout.write(" | " + Event.LIRCDataBitString)
+			sys.stdout.write("\n")
+		elif Event.Class == GizmoEventClass.SoundCard:
+			if Event.Mixer:
+				sys.stdout.write("onEvent: " + str(Event.Class) + " -- " + str(Event.Type) + " [" + str(Event.SoundCard.CardName) + "] <" + str(Event.Mixer.Name) + ">")
+				if Event.VolumePlaybackChanged:
+					sys.stdout.write(" Vol: " + str(Event.Mixer.VolumePlaybackPercent))
+				if Event.SwitchPlaybackChanged:
+					if Event.Mixer.SwitchPlayback:
+						sys.stdout.write(" Unmute")
+					else:
+						sys.stdout.write(" Mute")
 				sys.stdout.write("\n")
 			else:
-				if Event.Type == GizmoEventType.EV_KEY:
-					print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))
-				else:
-					print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] c: " + str(hex(Event.RawCode)) +  " Val: " + str(hex(Event.Value))					
+				print "onEvent: " + str(Event.Class) + " -- " + str(Event.Type) + " [" + str(Event.SoundCard.CardName) + "]"
+		else:
+			if Event.Type == GizmoEventType.EV_KEY:
+				print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))
+			else:
+				print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] c: " + str(hex(Event.RawCode)) +  " Val: " + str(hex(Event.Value))					
+				
+		# return False always so that events continue to get processed by other scripts
 		return False
 			
 	############################

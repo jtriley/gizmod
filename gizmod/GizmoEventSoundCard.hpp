@@ -34,6 +34,9 @@
 #endif
 
 #include "GizmoEvent.hpp"
+#include "AlsaEvent.hpp"
+#include "AlsaSoundCard.hpp"
+#include "AlsaMixer.hpp"
 #include <string>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,18 +53,25 @@
  *
  * This class is for all GizmoEventSoundCards attached to the system.
  */
-class GizmoEventSoundCard : public GizmoEvent {
+class GizmoEventSoundCard : public AlsaEvent, public GizmoEvent {
 public:
-	// public functions
+	// public member variables
+	AlsaMixer const *			getMixer();		///< Get the associated Mixer
+	AlsaSoundCard const *			getSoundCard();		///< Get the associated SoundCard
 	
+	// public functions
+		
 	// construction / deconstruction
-	GizmoEventSoundCard();						///< Default Constructor
+	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Default Constructor
+	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Default Constructor
 	virtual ~GizmoEventSoundCard();					///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
+	AlsaMixer const * 			mpMixer;		///< The assocaited Mixer
+	AlsaSoundCard const * 			mpSoundCard;		///< The associated SoundCard
 };
 
 #endif // __GizmoEventSoundCard_h

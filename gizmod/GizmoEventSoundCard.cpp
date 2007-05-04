@@ -46,7 +46,23 @@ using namespace H;
 /**
  * \brief GizmoEventSoundCard Default Constructor
  */
-GizmoEventSoundCard::GizmoEventSoundCard() : GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD) {
+GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) : 
+	AlsaEvent(Event),
+	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD)
+{
+	mpSoundCard = &SoundCard;
+	mpMixer = NULL;
+}
+
+/**
+ * \brief GizmoEventSoundCard Default Constructor
+ */
+GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) : 
+	AlsaEvent(Event),
+	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD)
+{
+	mpSoundCard = &SoundCard;
+	mpMixer = &Mixer;
 }
 
 /**
@@ -58,3 +74,19 @@ GizmoEventSoundCard::~GizmoEventSoundCard() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Get the associated Mixer
+ * \return The Mixer
+ */
+AlsaMixer const * GizmoEventSoundCard::getMixer() {
+	return mpMixer;
+}
+
+/**
+ * \brief  Get the associated SoundCard
+ * \return The SoundCard
+ */
+AlsaSoundCard const * GizmoEventSoundCard::getSoundCard() {
+	return mpSoundCard;
+}

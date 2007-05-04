@@ -43,7 +43,7 @@ class PowermateMPlayer:
 		if Event.Class in INTERESTED_CLASSES \
 		   and [i for i in INTERESTED_WINDOWS if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1] \
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
-		   	# Only interact with Amarok if it's the first Powermate
+		   	# Only interact with MPlayer if it's the first Powermate
 		  	if Gizmo.DeviceClassID == 0:
 			   	# Check for rotations
 				if Event.Type == GizmoEventType.EV_REL:

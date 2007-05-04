@@ -33,6 +33,7 @@
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventSoundCard.hpp"
 #include "GizmoEventStandard.hpp"
+#include "GizmoEventSoundCard.hpp"
 #include "GizmoEventWindowFocus.hpp"
 #include "GizmoATIX10.hpp"
 #include "GizmoCPU.hpp"
@@ -152,7 +153,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		onRegisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 	void		onRegisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onRegisterDevice", ptr(Device)); }
 
-	PyObject * 	self;		///< Pointer to self
+	PyObject * 	self;			///< Pointer to self
 };
 
 /**
@@ -163,30 +164,40 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	// Enum exports
 	///////////////////////////////////////
 	
+	/// AlsaEventType enum export
+	enum_<AlsaEventType>("AlsaEventType")
+		.value("Error",			ALSAEVENT_ERROR)
+		.value("SoundCardAttach", 	ALSAEVENT_SOUNDCARD_ATTACH)
+		.value("SoundCardDetach",	ALSAEVENT_SOUNDCARD_DETACH)
+		.value("MixerElementAttach",	ALSAEVENT_MIXERELEMENT_ATTACH)
+		.value("MixerElementChange",	ALSAEVENT_MIXERELEMENT_CHANGE)
+		.value("MixerElementDetach",	ALSAEVENT_MIXERELEMENT_DETACH)
+		;
+	
 	/// GizmoClass enum export
 	enum_<GizmoClass>("GizmoClass")
-		.value("ATIX10",	GIZMO_CLASS_ATIX10)
-		.value("CPU", 		GIZMO_CLASS_CPU)
-		.value("LIRC",	 	GIZMO_CLASS_LIRC)
-		.value("Powermate", 	GIZMO_CLASS_POWERMATE)
-		.value("Standard", 	GIZMO_CLASS_STANDARD)
+		.value("ATIX10",		GIZMO_CLASS_ATIX10)
+		.value("CPU", 			GIZMO_CLASS_CPU)
+		.value("LIRC",	 		GIZMO_CLASS_LIRC)
+		.value("Powermate", 		GIZMO_CLASS_POWERMATE)
+		.value("Standard", 		GIZMO_CLASS_STANDARD)
 		;
 	
 	/// GizmoEventClass enum export
 	enum_<GizmoEventClass>("GizmoEventClass")
-		.value("ATIX10", 	GIZMO_EVENTCLASS_ATIX10)
-		.value("CPU", 		GIZMO_EVENTCLASS_CPU)
-		.value("LIRC",	 	GIZMO_EVENTCLASS_LIRC)
-		.value("Powermate", 	GIZMO_EVENTCLASS_POWERMATE)
-		.value("SoundCard",	GIZMO_EVENTCLASS_SOUNDCARD)
-		.value("Standard", 	GIZMO_EVENTCLASS_STANDARD)
-		.value("WindowFocus",	GIZMO_EVENTCLASS_WINDOWFOCUS)
+		.value("ATIX10", 		GIZMO_EVENTCLASS_ATIX10)
+		.value("CPU", 			GIZMO_EVENTCLASS_CPU)
+		.value("LIRC",	 		GIZMO_EVENTCLASS_LIRC)
+		.value("Powermate", 		GIZMO_EVENTCLASS_POWERMATE)
+		.value("SoundCard",		GIZMO_EVENTCLASS_SOUNDCARD)
+		.value("Standard", 		GIZMO_EVENTCLASS_STANDARD)
+		.value("WindowFocus",		GIZMO_EVENTCLASS_WINDOWFOCUS)
 		;	
 	
 	/// X11FocusEventType enum export
 	enum_<X11FocusEventType>("X11FocusEventType")
-		.value("FocusIn", 	X11FOCUSEVENT_IN)
-		.value("FocusOut", 	X11FOCUSEVENT_OUT)
+		.value("FocusIn", 		X11FOCUSEVENT_IN)
+		.value("FocusOut", 		X11FOCUSEVENT_OUT)
 		;
 	
 	/// GizmoEventType and GizmoKey Python Enum Exposures
@@ -332,6 +343,18 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	// Event class exports
 	///////////////////////////////////////
 	
+	/// AlsaEvent Python Class Export
+ 	class_<AlsaEvent>("AlsaEvent")
+		.def_readonly("Type", &AlsaEvent::Type)
+		.def_readonly("Mask", &AlsaEvent::Mask)		
+		.def_readonly("IsActiveChanged", &AlsaEvent::IsActiveChanged)
+		.def_readonly("ElementsChanged", &AlsaEvent::ElementsChanged)
+		.def_readonly("VolumePlaybackChanged", &AlsaEvent::VolumePlaybackChanged)
+		.def_readonly("VolumeCaptureChanged", &AlsaEvent::VolumeCaptureChanged)
+		.def_readonly("SwitchPlaybackChanged", &AlsaEvent::SwitchPlaybackChanged)
+		.def_readonly("SwitchCaptureChanged", &AlsaEvent::SwitchCaptureChanged)
+		;
+	
 	/// GizmodEventHandlerInterface Python Class Export	
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
 		;
@@ -382,7 +405,15 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// GizmoEventPowermate Python Class Export
 	class_< GizmoEventStandard, bases<GizmoEvent, GizmoLinuxInputEvent> >("GizmoEventStandard")
 		;
-			
+
+	/// GizmoEventSoundCard Python Class Export
+	class_< GizmoEventSoundCard, bases<AlsaEvent, GizmoEvent> >("GizmoEventSoundCard", init<AlsaEvent const &, AlsaSoundCard const &, AlsaMixer const &>())
+		.def("getMixer", &GizmoEventSoundCard::getMixer, return_internal_reference<>())
+		.add_property("Mixer", make_function(&GizmoEventSoundCard::getMixer, return_internal_reference<>()))
+		.def("getSoundCard", &GizmoEventSoundCard::getSoundCard, return_internal_reference<>())
+		.add_property("SoundCard", make_function(&GizmoEventSoundCard::getSoundCard, return_internal_reference<>()))
+		;
+
 	/// X11FocusEvent Python Class Export
 	class_<X11FocusEvent>("X11FocusEvent", init<X11FocusEvent const &>())
 		.def_readonly("WindowEventType", &X11FocusEvent::EventType)
@@ -411,7 +442,17 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	
 	/// GizmoPowermate Python Class Export
 	class_< GizmoPowermate, bases<Gizmo, GizmoLinuxInputDevice> >("GizmoPowermate", init<const DeviceInfo &, int, int>())
+		.def("changeLEDState", &GizmoPowermate::changeLEDState)
+		.def("getLED", &GizmoPowermate::getLED)
+		.def("getLEDPercent", &GizmoPowermate::getLEDPercent)		
+		.def("getLEDPulseAsleep", &GizmoPowermate::getLEDPulseAsleep)
 		.def("getRotated", &GizmoPowermate::getRotated)
+		.def("setLED", &GizmoPowermate::setLED)
+		.def("setLEDPercent", &GizmoPowermate::setLEDPercent)
+		.def("setLEDPulseAsleep", &GizmoPowermate::setLEDPulseAsleep)
+		.add_property("LED", &GizmoPowermate::getLED, &GizmoPowermate::setLED)
+		.add_property("LEDPercent", &GizmoPowermate::getLEDPercent, &GizmoPowermate::setLEDPercent)
+		.add_property("LEDPulseAsleep", &GizmoPowermate::getLEDPulseAsleep, &GizmoPowermate::setLEDPulseAsleep)
 		.add_property("Rotated", &GizmoPowermate::getRotated)
 		;
 
@@ -943,6 +984,16 @@ void GizmoDaemon::printNiceScriptInit(int Width, std::string Text1, std::string 
 void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	// override me
 	cdbg1 << "Mixer Element Attached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
+		mpPyDispatcher->onEvent(&EventSoundCard);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}
 }
 
 /**
@@ -957,6 +1008,16 @@ void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSou
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.IsActiveChanged << Event.ElementsChanged << Event.VolumePlaybackChanged << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
 	else
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.Mask << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+	
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
+		mpPyDispatcher->onEvent(&EventSoundCard);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}
 }
 
 /**
@@ -968,6 +1029,16 @@ void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSou
 void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	// override me
 	cdbg3 << "Mixer Element Detached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+	
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
+		mpPyDispatcher->onEvent(&EventSoundCard);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}
 }
 
 /**
@@ -978,6 +1049,16 @@ void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSou
 void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
 	// override me
 	cdbg << "Attached to Sound Card [" << SoundCard.getCardHardwareID() << "] -- " << SoundCard.getCardName() << endl;
+
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
+		mpPyDispatcher->onEvent(&EventSoundCard);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}
 }
 
 /**
@@ -988,6 +1069,16 @@ void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundC
 void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
 	// override me
 	cdbg1 << "Sound Card Detached [" << SoundCard.getCardHardwareID() << "] -- " << SoundCard.getCardName() << endl;
+
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
+		mpPyDispatcher->onEvent(&EventSoundCard);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}
 }
 
 /**

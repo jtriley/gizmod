@@ -32,6 +32,7 @@
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <boost/shared_ptr.hpp>
+#include <errno.h>
 
 using namespace std;
 using namespace boost;
@@ -56,6 +57,7 @@ using namespace H;
  */
 GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
 	mRotated = false;
+	mPulseAsleep = true;
 }
 
 /**
@@ -69,12 +71,65 @@ GizmoPowermate::~GizmoPowermate() {
 ///////////////////////////////////////
 
 /**
+ * \brief  Change the state of the Powermate's LED
+ * \param  StaticBrightness Brightness level of LED
+ * \param  PulseSpeed Pulse speed of the LED
+ * \param  PulseTable Pulse type of LED
+ * \param  PulseAsleep Pulse while asleep
+ * \param  PulseAwake Pulse while awake
+ *
+ * This function is what sends raw event codes to the Powermate
+ * All other functions use this as their base, as this function
+ * encompasses the complete functionality of the Powermate.
+ */
+void GizmoPowermate::changeLEDState(int StaticBrightness, int PulseSpeed, int PulseTable, int PulseAsleep, int PulseAwake) {
+	struct input_event ev;
+	memset(&ev, 0, sizeof(struct input_event));
+	
+	StaticBrightness &= 0xFF;
+
+	if (PulseSpeed < 0)
+		PulseSpeed = 0;
+	else if (PulseSpeed > 510)
+		PulseSpeed = 510;
+	if (PulseTable < 0)
+		PulseTable = 0;
+	else if (PulseTable > 2)
+		PulseTable = 2;
+	PulseAsleep = !!PulseAsleep;
+	PulseAwake = !!PulseAwake;
+
+	ev.type = EV_MSC;
+	ev.code = MSC_PULSELED;
+	ev.value = StaticBrightness | (PulseSpeed << 8) | (PulseTable << 17) | (PulseAsleep << 19) | (PulseAwake << 20);
+
+	if (write(mDeviceInfo.FileDescriptor, &ev, sizeof(struct input_event)) != sizeof(struct input_event))
+		cdbg << "Failed to Write to Griffin PowerMate [" << strerror(errno) << "]" << endl;
+}
+
+/**
  * \brief  Get the Powermate's LED Value
  * \return LED value (0-255)
  */
-unsigned char GizmoPowermate::getLEDValue() {
-	return 0;
+unsigned char GizmoPowermate::getLED() {
+	return mLevel;
 }
+
+/**
+ * \brief  Get the Powermate's LED Value as a percentage 
+ * \return LED value (0.0-100.0)
+ */
+float GizmoPowermate::getLEDPercent() {
+	return ((float) mLevel / 255.0f) * 100.0f;
+}
+
+/**
+ * \brief  Get pulse while sleeping
+ * \return True if the powermate will pulse when it goes to sleep
+ */
+bool GizmoPowermate::getLEDPulseAsleep() {
+	return mPulseAsleep;
+} 
 
 /**
  * \brief  Get the type of this Gizmo
@@ -116,3 +171,43 @@ bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 	
 	return true;
 }
+
+/**
+ * \brief  Set the hardware pulsing state of the Powermate's LED
+ * \param  Level The Level of the Pulsing (0x80 is a good value)
+ * \param  PulseSpeed Speed of the pulsing
+ * \param  PulseTable Type of the pulsing
+ */
+void GizmoPowermate::pulseLED(int Level, int PulseSpeed, int PulseTable) {
+	changeLEDState(Level, PulseSpeed, PulseTable, 1, 1);
+	cdbg2 << "Pulsing LED [Speed " << PulseSpeed << " @ Table " << PulseTable << "]" << endl;
+}
+
+/**
+ * \brief  Set the intensity of the Powermate's LED
+ * \param  Level of intensity from 0 - 255
+ */
+void GizmoPowermate::setLED(unsigned char Level) {
+	changeLEDState((int) Level, 255, 0, mPulseAsleep, 0);
+	mLevel = Level;
+}
+
+/**
+ * \brief  Set the intensity of the Powermate's LED as a percentage
+ * \param  Percent The intensity of the powermate as a range between 0.0 and 100.0
+ */
+void GizmoPowermate::setLEDPercent(float Percent) {
+	if (Percent < 0.0f)
+		Percent = 0.0f;
+	else if (Percent > 100.0f)
+		Percent = 100.0f;
+	setLED( (unsigned char) (255.0f * (Percent / 100.0f)));
+}
+
+/**
+ * \brief  Set LED pulse while sleeping
+ * \param  Enabled Set to true if the powermate should pulse when it goes to sleep
+ */
+void GizmoPowermate::setLEDPulseAsleep(bool Enabled) {
+	mPulseAsleep = Enabled;
+} 

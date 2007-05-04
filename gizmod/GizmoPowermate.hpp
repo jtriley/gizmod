@@ -53,10 +53,17 @@
 class GizmoPowermate : public Gizmo, public GizmoLinuxInputDevice {
 public:
 	// public functions
-	unsigned char			getLEDValue();			///< Get the Powermate's LED value
-	virtual std::string		getType();			///< Get the type of the Gizmo
+	void 				changeLEDState(int StaticBrightness, int PulseSpeed, int PulseTable, int PulseAsleep, int PulseAwake); ///< Directly send a raw event code to the Powermate
+	unsigned char			getLED();			///< Get the Powermate's LED value
+	float				getLEDPercent();		///< Get the Powermate's LED value as a percentage
+	bool				getLEDPulseAsleep();		///< Get pulse while sleeping
 	bool				getRotated();			///< Has the dial rotated since last press?
+	virtual std::string		getType();			///< Get the type of the Gizmo
 	virtual bool			processEvent(GizmoEvent * pEvent); ///< Process an event
+	void 				pulseLED(int Level, int PulseSpeed, int PulseTable); ///< Set the pulsing state of the LED
+	void 				setLED(unsigned char Level);	///< Set the LED intensity
+	void 				setLEDPercent(float Percent);	///< Set the LED intensity as a percentage
+	void				setLEDPulseAsleep(bool Enabled);///< Pulse while sleeping
 	
 	// construction / deconstruction	
 	GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
@@ -67,6 +74,8 @@ protected:
 	
 	// private member variables
 	bool				mRotated;			///< Has the dial rotated since last click
+	unsigned char			mLevel;				///< Current intensity level of the LED
+	bool				mPulseAsleep;			///< Pulse when going to sleep
 };
 
 #endif // __GizmoPowermate_h
