@@ -62,6 +62,8 @@ class CatchAllDebug:
 				sys.stdout.write("\n")
 			else:
 				print "onEvent: " + str(Event.Class) + " -- " + str(Event.Type) + " [" + str(Event.SoundCard.CardName) + "]"
+		elif Event.Class == GizmoEventClass.CPUUsage:
+			print "onEvent: " + str(Event.Class) + " -- " + str(Event.getCPUUsage(0)) + " [" + str(Event.getCPUUsageAvg(0)) + "]"
 		else:
 			if Event.Type == GizmoEventType.EV_KEY:
 				print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))

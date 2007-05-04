@@ -181,8 +181,11 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 	if (!window) {
 		return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 	} else {
-		if (window == RootWindow(dpy, XDefaultScreen(dpy)))
+		XLockDisplay(dpy);	
+		if (window == RootWindow(dpy, XDefaultScreen(dpy))) {
+			XUnlockDisplay(dpy);	
 			return tuple<string, string, string>("(root window)", "(root window)", "(root window)");
+		}
 		#ifdef NO_I18N
 			char * win_name;
 			if (!XFetchName(dpy, window, &win_name)) { /* Get window name if any */
@@ -195,6 +198,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 					XFree(children);
 				if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
 					XFree((void*)tp.value);
+					XUnlockDisplay(dpy);	
 					return getWindowName(parent_ret, false);
 				} else {
 					if (tp.value)
@@ -208,6 +212,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 						XFree(pClassHint->res_class);
 					}
 					XFree(pClassHint);
+					XUnlockDisplay(dpy);	
 					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				}
 			} else if (win_name) {
@@ -222,6 +227,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 				}
 				XFree(pClassHint);
 				WindowName = retStr;
+				XUnlockDisplay(dpy);
 				return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 			}
 		#else
@@ -237,6 +243,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 				if ((XGetWMName(dpy, parent_ret, &tp)) && (recurse)) {
 					if (tp.value)
 						XFree((void*)tp.value);
+					XUnlockDisplay(dpy);
 					return getWindowName(dpy, parent_ret, false);
 				} else {
 					if (tp.value)
@@ -249,6 +256,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 						XFree(pClassHint->res_class);
 					}
 					XFree(pClassHint);
+					XUnlockDisplay(dpy);
 					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				}
 			} else if (tp.nitems > 0) {				
@@ -271,6 +279,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 					XFree((void*)tp.value);
 					XFreeStringList(list);
 					WindowName = retStr;
+					XUnlockDisplay(dpy);
 					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				} else {
 					XFree((void*)tp.value);
@@ -278,15 +287,18 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 						XFreeStringList(list);
 					retStr = (const char *) tp.value;
 					WindowName = retStr;
+					XUnlockDisplay(dpy);
 					return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 				}
 			}
 		#endif
 		else {
+			XUnlockDisplay(dpy);
 			return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 		}
-	}	
-
+	}
+		
+	XUnlockDisplay(dpy);
 	return tuple<string, string, string>(WindowName, WindowNameFormal, WindowClass);
 }
 
@@ -370,6 +382,7 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 	else
 		mDisplayName = DisplayName;
 
+	XInitThreads();
 	if ( (mDisplay = XOpenDisplay(mDisplayName.c_str())) == NULL ) {
 		cerr << "Unable to Open X11 Display [" << (mDisplayName == "" ? "Default" : mDisplayName) << "] -- Per application mappings will not work!" << endl;
 		return false;
@@ -378,9 +391,11 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 	// set the error handlers
 	// special thanks to ajax from #xorg for this tip
 	// you have no idea how annoying this was to track down
+	XLockDisplay(mDisplay);
 	XSetErrorHandler(x11ErrorHandler);
 	XSetIOErrorHandler(x11IOErrorHandler);
 	mScreen = DefaultScreen(mDisplay);
+	XUnlockDisplay(mDisplay);
 	
 	return true;
 }
@@ -418,11 +433,13 @@ void X11FocusWatcher::setFocusEventMasks() {
 	Window RootRet, ParentRet;
 	unsigned int nChildren;
 	Window * Children = NULL;
+	XLockDisplay(mDisplay);
 	XQueryTree(mDisplay, RootWindow(mDisplay, mScreen), &RootRet, &ParentRet, &Children, &nChildren);
 	for (unsigned int lp = 0; lp < nChildren; lp ++)
 		XSelectInput(mDisplay, Children[lp], FocusChangeMask);
 	if (Children)
 		XFree(Children);
+	XUnlockDisplay(mDisplay);
 }
 
 /**
@@ -430,6 +447,19 @@ void X11FocusWatcher::setFocusEventMasks() {
  */
 void X11FocusWatcher::shutdown() {
 	mWatching = false;
+	
+	// send a fake event in the queue to force the thread to quit
+	XFocusChangeEvent Event;
+	Event.display = mDisplay;
+	Event.type = 0;
+	Event.window = mCurrentWindow;
+	Event.mode = NotifyNormal;
+	Event.detail = NotifyPointer;
+	
+	XLockDisplay(mDisplay);
+	XSendEvent(mDisplay, mCurrentWindow, True, FocusChangeMask, (XEvent *) &Event);
+	XSync(mDisplay, True);
+	XUnlockDisplay(mDisplay);
 }
 
 /** 
@@ -458,12 +488,16 @@ void X11FocusWatcher::threadProc() {
 		// manually check for focus changes since brand new windows 
 		// might not have the proper event focus mask yet
 		XEvent event;
+		XLockDisplay(mDisplay);
 		XGetInputFocus(mDisplay, &window, &revert_to_return);
+		XUnlockDisplay(mDisplay);
 		if (mCurrentWindow != window) {
 			event.type = FocusIn;
 			event.xany.window = window;
 		} else {
 			XNextEvent(mDisplay, &event);
+			if (!mWatching)
+				break;
 		}
 		
 		// handle the event

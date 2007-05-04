@@ -29,6 +29,7 @@
 #include "UtilTime.hpp"
 #include "../libH/Debug.hpp"
 #include <sys/time.h>
+#include <math.h>
 
 using namespace H;
 
@@ -133,8 +134,8 @@ void UtilTime::sleep(float Seconds) {
 	struct 	timespec sleepTime;
 	struct 	timespec sleepRet;
 	
-	int IntSecs = (int) Seconds;
-	float Remainder = float(IntSecs) - Seconds;
+	int IntSecs = (int) floor(Seconds);
+	float Remainder = Seconds - float(IntSecs);
 
 	sleepTime.tv_sec = IntSecs;
 	sleepTime.tv_nsec = (long) (Remainder * 1000000000);

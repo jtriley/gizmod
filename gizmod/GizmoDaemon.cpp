@@ -28,7 +28,7 @@
 
 #include "GizmoDaemon.hpp"
 #include "GizmoEventATIX10.hpp"
-#include "GizmoEventCPU.hpp"
+#include "GizmoEventCPUUsage.hpp"
 #include "GizmoEventLIRC.hpp"
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventSoundCard.hpp"
@@ -138,7 +138,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		onDeregisterDevice(GizmoPowermate const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onDeregisterDevice(GizmoStandard const * Device) { return python::call_method<void>(self, "onDeregisterDevice", ptr(Device)); }
 	void		onEvent(GizmoEventATIX10 const * Event, GizmoATIX10 const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
-	void		onEvent(GizmoEventCPU const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
+	void		onEvent(GizmoEventCPUUsage const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	void		onEvent(GizmoEventLIRC const * Event, GizmoLIRC const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventSoundCard const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
@@ -370,7 +370,11 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 		
 	/// GizmoEventCPU Python Class Export
- 	class_< GizmoEventCPU, bases<GizmoEvent> >("GizmoEventCPU")
+ 	class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage", init<vector<double> const &, vector<double> const &>())
+		.def("getCPUUsage", &GizmoEventCPUUsage::getCPUUsage)		
+		.def("getCPUUsageAvg", &GizmoEventCPUUsage::getCPUUsageAvg)
+		.def("getNumCPUs", &GizmoEventCPUUsage::getNumCPUs)
+		.add_property("NumCPUs", &GizmoEventCPUUsage::getNumCPUs)
 		;
 			
 	/// GizmoEventPowermate Python Class Export
@@ -1085,6 +1089,23 @@ void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundC
 			PyErr_Print();
 		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
 	}
+}
+
+/**
+ * \brief  Event triggered when CPU Usage stats are updated
+ * \param  Usages A vector of raw CPU Usage stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
+ * \param  Averages A vector of Averaged CPU Usages over a brief period of time -- stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
+ */
+void GizmoDaemon::onCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages) {
+	try {
+		mutex::scoped_lock lock(mMutexScript);
+		GizmoEventCPUUsage EventCPUUsage(Usages, Averages);
+		mpPyDispatcher->onEvent(&EventCPUUsage);
+	} catch (error_already_set) {
+		if (Debug::getDebugEnabled())
+			PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+	}	
 }
 
 /**

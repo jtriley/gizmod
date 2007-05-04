@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoEventCPU.cpp
-*** \brief GizmoEventCPU class body
+*** \file  GizmoEventCPUUsage.cpp
+*** \brief GizmoEventCPUUsage class body
 ***
 *****************************************
   *****************************************
@@ -26,7 +26,7 @@
   
 */
 
-#include "GizmoEventCPU.hpp"
+#include "GizmoEventCPUUsage.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include <boost/shared_ptr.hpp>
@@ -44,17 +44,54 @@ using namespace H;
 ///////////////////////////////////////
 
 /**
- * \brief GizmoEventCPU Default Constructor
+ * \brief GizmoEventCPUUsage Default Constructor
  */
-GizmoEventCPU::GizmoEventCPU() : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE) {
+GizmoEventCPUUsage::GizmoEventCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages) : 
+	GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE),
+	mAverages(Averages),
+	mUsages(Usages)
+{
 }
 
 /**
- * \brief GizmoEventCPU Destructor
+ * \brief GizmoEventCPUUsage Destructor
  */
-GizmoEventCPU::~GizmoEventCPU() {
+GizmoEventCPUUsage::~GizmoEventCPUUsage() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  Get the CPU Usage for CPU at the specified Index
+ * \param  CPUIndex The CPU in question  (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
+ */
+double GizmoEventCPUUsage::getCPUUsage(size_t CPUIndex) {
+	if (CPUIndex < 0.0)
+		return 0.0;
+	else if (CPUIndex >= mUsages.size())
+		return 0.0;
+	return mUsages[CPUIndex];
+}
+
+/**
+ * \brief  Get the CPU Usage for CPU at the specified Index
+ * \param  CPUIndex The CPU in question  (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
+ */
+double GizmoEventCPUUsage::getCPUUsageAvg(size_t CPUIndex) {
+	if (CPUIndex < 0.0)
+		return 0.0;
+	else if (CPUIndex >= mAverages.size())
+		return 0.0;
+	return mAverages[CPUIndex];
+}
+
+/**
+ * \brief  Get the number of CPUs the event is describing
+ * \return Number of CPUs
+ */
+size_t GizmoEventCPUUsage::getNumCPUs() {
+	return mUsages.size();
+}
+

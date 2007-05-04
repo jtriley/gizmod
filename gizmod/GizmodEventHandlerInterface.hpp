@@ -34,7 +34,7 @@
 #endif
 
 #include "GizmoEventATIX10.hpp"
-#include "GizmoEventCPU.hpp"
+#include "GizmoEventCPUUsage.hpp"
 #include "GizmoEventLIRC.hpp"
 #include "GizmoEventPowermate.hpp"
 #include "GizmoEventSoundCard.hpp"
@@ -110,7 +110,7 @@ public:
 	 * \brief  CPU Event trigger
 	 * \param  Event The event information 
 	 */
-	virtual void			onEvent(GizmoEventCPU const * Event) = 0;
+	virtual void			onEvent(GizmoEventCPUUsage const * Event) = 0;
 	
 	/**
 	 * \brief  LIRC Event trigger

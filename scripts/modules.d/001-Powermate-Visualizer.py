@@ -27,6 +27,7 @@ class VisualizationType:
 	Types of visualizations
 	"""
 	
+	CPUUsage = "CPUUsage"
 	Volume = "Volume"
 
 ############################
@@ -56,7 +57,7 @@ class PowermateVisualizer:
 		"""
 		
 		# check for mixer events
-		if self.Visualization == VisualizationType.Volume \
+		if (self.Visualization == VisualizationType.Volume or self.VolumeInterruptsOthers) \
 		   and Event.Class == GizmoEventClass.SoundCard \
 		   and Event.Type == AlsaEventType.MixerElementChange:
 		   	# check for volume changed
@@ -69,6 +70,10 @@ class PowermateVisualizer:
 			   and Gizmod.DefaultMixerSwitch \
 			   and Event.Mixer.Name == Gizmod.DefaultMixerSwitch.Name:
 				self.__applyVisualizationVolume()
+		# check for CPUUsage events
+		elif self.Visualization == VisualizationType.CPUUsage \
+		   and Event.Class == GizmoEventClass.CPUUsage \
+			self.__applyVisualizationCPUUsage(Event)
 
 		return False
 					
@@ -76,9 +81,22 @@ class PowermateVisualizer:
 	# Private Functions
 	##########################
 	
+	def __applyVisualizationCPUUsage(self, Event):
+		"""
+		Set the Powermates' LEDs to the current system CPU Usage
+		"""
+		
+		Count = 0
+		for Powermate in Gizmod.Powermates:
+			if Count >= Event.NumCPUs:
+				Count = 0
+			else:
+				Count += 1
+			Powermate.LEDPercent = Event.getCPUUsageAvg(Count)
+		
 	def __applyVisualizationVolume(self):
 		"""
-		Set the Powermate's LED to the Default playback volume mixer's level
+		Set the Powermates' LEDs to the Default playback volume mixer's level
 		"""
 
 		# make sure there's a mixer available		
@@ -105,8 +123,8 @@ class PowermateVisualizer:
 		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, str(len(Gizmod.Powermates)) + " Powermates")
 
 		# initialize member variables
-		self.CurrentVolume = Gizmod.DefaultMixerVolume
-		self.Visualization = VisualizationType.Volume	# Current LED visualizer
+		self.Visualization = VisualizationType.CPUUsage	# Current LED visualizer
+		self.VolumeInterruptsOthers = True		# Set to True if volume changes should interrupt other visualizations
 		
 		# apply the initial visualization
 		self.applyVisualization()

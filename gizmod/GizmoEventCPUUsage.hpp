@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmoEventCPU.hpp
-*** \brief GizmoEventCPU class header
+*** \file  GizmoEventCPUUsage.hpp
+*** \brief GizmoEventCPUUsage class header
 ***
 *****************************************
   *****************************************
@@ -26,15 +26,15 @@
   
 */
 
-#ifndef __GizmoEventCPU_h
-#define __GizmoEventCPU_h
+#ifndef __GizmoEventCPUUsage_h
+#define __GizmoEventCPUUsage_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #include "GizmoEvent.hpp"
-#include <string>
+#include <vector>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -45,23 +45,28 @@
 ///////////////////////////////////////
 
 /**
- * \class GizmoEventCPU
+ * \class GizmoEventCPUUsage
  * \brief Class for CPU events
  *
- * This class is for all GizmoEventCPUs attached to the system.
+ * This class is for all GizmoEventCPUUsages attached to the system.
  */
-class GizmoEventCPU : public GizmoEvent {
+class GizmoEventCPUUsage : public GizmoEvent {
 public:
 	// public functions
+	double				getCPUUsage(size_t CPUIndex);	///< Get the CPU Usage for CPU at the specified Index (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
+	double				getCPUUsageAvg(size_t CPUIndex);///< Get the Averaged CPU Usage for CPU at the specified Index (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
+	size_t				getNumCPUs();			///< Get the number of CPUs
 	
 	// construction / deconstruction
-	GizmoEventCPU();						///< Default Constructor
-	virtual ~GizmoEventCPU();					///< Destructor
+	GizmoEventCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages); ///< Default Constructor
+	virtual ~GizmoEventCPUUsage();					///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
+	std::vector<double> const & 	mAverages;			///< Averaged CPU Usage vector (0 is all processors, 1 is processor 1, etc)
+	std::vector<double> const & 	mUsages;			///< CPU Usage vector (0 is all processors, 1 is processor 1, etc)
 };
 
-#endif // __GizmoEventCPU_h
+#endif // __GizmoEventCPUUsage_h

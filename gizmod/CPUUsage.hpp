@@ -69,6 +69,7 @@ public:
 	// public functions
 	size_t 				getNumCPUs();			///< Get the number of CPUs on the system
 	void 				init();				///< Start watching!
+	virtual void			onCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages); ///< Event triggered when CPU Usage stats are updated
 	void				setTimeBetweenUpdates(float Seconds); ///< Time between updates in seconds
 
 	// construction / deconstruction
@@ -85,7 +86,8 @@ private:
 	float				mSecsBetweenUpdates;		///< Time between updates
 	bool				mWatching;			///< Continue watching for usage events
 	std::vector<double>		mCPUUsage;			///< CPU Usage vector (0 is all processor, 1 is processor 1, etc)
-	std::vector<H::Average> 	mCPUUsageAvg;			///< CPU Usage vector (averaged)
+	std::vector<double>		mCPUUsageAvg;			///< CPU Averaged Usage vector (0 is all processor, 1 is processor 1, etc)
+	std::vector<H::Average> 	mCPUUsageAveragers;		///< Averagers for the Avg vector
 	
 	/**
 	 * Thread callback procedure struct

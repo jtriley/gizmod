@@ -57,7 +57,7 @@ using namespace H;
  * \def    DEFAULT_UPDATE_DELAY
  * \brief  The default amount of seconds between process tree rebuilds
  */
-#define DEFAULT_UPDATE_DELAY	0.25f
+#define DEFAULT_UPDATE_DELAY	0.5f
 
 ////////////////////////////////////////////////////////////////////////////
 // Statics 
@@ -121,6 +121,7 @@ size_t CPUUsage::getNumCPUs() {
 		}
 		mCPUUsage.resize(cpus);
 		mCPUUsageAvg.resize(cpus);
+		mCPUUsageAveragers.resize(cpus);
 	}
 	
 	return mCPUUsage.size() - 1;
@@ -132,6 +133,15 @@ size_t CPUUsage::getNumCPUs() {
 void CPUUsage::init() {
 	// initialize the event handler thread
 	thread thrd(mThreadProc);
+}
+
+/**
+ * \brief  Event triggered when CPU Usage stats are updated
+ * \param  Usages A vector of raw CPU Usage stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
+ * \param  Averages A vector of Averaged CPU Usages over a brief period of time -- stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
+ */
+void CPUUsage::onCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages) {
+	// override me
 }
 
 /**
@@ -214,10 +224,11 @@ void CPUUsage::updateUsageStats() {
 		for (int lp = 0; lp < CPUUSAGE_RESERVED; lp ++)
 			Total += Fields[lp];
 				
-		mCPUUsage[CurCPU] = (Total - Fields[3] - Fields[4]) / Total;
-		mCPUUsageAvg[CurCPU].push(mCPUUsage[CurCPU]);
-		
-		// fire the event
-		//onCPUUsage(
+		mCPUUsage[CurCPU] = ((Total - Fields[3] - Fields[4]) / Total) * 100.0;
+		mCPUUsageAveragers[CurCPU].push(mCPUUsage[CurCPU]);
+		mCPUUsageAvg[CurCPU] = mCPUUsageAveragers[CurCPU].average();
 	} while (CurCPU < mCPUUsage.size());
+
+	// fire the event
+	onCPUUsage(mCPUUsage, mCPUUsageAvg);
 }
