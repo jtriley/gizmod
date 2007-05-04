@@ -50,7 +50,7 @@ using namespace H;
  * \def   GIZMO_ATIX10_EVENTDELAY
  * \brief Default minimum time between ATIX10 events
  */
-#define GIZMO_ATIX10_EVENTDELAY	0.15f
+#define GIZMO_ATIX10_EVENTDELAY	0.25f
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
