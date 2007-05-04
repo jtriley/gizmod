@@ -77,7 +77,7 @@ protected:
 	// private member variables
 	H::DeviceInfo 			mDeviceInfo;			///< Info about the device
 	unsigned long			mLastEventTime;			///< Time of last event
-	float				mMinTimeBetweenEvents;		///< Minimum time between events (smooth out trigger happy controllers)
+	unsigned long 			mMinTimeBetweenEvents;		///< Minimum time between events (smooth out trigger happy controllers)
 	bool				mSendNullEvents;		///< Send NULL events if the device creates them?
 };
 

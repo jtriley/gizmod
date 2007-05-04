@@ -49,7 +49,7 @@ GizmoLinuxInputDevice::GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo) {
 	mDeviceInfo= DeviceInfo;
 	mSendNullEvents = false;
 	mLastEventTime = 0;
-	mMinTimeBetweenEvents = 0.0f;
+	mMinTimeBetweenEvents = 0;
 }
 
 /**
@@ -199,7 +199,7 @@ bool GizmoLinuxInputDevice::remapKey(int CurCode, int NewCode) {
  * Set this to an appropriate value (issue -V 5 to see the timings)
  */
 void GizmoLinuxInputDevice::setMinimumTimeBetweenEvents(float Seconds) {
-	mMinTimeBetweenEvents = Seconds;
+	mMinTimeBetweenEvents = (long) (Seconds * 1000000.0f);
 }
 
 /**
