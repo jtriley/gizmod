@@ -598,6 +598,7 @@ void FileEventWatcher::watchForFileEvents() {
 		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), -1)) <= 0) {
 			if (ret == 0) {
 				// timeout occured, loop again
+				cdbg1 << "Poll timeout" << endl;
 				continue;
 			}
 			
@@ -607,6 +608,7 @@ void FileEventWatcher::watchForFileEvents() {
 		}
 						
 		// file events have happened, check for them and dispatch
+		cdbg5 << "Processing File Events..." << endl;
 		apply_func(mPollFDs, &FileEventWatcher::handleEventsOnFile, this);
 	}
 }

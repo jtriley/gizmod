@@ -50,6 +50,7 @@
 #include <boost/format.hpp>
 #include <boost/python.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/exception.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <fcntl.h>
@@ -76,6 +77,12 @@ using namespace H;
  * The default path of the config file
  */
 #define SCRIPT_DIR		PACKAGE_SYSCONFDIR "/gizmod/"
+
+/** 
+ * \def   HOME_SCRIPT_DIR
+ * The default path of the users home script dir
+ */
+#define HOME_SCRIPT_DIR		"~/.gizmod/"
 
 /** 
  * \def   USER_SCRIPT_DIR
@@ -481,8 +488,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 GizmoDaemon::GizmoDaemon() {
 	cout << getProps();
 	
-	mConfigDir = SCRIPT_DIR;
-	replace_all(mConfigDir, "${prefix}", PACKAGE_PREFIX);
+	setConfigDir();
 	mEventsDir = EVENT_NODE_DIR;
 	mInitialized = false;
 	mLircDev = LIRC_DEV;
@@ -493,7 +499,7 @@ GizmoDaemon::GizmoDaemon() {
  * \brief  Default Destructor
  */
 GizmoDaemon::~GizmoDaemon() {
-	cdbg << "GizmoDaemon Shutting Down..." << endl << endl;
+	cout << "GizmoDaemon Shutting Down..." << endl << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -533,9 +539,8 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 			break;
 		}		
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onEvent for deleteGizmo", __FILE__, __FUNCTION__, __LINE__);
 	}
 		
 	// remove the gizmo
@@ -786,8 +791,7 @@ void GizmoDaemon::initPython() {
 		PyRun_SimpleFile(ifScript, ScriptFile.c_str());
 		fclose(ifScript);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
+		PyErr_Print();
 		throw H::Exception("Failed to Execute Python Script!", __FILE__, __FUNCTION__, __LINE__);
 	}
 }
@@ -946,8 +950,7 @@ void GizmoDaemon::loadUserScriptsFunctor(std::string UserScript) {
 			ImportModuleString.c_str(),
 			Py_file_input, mPyMainNamespace.ptr(), mPyMainNamespace.ptr())));
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
+		PyErr_Print();
 		throw H::Exception("Failed to Load User Script [" + UserScript + "]", __FILE__, __FUNCTION__, __LINE__);
 	}
 }
@@ -1000,9 +1003,8 @@ void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSou
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
 		mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventMixerElementAttach" << endl;
 	}
 }
 
@@ -1024,9 +1026,8 @@ void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSou
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
 		mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventMixerElementChange" << endl;
 	}
 }
 
@@ -1045,9 +1046,8 @@ void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSou
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
 		mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventMixerElementDetach" << endl;
 	}
 }
 
@@ -1065,9 +1065,8 @@ void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundC
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
 		mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventSoundCardAttach" << endl;
 	}
 }
 
@@ -1085,9 +1084,8 @@ void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundC
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
 		mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventSoundCardDetach" << endl;
 	}
 }
 
@@ -1101,9 +1099,8 @@ void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > cons
 		GizmoEventCPUUsage EventCPUUsage(Event);
 		mpPyDispatcher->onEvent(&EventCPUUsage);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onCPUUsage" << endl; 
 	}	
 }
 
@@ -1199,9 +1196,8 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 			break; }
 		}
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onFileEventRead" << endl;
 	}
 }
 
@@ -1237,9 +1233,8 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 			break; }
 		}
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onQueryDeviceClass");
+		PyErr_Print();
+		throw H::Exception("Failed to call GizmodDispatcher.onRegisterDevice for onFileEventRegister", __FILE__, __FUNCTION__, __LINE__);
 	}
 }
 
@@ -1255,9 +1250,8 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 		GizmoEventWindowFocus FocusEvent(Event);
 		mpPyDispatcher->onEvent(&FocusEvent);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onFocusIn" << endl;
 	}
 }
 
@@ -1272,9 +1266,8 @@ void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
 		GizmoEventWindowFocus FocusEvent(Event);
 		mpPyDispatcher->onEvent(&FocusEvent);
 	} catch (error_already_set) {
-		if (Debug::getDebugEnabled())
-			PyErr_Print();
-		throw H::Exception("Failed to call GizmodDispatcher.onEvent");
+		PyErr_Print();
+		cerr << "Failed to call GizmodDispatcher.onEvent for onFocusOut" << endl;
 	}
 }
 
@@ -1419,4 +1412,32 @@ void GizmoDaemon::registerLircDevice() {
 	
 	// register the directory itself
 	addFileToWatch(mLircDev, WATCH_IN, "LIRC");
+}
+
+/**
+ * \brief  Set the config directory
+ */
+void GizmoDaemon::setConfigDir() {
+	// get the hoome directory
+	string HomeScriptDir = HOME_SCRIPT_DIR;
+	char * EnvHome = getenv("HOME");
+	if (EnvHome)
+		replace_all(HomeScriptDir, "~", EnvHome);
+	
+	// make sure it's okay
+	bool PathsOkay;
+	try {
+		path HomeScriptPath(HomeScriptDir);
+		PathsOkay = true;
+	} catch (filesystem_error const & e) {
+		PathsOkay = false;
+	}
+	
+	// set the path
+	if ( PathsOkay && filesystem::exists(HomeScriptDir) && filesystem::exists(HomeScriptDir + USER_SCRIPT_DIR) ) {
+		mConfigDir = HomeScriptDir;
+	} else {
+		mConfigDir = SCRIPT_DIR;
+		replace_all(mConfigDir, "${prefix}", PACKAGE_PREFIX);
+	}
 }

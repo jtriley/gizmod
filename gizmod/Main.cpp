@@ -37,10 +37,12 @@
 #include <cstdlib>
 #include <iostream>
 #include <boost/shared_ptr.hpp>
+#include <boost/filesystem/operations.hpp>
 
 using namespace std;
 using namespace H;
 using namespace boost;
+using namespace boost::filesystem;
 
 /**
  * \brief  main function for the program
@@ -51,6 +53,9 @@ using namespace boost;
  * Instantiate the main object, and run
  */
 int main (int argc, char * argv []) {
+	// set filesystem to native filesystem checking
+	path::default_name_check(native);
+	
 	// create the Gizmod
 	shared_ptr<GizmoDaemon> pGizmod(new GizmoDaemon);
 	

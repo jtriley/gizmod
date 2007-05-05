@@ -119,6 +119,7 @@ private:
 	void 				registerDevices();	///< Register all the attached system devices
 	void				registerInputEventDevices(); ///< Register input event devices (/dev/input/*)
 	void 				registerLircDevice();	///< Register the LIRC device
+	void				setConfigDir();		///< Set the config dir
 	
 	// private member vars
 	std::string			mConfigDir;		///< Configuration scripts directory

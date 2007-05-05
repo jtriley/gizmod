@@ -490,6 +490,8 @@ void X11FocusWatcher::threadProc() {
 	// Watch for focus changes	
 	mWatching = true;
 	while (mWatching) {
+		cdbg5 << "Processing X11 Focus Events..." << endl;
+
 		// reset focus event masks
 		setFocusEventMasks();
 		
