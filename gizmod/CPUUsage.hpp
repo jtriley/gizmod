@@ -35,6 +35,7 @@
 
 #include "../libH/Average.hpp"
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs / enums
@@ -56,6 +57,17 @@ typedef enum {
 	CPUUSAGE_MAX 
 } ProcStatField;
 
+/**
+ * \struct CPUUsageInfo
+ * \brief  Structure that holds info about each CPU
+ */
+struct CPUUsageInfo {
+	double 				Field[CPUUSAGE_MAX];		///< CPU Usage fields
+	double 				Stat[CPUUSAGE_MAX];		///< CPU Stat fields
+	double 				Usage;
+	H::Average			Averager;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 // CPUUsage Class Definition
 ///////////////////////////////////////
@@ -69,7 +81,7 @@ public:
 	// public functions
 	size_t 				getNumCPUs();			///< Get the number of CPUs on the system
 	void 				init();				///< Start watching!
-	virtual void			onCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages); ///< Event triggered when CPU Usage stats are updated
+	virtual void			onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event); ///< Event triggered when CPU Usage stats are updated
 	void				setTimeBetweenUpdates(float Seconds); ///< Time between updates in seconds
 
 	// construction / deconstruction
@@ -85,9 +97,7 @@ private:
 	// private member variables
 	float				mSecsBetweenUpdates;		///< Time between updates
 	bool				mWatching;			///< Continue watching for usage events
-	std::vector<double>		mCPUUsage;			///< CPU Usage vector (0 is all processor, 1 is processor 1, etc)
-	std::vector<double>		mCPUUsageAvg;			///< CPU Averaged Usage vector (0 is all processor, 1 is processor 1, etc)
-	std::vector<H::Average> 	mCPUUsageAveragers;		///< Averagers for the Avg vector
+	std::vector< boost::shared_ptr<CPUUsageInfo> > mCPUUsage;	///< CPU Usage info
 	
 	/**
 	 * Thread callback procedure struct

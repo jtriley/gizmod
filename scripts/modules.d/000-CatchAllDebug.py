@@ -63,7 +63,12 @@ class CatchAllDebug:
 			else:
 				print "onEvent: " + str(Event.Class) + " -- " + str(Event.Type) + " [" + str(Event.SoundCard.CardName) + "]"
 		elif Event.Class == GizmoEventClass.CPUUsage:
-			print "onEvent: " + str(Event.Class) + " -- " + str(Event.getCPUUsage(0)) + " [" + str(Event.getCPUUsageAvg(0)) + "]"
+			#for lp in range(Event.NumCPUs):
+			#	print "onEvent: " + str(Event.Class) + " [" + str(lp) + "] " + str(Event.getCPUUsage(lp)) + " -- " + str(Event.getCPUUsageAvg(lp))
+			pass
+		elif Event.Class == GizmoEventClass.Powermate and Event.Type == GizmoEventType.EV_MSC:
+			# Don't print LED change events
+			pass
 		else:
 			if Event.Type == GizmoEventType.EV_KEY:
 				print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))

@@ -34,7 +34,9 @@
 #endif
 
 #include "GizmoEvent.hpp"
+#include "CPUUsage.hpp"
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -58,15 +60,14 @@ public:
 	size_t				getNumCPUs();			///< Get the number of CPUs
 	
 	// construction / deconstruction
-	GizmoEventCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages); ///< Default Constructor
+	GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event); ///< Default Constructor
 	virtual ~GizmoEventCPUUsage();					///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
-	std::vector<double> const & 	mAverages;			///< Averaged CPU Usage vector (0 is all processors, 1 is processor 1, etc)
-	std::vector<double> const & 	mUsages;			///< CPU Usage vector (0 is all processors, 1 is processor 1, etc)
+	std::vector< boost::shared_ptr<CPUUsageInfo> > const & mEvent;	///< The Raw Event info
 };
 
 #endif // __GizmoEventCPUUsage_h

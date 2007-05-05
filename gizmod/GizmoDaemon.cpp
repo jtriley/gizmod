@@ -370,7 +370,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 		
 	/// GizmoEventCPU Python Class Export
- 	class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage", init<vector<double> const &, vector<double> const &>())
+ 	class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage", init<std::vector< boost::shared_ptr<CPUUsageInfo> > const &>())
 		.def("getCPUUsage", &GizmoEventCPUUsage::getCPUUsage)		
 		.def("getCPUUsageAvg", &GizmoEventCPUUsage::getCPUUsageAvg)
 		.def("getNumCPUs", &GizmoEventCPUUsage::getNumCPUs)
@@ -1093,13 +1093,12 @@ void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundC
 
 /**
  * \brief  Event triggered when CPU Usage stats are updated
- * \param  Usages A vector of raw CPU Usage stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
- * \param  Averages A vector of Averaged CPU Usages over a brief period of time -- stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
+ * \param  Event A vector of CPU Usage info, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
  */
-void GizmoDaemon::onCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages) {
+void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) {
 	try {
 		mutex::scoped_lock lock(mMutexScript);
-		GizmoEventCPUUsage EventCPUUsage(Usages, Averages);
+		GizmoEventCPUUsage EventCPUUsage(Event);
 		mpPyDispatcher->onEvent(&EventCPUUsage);
 	} catch (error_already_set) {
 		if (Debug::getDebugEnabled())

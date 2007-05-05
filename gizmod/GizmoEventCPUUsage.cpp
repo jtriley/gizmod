@@ -46,10 +46,9 @@ using namespace H;
 /**
  * \brief GizmoEventCPUUsage Default Constructor
  */
-GizmoEventCPUUsage::GizmoEventCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages) : 
+GizmoEventCPUUsage::GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) : 
 	GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE),
-	mAverages(Averages),
-	mUsages(Usages)
+	mEvent(Event)
 {
 }
 
@@ -70,9 +69,9 @@ GizmoEventCPUUsage::~GizmoEventCPUUsage() {
 double GizmoEventCPUUsage::getCPUUsage(size_t CPUIndex) {
 	if (CPUIndex < 0.0)
 		return 0.0;
-	else if (CPUIndex >= mUsages.size())
+	else if (CPUIndex >= mEvent.size())
 		return 0.0;
-	return mUsages[CPUIndex];
+	return mEvent[CPUIndex]->Usage;
 }
 
 /**
@@ -82,9 +81,9 @@ double GizmoEventCPUUsage::getCPUUsage(size_t CPUIndex) {
 double GizmoEventCPUUsage::getCPUUsageAvg(size_t CPUIndex) {
 	if (CPUIndex < 0.0)
 		return 0.0;
-	else if (CPUIndex >= mAverages.size())
+	else if (CPUIndex >= mEvent.size())
 		return 0.0;
-	return mAverages[CPUIndex];
+	return mEvent[CPUIndex]->Averager.average();
 }
 
 /**
@@ -92,6 +91,6 @@ double GizmoEventCPUUsage::getCPUUsageAvg(size_t CPUIndex) {
  * \return Number of CPUs
  */
 size_t GizmoEventCPUUsage::getNumCPUs() {
-	return mUsages.size();
+	return mEvent.size();
 }
 

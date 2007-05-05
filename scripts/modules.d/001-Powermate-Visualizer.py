@@ -17,6 +17,7 @@ from GizmoDaemon import *
 import sys
 
 ENABLED = True
+INTERRUPT_LENGTH = 10
 
 ############################
 # Visualization Class definition
@@ -60,20 +61,28 @@ class PowermateVisualizer:
 		if (self.Visualization == VisualizationType.Volume or self.VolumeInterruptsOthers) \
 		   and Event.Class == GizmoEventClass.SoundCard \
 		   and Event.Type == AlsaEventType.MixerElementChange:
+		   	# if we're an interruption, mark the occasion
+		   	self.InterruptCount = INTERRUPT_LENGTH
+		   	
 		   	# check for volume changed
 			if Event.VolumePlaybackChanged \
 			   and Gizmod.DefaultMixerVolume \
 			   and Event.Mixer.Name == Gizmod.DefaultMixerVolume.Name:
 				self.__applyVisualizationVolume()
+				
 			# check for switch changed
 			if Event.SwitchPlaybackChanged \
 			   and Gizmod.DefaultMixerSwitch \
 			   and Event.Mixer.Name == Gizmod.DefaultMixerSwitch.Name:
-				self.__applyVisualizationVolume()
+				self.__applyVisualizationVolume()				
 		# check for CPUUsage events
 		elif self.Visualization == VisualizationType.CPUUsage \
-		   and Event.Class == GizmoEventClass.CPUUsage \
-			self.__applyVisualizationCPUUsage(Event)
+		   and Event.Class == GizmoEventClass.CPUUsage\
+		   and not (Gizmod.DefaultMixerSwitch and (not Gizmod.DefaultMixerSwitch.SwitchPlayback)):
+		   	if self.InterruptCount:
+		   		self.InterruptCount -= 1
+		   	else:
+				self.__applyVisualizationCPUUsage(Event)
 
 		return False
 					
@@ -125,6 +134,7 @@ class PowermateVisualizer:
 		# initialize member variables
 		self.Visualization = VisualizationType.CPUUsage	# Current LED visualizer
 		self.VolumeInterruptsOthers = True		# Set to True if volume changes should interrupt other visualizations
+		self.InterruptCount = 0				# Length of time to remain interrupted
 		
 		# apply the initial visualization
 		self.applyVisualization()

@@ -34,8 +34,6 @@
 #include <iostream>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/thread/thread.hpp>
 
 using namespace std;
@@ -57,7 +55,7 @@ using namespace H;
  * \def    DEFAULT_UPDATE_DELAY
  * \brief  The default amount of seconds between process tree rebuilds
  */
-#define DEFAULT_UPDATE_DELAY	0.5f
+#define DEFAULT_UPDATE_DELAY	0.1f
 
 ////////////////////////////////////////////////////////////////////////////
 // Statics 
@@ -73,6 +71,7 @@ using namespace H;
 CPUUsage::CPUUsage() : mThreadProc(this) {
 	mSecsBetweenUpdates = DEFAULT_UPDATE_DELAY;
 	mWatching = false;
+	mThreading = false;
 	getNumCPUs();
 }
 
@@ -104,11 +103,7 @@ size_t CPUUsage::getNumCPUs() {
 			cdbg << "Error Updating CPU Usage Stats!" << endl;
 			return -1;
 		}
-		
-		// create some datastructures for parsing the line
-		typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-		char_separator<char> Separators(" ");	
-		
+				
 		// read the contents
 		string Line;
 		int cpus = 0;
@@ -119,9 +114,13 @@ size_t CPUUsage::getNumCPUs() {
 				break;
 			cpus ++;
 		}
+		
 		mCPUUsage.resize(cpus);
-		mCPUUsageAvg.resize(cpus);
-		mCPUUsageAveragers.resize(cpus);
+		for (int lp = 0; lp < cpus; lp ++) {
+			mCPUUsage[lp] = shared_ptr<CPUUsageInfo>(new CPUUsageInfo);
+			memset(mCPUUsage[lp]->Field, 0, sizeof(double) * CPUUSAGE_MAX);
+			memset(mCPUUsage[lp]->Stat, 0, sizeof(double) * CPUUSAGE_MAX);
+		}
 	}
 	
 	return mCPUUsage.size() - 1;
@@ -131,16 +130,20 @@ size_t CPUUsage::getNumCPUs() {
  * \brief  Start the Usage watcher thread
  */
 void CPUUsage::init() {
+	if (getNumCPUs() < 0) {
+		cdbg << "Cannot give CPU Usage Stats! -- Cannot access [" << PROC_STAT_PATH << "]" << endl;
+		return;
+	}
+	
 	// initialize the event handler thread
 	thread thrd(mThreadProc);
 }
 
 /**
  * \brief  Event triggered when CPU Usage stats are updated
- * \param  Usages A vector of raw CPU Usage stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
- * \param  Averages A vector of Averaged CPU Usages over a brief period of time -- stats for each processor, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
+ * \param  Event A vector of CPU Usage info, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
  */
-void CPUUsage::onCPUUsage(std::vector<double> const & Usages, std::vector<double> const & Averages) {
+void CPUUsage::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) {
 	// override me
 }
 
@@ -157,8 +160,10 @@ void CPUUsage::setTimeBetweenUpdates(float Seconds) {
  */
 void CPUUsage::shutdown() {
 	mWatching = false;
-	while (mThreading)
+	while (mThreading) {
+		cdbg5 << "Waiting on CPUUsage Thread to Finish..." << endl;
 		UtilTime::sleep(0.1f);
+	}
 }
 
 /**
@@ -177,58 +182,37 @@ void CPUUsage::threadProc() {
  * \brief  Force an update of the CPU Usage stats
  */
 void CPUUsage::updateUsageStats() {
-	if (!filesystem::exists(path(PROC_STAT_PATH))) {
-		cdbg << "Can not update CPU Usage Stats!" << endl;
-		return;
-	}
-				
 	// open the file
-	ifstream StatFile(PROC_STAT_PATH);
-	if (!StatFile.is_open()) {
-		cdbg << "Error Updating CPU Usage Stats!" << endl;
+	FILE * StatFile;
+	if ((StatFile = fopen(PROC_STAT_PATH, "r")) == NULL) {
+		cdbg << "Failed get CPU Usage Information" << endl;
 		return;
 	}
-	
-	// create some datastructures for parsing the line
-	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-	char_separator<char> Separators(" ");	
-	
-	// read the contents
-	string Line;
-	size_t CurCPU = 0;
-	do {
-		// get the line and make sure it's related to cpu information
-		getline(StatFile, Line);
-		if (Line.find("cpu") != 0)
-			break;
-		
-		// process the line
-		tokenizer tok(Line, Separators);
-		int count = 0;
-		int Fields[CPUUSAGE_MAX];
-		memset(Fields, 0, sizeof(int) * CPUUSAGE_MAX);
-		for(tokenizer::iterator iter = tok.begin(); iter!= tok.end(); iter ++, count ++) {
-			if (count == 0)
-				continue;
-			try {
-				Fields[count] = lexical_cast<int>(*iter);
-			} catch (bad_lexical_cast const & e) {
-				// no worries, continue
-				cdbg << "Error parsing CPUUsage for CPU [" << CurCPU << "]" << endl;
-				continue;
-			}
+
+	// read and close
+	for (size_t cpu = 0; cpu < mCPUUsage.size(); cpu ++) {
+		double Info[CPUUSAGE_MAX];
+		int CpuIndex = 0;
+		shared_ptr<CPUUsageInfo> pUsage = mCPUUsage[cpu];
+		if (cpu == 0)
+			fscanf(StatFile, "cpu %lf %lf %lf %lf %lf %lf %lf %lf\n", Info, Info + 1, Info + 2, Info + 3, Info + 4, Info + 5, Info + 6, Info + 7);
+		else {
+			fscanf(StatFile, "cpu%d %lf %lf %lf %lf %lf %lf %lf %lf\n", &CpuIndex, Info, Info + 1, Info + 2, Info + 3, Info + 4, Info + 5, Info + 6, Info + 7);
 		}
 		
-		// compute the total
+		// calculate the total
 		double Total = 0.0;
-		for (int lp = 0; lp < CPUUSAGE_RESERVED; lp ++)
-			Total += Fields[lp];
-				
-		mCPUUsage[CurCPU] = ((Total - Fields[3] - Fields[4]) / Total) * 100.0;
-		mCPUUsageAveragers[CurCPU].push(mCPUUsage[CurCPU]);
-		mCPUUsageAvg[CurCPU] = mCPUUsageAveragers[CurCPU].average();
-	} while (CurCPU < mCPUUsage.size());
+		for (int lp = 0; lp < CPUUSAGE_MAX; lp ++) {
+			//Total 
+			pUsage->Field[lp] = Info[lp] - pUsage->Stat[lp];
+			Total += pUsage->Field[lp];
+			pUsage->Stat[lp] = Info[lp];
+		} 
+		pUsage->Usage = ((Total - pUsage->Field[CPUUSAGE_IDLE] - pUsage->Field[CPUUSAGE_IOWAIT]) / Total) * 100.0;
+		pUsage->Averager.push(pUsage->Usage);
+	}
+	fclose(StatFile);
 
 	// fire the event
-	onCPUUsage(mCPUUsage, mCPUUsageAvg);
+	onCPUUsage(mCPUUsage);
 }

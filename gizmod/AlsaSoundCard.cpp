@@ -117,6 +117,7 @@ AlsaSoundCard::AlsaSoundCard(AlsaInterface * piAlsa, int CardID) : AlsaSoundCard
 	mHWInfo = NULL;
 	mMixerHandle = NULL;
 	mWatching = false;
+	mThreading = false;
 	init();
 }
 
@@ -274,6 +275,10 @@ void AlsaSoundCard::shutdown() {
 			
 	// wait for the thread to exit
 	mWatching = false;
+	while (mThreading) {
+		cdbg5 << "Waiting on AlsaSoundCard Thread to Finish..." << endl;
+		UtilTime::sleep(0.1f);
+	}
 	
 	// shut down alsa connection to the sound card
 	if (mMixerHandle)
@@ -307,7 +312,7 @@ void AlsaSoundCard::threadProc() {
 		}
 		
 		// wait for the next event
-		if ((err = snd_mixer_wait(mMixerHandle, -1)) < 0) {
+		if ((err = snd_mixer_wait(mMixerHandle, 250)) < 0) {
 			cout << "test err: " << snd_strerror(err) << endl;
 		} else {
 			snd_mixer_handle_events(mMixerHandle);

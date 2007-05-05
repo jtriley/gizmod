@@ -119,6 +119,7 @@ X11FocusWatcher::X11FocusWatcher() : mThreadProc(this) {
 	mCurrentWindow = -1;
 	mDisplay = NULL;
 	mWatching = false;
+	mThreading = false;
 }
 
 /**
@@ -449,17 +450,25 @@ void X11FocusWatcher::shutdown() {
 	mWatching = false;
 	
 	// send a fake event in the queue to force the thread to quit
-	XFocusChangeEvent Event;
-	Event.display = mDisplay;
-	Event.type = 0;
-	Event.window = mCurrentWindow;
-	Event.mode = NotifyNormal;
-	Event.detail = NotifyPointer;
+	if (mDisplay) {
+		XFocusChangeEvent Event;
+		Event.display = mDisplay;
+		Event.type = 0;
+		Event.window = mCurrentWindow;
+		Event.mode = NotifyNormal;
+		Event.detail = NotifyPointer;
+		
+		XLockDisplay(mDisplay);
+		XPutBackEvent(mDisplay, (XEvent*) &Event);
+		XSync(mDisplay, True);
+		XUnlockDisplay(mDisplay);
+	}
 	
-	XLockDisplay(mDisplay);
-	XSendEvent(mDisplay, mCurrentWindow, True, FocusChangeMask, (XEvent *) &Event);
-	XSync(mDisplay, True);
-	XUnlockDisplay(mDisplay);
+	// wait until thread exits
+	while (mThreading) {
+		cdbg5 << "Waiting on X11FocusWatcher Thread to Finish..." << endl;
+		UtilTime::sleep(0.1f);
+	}
 }
 
 /** 
