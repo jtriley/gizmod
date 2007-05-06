@@ -56,6 +56,7 @@ public:
 	virtual bool 			processEvent(GizmoEvent * pEvent); ///< Process an event
 	
 	// construction / deconstruction	
+	GizmoLIRC();						///< Serialize Constructor
 	GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
 	virtual ~GizmoLIRC();					///< Destructor
 
@@ -63,11 +64,25 @@ public:
 	static void			setMinimumTimeBetweenEvents(float Seconds); ///< Set the minimum time between events
 	
 protected:
+	// protected functions
+	
+	// protected member variables
+	unsigned long			mLastEventTime;		///< Time of last event
+	static float			mMinTimeBetweenEvents;	///< Minimum time between events (smooth out trigger happy controllers)
+
+private:
 	// private functions
 	
 	// private member variables
-	unsigned long			mLastEventTime;		///< Time of last event
-	static float			mMinTimeBetweenEvents;	///< Minimum time between events (smooth out trigger happy controllers)
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<Gizmo>(*this);
+		ar & mLastEventTime;
+	}		
 };
 
 #endif // __GizmoLIRC_h

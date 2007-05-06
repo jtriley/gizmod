@@ -123,16 +123,21 @@ public:
 	boost::shared_ptr<Socket> 	accept();			///< Accept a connection on a socket
 	void 				bind(int Port);			///< Bind a socket to a port
 	void 				closeSocket();			///< Close the socket
+	void 				connect(std::string Host, int Port); ///< Connect to a server 
 	void 				createSocket(SocketDomain Domain = SOCKET_INTERNET, SocketType Type = SOCKET_STREAM); ///< Create a socket
-	int				getSocket() const;			///< Get the socket
+	std::string			getAddress() const;		///< Get the socket's address
+	int				getOldSocket() const;		///< Get the old socket (what it was before disconnect)
+	int				getSocket() const;		///< Get the socket
 	bool 				isSocketValid() const;		///< Test if a socket is valid or not
 	void 				listen();			///< Listen on a socket
 	void				processEvents();		///< Process events on the socket
 	int 				readIntoBuffer(DynamicBuffer<char> & Buffer); ///< Read from the socket into a buffer
 	void				setEventWatcher(SocketEventWatcher * pWatcher); ///< Set the event watcher
+	void				setMessageMode(bool Enabled);	///< Enable automatic message handling mode?
 	void 				setTo(Socket const & SocketToBecome); ///< Initialize from another socket
 	void 				shutdown();			///< Shutdown socket processing
-	
+	int 				write(const char * Buffer, int BufLen); ///< Write date to the socket
+	void				writeMessage(std::string const & Message, bool FormatMessage = true); ///< Write message to socket
 	
 	// Construction / Deconstruction
 	Socket();							///< Default Constructor
@@ -141,13 +146,16 @@ public:
 
 protected:
 	// Private Member Functions
+	void 				addToMessageBuffer(char * Data, int BufLen); ///< Add data to the message buffer
 	void				handleSocketDisconnect();	///< Handle a socket disconnect
 	void 				handleSocketRead(DynamicBuffer<char> & ReadBuffer); ///< Handle a socket read
 	void				init();				///< Initialize the socket
 	int 				read(char * Buffer, int BufLen);///< Read from a socket
+	void				setAddress();			///< Set the socket's address
 	void				threadProcRead();		///< Thread procedure for reading from the socket
 
 	// Private Member Variables
+	std::string			mAddress;			///< The socket's address
 	int				mBacklog;			///< Listen with backlog enabled?
 	SocketDomain			mDomain;			///< Socket domain
 	SocketEventWatcher *		mpEventWatcher;			///< Object that listens for events on this socket
@@ -155,6 +163,8 @@ protected:
 	int				mPort;				///< Socket port
 	bool				mProcessing;			///< Keep processing?
 	SocketProtocol			mProtocol;			///< Socket protocol
+	DynamicBuffer<char>		mMessageBuffer;			///< Buffer that holds messages
+	bool				mMessageMode;			///< Do automatic message processing?
 	struct sockaddr_in 		mSockAddr;			///< The socket addres structure
 	socklen_t			mSockAddrLen;			///< Length of the socket address
 	int				mSocket;			///< The socket

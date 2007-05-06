@@ -62,7 +62,10 @@ class SocketServer : public Socket, private SocketEventWatcher {
 public:
 	// Public Member Functions
 	void				acceptConnections(int ListenPort, SocketDomain Domain = SOCKET_INTERNET, SocketType Type = SOCKET_STREAM); ///< Start accepting incoming connections
-	virtual void			onSocketConnect(boost::shared_ptr<Socket> pSocket); ///< Event triggered when a new connection is detected
+	virtual void			onSocketServerConnect(boost::shared_ptr<Socket> pSocket); ///< Event triggered when a new connection is detected
+	virtual void 			onSocketServerDisconnect(Socket const & socket); ///< Event triggered on a socket disconnect
+	virtual void 			onSocketServerMessage(Socket const & socket, std::string const & Message); ///< Event triggered on a socket message
+	virtual void 			onSocketServerRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer); ///< Event triggered on a socket read
 	void 				shutdown();			///< Shutdown socket processing
 	void				threadProc();			///< The thread procedure loop
 	
@@ -72,7 +75,9 @@ public:
 
 private:
 	// private member functions
-	void 				onSocketDisconnect(SocketInterface const & iSocket); ///< Handle a socket read
+	void 				onSocketDisconnect(SocketInterface const & iSocket); ///< Handle a socket disconnect
+	void 				onSocketConnect(SocketInterface const & iSocket); ///< Handle a socket connection
+	void 				onSocketMessage(SocketInterface const & iSocket, std::string const & Message); ///< Handle a socket message
 	void 				onSocketRead(SocketInterface const & iSocket, DynamicBuffer<char> & ReadBuffer); ///< Handle a socket read
 	
 	// Private Member Variables

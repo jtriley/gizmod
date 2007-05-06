@@ -67,6 +67,12 @@ typedef enum {
 	GIZMO_EVENTCLASS_STANDARD,
 	GIZMO_EVENTCLASS_WINDOWFOCUS,
 } GizmoEventClass;
+
+/**
+ * \def    GIZMO_EVENTCLASS_MAX
+ * \brief  Max event class value
+ */
+#define GIZMO_EVENTCLASS_MAX	GIZMO_EVENTCLASS_WINDOWFOCUS
 	
 //////////////////////////////////////////////////////////////////////////////
 // Class Definition
@@ -89,10 +95,11 @@ public:
 	virtual ~GizmoEvent();						///< Destructor
 	
 protected:
-	// private functions
-	
-	// private member variables
+	// protected member variables
 	GizmoEventClass			mClass;				///< Class of the Gizmo
+	
+private:
+	// private functions
 	
 private: 
 	// serialization

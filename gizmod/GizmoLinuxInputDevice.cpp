@@ -137,7 +137,7 @@ bool GizmoLinuxInputDevice::createEvents(int Type, int Code, int Value, int NumW
  * \brief  Get whether or not the Gizmo sends NULL events
  * \return True if sends null events
  */
-bool GizmoLinuxInputDevice::getSendNullEvents() {
+bool GizmoLinuxInputDevice::getSendNullEvents() const {
 	return mSendNullEvents;
 }
 

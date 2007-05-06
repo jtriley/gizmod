@@ -42,6 +42,7 @@
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include "../libH/SocketServer.hpp"
+#include "../libH/SocketClient.hpp"
 #include <ext/hash_map>
 #include <map>
 #include <string>
@@ -69,19 +70,48 @@ class GizmoDaemon :
 	public Alsa,
 	public Processes,
 	public CPUUsage,
-	public SocketServer
+	public SocketServer,
+	public SocketClient
 {
 public:
 	// public functions
-	void				enterLoop();		///< Enter the main run loop
-	X11FocusEvent 	 		getCurrentFocus();	///< Get currently focused window
-	bool				getDebugEnabled();	///< Is debug mode enabled?
-	GizmodEventHandlerInterface *	getDispatcher();	///< Get the event handler / dispatcher
+	void				enterLoop();			///< Enter the main run loop
+	X11FocusEvent 	 		getCurrentFocus();		///< Get currently focused window
+	bool				getDebugEnabled();		///< Is debug mode enabled?
+	GizmodEventHandlerInterface *	getDispatcher();		///< Get the event handler / dispatcher
 	boost::shared_ptr<Gizmo>	getGizmoByFileName(std::string FileName); ///< Get a Gizmo by its file name
 	int 				getNumGizmosByClass(GizmoClass Class); ///< Get number of Gizmos of a particular class
-	std::string			getVersion();		///< Get version string
-	void				initGizmod();		///< Initialize GizmoDaemon Evolution
+	std::string			getVersion();			///< Get version string
+	void				initGizmod();			///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
+	void 				printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3); ///< Print a nice looking init string
+	void				signalShutdown();		///< Shutdown gizmod
+		
+	// construction / deconstruction
+	GizmoDaemon();							///< Default Constructor
+	virtual ~GizmoDaemon();						///< Destructor
+
+private:
+	// private functions
+	void 				deleteGizmo(std::string FileName); ///< Delete a Gizmo
+	void				deserializeMessage(GizmoEventClass EventClass, std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessageATIX10(std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessageCPUUsage(std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessageLIRC(std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessagePowermate(std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessageSoundcard(std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessageStandard(std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessageWindowFocus(std::string const & Message); ///< Deserialize a network message into event Objects
+	int 				getGizmoClassID(GizmoClass Class); ///< Get number of Gizmos of a particular class
+	std::string	 		getProps();			///< Get version information
+	std::string			getUserScriptDirPaths();	///< Get all of the dirs inside the user script dir
+	void 				handleFileEventReadATIX10(GizmoATIX10 & pGizmo, DynamicBuffer<char> const & ReadBuffer); ///< Handle incoming ATIX10 events
+	void 				handleFileEventReadLIRC(GizmoLIRC & pGizmo, DynamicBuffer<char> const & ReadBuffer); ///< Handle incoming LIRC events
+	void 				handleFileEventReadPowermate(GizmoPowermate & pGizmo, DynamicBuffer<char> const & ReadBuffer); ///< Handle incoming Powermate events
+	void 				handleFileEventReadStandard(GizmoStandard & pGizmo, DynamicBuffer<char> const & ReadBuffer); ///< Handle incoming Standard events
+	void				initPython();			///< Initialize Python
+	void 				loadUserScripts();		///< Load user scripts
+	void 				loadUserScriptsFunctor(std::string UserScript); ///< Load user scripts functor
 	virtual void			onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
 	virtual void			onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is discovered
 	virtual void			onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Triggered when a mixer element is detached
@@ -95,51 +125,47 @@ public:
 	virtual void			onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a new device is registered
 	virtual void			onFocusIn(X11FocusEvent const & Event); ///< Event triggered on a Focus In
 	virtual void			onFocusOut(X11FocusEvent const & Event); ///< Event triggered on a Focus Out
-	virtual void			onSignalSegv();		///< Signal handler for SEGV
-	virtual void			onSignalInt();		///< Signal handler for INT
-	virtual void			onSignalHup();		///< Signal handler for HUP
-	virtual void			onSignalQuit();		///< Signal handler for QUIT
-	virtual void			onSignalKill();		///< Signal handler for KILL
-	virtual void			onSignalTerm();		///< Signal handler for TERM
-	virtual void			onSignalStop();		///< Signal handler for STOP
+	virtual void			onSignalSegv();			///< Signal handler for SEGV
+	virtual void			onSignalInt();			///< Signal handler for INT
+	virtual void			onSignalHup();			///< Signal handler for HUP
+	virtual void			onSignalQuit();			///< Signal handler for QUIT
+	virtual void			onSignalKill();			///< Signal handler for KILL
+	virtual void			onSignalTerm();			///< Signal handler for TERM
+	virtual void			onSignalStop();			///< Signal handler for STOP
 	virtual void			onSignalUnknown(int Signal); ///< Signal handler for Unknown Signals
-	void 				printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3); ///< Print a nice looking init string
-	void				signalShutdown();	///< Shutdown gizmod
-		
-	// construction / deconstruction
-	GizmoDaemon();						///< Default Constructor
-	virtual ~GizmoDaemon();					///< Destructor
-
-private:
-	// private functions
-	void 				deleteGizmo(std::string FileName); ///< Delete a Gizmo
-	int 				getGizmoClassID(GizmoClass Class); ///< Get number of Gizmos of a particular class
-	std::string	 		getProps();		///< Get version information
-	std::string			getUserScriptDirPaths();///< Get all of the dirs inside the user script dir
-	void				initPython();		///< Initialize Python
-	void 				loadUserScripts();	///< Load user scripts
-	void 				loadUserScriptsFunctor(std::string UserScript); ///< Load user scripts functor
-	void 				registerDevices();	///< Register all the attached system devices
-	void				registerInputEventDevices(); ///< Register input event devices (/dev/input/*)
-	void 				registerLircDevice();	///< Register the LIRC device
-	void				setConfigDir();		///< Set the config dir
+	virtual void			onSocketClientConnect(Socket const & socket); ///< Handle a socket connection
+	virtual void 			onSocketClientDisconnect(Socket const & socket); ///< Handle a socket read
+	virtual void 			onSocketClientMessage(Socket const & socket, std::string const & Message); ///< Event triggered on a socket message
+	virtual void			onSocketClientRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer); ///< Handle a socket read
+	virtual void			onSocketServerConnect(boost::shared_ptr<Socket> pSocket); ///< Event triggered when a new connection is detected
+	virtual void 			onSocketServerDisconnect(Socket const & socket); ///< Event triggered on a socket disconnect
+	virtual void 			onSocketServerMessage(Socket const & socket, std::string const & Message); ///< Event triggered on a socket message
+	virtual void 			onSocketServerRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer); ///< Event triggered on a socket read
+	void 				registerDevices();		///< Register all the attached system devices
+	void				registerInputEventDevices();	///< Register input event devices (/dev/input/*)
+	void 				registerLircDevice();		///< Register the LIRC device
+	void				setConfigDir();			///< Set the config dir
 	
 	// private member vars
-	std::string			mConfigDir;		///< Configuration scripts directory
-	X11FocusEvent			mCurrentFocus;		///< Currently focused window
-	std::string			mEventsDir;		///< Event node directory
-	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; ///< Map of Gizmos
-	bool				mInitialized;		///< Has GizmoDaemon been properly initialized?
-	std::string			mLircDev;		///< Lirc device node
-	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
-	boost::python::object		mPyMainModule;		///< The Python Main Module
-	boost::python::object		mPyMainNamespace;	///< The Python Main Namespace
-	bool				mServerEnabled;		///< Allow incoming connections
-	int				mServerPort;		///< Port of the server
-	bool				mShuttingDown;		///< Shutting down?
+	std::string			mClientHost;			///< Remote host to forward events to 
+	int				mClientPort;			///< Port to forward events to
+	std::string			mConfigDir;			///< Configuration scripts directory
+	X11FocusEvent			mCurrentFocus;			///< Currently focused window
+	bool				mDisabledCPUUsage;		///< Disable CPU Usage reporting
+	std::string			mEventsDir;			///< Event node directory
+	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; 	///< Map of Gizmos
+	bool				mInitialized;			///< Has GizmoDaemon been properly initialized?
+	std::string			mLircDev;			///< Lirc device node
+	bool				mLocalDisabled;			///< Disable local processing of events?
+	GizmodEventHandlerInterface * 	mpPyDispatcher;			///< The GizmoDaemonDispatcher Python object
+	boost::python::object		mPyMainModule;			///< The Python Main Module
+	boost::python::object		mPyMainNamespace;		///< The Python Main Namespace
+	bool				mServerEnabled;			///< Allow incoming connections
+	int				mServerPort;			///< Port of the server
+	bool				mShuttingDown;			///< Shutting down?
 	
 	// static private member vars
-	static boost::mutex		mMutexScript;		///< Mutex for the python script
+	static boost::mutex		mMutexScript;			///< Mutex for the python script
 };
 
 #endif // __GizmoDaemon_h

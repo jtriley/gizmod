@@ -83,11 +83,11 @@ class LIRCHauppaugeDefault(Hauppauge):
 		   		return False
 		   	elif KeyString == "VolUp":
 		   		if Gizmod.DefaultMixerVolume:
-		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent + 5
+		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent + 2.5
 		   		return True
 		   	elif KeyString == "VolDown":
 		   		if Gizmod.DefaultMixerVolume:
-		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent - 5
+		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent - 2.5
 		   		return True
 		   	elif KeyString == "Prev.Ch":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_BACKSPACE)

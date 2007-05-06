@@ -604,6 +604,7 @@ void FileEventWatcher::watchForFileEvents() {
 		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), POLL_TIMEOUT)) == -1) {
 			// error
 			cdbg1 << "Poll error: " << strerror(errno) << endl;
+			//continue; // <-- for debugging, since the debugger fires signals and causes poll to abort
 			return;
 		}
 						

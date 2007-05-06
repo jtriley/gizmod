@@ -57,7 +57,7 @@ public:
 	bool 				createEvent(int Type, int Code, int Value); ///< Write event to the device
 	bool 				createEventPress(int Type, int Code); ///< Write a "press" event to the device (two events, with value 1, then 0)
 	bool 				createEvents(int Type, int Code, int Value, int NumWrites); ///< Write multiple similar events to the device
-	bool				getSendNullEvents();		///< Get whether or not the Gizmo sends NULL events
+	bool				getSendNullEvents() const;		///< Get whether or not the Gizmo sends NULL events
 	bool 				grabExclusiveAccess(bool Grab); ///< Grab a device for exlusive access (or ungrab)
 	bool				processEvent();			///< Should we process the event based on the minimum time between events?
 	bool 				remapKey(int CurCode, int NewCode); /// Remap a key on the device

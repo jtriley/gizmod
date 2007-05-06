@@ -37,6 +37,9 @@
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -69,11 +72,23 @@ public:
 	virtual ~GizmoEventLIRC();					///< Destructor
 
 protected:
+	
+private:
 	// private functions
 	
 	// private member variables
 	
 	// static private functions
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<GizmoEvent>(*this);
+		ar & LIRCData;
+		ar & LIRCDataBitString;
+	}		
 };
 
 #endif // __GizmoEventLIRC_h

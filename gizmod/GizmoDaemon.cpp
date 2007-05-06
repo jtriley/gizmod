@@ -45,6 +45,7 @@
 #include "../libH/SocketException.hpp"
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <list>
 #include <boost/program_options.hpp>
@@ -54,12 +55,12 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <fcntl.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/list.hpp>
+#include <fcntl.h>
 
 using namespace std;
 using namespace boost;
@@ -127,16 +128,16 @@ using namespace H;
 #define NO_GETTER		python::object()
 
 /** 
- * \def    DEFAULT_SERVER_PORT
+ * \def    DEFAULT_PORT
  * \brief  Default port to start the server on
  */
-#define DEFAULT_SERVER_PORT	30303
+#define DEFAULT_PORT		30303
 
 /** 
- * \def    DEFAULT_SERVER_PORT_STR
+ * \def    DEFAULT_PORT_STR
  * \brief  Default port to start the server on
  */
-#define DEFAULT_SERVER_PORT_STR	"30303"
+#define DEFAULT_PORT_STR	"30303"
 
 ////////////////////////////////////////////////////////////////////////////
 // Statics
@@ -508,11 +509,15 @@ GizmoDaemon::GizmoDaemon() {
 	cout << getProps();
 	
 	setConfigDir();
+	mClientHost = "";
+	mClientPort = DEFAULT_PORT;
+	mDisabledCPUUsage = false;
 	mEventsDir = EVENT_NODE_DIR;
 	mInitialized = false;
 	mLircDev = LIRC_DEV;
+	mLocalDisabled = false;
 	mpPyDispatcher = NULL;
-	mServerPort = DEFAULT_SERVER_PORT;
+	mServerPort = DEFAULT_PORT;
 	mServerEnabled = false;
 	mShuttingDown = false;
 }
@@ -579,6 +584,123 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
 	mGizmos.erase(FileName);
 	cdbg2 << "Deleted Gizmo [" << FileName << "]" << endl;
 }
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  EventClass The class of object to deserialize
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessage(GizmoEventClass EventClass, std::string const & Message) {	
+	switch (EventClass) {
+	case GIZMO_EVENTCLASS_ATIX10:
+		deserializeMessageATIX10(Message);
+		break;
+	case GIZMO_EVENTCLASS_CPUUSAGE:
+		deserializeMessageCPUUsage(Message);
+		break;
+	case GIZMO_EVENTCLASS_LIRC:
+		deserializeMessageLIRC(Message);
+		break;
+	case GIZMO_EVENTCLASS_POWERMATE:
+		deserializeMessagePowermate(Message);
+		break;
+	case GIZMO_EVENTCLASS_SOUNDCARD:
+		deserializeMessageSoundcard(Message);
+		break;
+	case GIZMO_EVENTCLASS_STANDARD:
+		deserializeMessageStandard(Message);
+		break;
+	case GIZMO_EVENTCLASS_WINDOWFOCUS:
+		deserializeMessageWindowFocus(Message);
+		break;
+	}
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessageATIX10(std::string const & Message) {	
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessageCPUUsage(std::string const & Message) {	
+	// deserialize
+	stringstream InStream(Message);
+	archive::text_iarchive InArchive(InStream);
+	GizmoEventCPUUsage Event;
+	InArchive >> Event;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event);
+	}
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessageLIRC(std::string const & Message) {	
+	// separate the two components of the message
+	size_t SepPos = Message.find("|");
+	if (SepPos == string::npos) {
+		cdbg << "Could not deserialize LIRC message -- invalid format" << endl;
+		return;
+	}
+	string MessageEvent = Message.substr(0, SepPos);
+	string MessageDevice = Message.substr(SepPos + 1);
+
+	// deserialize
+	stringstream InStreamEvent(MessageEvent);
+	archive::text_iarchive InArchiveEvent(InStreamEvent);
+	GizmoEventLIRC Event;
+	InArchiveEvent >> Event;
+	
+	stringstream InStreamDevice(MessageDevice);
+	archive::text_iarchive InArchiveDevice(InStreamDevice);
+	GizmoLIRC Gizmo;
+	InArchiveDevice >> Gizmo;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event, &Gizmo);
+	}
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {	
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessageSoundcard(std::string const & Message) {	
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {	
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {	
+}
+
 
 /**
  * \brief  Enter the main run loop
@@ -712,6 +834,89 @@ string GizmoDaemon::getVersion() {
 }
 
 /**
+ * \brief Handle incoming ATIX10 events
+ * \param pWatchee The Watchee that triggered the event
+ * \param ReadBuffer The data that was waiting on the device
+ */
+void GizmoDaemon::handleFileEventReadATIX10(GizmoATIX10 & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
+	std::vector< boost::shared_ptr<GizmoEventATIX10> > EventVector;
+	GizmoEventATIX10::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
+	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+		mutex::scoped_lock lock(mMutexScript);
+		if (Gizmo.processEvent(EventVector[lp].get()))
+			if (!mLocalDisabled)
+				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+	}
+}
+
+/**
+ * \brief Handle incoming LIRC events
+ * \param pWatchee The Watchee that triggered the event
+ * \param ReadBuffer The data that was waiting on the device
+ */
+void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
+	std::vector< boost::shared_ptr<GizmoEventLIRC> > EventVector;
+	GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
+	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+		mutex::scoped_lock lock(mMutexScript);
+		if (Gizmo.processEvent(EventVector[lp].get())) {
+			// process the local event
+			if (!mLocalDisabled)
+				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+			
+			// process the remote event
+			if (isClientConnected()) {
+				// serialize
+				stringstream OutStreamEvent;
+				archive::text_oarchive OutArchiveEvent(OutStreamEvent);
+				OutArchiveEvent << static_cast<GizmoEventLIRC const>(*EventVector[lp]);
+				
+				stringstream OutStreamDevice;
+				archive::text_oarchive OutArchiveDevice(OutStreamDevice);
+				OutArchiveDevice << static_cast<GizmoLIRC const>(Gizmo);
+				try {
+					sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_CPUUSAGE) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
+				} catch (SocketException const & e) {
+					cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
+				}
+			}					
+		}
+	}
+}
+
+/**
+ * \brief Handle incoming Powermate events
+ * \param pWatchee The Watchee that triggered the event
+ * \param ReadBuffer The data that was waiting on the device
+ */
+void GizmoDaemon::handleFileEventReadPowermate(GizmoPowermate & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
+	std::vector< boost::shared_ptr<GizmoEventPowermate> > EventVector;
+	GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
+	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+		mutex::scoped_lock lock(mMutexScript);
+		if (Gizmo.processEvent(EventVector[lp].get()))
+			if (!mLocalDisabled)
+				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+	}
+}
+
+/**
+ * \brief Handle incoming Standard events
+ * \param pWatchee The Watchee that triggered the event
+ * \param ReadBuffer The data that was waiting on the device
+ */
+void GizmoDaemon::handleFileEventReadStandard(GizmoStandard & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
+	std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
+	GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
+	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
+		mutex::scoped_lock lock(mMutexScript);
+		if (Gizmo.processEvent(EventVector[lp].get()))
+			if (!mLocalDisabled)
+				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+	}
+}
+
+/**
  * \brief  Setup GizmoDaemon
  * 
  * Initialize GizmoDaemon
@@ -722,7 +927,7 @@ void GizmoDaemon::initGizmod() {
 	
 	// initialize signals
 	initSignals();
-	
+		
 	// init python
 	try {
 		initPython();
@@ -731,6 +936,16 @@ void GizmoDaemon::initGizmod() {
 	} catch (exception & e) {
 		throw H::Exception("Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
 	}
+	
+	// initialize the client
+	if (mClientHost != "") {
+		try {
+			cout << "Connecting to [" << mClientHost << "] at Port [" << mClientPort << "]..." << endl;
+			connectToServer(mClientHost, mClientPort);
+		} catch (SocketException const & e) {
+			throw H::Exception(e.getExceptionMessage(), __FILE__, __FUNCTION__, __LINE__);
+		}
+	}		
 	
 	// register all the devices
 	try {
@@ -745,12 +960,22 @@ void GizmoDaemon::initGizmod() {
 	} catch (H::Exception & e) {
 		cerr << e.getExceptionMessage() << endl;
 	}
-			
+	
+	// initialize the server
+	if (mServerEnabled) {
+		try {
+			acceptConnections(mServerPort);
+		} catch (SocketException const & e) {
+			throw H::Exception("Failed to Start Server -- " + e.getExceptionMessage(), __FILE__, __FUNCTION__, __LINE__);
+		}
+	}
+				
 	// init the X11FocusWatcher
 	X11FocusWatcher::init();
 	
 	// init the CPU Usage watcher
-	CPUUsage::init();
+	if (!mDisabledCPUUsage)
+		CPUUsage::init();
 	
 	// init Alsa
 	try {
@@ -758,17 +983,7 @@ void GizmoDaemon::initGizmod() {
 	} catch (H::Exception & e) {
 		cerr << e.getExceptionMessage() << endl;
 	}
-	
-	// initialize the server
-	if (mServerEnabled) {
-		try {
-			acceptConnections(mServerPort);
-		} catch (SocketException const & e) {
-			cout << "Failed to start server on port [" << mServerPort << "] Disabling server support -- " << e.getExceptionMessage() << endl;
-			mServerEnabled = false;
-		}
-	}
-	
+		
 	// success
 	mInitialized = true;
 }
@@ -859,11 +1074,15 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	// config file options that can be loaded via command line as well
 	options_description ConfigurationOptions("Configuration Options");
 	ConfigurationOptions.add_options()
-		("configdir,c",		value<string>(),	"Set config scripts directory") 
-		("eventsdir,e",		value<string>(),	"Set event node directory (default: " EVENT_NODE_DIR ")")
-		("lircdev,l",		value<string>(),	"Set LIRC device node (default: " LIRC_DEV ")")
+		("client-host,c",	value<string>(),	"Enable event forwarding to a remote host")
+		("client-port,P",	value<int>(),		"Port to forward events to (default: " DEFAULT_PORT_STR ")")
+		("config-dir,C",	value<string>(),	"Set config scripts directory") 
+		("events-dir,e",	value<string>(),	"Set event node directory (default: " EVENT_NODE_DIR ")")
+		("lirc-dev,l",		value<string>(),	"Set LIRC device node (default: " LIRC_DEV ")")
+		("no-cpuusage,U",				"Disable CPU Usage reporting")
+		("no-local,n",					"Disable local processing of events")
 		("server,s",					"Enable server (default: not enabled)")
-		("server-port,p",	value<int>(),		"Port to start Gizmod server on (default: " DEFAULT_SERVER_PORT_STR ")")
+		("server-port,p",	value<int>(),		"Port to start Gizmod server on (default: " DEFAULT_PORT_STR ")")
 		;
         
         // hiGizmoDaemonn options
@@ -922,21 +1141,37 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		Debug::setDebugVerbosity(VarMap["verbosity"].as<int>());
 		cdbg << "Debug Verbosity set to [" << VarMap["verbosity"].as<int>() << "]" << endl;
 	}
-	if (VarMap.count("configdir")) {
-		mConfigDir = VarMap["configdir"].as<string>();
+	if (VarMap.count("client-host")) {
+		mClientHost = VarMap["client-host"].as<string>();
+		cdbg << "Client Forwarding to [" << mClientHost << "]" << endl;
+	}
+	if (VarMap.count("client-port")) {
+		mClientPort = VarMap["client-port"].as<int>();
+		cdbg << "Client port set to [" << mClientPort << "]" << endl;
+	}
+	if (VarMap.count("config-dir")) {
+		mConfigDir = VarMap["config-dir"].as<string>();
 		if (mConfigDir[mConfigDir.length() - 1] != '/')
 			mConfigDir += "/";
 		cdbg << "Config Scripts Directory set to [" << mConfigDir << "]" << endl;
 	}
-	if (VarMap.count("eventsdir")) {
-		mEventsDir = VarMap["eventsdir"].as<string>();
+	if (VarMap.count("events-dir")) {
+		mEventsDir = VarMap["events-dir"].as<string>();
 		if (mEventsDir[mEventsDir.length() - 1] != '/')
 			mEventsDir += "/";
 		cdbg << "Event Node Directory set to [" << mEventsDir << "]" << endl;
 	}
-	if (VarMap.count("lircdev")) {
-		mLircDev = VarMap["lircdev"].as<string>();
+	if (VarMap.count("lirc-dev")) {
+		mLircDev = VarMap["lirc-dev"].as<string>();
 		cdbg << "LIRC Device Node set to [" << mLircDev << "]" << endl;
+	}
+	if (VarMap.count("no-cpuusage")) {
+		mDisabledCPUUsage = true;
+		cdbg << "CPU Usage Reporting Disabled" << endl;
+	}
+	if (VarMap.count("no-local")) {
+		mLocalDisabled = true;
+		cdbg << "Local Event Processing Disabled" << endl;
 	}
 	if (VarMap.count("server")) {
 		mServerEnabled = !mServerEnabled;
@@ -1054,7 +1289,9 @@ void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSou
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
-		mpPyDispatcher->onEvent(&EventSoundCard);
+		
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventMixerElementAttach" << endl;
@@ -1079,7 +1316,9 @@ void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSou
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
-		mpPyDispatcher->onEvent(&EventSoundCard);
+		
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventMixerElementChange" << endl;
@@ -1100,7 +1339,9 @@ void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSou
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
-		mpPyDispatcher->onEvent(&EventSoundCard);
+		
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventMixerElementDetach" << endl;
@@ -1120,7 +1361,9 @@ void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundC
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
-		mpPyDispatcher->onEvent(&EventSoundCard);
+		
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventSoundCardAttach" << endl;
@@ -1140,7 +1383,9 @@ void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundC
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
-		mpPyDispatcher->onEvent(&EventSoundCard);
+		
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&EventSoundCard);
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onAlsaEventSoundCardDetach" << endl;
@@ -1158,25 +1403,23 @@ void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > cons
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventCPUUsage const EventCPUUsage(Event);
-		mpPyDispatcher->onEvent(&EventCPUUsage);
 		
-		/*
-		// serialization test begin
-		ofstream ofs("/tmp/test.txt");
-		archive::text_oarchive oa(ofs);
-		oa << EventCPUUsage;
-		cout << EventCPUUsage.getCPUUsageAvg(0) << " / " << EventCPUUsage.getNumCPUs() << endl;
-		ofs.close();
+		// process the local event
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&EventCPUUsage);
 		
-		ifstream ifs("/tmp/test.txt");
-		archive::text_iarchive ia(ifs);
-		GizmoEventCPUUsage tEvent;
-		ia >> tEvent;
-		cout << tEvent.getCPUUsageAvg(0) << " / " << tEvent.getNumCPUs() << endl;
-		ifs.close();
-		// serialization test end
-		*/
-		
+		// process the remote event
+		if (isClientConnected()) {
+			// serialize
+			stringstream OutStream;
+			archive::text_oarchive OutArchive(OutStream);
+			OutArchive << EventCPUUsage;
+			try {
+				sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_CPUUSAGE) + "|" + OutStream.str());
+			} catch (SocketException const & e) {
+				cdbg << "Failed to send CPUUsage Message to Server -- " << e.getExceptionMessage() << endl;
+			}
+		}		
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onCPUUsage" << endl; 
@@ -1236,46 +1479,18 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 	// create the event and dispatch it
 	try {
 		switch (pUnknownGizmo->getClass()) {
-		case GIZMO_CLASS_ATIX10: {
-			std::vector< boost::shared_ptr<GizmoEventATIX10> > EventVector;
-			GizmoATIX10 * pGizmo = static_cast<GizmoATIX10 const *>(pUnknownGizmo.get());
-			GizmoEventATIX10::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
-			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-				mutex::scoped_lock lock(mMutexScript);
-				if (pGizmo->processEvent(EventVector[lp].get()))
-					mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
-			}
-			break; }
-		case GIZMO_CLASS_LIRC: {
-			std::vector< boost::shared_ptr<GizmoEventLIRC> > EventVector;
-			GizmoLIRC * pGizmo = static_cast<GizmoLIRC const *>(pUnknownGizmo.get());
-			GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
-			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-				mutex::scoped_lock lock(mMutexScript);
-				if (pGizmo->processEvent(EventVector[lp].get()))
-					mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
-			}
-			break; }
-		case GIZMO_CLASS_POWERMATE: {
-			std::vector< boost::shared_ptr<GizmoEventPowermate> > EventVector;
-			GizmoPowermate * pGizmo = static_cast<GizmoPowermate const *>(pUnknownGizmo.get());
-			GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
-			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-				mutex::scoped_lock lock(mMutexScript);
-				if (pGizmo->processEvent(EventVector[lp].get()))
-					mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
-			}
-			break; }
-		case GIZMO_CLASS_STANDARD: {
-			std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
-			GizmoStandard * pGizmo = static_cast<GizmoStandard const *>(pUnknownGizmo.get());
-			GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, pGizmo->getSendNullEvents());
-			for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-				mutex::scoped_lock lock(mMutexScript);
-				if (pGizmo->processEvent(EventVector[lp].get()))
-					mpPyDispatcher->onEvent(EventVector[lp].get(), pGizmo);
-			}
-			break; }
+		case GIZMO_CLASS_ATIX10:
+			handleFileEventReadATIX10(static_cast<GizmoATIX10 &>(*pUnknownGizmo), ReadBuffer);
+			break;
+		case GIZMO_CLASS_LIRC:
+			handleFileEventReadLIRC(static_cast<GizmoLIRC &>(*pUnknownGizmo), ReadBuffer);
+			break;
+		case GIZMO_CLASS_POWERMATE:
+			handleFileEventReadPowermate(static_cast<GizmoPowermate &>(*pUnknownGizmo), ReadBuffer);
+			break;			
+		case GIZMO_CLASS_STANDARD: 
+			handleFileEventReadStandard(static_cast<GizmoStandard &>(*pUnknownGizmo), ReadBuffer);
+			break;			
 		}
 	} catch (error_already_set) {
 		PyErr_Print();
@@ -1336,7 +1551,8 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 		mutex::scoped_lock lock(mMutexScript);
 		mCurrentFocus = Event;
 		GizmoEventWindowFocus FocusEvent(Event);
-		mpPyDispatcher->onEvent(&FocusEvent);
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&FocusEvent);
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onFocusIn" << endl;
@@ -1355,7 +1571,8 @@ void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventWindowFocus FocusEvent(Event);
-		mpPyDispatcher->onEvent(&FocusEvent);
+		if (!mLocalDisabled)
+			mpPyDispatcher->onEvent(&FocusEvent);
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onFocusOut" << endl;
@@ -1366,7 +1583,6 @@ void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
  * \brief Signal handler for SEGV
  */
 void GizmoDaemon::onSignalSegv() {
-	// override me
 	cerr << "Segmentation Fault Detected" << endl;
 	signalShutdown();
 }
@@ -1375,7 +1591,6 @@ void GizmoDaemon::onSignalSegv() {
  * \brief Signal handler for INT
  */
 void GizmoDaemon::onSignalInt() {
-	// override me
 	cdbg << "Keyboard Interrupt Received..." << endl;
 	signalShutdown();
 }
@@ -1384,7 +1599,6 @@ void GizmoDaemon::onSignalInt() {
  * \brief Signal handler for HUP
  */
 void GizmoDaemon::onSignalHup() {
-	// override me
 	cerr << "Unhandled HUP Signal" << endl;
 }
 
@@ -1392,7 +1606,6 @@ void GizmoDaemon::onSignalHup() {
  * \brief Signal handler for QUIT
  */
 void GizmoDaemon::onSignalQuit() {
-	// override me
 	cdbg << "Request to Quit Received..." << endl;
 	signalShutdown();
 }
@@ -1401,7 +1614,6 @@ void GizmoDaemon::onSignalQuit() {
  * \brief Signal handler for KILL
  */
 void GizmoDaemon::onSignalKill() {
-	// override me
 	cdbg << "Kill signal Received..." << endl;
 	signalShutdown();
 }
@@ -1410,7 +1622,6 @@ void GizmoDaemon::onSignalKill() {
  * \brief Signal handler for TERM
  */
 void GizmoDaemon::onSignalTerm() {
-	// override me
 	cdbg << "Request to Terminate Received..." << endl;
 	signalShutdown();
 }
@@ -1419,7 +1630,6 @@ void GizmoDaemon::onSignalTerm() {
  * \brief Signal handler for STOP
  */
 void GizmoDaemon::onSignalStop() {
-	// override me
 	cdbg << "Request to Stop Received..." << endl;
 	signalShutdown();
 }
@@ -1428,8 +1638,97 @@ void GizmoDaemon::onSignalStop() {
  * \brief Signal handler for Unknown Signals
  */
 void GizmoDaemon::onSignalUnknown(int Signal) {
-	// override me
 	cerr << "Unhandled Unknown Signal" << endl;
+}
+
+/**
+ * \brief  Event triggered when a new connection is detected
+ * \param  socket The new socket
+ */
+void GizmoDaemon::onSocketClientConnect(Socket const & socket) {
+	cdbg << "Successfully Connected to [" << mClientHost << "] at Port [" << mClientPort << "]" << endl;
+}
+
+/**
+ * \brief  Event triggered on a socket disconnect
+ * \param  socket The socket
+ */
+void GizmoDaemon::onSocketClientDisconnect(Socket const & socket) {
+	cdbg << "Disconnected from Server" << endl;
+}
+
+/** 
+ * \brief  Event triggered on a socket server message
+ * \param  socket The Socket that triggered the event
+ * \param  Message The message
+ */
+void GizmoDaemon::onSocketClientMessage(Socket const & socket, std::string const & Message) {
+	cdbg << "Client Socket Message [" << Message.length() << "] Bytes -- " << Message << endl;
+}
+
+/**
+ * \brief  Event triggered on a socket read
+ * \param  socket The socket
+ * \param  ReadBuffer The data
+ */
+void GizmoDaemon::onSocketClientRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer) {
+	cdbg << "Client Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
+}
+
+/**
+ * \brief  Event triggered when a new connection is detected
+ * \param  pSocket The new socket
+ */
+void GizmoDaemon::onSocketServerConnect(boost::shared_ptr<Socket> pSocket) {
+	cdbg << "Client Connection from [" << pSocket->getAddress() << "]" << endl;
+}
+
+/**
+ * \brief  Event triggered on a socket disconnect
+ * \param  socket The socket
+ */
+void GizmoDaemon::onSocketServerDisconnect(Socket const & socket) {
+	cdbg << "Client Disconnected [" << socket.getAddress() << "]" << endl;
+}
+
+/** 
+ * \brief  Event triggered on a socket server message
+ * \param  socket The Socket that triggered the event
+ * \param  Message The message
+ */
+void GizmoDaemon::onSocketServerMessage(Socket const & socket, std::string const & Message) {
+	//cdbg << "Socket Message [" << Message.length() << "] Bytes -- " << Message << endl;
+	size_t dPos = Message.find("|");
+	if (dPos == string::npos) {
+		cdbg << "Invalid Message Received from Client [" << socket.getAddress() << "]" << endl;
+		return;
+	}
+	
+	int MessageType;
+	try {
+		 MessageType = lexical_cast<int>(Message.substr(0, dPos));
+	} catch (bad_lexical_cast const & e) {
+		cdbg << "Invalid Message Type Received from Client [" << socket.getAddress() << "]" << endl;
+		return;
+	}
+	
+	// make sure event class isn't all wacky
+	if ( (MessageType < 0) || (MessageType > GIZMO_EVENTCLASS_MAX) ) {
+		cdbg << "Improper Message Type Received from Client [" << socket.getAddress() << "]" << endl;
+		return;
+	}
+	
+	// everything is okay, let's deserialize
+	deserializeMessage(static_cast<GizmoEventClass>(MessageType), Message.substr(dPos + 1));
+}
+
+/**
+ * \brief  Event triggered on a socket read
+ * \param  socket The socket
+ * \param  ReadBuffer The data
+ */
+void GizmoDaemon::onSocketServerRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer) {
+	//cdbg4 << "Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
 }
 
 /**

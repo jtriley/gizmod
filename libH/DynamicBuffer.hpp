@@ -62,6 +62,7 @@ class DynamicBuffer {
 public:
 	// public functions
 	void			addToBuffer(const DataType * AddBuf, size_t BufLen); ///< Add data to the buffer
+	void			clear();			///< Clear the buffer's contents
 	const DataType * 	getBuffer() const;		///< Get the buffer
 	size_t			length() const;			///< Get the buffer length
 

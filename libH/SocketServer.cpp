@@ -87,38 +87,89 @@ void SocketServer::acceptConnections(int ListenPort, SocketDomain Domain, Socket
 }
 
 /**
- * \brief  Event triggered when a new connection is detected
- * \param  pSocket The new socket
+ * \brief Handle a socket Connect
+ * \param iSocket The Socket that triggered the event
+ *
+ * SocketEventWatcher triggers this event
  */
-void SocketServer::onSocketConnect(boost::shared_ptr<Socket> pSocket) {
-	cdbg << "New Socket Connection Detected" << endl;
+void SocketServer::onSocketConnect(SocketInterface const & iSocket) {
+	// this is only for client socket connections
 }
 
 /**
  * \brief Handle a socket Disconnect
- * \param TheSocket The Socket that triggered the event
+ * \param iSocket The Socket that triggered the event
  *
  * SocketEventWatcher triggers this event
  */
 void SocketServer::onSocketDisconnect(SocketInterface const & iSocket) {
-	shared_ptr<Socket> pSocket = mSockets[iSocket.getSocket()];
+	shared_ptr<Socket> pSocket = mSockets[iSocket.getOldSocket()];
 	if (!pSocket) {
-		cdbg << "Socket Disconnect from Unhandled Socket Detected" << endl;
+		cdbg << "SocketServer :: Socket Disconnect from Unhandled Socket Detected" << endl;
 	} else {
-		cdbg << "Socket Disconnect Detected" << endl;
-		mSockets.erase(iSocket.getSocket());
+		onSocketServerDisconnect(*pSocket);
+		mSockets.erase(iSocket.getOldSocket());
 	}
+}
+
+/** 
+ * \brief  Handle a socket message
+ * \param  iSocket The Socket that triggered the event
+ * \param  Message The message
+ *
+ * SocketEventWatcher triggers this event
+ */
+void SocketServer::onSocketMessage(SocketInterface const & iSocket, std::string const & Message) {
+	onSocketServerMessage(static_cast<Socket const &>(iSocket), Message);
 }
 
 /**
  * \brief Handle a socket read
- * \param TheSocket The Socket that triggered the event
+ * \param iSocket The Socket that triggered the event
  * \param ReadBuffer The Buffer
  *
  * SocketEventWatcher triggers this event
  */
 void SocketServer::onSocketRead(SocketInterface const & iSocket, DynamicBuffer<char> & ReadBuffer) {
-	cdbg << "Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
+	onSocketServerRead(static_cast<Socket const &>(iSocket), ReadBuffer);
+}
+
+/**
+ * \brief  Event triggered when a new connection is detected
+ * \param  pSocket The new socket
+ */
+void SocketServer::onSocketServerConnect(boost::shared_ptr<Socket> pSocket) {
+	// override me
+	cdbg << "SocketServer :: New Socket Connection Detected" << endl;
+}
+
+/**
+ * \brief  Event triggered on a socket disconnect
+ * \param  socket The socket
+ */
+void SocketServer::onSocketServerDisconnect(Socket const & socket) {
+	// override me
+	cdbg << "SocketServer :: Socket Disconnect Detected" << endl;
+}
+
+/** 
+ * \brief  Event triggered on a socket server message
+ * \param  socket The Socket that triggered the event
+ * \param  Message The message
+ */
+void SocketServer::onSocketServerMessage(Socket const & socket, std::string const & Message) {
+	// override me
+	cdbg << "SocketServer :: Socket Message [" << Message.length() << "] Bytes -- " << Message << endl;
+}
+
+/**
+ * \brief  Event triggered on a socket read
+ * \param  socket The socket
+ * \param  ReadBuffer The data
+ */
+void SocketServer::onSocketServerRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer) {
+	// override me
+	cdbg << "SocketServer :: Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
 }
 
 /**
@@ -146,12 +197,13 @@ void SocketServer::threadProc() {
 		
 		// configure the socket
 		pSocket->setEventWatcher(this);
+		pSocket->setMessageMode(true);
 		
 		// add the socket to the map
 		mSockets.insert(make_pair(pSocket->getSocket(), pSocket));
 		
 		// fire the event
-		onSocketConnect(pSocket);
+		onSocketServerConnect(pSocket);
 		
 		// start processing events on the new socket
 		pSocket->processEvents();

@@ -37,6 +37,9 @@
 #include "GizmoKeyDefs.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include <string>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -85,17 +88,35 @@ public:
 	void				setKeyState(GizmoKey Key, int State); ///< Set a keystate of the Gizmo
 	
 	// construction / deconstruction
+	Gizmo();							///< Serialize Constructor
 	Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
 	virtual ~Gizmo();						///< Destructor
 
 protected:
-	// private functions
+	// protected functions
 	
-	// private member variables
+	// protected member variables
 	GizmoClass			mClass;				///< Class of the Gizmo
 	int 				mDeviceID;			///< Unique ID of the device
 	int				mDeviceClassID;			///< ID of the device in its class
 	int				mKeyState[GIZMO_KEY_MAX];	///< Gizmos's key states
+	
+private:
+	// private functions
+	
+	// private member variables
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<H::DeviceInfo>(*this);
+		ar & mClass;
+		ar & mDeviceID;
+		ar & mDeviceClassID;
+		ar & mKeyState;
+	}	
 };
 
 #endif // __Gizmo_h

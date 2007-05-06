@@ -41,6 +41,8 @@
 #include <sys/poll.h>
 #include <map>
 #include "DynamicBuffer.hpp"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Namespace
@@ -103,6 +105,20 @@ public:
 	DeviceInfo(const DeviceInfo & DeviceInformation); 	///< Init Constructor
 	DeviceInfo(std::string DeviceName, std::string FileName, int DeviceIDBusType, int DeviceIDVendor, int DeviceIDProduct, int DeviceIDVersion, int FileDescriptor); ///< Init Constructor
 	virtual ~DeviceInfo();					///< Destructor
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & DeviceIDBusType;
+		ar & DeviceIDProduct;
+		ar & DeviceIDVendor;
+		ar & DeviceIDVersion;
+		ar & DeviceName;
+		ar & FileDescriptor;
+		ar & FileName;
+	}	
 };
 
 //////////////////////////////////////////////////////////////////////////////

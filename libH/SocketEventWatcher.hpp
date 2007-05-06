@@ -60,8 +60,10 @@ namespace H {
 class SocketEventWatcher {
 public:
 	// Public Member Functions
+	virtual void 				onSocketDisconnect(SocketInterface const & iSocket) = 0; ///< Handle a socket disconnect
+	virtual void 				onSocketConnect(SocketInterface const & iSocket) = 0; ///< Handle a socket connection
+	virtual void 				onSocketMessage(SocketInterface const & iSocket, std::string const & Message) = 0; ///< Handle a socket message
 	virtual void 				onSocketRead(SocketInterface const & iSocket, DynamicBuffer<char> & ReadBuffer) = 0; ///< Handle a socket read
-	virtual void 				onSocketDisconnect(SocketInterface const & iSocket) = 0; ///< Handle a socket read
 	
 	// Construction / Deconstruction
 	SocketEventWatcher();						///< Default Constructor

@@ -64,6 +64,12 @@ GizmoLIRC::GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceC
 }
 
 /**
+ * \brief GizmoLIRC Serialize Constructor
+ */
+GizmoLIRC::GizmoLIRC()  {
+}
+
+/**
  * \brief GizmoLIRC Destructor
  */
 GizmoLIRC::~GizmoLIRC() {

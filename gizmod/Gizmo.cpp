@@ -52,13 +52,17 @@ using namespace H;
 /**
  * \brief Gizmo Default Constructor
  */
-Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) :
-	DeviceInfo(deviceInfo)
-{
+Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : DeviceInfo(deviceInfo) {
 	mClass = Class;
 	mDeviceID = DeviceID;
 	mDeviceClassID = DeviceClassID;
 	memset(mKeyState, 0, sizeof(int) * GIZMO_KEY_MAX);
+}
+
+/**
+ * \brief Gizmo Serialize Constructor
+ */
+Gizmo::Gizmo() {
 }
 
 /**

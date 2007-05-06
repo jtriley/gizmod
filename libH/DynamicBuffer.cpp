@@ -58,9 +58,7 @@ DynamicBuffer<DataType>::DynamicBuffer() {
  */
 template <class DataType>
 DynamicBuffer<DataType>::~DynamicBuffer() {
-	if (mBuffer)
-		free(mBuffer);
-	mBuffer = NULL;
+	clear();
 }
 
 /**
@@ -94,6 +92,17 @@ void DynamicBuffer<DataType>::addToBuffer(const DataType * AddBuf, size_t BufLen
 	memcpy(mBuffer + mLength, AddBuf, sizeof(DataType) * BufLen);	
 	mLength += BufLen;
 	mBuffer[mLength] = '\0';
+}
+
+/**
+ * \brief Clear the buffer
+ */
+template <class DataType>
+void DynamicBuffer<DataType>::clear() {
+	if (mBuffer)
+		free(mBuffer);
+	mBuffer = NULL;
+	mLength = 0;
 }
 
 /**

@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  SocketInterface.hpp
-*** \brief SocketInterface class header file
+*** \file  SocketClient.hpp
+*** \brief SocketClient class header file
 ***
 *****************************************
   *****************************************
@@ -26,14 +26,15 @@
   
 */
 
-#ifndef __SocketInterface_h
-#define __SocketInterface_h
+#ifndef __SocketClient_h
+#define __SocketClient_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "SocketInterface.hpp"
+#include "Socket.hpp"
+#include "SocketEventWatcher.hpp"
 #include <cstdlib>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,29 +52,39 @@ namespace H {
 ///////////////////////////////////////
 
 /**
- * \class SocketInterface
- * \brief Main SocketInterface class
+ * \class SocketClient
+ * \brief Main SocketClient class
  *
  * This is an interface for classes wishing to receive socket events
  */
-class SocketInterface {
+class SocketClient : public Socket, private SocketEventWatcher {
 public:
 	// Public Member Functions
-	virtual int			getOldSocket() const = 0;	///< Get the socket (what it was before disconnect)
-	virtual int			getSocket() const = 0;		///< Get the socket
+	void				connectToServer(std::string Host, int Port); ///< Connect to a server
+	bool				isClientConnected();		///< Are we connected to the server
+	virtual void			onSocketClientConnect(Socket const & socket); ///< Event triggered on a socket connection
+	virtual void 			onSocketClientDisconnect(Socket const & socket); ///< Event triggered on a socket read
+	virtual void 			onSocketClientMessage(Socket const & socket, std::string const & Message); ///< Event triggered on a socket message
+	virtual void			onSocketClientRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer); ///< Event triggered on a socket read
+	void				sendToServer(std::string const & Message); ///< Send a message to the server
 	
 	// Construction / Deconstruction
-	SocketInterface();						///< Default Constructor
-	virtual ~SocketInterface();					///< Destructor
+	SocketClient();							///< Default Constructor
+	virtual ~SocketClient();					///< Destructor
 
 private:
 	// Private Member Functions
+	void 				onSocketConnect(SocketInterface const & iSocket); ///< Handle a socket connection
+	void 				onSocketDisconnect(SocketInterface const & iSocket); ///< Handle a socket read
+	void 				onSocketMessage(SocketInterface const & iSocket, std::string const & Message); ///< Handle a socket message
+	void 				onSocketRead(SocketInterface const & iSocket, DynamicBuffer<char> & ReadBuffer); ///< Handle a socket read
 
 	// Private Member Variables
+	bool				mConnected;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 } // H namespace
 
-#endif // __SocketInterface_h
+#endif // __SocketClient_h

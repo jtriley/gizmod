@@ -35,6 +35,10 @@
 #include <errno.h>
 #include <signal.h>
 #include <poll.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 using namespace H;
 using namespace boost;
@@ -62,6 +66,12 @@ using namespace std;
  */
 #define POLL_TIMEOUT	1000
 
+/**
+ * \def    STOP_CODON
+ * \brief  Message stop signififer
+ */
+#define STOP_CODON	"\255"
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction / Deconstruction
 ///////////////////////////////////////
@@ -70,6 +80,7 @@ using namespace std;
  * \brief Default Constructor
  */
 Socket::Socket() : mThreadProcRead(this) {
+	mpEventWatcher = NULL;
 	init();
 }
 
@@ -77,6 +88,7 @@ Socket::Socket() : mThreadProcRead(this) {
  * \brief Default Constructor
  */
 Socket::Socket(Socket const & InitFrom) : mThreadProcRead(this) {
+	mpEventWatcher = NULL;
 	init();
 	setTo(InitFrom);
 }
@@ -102,7 +114,7 @@ Socket::~Socket() {
 boost::shared_ptr<Socket> Socket::accept() {
 	// error checking
 	if (mSocket == SOCKET_ERROR)
-		throw SocketException("Accept on Invalid Socket!" + lexical_cast<string>(mPort), __FILE__, __FUNCTION__, __LINE__);
+		throw SocketException("Accept Attempted on Invalid Socket!" + lexical_cast<string>(mPort), __FILE__, __FUNCTION__, __LINE__);
 	
 	// set up the poll structure
 	struct pollfd PollFD;
@@ -129,9 +141,40 @@ boost::shared_ptr<Socket> Socket::accept() {
 	
 	// accept the connection
 	pSocket->mSocket = ::accept(mSocket, (struct sockaddr *) &pSocket->mSockAddr, &pSocket->mSockAddrLen);
+	pSocket->setAddress();
 	pSocket->mOldSocket = pSocket->mSocket;
 
 	return pSocket;
+}
+
+/**
+ * \brief  Add to the message buffer
+ */
+void Socket::addToMessageBuffer(char * Data, int BufLen) {
+	if (!mMessageMode)
+		return;
+	
+	char * pos = strstr(Data, STOP_CODON);
+	if (pos) {
+		// message found!
+		int Index = pos - Data;
+		string Message;
+		if (mMessageBuffer.length())
+			Message += mMessageBuffer.getBuffer(); 
+		Message += string(Data, Index);
+	
+		// fire the event
+		if (mpEventWatcher)
+			mpEventWatcher->onSocketMessage(*this, Message);
+		
+		// Check if there's another event 
+		mMessageBuffer.clear();
+		if (BufLen - Index > 1)
+			addToMessageBuffer(Data + Index + 1, BufLen - Index - 1);
+	} else {
+		// message not found
+		mMessageBuffer.addToBuffer(Data, BufLen);
+	}
 }
 
 /**
@@ -147,7 +190,7 @@ void Socket::bind(int Port) {
 	
 	/* bind the socket to the newly formed address */
 	if (::bind(mSocket, (struct sockaddr *) &mSockAddr, sizeof(mSockAddr)))
-		throw SocketException("Failed to Bind to Port" + lexical_cast<string>(mPort), __FILE__, __FUNCTION__, __LINE__);
+		throw SocketException("Failed to Bind to Port [" + lexical_cast<string>(mPort) + "]", __FILE__, __FUNCTION__, __LINE__);
 }
 
 /**
@@ -170,9 +213,54 @@ void Socket::closeSocket() {
 	}
 	#endif
 		
+	mOldSocket = mSocket;
 	init();
 }
 
+/**
+ * \brief  Connect to a server on Port at Host
+ * \param  Host The server to connect to
+ * \param  Port The port to connect to
+ */
+void Socket::connect(std::string Host, int Port) {
+	// error checking
+	if (mSocket == SOCKET_ERROR)
+		throw SocketException("Connect Attempted on Invalid Socket!", __FILE__, __FUNCTION__, __LINE__);
+	
+	// get hostname
+	struct hostent * hp = gethostbyname(Host.c_str());
+	if (!hp)
+		throw SocketException("Connect Failed to Resolve Host [" + Host + "]", __FILE__, __FUNCTION__, __LINE__);
+
+	// Set up the data structures
+	mPort = Port;
+#ifndef WIN32
+	struct in_addr address;
+	memcpy(&address, *(hp->h_addr_list), sizeof(struct in_addr));
+	mSockAddr.sin_addr = address;
+#else
+	memset(&mSockAddr, 0, sizeof(mSockAddr));
+	mSockAddr.sin_addr.s_addr = ((struct in_addr *)(hp->h_addr))->s_addr;
+#endif
+	mSockAddr.sin_family = AF_INET;
+	mSockAddr.sin_port = htons(mPort);
+	
+	cdbg4 << "Initiating connection to [" << Host << ":" << mPort << "]" << endl;
+
+#ifdef WIN32
+	return tryConnectingWindows();
+#endif
+		
+	if (::connect(mSocket, (struct sockaddr *) &mSockAddr, sizeof(mSockAddr)) == -1) {
+		closeSocket();
+		throw SocketException("Connect Attempted to [" + Host + ":" + lexical_cast<string>(Port) + "] Failed -- " + strerror(errno), __FILE__, __FUNCTION__, __LINE__);
+	}
+	setAddress();
+		
+	// connection!
+	if (mpEventWatcher)
+		mpEventWatcher->onSocketConnect(*this);
+}
 
 /**
  * \brief  Create a socket
@@ -193,6 +281,22 @@ void Socket::createSocket(SocketDomain Domain, SocketType Type) {
 }
 
 /**
+ * \brief  Get the socket's address / hostname
+ * \return The address / hostname
+ */
+std::string Socket::getAddress() const {
+	return mAddress;
+}
+
+/**
+ * \brief  Get the old socket (what it was before disconnect)
+ * \return The old socket
+ */
+int Socket::getOldSocket() const {
+	return mOldSocket;
+}
+
+/**
  * \brief  Get the socket
  * \return The socket
  */
@@ -204,9 +308,9 @@ int Socket::getSocket() const {
  * \brief Handle a socket disconnect
  */
 void Socket::handleSocketDisconnect() {
+	closeSocket();
 	if (mpEventWatcher)
 		mpEventWatcher->onSocketDisconnect(*this);
-	closeSocket();
 }
 
 /**
@@ -217,14 +321,13 @@ void Socket::handleSocketRead(DynamicBuffer<char> & ReadBuffer) {
 		mpEventWatcher->onSocketRead(*this, ReadBuffer);
 }
 
-
 /**
  * \brief  Init the socket
  */
 void Socket::init() {
 	mBacklog = DEFAULT_BACKLOG;
 	mDomain = SOCKET_INTERNET;
-	mpEventWatcher = NULL;
+	mMessageMode = false;
 	mPort = 0;
 	mProcessing = false;
 	mProtocol = SOCKET_PROTO_TCP;
@@ -263,14 +366,14 @@ void Socket::processEvents() {
  * \param  BufLen The length of the buffer
  */
 int Socket::read(char * Buffer, int BufLen) {
+	// do the receiving
 	int ret;
-	
 	#ifdef HAVE_OPENSSL
 		if (m_SSLMode) {
-			SSL_set_bio(m_SSL, m_SSLbio, m_SSLbio);
-			ret = SSL_read(m_SSL, Buffer, BufLen);
+			SSL_set_bio(mSSL, mSSLbio, mSSLbio);
+			ret = SSL_read(mSSL, Buffer, BufLen);
 		} else
-			ret = ::recv(m_Socket, Buffer, sizeof(char) * BufLen, 0);
+			ret = ::recv(mSocket, Buffer, sizeof(char) * BufLen, 0);
 	#else
 		ret = ::recv(mSocket, Buffer, sizeof(char) * BufLen, 0);
 	#endif
@@ -278,7 +381,6 @@ int Socket::read(char * Buffer, int BufLen) {
 	// value is 0 if socket has disconnected
 	if (ret == 0)
 		handleSocketDisconnect();
-
 	return ret;
 }
 
@@ -315,6 +417,7 @@ int Socket::readIntoBuffer(DynamicBuffer<char> & Buffer) {
 		
 		if (BytesRead > 0) {
 			Buffer.addToBuffer(Packet, BytesRead);
+			addToMessageBuffer(Packet, BytesRead);
 			TotalBytesRead += BytesRead;
 		}
 	} while ( (BytesRead == PACKET_SIZE) && (BytesRead > 0) );
@@ -323,11 +426,26 @@ int Socket::readIntoBuffer(DynamicBuffer<char> & Buffer) {
 }
 
 /**
+ * \brief  Set the socket's address from internal structures
+ */
+void Socket::setAddress() {
+	mAddress = inet_ntoa(mSockAddr.sin_addr);
+}
+
+/**
  * \brief  Set the event watcher
  * \param  pWatcher The event watcher
  */
 void Socket::setEventWatcher(SocketEventWatcher * pWatcher) {
 	mpEventWatcher = pWatcher;
+}
+
+/**
+ * \brief  Enable automatic message handling mode?
+ * \param  Enabled True if message mode should be enabled
+ */
+void Socket::setMessageMode(bool Enabled) {
+	mMessageMode = Enabled;
 }
 
 /**
@@ -352,10 +470,6 @@ void Socket::setTo(Socket const & SocketToBecome) {
  */
 void Socket::shutdown() {
 	mProcessing = false;
-	while (mThreading) {
-		cdbg5 << "Waiting on Socket [" << mSocket << "] Thread to Finish..." << endl;
-		UtilTime::sleep(0.1f);
-	}
 }
 
 /**
@@ -376,8 +490,8 @@ void Socket::threadProcRead() {
 		do {
 			if ((ret = poll(&PollFD, 1, POLL_TIMEOUT)) < 0) {
 				// error
-				cdbg1 << "Poll error: " << strerror(errno) << endl;
-				break;
+				handleSocketDisconnect();
+				return;
 			}		
 		} while (mProcessing && (ret <= 0));		
 		
@@ -385,7 +499,55 @@ void Socket::threadProcRead() {
 		if (readIntoBuffer(ReadBuffer) > 0)
 			handleSocketRead(ReadBuffer);
 	}
+}
+
+/**
+ * \brief  Write data to the socket
+ * \param  Buffer The data to send
+ * \param  BufLen Length of data to send
+ * \return Bytes sent
+ */
+int Socket::write(const char * Buffer, int BufLen) {
+	#ifdef HAVE_OPENSSL
+	if (mSSLMode) {
+		SSL_set_bio(mSSL, mSSLbio, mSSLbio);
+		return SSL_write(mSSL, Buffer, BufLen);
+	} else
+		#ifndef WIN32
+			return ::write(mSocket, Buffer, sizeof(char) * BufLen);
+		#else
+			return ::send(mSocket, Buffer, sizeof(char) * BufLen, 0);
+		#endif
+	#else
+		#ifndef WIN32
+			return ::write(mSocket, Buffer, sizeof(char) * BufLen);
+		#else
+			return ::send(mSocket, Buffer, sizeof(char) * BufLen, 0);
+		#endif
+	#endif
+}
+
+/**
+ * \brief  Write message to socket
+ * \param  Message The message to write
+ * \param  FormatMessage Format the massage for easy receiving
+ *
+ * This function send a message, and makes sure it gets fully sent
+ * or else it throws an exception
+ *
+ * It also formats the message for easy decomposition by SocketServer
+ */
+void Socket::writeMessage(std::string const & Message, bool FormatMessage) {
+	// format the message
+	string OutMessage = Message;
+	if (FormatMessage)
+		OutMessage += STOP_CODON;
 	
-	// done
-	cdbg << "No longer handling events on Socket [" << mSocket << "]" << endl;
+	size_t CurPos = 0;
+	int BytesWritten;
+	do {
+		if ((BytesWritten = write(OutMessage.c_str() + CurPos, OutMessage.length() - CurPos)) == -1)
+			throw SocketException(string("Failed to Write Message to Socket -- ") + strerror(errno), __FILE__, __FUNCTION__, __LINE__);
+		CurPos += BytesWritten;
+	} while (CurPos < OutMessage.length());
 }
