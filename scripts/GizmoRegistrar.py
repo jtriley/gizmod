@@ -57,6 +57,8 @@ class GizmoRegistrar:
 			Gizmod.ATIX10Remotes.append(self.Device)
 			# set exlusive mode
 			self.Device.grabExclusiveAccess(True)
+		elif [i for i in LIRC_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+			Gizmod.printNiceScriptInit(0, "LIRC", self.Device.DeviceName, self.Device.FileName)
 		else:
 			Gizmod.printNiceScriptInit(0, "Standard", self.Device.DeviceName, self.Device.FileName)
 
@@ -87,6 +89,8 @@ class GizmoRegistrar:
 				if item.FileName == self.Device.FileName:
 					Gizmod.ATIX10Remotes.remove(item)
 					print "Removed ATI X10 Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
+		elif [i for i in LIRC_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+			print "Removed LIRC Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 		else:
 			print "Removed Device: " + self.Device.DeviceName + " [" + self.Device.FileName + "]"
 			
