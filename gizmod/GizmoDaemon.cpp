@@ -511,7 +511,9 @@ GizmoDaemon::GizmoDaemon() {
 	setConfigDir();
 	mClientHost = "";
 	mClientPort = DEFAULT_PORT;
+	mDisabledALSA = false;
 	mDisabledCPUUsage = false;
+	mDisabledX11 = false;
 	mEventsDir = EVENT_NODE_DIR;
 	mInitialized = false;
 	mLircDev = LIRC_DEV;
@@ -875,7 +877,7 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
 				archive::text_oarchive OutArchiveDevice(OutStreamDevice);
 				OutArchiveDevice << static_cast<GizmoLIRC const>(Gizmo);
 				try {
-					sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_CPUUSAGE) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
+					sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_LIRC) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
 				} catch (SocketException const & e) {
 					cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
 				}
@@ -971,17 +973,20 @@ void GizmoDaemon::initGizmod() {
 	}
 				
 	// init the X11FocusWatcher
-	X11FocusWatcher::init();
+	if (!mDisabledX11)
+		X11FocusWatcher::init();
 	
 	// init the CPU Usage watcher
 	if (!mDisabledCPUUsage)
 		CPUUsage::init();
 	
 	// init Alsa
-	try {
-		Alsa::init();
-	} catch (H::Exception & e) {
-		cerr << e.getExceptionMessage() << endl;
+	if (!mDisabledALSA) {
+		try {
+			Alsa::init();
+		} catch (H::Exception & e) {
+			cerr << e.getExceptionMessage() << endl;
+		}
 	}
 		
 	// success
@@ -1079,8 +1084,10 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		("config-dir,C",	value<string>(),	"Set config scripts directory") 
 		("events-dir,e",	value<string>(),	"Set event node directory (default: " EVENT_NODE_DIR ")")
 		("lirc-dev,l",		value<string>(),	"Set LIRC device node (default: " LIRC_DEV ")")
+		("no-alsa,A",					"Disable ALSA support")
 		("no-cpuusage,U",				"Disable CPU Usage reporting")
 		("no-local,n",					"Disable local processing of events")
+		("no-x11,X",					"Disable X11 support")
 		("server,s",					"Enable server (default: not enabled)")
 		("server-port,p",	value<int>(),		"Port to start Gizmod server on (default: " DEFAULT_PORT_STR ")")
 		;
@@ -1165,6 +1172,10 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		mLircDev = VarMap["lirc-dev"].as<string>();
 		cdbg << "LIRC Device Node set to [" << mLircDev << "]" << endl;
 	}
+	if (VarMap.count("no-alsa")) {
+		mDisabledALSA = true;
+		cdbg << "ALSA Support Disabled" << endl;
+	}
 	if (VarMap.count("no-cpuusage")) {
 		mDisabledCPUUsage = true;
 		cdbg << "CPU Usage Reporting Disabled" << endl;
@@ -1172,6 +1183,10 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	if (VarMap.count("no-local")) {
 		mLocalDisabled = true;
 		cdbg << "Local Event Processing Disabled" << endl;
+	}
+	if (VarMap.count("no-x11")) {
+		mDisabledX11 = true;
+		cdbg << "X11 Support Disabled" << endl;
 	}
 	if (VarMap.count("server")) {
 		mServerEnabled = !mServerEnabled;

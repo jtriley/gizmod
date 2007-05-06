@@ -151,7 +151,9 @@ private:
 	int				mClientPort;			///< Port to forward events to
 	std::string			mConfigDir;			///< Configuration scripts directory
 	X11FocusEvent			mCurrentFocus;			///< Currently focused window
+	bool				mDisabledALSA;			///< Disable ALSA support
 	bool				mDisabledCPUUsage;		///< Disable CPU Usage reporting
+	bool				mDisabledX11;			///< Disable X11 support
 	std::string			mEventsDir;			///< Event node directory
 	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; 	///< Map of Gizmos
 	bool				mInitialized;			///< Has GizmoDaemon been properly initialized?
