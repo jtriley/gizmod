@@ -42,6 +42,7 @@
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/Util.hpp"
+#include "../libH/SocketException.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -54,6 +55,11 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <fcntl.h>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/list.hpp>
 
 using namespace std;
 using namespace boost;
@@ -67,58 +73,70 @@ using namespace H;
 ///////////////////////////////////////
 
 /** 
- * \def   CONFIG_FILE
- * The default path of the config file
+ * \def    CONFIG_FILE
+ * \brief  The default path of the config file
  */
 #define CONFIG_FILE		PACKAGE_NAME ".conf"
 
 /** 
- * \def   SCRIPT_DIR
- * The default path of the config file
+ * \def    SCRIPT_DIR
+ * \brief  The default path of the config file
  */
 #define SCRIPT_DIR		PACKAGE_SYSCONFDIR "/gizmod/"
 
 /** 
- * \def   HOME_SCRIPT_DIR
- * The default path of the users home script dir
+ * \def    HOME_SCRIPT_DIR
+ * \brief  The default path of the users home script dir
  */
 #define HOME_SCRIPT_DIR		"~/.gizmod/"
 
 /** 
- * \def   USER_SCRIPT_DIR
- * The default path of the modules.d dir
+ * \def    USER_SCRIPT_DIR
+ * \brief  The default path of the modules.d dir
  */
 #define USER_SCRIPT_DIR		"modules.d"
 
 /** 
- * \def   SCRIPT_DISPATCHER
- * The path of the initial config script
+ * \def    SCRIPT_DISPATCHER
+ * \brief  The path of the initial config script
  */
 #define SCRIPT_DISPATCHER 	"GizmodDispatcher.py"
 
 /** 
- * \def   SCRIPT_USER
- * The path of the user config script that gets run after SCRIPT_DISPATCH
+ * \def    SCRIPT_USER
+ * \brief  The path of the user config script that gets run after SCRIPT_DISPATCH
  */
 #define SCRIPT_USER		"GizmodUser.py"
 
 /** 
- * \def   EVENT_NODE_DIR
- * Default path to the event nodes
+ * \def    EVENT_NODE_DIR
+ * \brief  Default path to the event nodes
  */
 #define EVENT_NODE_DIR		"/dev/input"
 
 /** 
- * \def   LIRC_DEV
- * Default path to the LIRC device node
+ * \def    LIRC_DEV
+ * \brief  Default path to the LIRC device node
  */
 #define LIRC_DEV		"/dev/lirc/0"
 
 /** 
- * \def   NO_GETTER
- * Used when adding properties to pythong classes without a getter
+ * \def    NO_GETTER
+ * \brief  Used when adding properties to pythong classes without a getter
  */
 #define NO_GETTER		python::object()
+
+/** 
+ * \def    DEFAULT_SERVER_PORT
+ * \brief  Default port to start the server on
+ */
+#define DEFAULT_SERVER_PORT	30303
+
+/** 
+ * \def    DEFAULT_SERVER_PORT_STR
+ * \brief  Default port to start the server on
+ */
+#define DEFAULT_SERVER_PORT_STR	"30303"
 
 ////////////////////////////////////////////////////////////////////////////
 // Statics
@@ -377,7 +395,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 		
 	/// GizmoEventCPU Python Class Export
- 	class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage", init<std::vector< boost::shared_ptr<CPUUsageInfo> > const &>())
+ 	//class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage", init<std::vector< boost::shared_ptr<CPUUsageInfo> > const *>())
+	class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage")
 		.def("getCPUUsage", &GizmoEventCPUUsage::getCPUUsage)		
 		.def("getCPUUsageAvg", &GizmoEventCPUUsage::getCPUUsageAvg)
 		.def("getNumCPUs", &GizmoEventCPUUsage::getNumCPUs)
@@ -493,13 +512,23 @@ GizmoDaemon::GizmoDaemon() {
 	mInitialized = false;
 	mLircDev = LIRC_DEV;
 	mpPyDispatcher = NULL;
+	mServerPort = DEFAULT_SERVER_PORT;
+	mServerEnabled = false;
+	mShuttingDown = false;
 }
 
 /**
  * \brief  Default Destructor
  */
 GizmoDaemon::~GizmoDaemon() {
-	cout << "GizmoDaemon Shutting Down..." << endl << endl;
+	cout << "GizmoDaemon Shutting Down... ";
+	mShuttingDown = true;	
+					cout << "|"; flush(cout);
+	X11FocusWatcher::shutdown();	cout << "\b/"; flush(cout);
+	Alsa::shutdown();		cout << "\b-"; flush(cout);
+	CPUUsage::shutdown();		cout << "\b\\"; flush(cout);
+	SocketServer::shutdown();	cout << "\b|"; flush(cout);
+	cout << "\b\b\b\b\b\b\b\b\b\b\b\b\b\b Down.                  " << endl << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -511,6 +540,9 @@ GizmoDaemon::~GizmoDaemon() {
  * \param  FileName The filename of the Gizmo to be deleted
  */
 void GizmoDaemon::deleteGizmo(std::string FileName) {
+	if (mShuttingDown)
+		return;
+	
 	// remove from map
 	if (!mGizmos.count(FileName)) {
 		// not found -- unusual, but whatever
@@ -727,6 +759,16 @@ void GizmoDaemon::initGizmod() {
 		cerr << e.getExceptionMessage() << endl;
 	}
 	
+	// initialize the server
+	if (mServerEnabled) {
+		try {
+			acceptConnections(mServerPort);
+		} catch (SocketException const & e) {
+			cout << "Failed to start server on port [" << mServerPort << "] Disabling server support -- " << e.getExceptionMessage() << endl;
+			mServerEnabled = false;
+		}
+	}
+	
 	// success
 	mInitialized = true;
 }
@@ -820,6 +862,8 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		("configdir,c",		value<string>(),	"Set config scripts directory") 
 		("eventsdir,e",		value<string>(),	"Set event node directory (default: " EVENT_NODE_DIR ")")
 		("lircdev,l",		value<string>(),	"Set LIRC device node (default: " LIRC_DEV ")")
+		("server,s",					"Enable server (default: not enabled)")
+		("server-port,p",	value<int>(),		"Port to start Gizmod server on (default: " DEFAULT_SERVER_PORT_STR ")")
 		;
         
         // hiGizmoDaemonn options
@@ -882,17 +926,25 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		mConfigDir = VarMap["configdir"].as<string>();
 		if (mConfigDir[mConfigDir.length() - 1] != '/')
 			mConfigDir += "/";
-		cdbg << "Config Scripts Directory set to [" << VarMap["configdir"].as<string>() << "]" << endl;
+		cdbg << "Config Scripts Directory set to [" << mConfigDir << "]" << endl;
 	}
 	if (VarMap.count("eventsdir")) {
 		mEventsDir = VarMap["eventsdir"].as<string>();
 		if (mEventsDir[mEventsDir.length() - 1] != '/')
 			mEventsDir += "/";
-		cdbg << "Event Node Directory set to [" << VarMap["eventsdir"].as<string>() << "]" << endl;
+		cdbg << "Event Node Directory set to [" << mEventsDir << "]" << endl;
 	}
 	if (VarMap.count("lircdev")) {
 		mLircDev = VarMap["lircdev"].as<string>();
-		cdbg << "LIRC Device Node set to [" << VarMap["lircdev"].as<string>() << "]" << endl;
+		cdbg << "LIRC Device Node set to [" << mLircDev << "]" << endl;
+	}
+	if (VarMap.count("server")) {
+		mServerEnabled = !mServerEnabled;
+		cdbg << "Gizmod Server Enabled" << endl;
+	}
+	if (VarMap.count("server-port")) {
+		mServerPort = VarMap["server-port"].as<int>();
+		cdbg << "Sever port set to [" << mServerPort << "]" << endl;
 	}
 
 	cout << endl;
@@ -995,9 +1047,10 @@ void GizmoDaemon::printNiceScriptInit(int Width, std::string Text1, std::string 
  * \param  Mixer The mixer element that triggered the event
  */
 void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
-	// override me
+	if (mShuttingDown)
+		return;
+	
 	cdbg1 << "Mixer Element Attached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
-
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
@@ -1015,7 +1068,9 @@ void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSou
  * \param  Mixer The mixer element that triggered the event
  */
 void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
-	// override me
+	if (mShuttingDown)
+		return;
+	
 	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) 
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.IsActiveChanged << Event.ElementsChanged << Event.VolumePlaybackChanged << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
 	else
@@ -1038,9 +1093,10 @@ void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSou
  * \param  Mixer The mixer element that triggered the event
  */
 void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
-	// override me
-	cdbg3 << "Mixer Element Detached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+	if (mShuttingDown)
+		return;
 	
+	cdbg3 << "Mixer Element Detached [" << Mixer.getName() << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;	
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard, Mixer);
@@ -1057,9 +1113,10 @@ void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSou
  * \param  SoundCard The sound card that triggered the event
  */
 void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
-	// override me
+	if (mShuttingDown)
+		return;
+	
 	cdbg << "Attached to Sound Card [" << SoundCard.getCardHardwareID() << "] -- " << SoundCard.getCardName() << endl;
-
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
@@ -1076,9 +1133,10 @@ void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundC
  * \param  SoundCard The sound card that triggered the event
  */
 void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
-	// override me
+	if (mShuttingDown)
+		return;
+	
 	cdbg1 << "Sound Card Detached [" << SoundCard.getCardHardwareID() << "] -- " << SoundCard.getCardName() << endl;
-
 	try {
 		mutex::scoped_lock lock(mMutexScript);
 		GizmoEventSoundCard EventSoundCard(Event, SoundCard);
@@ -1093,11 +1151,32 @@ void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundC
  * \brief  Event triggered when CPU Usage stats are updated
  * \param  Event A vector of CPU Usage info, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
  */
-void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) {
+void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) {	
+	if (mShuttingDown)
+		return;
+	
 	try {
 		mutex::scoped_lock lock(mMutexScript);
-		GizmoEventCPUUsage EventCPUUsage(Event);
+		GizmoEventCPUUsage const EventCPUUsage(Event);
 		mpPyDispatcher->onEvent(&EventCPUUsage);
+		
+		/*
+		// serialization test begin
+		ofstream ofs("/tmp/test.txt");
+		archive::text_oarchive oa(ofs);
+		oa << EventCPUUsage;
+		cout << EventCPUUsage.getCPUUsageAvg(0) << " / " << EventCPUUsage.getNumCPUs() << endl;
+		ofs.close();
+		
+		ifstream ifs("/tmp/test.txt");
+		archive::text_iarchive ia(ifs);
+		GizmoEventCPUUsage tEvent;
+		ia >> tEvent;
+		cout << tEvent.getCPUUsageAvg(0) << " / " << tEvent.getNumCPUs() << endl;
+		ifs.close();
+		// serialization test end
+		*/
+		
 	} catch (error_already_set) {
 		PyErr_Print();
 		cerr << "Failed to call GizmodDispatcher.onEvent for onCPUUsage" << endl; 
@@ -1144,6 +1223,9 @@ void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatch
  * \param ReadBuffer The data that was waiting on the device
  */
 void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer) {
+	if (mShuttingDown)
+		return;
+	
 	// make sure the gizmo exists
 	shared_ptr<Gizmo> pUnknownGizmo = mGizmos[pWatchee->FileName];
 	if (!pUnknownGizmo) {
@@ -1206,6 +1288,9 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
  * \param pWatchee The Watchee that triggered the event
  */
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee) {
+	if (mShuttingDown)
+		return;
+	
 	cdbg1 << "New Device Detected [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	try {
 		mutex::scoped_lock lock(mMutexScript);
@@ -1243,6 +1328,9 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
  * \param  Event The Focus Event
  */
 void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
+	if (mShuttingDown)
+		return;
+	
 	//cdbg << "Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
 	try {
 		mutex::scoped_lock lock(mMutexScript);
@@ -1260,6 +1348,9 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
  * \param  Event The Focus Event
  */
 void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
+	if (mShuttingDown)
+		return;
+	
 	//cdbg << "Leaving Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
 	try {
 		mutex::scoped_lock lock(mMutexScript);
@@ -1277,7 +1368,7 @@ void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
 void GizmoDaemon::onSignalSegv() {
 	// override me
 	cerr << "Segmentation Fault Detected" << endl;
-	stopWatchingForFileEvents();
+	signalShutdown();
 }
 
 /**
@@ -1286,7 +1377,7 @@ void GizmoDaemon::onSignalSegv() {
 void GizmoDaemon::onSignalInt() {
 	// override me
 	cdbg << "Keyboard Interrupt Received..." << endl;
-	stopWatchingForFileEvents();
+	signalShutdown();
 }
 
 /**
@@ -1303,7 +1394,7 @@ void GizmoDaemon::onSignalHup() {
 void GizmoDaemon::onSignalQuit() {
 	// override me
 	cdbg << "Request to Quit Received..." << endl;
-	stopWatchingForFileEvents();
+	signalShutdown();
 }
 
 /**
@@ -1312,7 +1403,7 @@ void GizmoDaemon::onSignalQuit() {
 void GizmoDaemon::onSignalKill() {
 	// override me
 	cdbg << "Kill signal Received..." << endl;
-	stopWatchingForFileEvents();
+	signalShutdown();
 }
 
 /**
@@ -1321,7 +1412,7 @@ void GizmoDaemon::onSignalKill() {
 void GizmoDaemon::onSignalTerm() {
 	// override me
 	cdbg << "Request to Terminate Received..." << endl;
-	stopWatchingForFileEvents();
+	signalShutdown();
 }
 
 /**
@@ -1330,7 +1421,7 @@ void GizmoDaemon::onSignalTerm() {
 void GizmoDaemon::onSignalStop() {
 	// override me
 	cdbg << "Request to Stop Received..." << endl;
-	stopWatchingForFileEvents();
+	signalShutdown();
 }
 
 /**
@@ -1356,9 +1447,7 @@ void GizmoDaemon::registerDevices() {
 	// register the LIRC device
 	registerLircDevice();
 	
-	// register CPU usage device
-	//registerCPUDevice();
-	
+	// aesthetics
 	cout << endl;
 }
 
@@ -1440,4 +1529,12 @@ void GizmoDaemon::setConfigDir() {
 		mConfigDir = SCRIPT_DIR;
 		replace_all(mConfigDir, "${prefix}", PACKAGE_PREFIX);
 	}
+}
+
+/**
+ * \brief  Shutdown Gizmo Daemon
+ */
+void GizmoDaemon::signalShutdown() {
+	mShuttingDown = true;
+	FileEventWatcher::shutdown();
 }

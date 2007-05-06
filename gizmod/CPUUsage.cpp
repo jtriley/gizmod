@@ -76,10 +76,26 @@ CPUUsage::CPUUsage() : mThreadProc(this) {
 }
 
 /**
+ * \brief CPUUsageInfo Default Constructor
+ */
+CPUUsageInfo::CPUUsageInfo() {
+	memset(Field, 0, sizeof(double) * CPUUSAGE_MAX);
+	memset(Stat, 0, sizeof(double) * CPUUSAGE_MAX);	
+	Usage = 0.0;
+	Average = 0.0;
+}
+
+/**
  * \brief CPUUsage Destructor
  */
 CPUUsage::~CPUUsage() {
 	shutdown();
+}
+
+/**
+ * \brief CPUUsageInfo Destructor
+ */
+CPUUsageInfo::~CPUUsageInfo() {
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -116,11 +132,8 @@ size_t CPUUsage::getNumCPUs() {
 		}
 		
 		mCPUUsage.resize(cpus);
-		for (int lp = 0; lp < cpus; lp ++) {
+		for (int lp = 0; lp < cpus; lp ++)
 			mCPUUsage[lp] = shared_ptr<CPUUsageInfo>(new CPUUsageInfo);
-			memset(mCPUUsage[lp]->Field, 0, sizeof(double) * CPUUSAGE_MAX);
-			memset(mCPUUsage[lp]->Stat, 0, sizeof(double) * CPUUSAGE_MAX);
-		}
 	}
 	
 	return mCPUUsage.size() - 1;
@@ -209,7 +222,8 @@ void CPUUsage::updateUsageStats() {
 			pUsage->Stat[lp] = Info[lp];
 		} 
 		pUsage->Usage = ((Total - pUsage->Field[CPUUSAGE_IDLE] - pUsage->Field[CPUUSAGE_IOWAIT]) / Total) * 100.0;
-		pUsage->Averager.push(pUsage->Usage);
+		pUsage->mAverager.push(pUsage->Usage);
+		pUsage->Average = pUsage->mAverager.average();
 	}
 	fclose(StatFile);
 

@@ -85,6 +85,7 @@ private:
 	snd_ctl_card_info_t * 		mHWInfo;			///< Alsa card hardware info
 	snd_mixer_t *			mMixerHandle;			///< Mixer handle
 	std::map< std::string, boost::shared_ptr<AlsaMixer> > mMixers;	///< Map of the mixers (by index)
+	bool				mShutdown;			///< Shut down or not?
 	bool				mWatching;			///< Keep watching mixers?
 
 	/**

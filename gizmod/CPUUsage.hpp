@@ -36,6 +36,8 @@
 #include "../libH/Average.hpp"
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs / enums
@@ -57,15 +59,41 @@ typedef enum {
 	CPUUSAGE_MAX 
 } ProcStatField;
 
+//////////////////////////////////////////////////////////////////////////////
+// CPUUsageInfo Class Definition
+///////////////////////////////////////
+
 /**
- * \struct CPUUsageInfo
+ * \class  CPUUsageInfo
  * \brief  Structure that holds info about each CPU
  */
-struct CPUUsageInfo {
+class CPUUsageInfo {
+friend class CPUUsage;
+public:
+	// public member variables
 	double 				Field[CPUUSAGE_MAX];		///< CPU Usage fields
 	double 				Stat[CPUUSAGE_MAX];		///< CPU Stat fields
-	double 				Usage;
-	H::Average			Averager;
+	double 				Usage;				///< The CPU Usage
+	double				Average;			///< The CPU Usage as an average over a short amount of time
+	
+	// construction / deconstruction
+	CPUUsageInfo();							///< Default Constructor
+	virtual ~CPUUsageInfo();					///< Destructor
+	
+private:
+	// private member variables
+	H::Average			mAverager;			///< The averager
+	
+private:
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & Field;
+		ar & Stat;
+		ar & Usage;
+		ar & Average;
+	}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -83,6 +111,7 @@ public:
 	void 				init();				///< Start watching!
 	virtual void			onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event); ///< Event triggered when CPU Usage stats are updated
 	void				setTimeBetweenUpdates(float Seconds); ///< Time between updates in seconds
+	void				shutdown();			///< Shutodwn the CPU Usage monitor
 
 	// construction / deconstruction
 	CPUUsage();							///< Default Constructor
@@ -90,7 +119,6 @@ public:
 
 private:
 	// private functions
-	void				shutdown();			///< Shutodwn the CPU Usage monitor
 	void				threadProc();			///< The thread procedure loop
 	void				updateUsageStats();		///< Force an update of the CPU Usage stats
 	

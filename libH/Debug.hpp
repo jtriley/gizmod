@@ -40,13 +40,6 @@
 // Namespace
 ///////////////////////////////////////
 
-/**
- * \namespace H
- * \brief     H namespace
- *
- * All code in the H namespace gets its inspiration from the best movie ever made:
- *    Hackers
- */
 namespace H {
 	
 //////////////////////////////////////////////////////////////////////////////

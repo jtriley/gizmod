@@ -87,6 +87,12 @@ using namespace H;
  */
 #define MAX_RETRIES		5
 
+/**
+ * \def    POLL_TIMEOUT
+ * \brief  Poll timeout in milliseconds
+ */
+#define POLL_TIMEOUT	1000
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -575,7 +581,7 @@ void FileEventWatcher::removeWatchee(boost::shared_ptr<FileWatchee> pWatchee) {
  * This does not interrupt a current call to poll, so watchForFileEvents will only
  * exit after this function is called, and then the next event is received
  */
-void FileEventWatcher::stopWatchingForFileEvents() {
+void FileEventWatcher::shutdown() {
 	mPolling = false;
 }
 
@@ -592,23 +598,22 @@ void FileEventWatcher::watchForFileEvents() {
 	
 	cdbg1 << "FileEventWatcher :: Watching [" << (int) mPollFDs.size() << " Files] for Events..." << endl;
 	mPolling = true;
-	while (mPolling) {
+	int ret;
+	do {
 		// poll the open files
-		int ret;
-		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), -1)) <= 0) {
-			if (ret == 0) {
-				// timeout occured, loop again
-				cdbg1 << "Poll timeout" << endl;
-				continue;
-			}
-			
+		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), POLL_TIMEOUT)) == -1) {
 			// error
 			cdbg1 << "Poll error: " << strerror(errno) << endl;
-			continue;
+			return;
 		}
 						
+		if (!ret)
+			// timeout
+			continue;
+		
 		// file events have happened, check for them and dispatch
 		cdbg5 << "Processing File Events..." << endl;
 		apply_func(mPollFDs, &FileEventWatcher::handleEventsOnFile, this);
-	}
+	} while (mPolling);
+	cdbg1 << "FileEventWatcher :: Done Watching for File Events" << endl;
 }

@@ -41,6 +41,7 @@
 #include "CPUUsage.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
+#include "../libH/SocketServer.hpp"
 #include <ext/hash_map>
 #include <map>
 #include <string>
@@ -67,7 +68,8 @@ class GizmoDaemon :
 	public X11FocusWatcher, 
 	public Alsa,
 	public Processes,
-	public CPUUsage
+	public CPUUsage,
+	public SocketServer
 {
 public:
 	// public functions
@@ -102,6 +104,7 @@ public:
 	virtual void			onSignalStop();		///< Signal handler for STOP
 	virtual void			onSignalUnknown(int Signal); ///< Signal handler for Unknown Signals
 	void 				printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3); ///< Print a nice looking init string
+	void				signalShutdown();	///< Shutdown gizmod
 		
 	// construction / deconstruction
 	GizmoDaemon();						///< Default Constructor
@@ -131,6 +134,9 @@ private:
 	GizmodEventHandlerInterface * 	mpPyDispatcher;		///< The GizmoDaemonDispatcher Python object
 	boost::python::object		mPyMainModule;		///< The Python Main Module
 	boost::python::object		mPyMainNamespace;	///< The Python Main Namespace
+	bool				mServerEnabled;		///< Allow incoming connections
+	int				mServerPort;		///< Port of the server
+	bool				mShuttingDown;		///< Shutting down?
 	
 	// static private member vars
 	static boost::mutex		mMutexScript;		///< Mutex for the python script

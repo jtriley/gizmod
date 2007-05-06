@@ -37,6 +37,11 @@
 #include "CPUUsage.hpp"
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -55,19 +60,29 @@
 class GizmoEventCPUUsage : public GizmoEvent {
 public:
 	// public functions
-	double				getCPUUsage(size_t CPUIndex);	///< Get the CPU Usage for CPU at the specified Index (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
-	double				getCPUUsageAvg(size_t CPUIndex);///< Get the Averaged CPU Usage for CPU at the specified Index (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
-	size_t				getNumCPUs();			///< Get the number of CPUs
+	double				getCPUUsage(size_t CPUIndex) const; 	///< Get the CPU Usage for CPU at the specified Index (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
+	double				getCPUUsageAvg(size_t CPUIndex) const;	///< Get the Averaged CPU Usage for CPU at the specified Index (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
+	size_t				getNumCPUs() const;			///< Get the number of CPUs
 	
 	// construction / deconstruction
+	GizmoEventCPUUsage(); 							///< Default Constructor
 	GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event); ///< Default Constructor
-	virtual ~GizmoEventCPUUsage();					///< Destructor
+	virtual ~GizmoEventCPUUsage();						///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
-	std::vector< boost::shared_ptr<CPUUsageInfo> > const & mEvent;	///< The Raw Event info
+	std::vector< boost::shared_ptr<CPUUsageInfo> > mEvent;			///< The Raw Event info
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<GizmoEvent>(*this);
+		ar & mEvent;
+	}	
 };
 
 #endif // __GizmoEventCPUUsage_h

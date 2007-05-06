@@ -55,6 +55,12 @@ using namespace H;
  */
 #define ALSA_FAST_CALLS_BUG	5000000
 
+/**
+ * \def    POLL_TIMEOUT
+ * \brief  Poll timeout in milliseconds
+ */
+#define POLL_TIMEOUT		1000
+
 ////////////////////////////////////////////////////////////////////////////
 // Callbacks
 ///////////////////////////////////////
@@ -117,6 +123,7 @@ AlsaSoundCard::AlsaSoundCard(AlsaInterface * piAlsa, int CardID) : AlsaSoundCard
 	mHWInfo = NULL;
 	mMixerHandle = NULL;
 	mWatching = false;
+	mShutdown = false;
 	mThreading = false;
 	init();
 }
@@ -271,6 +278,9 @@ void AlsaSoundCard::setAllPlaybackSwitches(bool Enabled) {
  * \brief  Shutdown the AlsaSoundCard connection
  */
 void AlsaSoundCard::shutdown() {
+	if (mShutdown)
+		return;
+	
 	cdbg1 << "Closing connection to Sound Card [" << mCardHWID << " - " << mCardName << "]" << endl;
 			
 	// wait for the thread to exit
@@ -292,6 +302,9 @@ void AlsaSoundCard::shutdown() {
 	
 	// fire the event
 	static_cast<Alsa *>(mpiAlsa)->onAlsaEventSoundCardDetach(AlsaEvent(ALSAEVENT_SOUNDCARD_DETACH), *this);	
+	
+	// signal we've shutdown okay
+	mShutdown = true;
 }
 
 /**
@@ -313,7 +326,7 @@ void AlsaSoundCard::threadProc() {
 		
 		// wait for the next event
 		cdbg5 << "Processing Alsa Events..." << endl;
-		if ((err = snd_mixer_wait(mMixerHandle, 1000)) < 0) {
+		if ((err = snd_mixer_wait(mMixerHandle, POLL_TIMEOUT)) < 0) {
 			cdbg5 << "AlsaSoundCard :: Mixer Wait Error -- " << snd_strerror(err) << endl;
 		} else {
 			snd_mixer_handle_events(mMixerHandle);

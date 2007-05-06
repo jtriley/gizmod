@@ -72,10 +72,10 @@ typedef enum {
 class Exception : public std::exception {
 public:
 	/// Get the type of exception
-	virtual const ExceptionType getExceptionType() { return mType; };
+	virtual const ExceptionType getExceptionType() const { return mType; };
 	
 	/// Get the exception's message
-	virtual const std::string & getExceptionMessage() { return mMessage; };
+	virtual const std::string & getExceptionMessage() const { return mMessage; };
 	
 	/// Get the exceptions message
 	virtual const char * what() { return mMessage.c_str(); };

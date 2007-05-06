@@ -35,6 +35,8 @@
 
 #include "../libH/DynamicBuffer.hpp"
 #include <string>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -91,6 +93,14 @@ protected:
 	
 	// private member variables
 	GizmoEventClass			mClass;				///< Class of the Gizmo
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & mClass;
+	}
 };
 
 #endif // __GizmoEvent_h

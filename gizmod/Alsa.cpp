@@ -245,9 +245,12 @@ void Alsa::registerDefaultMixerPriority(std::string MixerName) {
  * \brief Shutdown the ALSA connection
  */
 void Alsa::shutdown() {
-	if (mSoundCards.size())
+	if (mSoundCards.size()) {
 		cdbg1 << "Shutting down [" << mSoundCards.size() << "] sound card connections..." << endl;
-	mSoundCards.clear();
+		for (size_t lp = 0; lp < mSoundCards.size(); lp ++)
+			mSoundCards[lp]->shutdown();
+		mSoundCards.clear();
+	}
 }
 
 /**
