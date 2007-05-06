@@ -42,6 +42,9 @@ class GizmoRegistrar:
 		Add the appropriate device to our internal list of devices
 		base on the actual type of the device.
 		"""
+
+		if self.Device.Class == GizmoClass.LIRC:
+			self.Device.setMinimumTimeBetweenEvents(0.0)
 		
 		if [i for i in KEYBOARD_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
 			Gizmod.printNiceScriptInit(0, "Keyboard", self.Device.DeviceName, self.Device.FileName)

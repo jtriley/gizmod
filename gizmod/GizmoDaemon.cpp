@@ -396,7 +396,6 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 		
 	/// GizmoEventCPU Python Class Export
- 	//class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage", init<std::vector< boost::shared_ptr<CPUUsageInfo> > const *>())
 	class_< GizmoEventCPUUsage, bases<GizmoEvent> >("GizmoEventCPUUsage")
 		.def("getCPUUsage", &GizmoEventCPUUsage::getCPUUsage)		
 		.def("getCPUUsageAvg", &GizmoEventCPUUsage::getCPUUsageAvg)
@@ -418,6 +417,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("grabExclusiveAccess", &GizmoLinuxInputDevice::grabExclusiveAccess)
 		.def("remapKey", &GizmoLinuxInputDevice::remapKey)
 		.def("setMinimumTimeBetweenEvents", &GizmoLIRC::setMinimumTimeBetweenEvents)
+			.staticmethod("setMinimumTimeBetweenEvents")
 		;
 	
 	/// GizmoLinuxInputEvent Python Class Export 
