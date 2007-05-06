@@ -868,8 +868,6 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
 			
 			// process the remote event
 			if (isClientConnected()) {
-				cout << "Serializing LIRC event" << endl;
-				
 				// serialize
 				stringstream OutStreamEvent;
 				archive::text_oarchive OutArchiveEvent(OutStreamEvent);
@@ -879,9 +877,7 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
 				archive::text_oarchive OutArchiveDevice(OutStreamDevice);
 				OutArchiveDevice << static_cast<GizmoLIRC const>(Gizmo);
 				try {
-					cout << "Send LIRC event" << endl;
 					sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_LIRC) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
-					cout << "Sent LIRC event" << endl;
 				} catch (SocketException const & e) {
 					cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
 				}

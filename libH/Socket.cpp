@@ -72,6 +72,12 @@ using namespace std;
  */
 #define STOP_CODON	"\255"
 
+/**
+ * \def    STOP_CODON_CHAR
+ * \brief  Message stop signififer
+ */
+#define STOP_CODON_CHAR	'\255'
+
 ////////////////////////////////////////////////////////////////////////////
 // Construction / Deconstruction
 ///////////////////////////////////////
@@ -154,10 +160,16 @@ void Socket::addToMessageBuffer(char * Data, int BufLen) {
 	if (!mMessageMode)
 		return;
 	
-	char * pos = strstr(Data, STOP_CODON);
-	if (pos) {
+	// search for the stop codon
+	int Index = -1;
+	for (int lp = 0; lp < BufLen; lp ++) {
+		if (Data[lp] == STOP_CODON_CHAR) {
+			Index = lp;
+			break;
+		}
+	}
+	if (Index > -1) {
 		// message found!
-		int Index = pos - Data;
 		string Message;
 		if (mMessageBuffer.length())
 			Message += mMessageBuffer.getBuffer(); 
@@ -542,17 +554,12 @@ void Socket::writeMessage(std::string const & Message, bool FormatMessage) {
 	string OutMessage = Message;
 	if (FormatMessage)
 		OutMessage += STOP_CODON;
-	
-	cout << "Writing Message: " << Message << endl;
-	
+		
 	size_t CurPos = 0;
 	int BytesWritten;
 	do {
 		if ((BytesWritten = write(OutMessage.c_str() + CurPos, OutMessage.length() - CurPos)) == -1)
 			throw SocketException(string("Failed to Write Message to Socket -- ") + strerror(errno), __FILE__, __FUNCTION__, __LINE__);
-		cout << "Wrote: " << BytesWritten << endl;
 		CurPos += BytesWritten;
 	} while (CurPos < OutMessage.length());
-	
-	cout << "Done Wrote: " << BytesWritten << endl;
 }
