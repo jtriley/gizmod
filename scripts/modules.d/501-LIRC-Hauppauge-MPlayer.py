@@ -50,7 +50,9 @@ class LIRCHauppaugeMPlayer(Hauppauge):
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	KeyString = self.getKeyString(Event)
-		   	if KeyString == "Go":
+		   	if not KeyString:
+		   		return False
+		   	elif KeyString == "Go":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_A)
 		   		return True
 		   	elif KeyString == "Power":

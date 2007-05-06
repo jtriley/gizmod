@@ -46,7 +46,9 @@ class LIRCHauppaugeDefault(Hauppauge):
 		if Event.Class in INTERESTED_CLASSES and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	KeyString = self.getKeyString(Event)
-		   	if KeyString == "Go":
+		   	if not KeyString:
+		   		return False
+		   	elif KeyString == "Go":
 		   		return False
 		   	elif KeyString == "Power":
 		   		return False

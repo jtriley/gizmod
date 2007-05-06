@@ -48,7 +48,9 @@ class LIRCHauppaugeAmarok(Hauppauge):
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	KeyString = self.getKeyString(Event)
-		   	if KeyString == "Go":
+		   	if not KeyString:
+		   		return False
+		   	elif KeyString == "Go":
 		   		return False
 		   	elif KeyString == "Power":
 		   		return False
