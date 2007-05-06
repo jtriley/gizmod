@@ -14,10 +14,12 @@
 ##########################
 
 from GizmoDaemon import *
+from GizmoDeviceStrings import *
 from Hauppauge import *
 import subprocess
 
 ENABLED = True
+USES_LIRC_REMOTE = "Hauppauge"
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 
 ############################
@@ -184,5 +186,5 @@ class LIRCHauppaugeDefault(Hauppauge):
 ##########################
 
 # register the user script
-if ENABLED:
+if ENABLED and USES_LIRC_REMOTE in LIRC_REMOTES:
 	Gizmod.Dispatcher.userScripts.append(LIRCHauppaugeDefault())

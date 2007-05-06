@@ -62,7 +62,7 @@ GizmoEventLIRC::GizmoEventLIRC(std::string const & InputEvent) : GizmoEvent(GIZM
 	// create the bitstring	
 	for (size_t lp = 0; lp < LIRCData.length(); lp++) {
 		bitset<8> bits(LIRCData[lp]);
-		LIRCDataBitString += bits.to_string();
+		LIRCDataBitString += bits.to_string() + " ";
 	}
 }
 

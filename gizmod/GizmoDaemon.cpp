@@ -703,7 +703,6 @@ void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {
 void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {	
 }
 
-
 /**
  * \brief  Enter the main run loop
  */
