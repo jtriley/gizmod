@@ -417,7 +417,6 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("grabExclusiveAccess", &GizmoLinuxInputDevice::grabExclusiveAccess)
 		.def("remapKey", &GizmoLinuxInputDevice::remapKey)
 		.def("setMinimumTimeBetweenEvents", &GizmoLIRC::setMinimumTimeBetweenEvents)
-			.staticmethod("setMinimumTimeBetweenEvents")
 		;
 	
 	/// GizmoLinuxInputEvent Python Class Export 
@@ -474,6 +473,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	class_< GizmoLIRC, bases<Gizmo> >("GizmoLIRC", init<const DeviceInfo &, int, int>())
 		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
 		.def("setMinimumTimeBetweenEvents", &GizmoLIRC::setMinimumTimeBetweenEvents)
+			.staticmethod("setMinimumTimeBetweenEvents")
 		;
 	
 	/// GizmoPowermate Python Class Export
