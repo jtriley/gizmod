@@ -543,11 +543,16 @@ void Socket::writeMessage(std::string const & Message, bool FormatMessage) {
 	if (FormatMessage)
 		OutMessage += STOP_CODON;
 	
+	cout << "Writing Message: " << Message << endl;
+	
 	size_t CurPos = 0;
 	int BytesWritten;
 	do {
 		if ((BytesWritten = write(OutMessage.c_str() + CurPos, OutMessage.length() - CurPos)) == -1)
 			throw SocketException(string("Failed to Write Message to Socket -- ") + strerror(errno), __FILE__, __FUNCTION__, __LINE__);
+		cout << "Wrote: " << BytesWritten << endl;
 		CurPos += BytesWritten;
 	} while (CurPos < OutMessage.length());
+	
+	cout << "Done Wrote: " << BytesWritten << endl;
 }

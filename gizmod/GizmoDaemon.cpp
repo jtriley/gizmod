@@ -868,6 +868,8 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
 			
 			// process the remote event
 			if (isClientConnected()) {
+				cout << "Serializing LIRC event" << endl;
+				
 				// serialize
 				stringstream OutStreamEvent;
 				archive::text_oarchive OutArchiveEvent(OutStreamEvent);
@@ -877,7 +879,9 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
 				archive::text_oarchive OutArchiveDevice(OutStreamDevice);
 				OutArchiveDevice << static_cast<GizmoLIRC const>(Gizmo);
 				try {
+					cout << "Send LIRC event" << endl;
 					sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_LIRC) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
+					cout << "Sent LIRC event" << endl;
 				} catch (SocketException const & e) {
 					cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
 				}
@@ -1086,7 +1090,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		("lirc-dev,l",		value<string>(),	"Set LIRC device node (default: " LIRC_DEV ")")
 		("no-alsa,A",					"Disable ALSA support")
 		("no-cpuusage,U",				"Disable CPU Usage reporting")
-		("no-local,n",					"Disable local processing of events")
+		("no-local,N",					"Disable local processing of events")
 		("no-x11,X",					"Disable X11 support")
 		("server,s",					"Enable server (default: not enabled)")
 		("server-port,p",	value<int>(),		"Port to start Gizmod server on (default: " DEFAULT_PORT_STR ")")
