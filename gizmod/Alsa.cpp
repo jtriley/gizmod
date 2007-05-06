@@ -175,7 +175,7 @@ void Alsa::_onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard
 	// set defulat mixer volume
 	if ( (!mpDefaultMixerVolume) || (Priority < mDefaultMixerVolumePriority) ) {
 		if (Mixer.HasPlaybackVolume) {
-			cdbg << "Setting Default Mixer Volume: " << Mixer.getName() << endl;
+			cdbg1 << "Setting Default Mixer Volume: " << Mixer.getName() << endl;
 			mpDefaultMixerVolume = &Mixer;
 			mDefaultMixerVolumePriority = Priority;
 		}
@@ -186,7 +186,7 @@ void Alsa::_onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard
 	// set defulat mixer volume
 	if ( (!mpDefaultMixerSwitch) || (Priority < mDefaultMixerSwitchPriority) ) {
 		if (Mixer.HasPlaybackSwitch) {
-			cdbg << "Setting Default Mixer Switch: " << Mixer.getName() << endl;
+			cdbg1 << "Setting Default Mixer Switch: " << Mixer.getName() << endl;
 			mpDefaultMixerSwitch = &Mixer;
 			mDefaultMixerSwitchPriority = Priority;
 		}
