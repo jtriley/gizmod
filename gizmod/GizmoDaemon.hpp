@@ -36,6 +36,7 @@
 #include "Alsa.hpp"
 #include "Gizmo.hpp"
 #include "GizmodEventHandlerInterface.hpp"
+#include "GizmoUtils.hpp"
 #include "X11FocusWatcher.hpp"
 #include "Processes.hpp"
 #include "CPUUsage.hpp"
@@ -71,7 +72,8 @@ class GizmoDaemon :
 	public Processes,
 	public CPUUsage,
 	public SocketServer,
-	public SocketClient
+	public SocketClient,
+	public GizmoUtils
 {
 public:
 	// public functions

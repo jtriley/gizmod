@@ -351,8 +351,14 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("isApplicationRunning", &X11FocusWatcher::isApplicationRunning)
 		;		
 	
+	/// GizmoUtils Python Class Export
+	class_<GizmoUtils>("GizmoUtils")
+		.def("bitDifference", &GizmoUtils::bitDifference)
+			.staticmethod("bitDifference")
+		;		
+	
 	/// GizmoDaemon Python Class Export
-	class_<GizmoDaemon, bases<Alsa, X11FocusWatcher, Processes, CPUUsage> >("PyGizmoDaemon")
+	class_<GizmoDaemon, bases<Alsa, X11FocusWatcher, Processes, CPUUsage, GizmoUtils> >("PyGizmoDaemon")
 		.def("getCurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.add_property("CurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)
