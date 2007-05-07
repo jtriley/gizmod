@@ -91,13 +91,15 @@ class PowermateVisualizer:
 			if Event.SwitchPlaybackChanged \
 			   and Gizmod.DefaultMixerSwitch \
 			   and Event.Mixer.Name == Gizmod.DefaultMixerSwitch.Name:
-				self.__applyVisualizationVolume()				
+				self.__applyVisualizationVolume()
+				
 		# check for CPUUsage events
 		elif self.Visualization == VisualizationType.CPUUsage \
 		   and Event.Class == GizmoEventClass.CPUUsage\
 		   and not (Gizmod.DefaultMixerSwitch and (not Gizmod.DefaultMixerSwitch.SwitchPlayback)):
 		   	if not self.InterruptCount:
 				self.__applyVisualizationCPUUsage(Event)
+
 		# check for Sound Visualization events
 		elif self.Visualization == VisualizationType.SoundVisualization \
 		   and Event.Class == GizmoEventClass.SoundVisualization \
