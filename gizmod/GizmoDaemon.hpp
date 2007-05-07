@@ -33,13 +33,13 @@
 #include "config.h"
 #endif
 
-#include "Alsa.hpp"
-#include "Gizmo.hpp"
 #include "GizmodEventHandlerInterface.hpp"
 #include "GizmoUtils.hpp"
-#include "X11FocusWatcher.hpp"
-#include "Processes.hpp"
-#include "CPUUsage.hpp"
+#include "../libGizmod/Alsa.hpp"
+#include "../libGizmod/CPUUsage.hpp"
+#include "../libGizmod/Gizmo.hpp"
+#include "../libGizmod/Processes.hpp"
+#include "../libGizmod/X11FocusWatcher.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include "../libH/SocketServer.hpp"

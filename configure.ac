@@ -139,6 +139,69 @@ AC_CHECK_HEADER(alsa/asoundlib.h, [
 	
 AC_SUBST(ALSA_LIBS)
 
+#########################################################################
+##
+## Check whether to build libVisual plugin
+##
+
+##################
+## enabled?
+########
+
+AC_MSG_CHECKING(Whether or not to build libVisual plugin)
+AC_ARG_ENABLE(visplugin,
+              [  --enable-visplugin      build libVisual plugin               <default = no>],
+              [enable_visplugin="$enableval"], enable_visplugin=no)
+AC_MSG_RESULT($enable_visplugin)
+
+AM_CONDITIONAL(BUILD_PLUGIN_VISPLUGIN, test x$enable_visplugin = xyes)
+
+##################
+## can we build it if it's enabled?
+########
+
+if test "$enable_visplugin" == "yes"; then
+
+# check for libvisual
+LIBVISUAL_CFLAGS=""
+LIBVISUAL_LIBS=""
+PKG_CHECK_MODULES(LIBVISUAL, libvisual-0.4 >= 0.4.0, [libvis="yes"], [libvis="no"])
+if test x$libvis = xno; then
+	AC_MSG_ERROR([*** libvisual not found.
+			libvisual is needed to build this package.
+			You can download libvisual at http://libvisual.sf.net/])
+fi
+AC_SUBST(LIBVISUAL_LIBS)
+AC_SUBST(LIBVISUAL_CFLAGS)
+
+# check for install dir
+AC_ARG_WITH([plugins_base_dir],
+            AC_HELP_STRING([--with-plugins_base_dir="dir"],
+                           [Install plugins to this base directory. Defaults to Libvisual's base dir ]),
+dnl ' # fix string coloring ;)
+	    [plugins_base_dir=$withval],
+	    [plugins_base_dir=])
+
+AC_MSG_CHECKING([where to install plugins])
+
+if test -z "$plugins_base_dir"; then
+    plugins_base_dir=`$PKG_CONFIG --variable=pluginsbasedir libvisual-0.4`
+    AC_MSG_RESULT([$plugins_base_dir])
+else
+    if test -d "$plugins_base_dir"; then
+        AC_MSG_RESULT([$plugins_base_dir])
+    else
+        AC_MSG_RESULT([not found])
+        AC_MSG_ERROR([Specified plugins base directory "$plugins_base_dir" is not accesible!])
+        exit 1
+    fi
+fi
+
+LIBVISUAL_PLUGINS_BASE_DIR="$plugins_base_dir"
+AC_SUBST(LIBVISUAL_PLUGINS_BASE_DIR)
+
+fi
+
 ##################
 
 CXXFLAGS="$CFLAGS"
@@ -151,11 +214,24 @@ echo
 AC_CONFIG_FILES([
 	Makefile
 	libH/Makefile
+	libGizmod/Makefile
 	gizmod/Makefile
 	scripts/Makefile
 	scripts/modules.d/Makefile
+	visplugin/Makefile
 ])
 AC_OUTPUT
 
 ##################
 
+echo
+echo "Build Parameters:"
+echo
+
+if test "$enable_visplugin" == "yes"; then
+	echo " libVisual Gizmo LED Visualization Plugin: Enabled"
+else
+	echo " libVisual Gizmo LED Visualization Plugin: Disabled"
+fi
+
+echo

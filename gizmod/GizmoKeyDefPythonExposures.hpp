@@ -29,7 +29,7 @@
 #ifndef __GizmoKeyDefPythonExposures_h
 #define __GizmoKeyDefPythonExposures_h
 
-#include "GizmoKeyDefs.hpp"
+#include "../libGizmod/GizmoKeyDefs.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's

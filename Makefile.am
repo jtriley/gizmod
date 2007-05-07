@@ -1,1 +1,1 @@
-SUBDIRS=libH gizmod scripts scripts/modules.d
+SUBDIRS=libH libGizmod gizmod scripts scripts/modules.d visplugin
