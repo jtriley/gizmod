@@ -54,14 +54,13 @@ using namespace H;
  * \brief GizmoEventLIRC Default Constructor
  */
 GizmoEventLIRC::GizmoEventLIRC() : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
-	Code = 0;
 	Repeat = 0;
 }
 
 /**
  * \brief GizmoEventLIRC Init Constructor
  */
-GizmoEventLIRC::GizmoEventLIRC(unsigned long code, int repeat, std::string button, std::string remote) : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
+GizmoEventLIRC::GizmoEventLIRC(std::string code, int repeat, std::string button, std::string remote) : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
 	Code = code;
 	Repeat = repeat;
 	Button = button;
@@ -87,7 +86,7 @@ void GizmoEventLIRC::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<
 	// create some data structures for parsing the info
 	typedef boost::tokenizer< boost::char_separator<char> > tokenizer;
 	char_separator<char> Separators(" ");
-	unsigned long Code;
+	string Code;
 	int Repeat;
 	string Button;
 	string Remote;
@@ -100,10 +99,7 @@ void GizmoEventLIRC::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<
 		switch (count) {
 		case 0:
 			// get the code
-			if (!from_string<unsigned long>(Code, *iter, std::hex)) {
-				cdbg1 << "Bad LIRC Data Packet <Code> [" << LIRCData << "]" << endl;
-				return;
-			}
+			Code = *iter;
 			break;
 		case 1:
 			// get the repeats

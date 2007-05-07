@@ -35,9 +35,6 @@ MOUSE_GIZMOS = ["mouse", "trackball", "touchpad", "logitech usb receiver"]
 # list of devices to enumerate as ATI X10 RF remotes
 LIRC_GIZMOS = ["lirc"]
 
-# list of lirc remotes -- these should match their class name in modules.d/devices.lirc
-LIRC_REMOTES = ["Hauppauge", "MceUSB2"]
-
 # List of devices to enumerate as mice
 POWERMATE_GIZMOS = ["powermate", "soundknob"]
 

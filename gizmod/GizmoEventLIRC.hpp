@@ -58,7 +58,7 @@
 class GizmoEventLIRC : public GizmoEvent {
 public:
 	// public variables
-	unsigned long 			Code;				///< Event Code
+	std::string 			Code;				///< Event Code
 	int				Repeat;				///< Repeat count of the event
 	std::string			Button;				///< Button text from lircd.conf
 	std::string			Remote;				///< Name of the remote that triggered the event
@@ -70,7 +70,7 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventLIRC();						///< Default Constructor
-	GizmoEventLIRC(unsigned long code, int repeat, std::string button, std::string remote); ///< Init Constructor
+	GizmoEventLIRC(std::string code, int repeat, std::string button, std::string remote); ///< Init Constructor
 	virtual ~GizmoEventLIRC();					///< Destructor
 
 protected:

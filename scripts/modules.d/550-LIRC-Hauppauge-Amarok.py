@@ -14,12 +14,10 @@
 ##########################
 
 from GizmoDaemon import *
-from GizmoDeviceStrings import *
-from Hauppauge import *
 import subprocess
 
 ENABLED = True
-USES_LIRC_REMOTE = "Hauppauge"
+USES_LIRC_REMOTES = ["Hauppauge_350"]
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 INTERESTED_APPLICATION = "amarokapp"
 
@@ -27,7 +25,7 @@ INTERESTED_APPLICATION = "amarokapp"
 # LIRCHauppaugeAmarok Class definition
 ##########################
 
-class LIRCHauppaugeAmarok(Hauppauge):
+class LIRCHauppaugeAmarok:
 	"""
 	Amarok LIRC Hauppauge Event Mapping
 	"""
@@ -44,108 +42,106 @@ class LIRCHauppaugeAmarok(Hauppauge):
 		# if the event class is in INTERESTED_CLASSES and the active window is
 		# one of INTERESTED_WINDOWS and there is a keyboard and mouse attached 
 		# then process the event
-		if Event.Class in INTERESTED_CLASSES and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \
+		if Event.Class in INTERESTED_CLASSES and Event.Remote in USES_LIRC_REMOTES \
+		   and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
-		   	KeyString = self.getKeyString(Event)
-		   	if not KeyString:
+		   	if   Button.Code == "Go":
 		   		return False
-		   	elif KeyString == "Go":
+		   	elif Button.Code == "Power":
 		   		return False
-		   	elif KeyString == "Power":
+		   	elif Button.Code == "TV":
 		   		return False
-		   	elif KeyString == "TV":
+		   	elif Button.Code == "Videos":
 		   		return False
-		   	elif KeyString == "Videos":
+		   	elif Button.Code == "Music":		   	
 		   		return False
-		   	elif KeyString == "Music":		   	
+		   	elif Button.Code == "Pictures":
 		   		return False
-		   	elif KeyString == "Pictures":
+		   	elif Button.Code == "Guide":
 		   		return False
-		   	elif KeyString == "Guide":
+		   	elif Button.Code == "Up":
 		   		return False
-		   	elif KeyString == "Up":
+		   	elif Button.Code == "Radio":
 		   		return False
-		   	elif KeyString == "Radio":
-		   		return False
-		   	elif KeyString == "Left":
+		   	elif Button.Code == "Left":
 			   	subprocess.Popen(["amarok", "--previous"])
 		   		return True
-		   	elif KeyString == "OK":
+		   	elif Button.Code == "OK":
 		   		return False
-		   	elif KeyString == "Right":
+		   	elif Button.Code == "Right":
 			   	subprocess.Popen(["amarok", "--next"])
 		   		return True
-		   	elif KeyString == "Back/Exit":
+		   	elif Button.Code == "Back/Exit":
 		   		return False
-		   	elif KeyString == "Down":
+		   	elif Button.Code == "Down":
 		   		return False
-		   	elif KeyString == "Menu":
+		   	elif Button.Code == "Menu/i":
 		   		return False
-		   	elif KeyString == "VolUp":
+		   	elif Button.Code == "Vol+":
 		   		return False
-		   	elif KeyString == "VolDown":
+		   	elif Button.Code == "Vol-":
 		   		return False
-		   	elif KeyString == "Prev.Ch":
+		   	elif Button.Code == "Prev.Ch":
 		   		return False
-		   	elif KeyString == "Mute":
+		   	elif Button.Code == "Mute":
 		   		return False
-		   	elif KeyString == "ChUp":
+		   	elif Button.Code == "Ch+":
 		   		return False
-		   	elif KeyString == "ChDown":
+		   	elif Button.Code == "Ch-":
 		   		return False
-		   	elif KeyString == "Rec":
+		   	elif Button.Code == "Record":
 		   		return False
-		   	elif KeyString == "Stop":
+		   	elif Button.Code == "Stop":
 			   	subprocess.Popen(["amarok", "--stop"])
 		   		return True
-		   	elif KeyString == "Rewind":
+		   	elif Button.Code == "Rewind":
 		   		return False
-		   	elif KeyString == "Play":
+		   	elif Button.Code == "Play":
 			   	subprocess.Popen(["amarok", "--play-pause"])
 		   		return True
-		   	elif KeyString == "FastForward":
+		   	elif Button.Code == "Forward":
 		   		return False
-		   	elif KeyString == "Replay":
+		   	elif Button.Code == "Replay/SkipBackward":
 			   	subprocess.Popen(["amarok", "--previous"])
 		   		return True
-		   	elif KeyString == "Pause":
+		   	elif Button.Code == "Pause":
 			   	subprocess.Popen(["amarok", "--play-pause"])
 		   		return True
-		   	elif KeyString == "Skip":
+		   	elif Button.Code == "SkipForward":
 			   	subprocess.Popen(["amarok", "--next"])
 		   		return True
-		   	elif KeyString == "1":
+		   	elif Button.Code == "1":
 		   		return False
-		   	elif KeyString == "2":
+		   	elif Button.Code == "2":
 		   		return False
-		   	elif KeyString == "3":
+		   	elif Button.Code == "3":
 		   		return False
-		   	elif KeyString == "4":
+		   	elif Button.Code == "4":
 		   		return False
-		   	elif KeyString == "5":
+		   	elif Button.Code == "5":
 		   		return False
-		   	elif KeyString == "6":
+		   	elif Button.Code == "6":
 		   		return False
-		   	elif KeyString == "7":
+		   	elif Button.Code == "7":
 		   		return False
-		   	elif KeyString == "8":
+		   	elif Button.Code == "8":
 		   		return False
-		   	elif KeyString == "9":
+		   	elif Button.Code == "9":
 		   		return False
-		   	elif KeyString == "*":
+		   	elif Button.Code == "Asterix":
 		   		return False
-		   	elif KeyString == "0":
+		   	elif Button.Code == "0":
 		   		return False
-		   	elif KeyString == "#":
+		   	elif Button.Code == "#":
 		   		return False
-		   	elif KeyString == "Red":
+		   	elif Button.Code == "Red":
 		   		return False
-		   	elif KeyString == "Green":
+		   	elif Button.Code == "Green":
 		   		return False
-		   	elif KeyString == "Yellow":
+		   	elif Button.Code == "Yellow":
 		   		return False
-		   	elif KeyString == "Blue":
+		   	elif Button.Code == "Blue":
 		   		return False
 		   	else:
 		   		# unmatched event, keep processing
@@ -169,5 +165,5 @@ class LIRCHauppaugeAmarok(Hauppauge):
 ##########################
 
 # register the user script
-if ENABLED and USES_LIRC_REMOTE in LIRC_REMOTES:
+if ENABLED:
 	Gizmod.Dispatcher.userScripts.append(LIRCHauppaugeAmarok())
