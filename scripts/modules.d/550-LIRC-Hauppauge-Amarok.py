@@ -46,102 +46,102 @@ class LIRCHauppaugeAmarok:
 		   and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
-		   	if   Button.Code == "Go":
+		   	if   Event.Button == "Go":
 		   		return False
-		   	elif Button.Code == "Power":
+		   	elif Event.Button == "Power":
 		   		return False
-		   	elif Button.Code == "TV":
+		   	elif Event.Button == "TV":
 		   		return False
-		   	elif Button.Code == "Videos":
+		   	elif Event.Button == "Videos":
 		   		return False
-		   	elif Button.Code == "Music":		   	
+		   	elif Event.Button == "Music":		   	
 		   		return False
-		   	elif Button.Code == "Pictures":
+		   	elif Event.Button == "Pictures":
 		   		return False
-		   	elif Button.Code == "Guide":
+		   	elif Event.Button == "Guide":
 		   		return False
-		   	elif Button.Code == "Up":
+		   	elif Event.Button == "Up":
 		   		return False
-		   	elif Button.Code == "Radio":
+		   	elif Event.Button == "Radio":
 		   		return False
-		   	elif Button.Code == "Left":
+		   	elif Event.Button == "Left":
 			   	subprocess.Popen(["amarok", "--previous"])
 		   		return True
-		   	elif Button.Code == "OK":
+		   	elif Event.Button == "OK":
 		   		return False
-		   	elif Button.Code == "Right":
+		   	elif Event.Button == "Right":
 			   	subprocess.Popen(["amarok", "--next"])
 		   		return True
-		   	elif Button.Code == "Back/Exit":
+		   	elif Event.Button == "Back/Exit":
 		   		return False
-		   	elif Button.Code == "Down":
+		   	elif Event.Button == "Down":
 		   		return False
-		   	elif Button.Code == "Menu/i":
+		   	elif Event.Button == "Menu/i":
 		   		return False
-		   	elif Button.Code == "Vol+":
+		   	elif Event.Button == "Vol+":
 		   		return False
-		   	elif Button.Code == "Vol-":
+		   	elif Event.Button == "Vol-":
 		   		return False
-		   	elif Button.Code == "Prev.Ch":
+		   	elif Event.Button == "Prev.Ch":
 		   		return False
-		   	elif Button.Code == "Mute":
+		   	elif Event.Button == "Mute":
 		   		return False
-		   	elif Button.Code == "Ch+":
+		   	elif Event.Button == "Ch+":
 		   		return False
-		   	elif Button.Code == "Ch-":
+		   	elif Event.Button == "Ch-":
 		   		return False
-		   	elif Button.Code == "Record":
+		   	elif Event.Button == "Record":
 		   		return False
-		   	elif Button.Code == "Stop":
+		   	elif Event.Button == "Stop":
 			   	subprocess.Popen(["amarok", "--stop"])
 		   		return True
-		   	elif Button.Code == "Rewind":
+		   	elif Event.Button == "Rewind":
 		   		return False
-		   	elif Button.Code == "Play":
+		   	elif Event.Button == "Play":
 			   	subprocess.Popen(["amarok", "--play-pause"])
 		   		return True
-		   	elif Button.Code == "Forward":
+		   	elif Event.Button == "Forward":
 		   		return False
-		   	elif Button.Code == "Replay/SkipBackward":
+		   	elif Event.Button == "Replay/SkipBackward":
 			   	subprocess.Popen(["amarok", "--previous"])
 		   		return True
-		   	elif Button.Code == "Pause":
+		   	elif Event.Button == "Pause":
 			   	subprocess.Popen(["amarok", "--play-pause"])
 		   		return True
-		   	elif Button.Code == "SkipForward":
+		   	elif Event.Button == "SkipForward":
 			   	subprocess.Popen(["amarok", "--next"])
 		   		return True
-		   	elif Button.Code == "1":
+		   	elif Event.Button == "1":
 		   		return False
-		   	elif Button.Code == "2":
+		   	elif Event.Button == "2":
 		   		return False
-		   	elif Button.Code == "3":
+		   	elif Event.Button == "3":
 		   		return False
-		   	elif Button.Code == "4":
+		   	elif Event.Button == "4":
 		   		return False
-		   	elif Button.Code == "5":
+		   	elif Event.Button == "5":
 		   		return False
-		   	elif Button.Code == "6":
+		   	elif Event.Button == "6":
 		   		return False
-		   	elif Button.Code == "7":
+		   	elif Event.Button == "7":
 		   		return False
-		   	elif Button.Code == "8":
+		   	elif Event.Button == "8":
 		   		return False
-		   	elif Button.Code == "9":
+		   	elif Event.Button == "9":
 		   		return False
-		   	elif Button.Code == "Asterix":
+		   	elif Event.Button == "Asterix":
 		   		return False
-		   	elif Button.Code == "0":
+		   	elif Event.Button == "0":
 		   		return False
-		   	elif Button.Code == "#":
+		   	elif Event.Button == "#":
 		   		return False
-		   	elif Button.Code == "Red":
+		   	elif Event.Button == "Red":
 		   		return False
-		   	elif Button.Code == "Green":
+		   	elif Event.Button == "Green":
 		   		return False
-		   	elif Button.Code == "Yellow":
+		   	elif Event.Button == "Yellow":
 		   		return False
-		   	elif Button.Code == "Blue":
+		   	elif Event.Button == "Blue":
 		   		return False
 		   	else:
 		   		# unmatched event, keep processing
