@@ -15,6 +15,9 @@
 
 from GizmoDaemon import *
 
+# tehe lirc remote names that work with this mapping
+REMOTE_NAMES = ["Hauppauge_350"]
+
 ############################
 # Hauppauge Class definition
 ##########################
@@ -33,60 +36,56 @@ class Hauppauge:
 		Get a human friendly key name from the key code
 		"""
 		
-		# ensure that the code is valid
-		if len(Event.LIRCData) != 2:
+		# ensure that the code is for this remote
+		if Event.Remote not in REMOTE_NAMES:
 			return None
 		
-		# grab the codes
-		data1 = ord(Event.LIRCData[0])
-		data2 = ord(Event.LIRCData[1])
-		
 		# parse the data
-		if   data2 == 0xbb: return "Go"
-		elif data2 == 0xbd: return "Power"
-		elif data2 == 0x9c: return "TV"
-		elif data2 == 0x98: return "Videos"
-		elif data2 == 0x99: return "Music"
-		elif data2 == 0x9a: return "Pictures"
-		elif data2 == 0x9b: return "Guide"
-		elif data2 == 0x94: return "Up"
-		elif data2 == 0x8c: return "Radio"
-		elif data2 == 0x96: return "Left"
-		elif data2 == 0xa5: return "OK"
-		elif data2 == 0x97: return "Right"
-		elif data2 == 0x9f: return "Back/Exit"
-		elif data2 == 0x95: return "Down"
-		elif data2 == 0x8d: return "Menu"
-		elif data2 == 0x90: return "VolUp"
-		elif data2 == 0x91: return "VolDown"
-		elif data2 == 0x92: return "Prev.Ch"
-		elif data2 == 0x8f: return "Mute"
-		elif data2 == 0xa0: return "ChUp"
-		elif data2 == 0xa1: return "ChDown"
-		elif data2 == 0xb7: return "Rec"
-		elif data2 == 0xb6: return "Stop"
-		elif data2 == 0xb2: return "Rewind"
-		elif data2 == 0xb5: return "Play"
-		elif data2 == 0xb4: return "FastForward"
-		elif data2 == 0xa4: return "Replay"
-		elif data2 == 0xb0: return "Pause"
-		elif data2 == 0x9e: return "Skip"
-		elif data2 == 0x81: return "1"
-		elif data2 == 0x82: return "2"
-		elif data2 == 0x83: return "3"
-		elif data2 == 0x84: return "4"
-		elif data2 == 0x85: return "5"
-		elif data2 == 0x86: return "6"
-		elif data2 == 0x87: return "7"
-		elif data2 == 0x88: return "8"
-		elif data2 == 0x89: return "9"
-		elif data2 == 0x8a: return "*"
-		elif data2 == 0x80: return "0"
-		elif data2 == 0x8e: return "#"
-		elif data2 == 0x8b: return "Red"
-		elif data2 == 0xae: return "Green"
-		elif data2 == 0xb8: return "Yellow"
-		elif data2 == 0xa9: return "Blue"
+		if   Event.Code == 0x17bb: return "Go"
+		elif Event.Code == 0x17bd: return "Power"
+		elif Event.Code == 0x179c: return "TV"
+		elif Event.Code == 0x1798: return "Videos"
+		elif Event.Code == 0x1799: return "Music"
+		elif Event.Code == 0x179a: return "Pictures"
+		elif Event.Code == 0x179b: return "Guide"
+		elif Event.Code == 0x1794: return "Up"
+		elif Event.Code == 0x178c: return "Radio"
+		elif Event.Code == 0x1796: return "Left"
+		elif Event.Code == 0x17a5: return "OK"
+		elif Event.Code == 0x1797: return "Right"
+		elif Event.Code == 0x179f: return "Back/Exit"
+		elif Event.Code == 0x1795: return "Down"
+		elif Event.Code == 0x178d: return "Menu"
+		elif Event.Code == 0x1790: return "VolUp"
+		elif Event.Code == 0x1791: return "VolDown"
+		elif Event.Code == 0x1792: return "Prev.Ch"
+		elif Event.Code == 0x178f: return "Mute"
+		elif Event.Code == 0x17a0: return "ChUp"
+		elif Event.Code == 0x17a1: return "ChDown"
+		elif Event.Code == 0x17b7: return "Rec"
+		elif Event.Code == 0x17b6: return "Stop"
+		elif Event.Code == 0x17b2: return "Rewind"
+		elif Event.Code == 0x17b5: return "Play"
+		elif Event.Code == 0x17b4: return "FastForward"
+		elif Event.Code == 0x17a4: return "Replay"
+		elif Event.Code == 0x17b0: return "Pause"
+		elif Event.Code == 0x179e: return "Skip"
+		elif Event.Code == 0x1781: return "1"
+		elif Event.Code == 0x1782: return "2"
+		elif Event.Code == 0x1783: return "3"
+		elif Event.Code == 0x1784: return "4"
+		elif Event.Code == 0x1785: return "5"
+		elif Event.Code == 0x1786: return "6"
+		elif Event.Code == 0x1787: return "7"
+		elif Event.Code == 0x1788: return "8"
+		elif Event.Code == 0x1789: return "9"
+		elif Event.Code == 0x178a: return "*"
+		elif Event.Code == 0x1780: return "0"
+		elif Event.Code == 0x178e: return "#"
+		elif Event.Code == 0x178b: return "Red"
+		elif Event.Code == 0x17ae: return "Green"
+		elif Event.Code == 0x17b8: return "Yellow"
+		elif Event.Code == 0x17a9: return "Blue"
 		else:
 			return None
 	

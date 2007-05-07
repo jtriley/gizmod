@@ -31,17 +31,19 @@
 #include "Exception.hpp"
 #include "Util.hpp"
 #include "UtilTime.hpp"
+#include <boost/bind.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <linux/input.h>
 #include <unistd.h>
-#include <boost/bind.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <sys/inotify.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 
 using namespace std;
 using namespace boost;
@@ -281,6 +283,51 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 	
 	cdbg1 << "Watching Device [" << FileName << "]: " << DeviceName << endl;
 	shared_ptr<FileWatchee> pWatchee(new FileWatchee(FileName, WatchType, events, fd, wd, DeviceName, DeviceIDs[0], DeviceIDs[1], DeviceIDs[2], DeviceIDs[3]));
+	mWatchees.insert(make_pair(fd, pWatchee));
+	buildPollFDArrayFromWatchees();
+	onFileEventRegister(pWatchee);
+			
+	return pWatchee;
+}
+
+/**
+ * \brief Add a unix socket to watch for events
+ * \param FileName Absolute path of the file to watch
+ * \param WatchType Type of watch to perform on the file
+ * \param DeviceName Device name
+ */
+boost::shared_ptr<FileWatchee> FileEventWatcher::addUnixSocketToWatch(std::string FileName, std::string DeviceName) {
+	// get mode mask
+	string	 	ModeString = "Read";
+	short		events = POLLIN;
+	FileWatchType 	WatchType = WATCH_IN;
+	
+	// make sure it exists
+	filesystem::path FilePath(FileName);
+	if (!filesystem::exists(FilePath))
+		throw H::Exception("Path [" + FileName + "] does not exist, or cannot open (perms?) with Mode [" + ModeString + "]", __FILE__, __FUNCTION__, __LINE__);
+	
+	// set up the datastructure
+	struct sockaddr_un Addr;
+	Addr.sun_family = AF_UNIX;
+	strcpy(Addr.sun_path, FileName.c_str());
+	
+	// open the unix socket
+	int fd;
+	if ((fd = socket(AF_UNIX,SOCK_STREAM, 0)) == -1) {
+		cdbg1 << "Failed to Creat Socket for [" << FileName << "] for [" << ModeString + "] -- Check Permissions!" << endl;
+		return shared_ptr<FileWatchee>();
+	}
+	
+	// connect to the socket
+	if (connect(fd,(struct sockaddr *) &Addr,sizeof(Addr)) == -1)  {
+		cdbg1 << "Failed to Connect to [" << FileName << "] for [" << ModeString + "] -- Check Permissions!" << endl;
+		close(fd);
+		return shared_ptr<FileWatchee>();
+	}
+	
+	cdbg1 << "Watching Unix Socket [" << FileName << "]: " << DeviceName << endl;
+	shared_ptr<FileWatchee> pWatchee(new FileWatchee(FileName, WatchType, events, fd, -1, DeviceName, -1, -1, -1, -1));
 	mWatchees.insert(make_pair(fd, pWatchee));
 	buildPollFDArrayFromWatchees();
 	onFileEventRegister(pWatchee);
@@ -604,8 +651,8 @@ void FileEventWatcher::watchForFileEvents() {
 		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), POLL_TIMEOUT)) == -1) {
 			// error
 			cdbg1 << "Poll error: " << strerror(errno) << endl;
-			continue; // <-- for debugging, since the debugger fires signals and causes poll to abort
-			//return;
+			//continue; // <-- for debugging, since the debugger fires signals and causes poll to abort
+			return;
 		}
 						
 		if (!ret)

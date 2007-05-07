@@ -119,7 +119,7 @@ using namespace H;
  * \def    LIRC_DEV
  * \brief  Default path to the LIRC device node
  */
-#define LIRC_DEV		"/dev/lirc/0"
+#define LIRC_DEV		"/dev/lircd"
 
 /** 
  * \def    NO_GETTER
@@ -411,8 +411,10 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 			
 	/// GizmoEventPowermate Python Class Export
 	class_< GizmoEventLIRC, bases<GizmoEvent> >("GizmoEventLIRC")
-		.def_readonly("LIRCData", &GizmoEventLIRC::LIRCData)
-		.def_readonly("LIRCDataBitString", &GizmoEventLIRC::LIRCDataBitString)
+		.def_readonly("Code", &GizmoEventLIRC::Code)
+		.def_readonly("Repeat", &GizmoEventLIRC::Repeat)
+		.def_readonly("Button", &GizmoEventLIRC::Button)
+		.def_readonly("Remote", &GizmoEventLIRC::Remote)
 		;
 		
 	/// GizmoLinuxInputDevice Python Class Export
@@ -478,8 +480,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// GizmoLIRC Python Class Export
 	class_< GizmoLIRC, bases<Gizmo> >("GizmoLIRC", init<const DeviceInfo &, int, int>())
 		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
+		.def("setDisableFirstRepeats", &GizmoLIRC::setDisableFirstRepeats)
 		.def("setMinimumTimeBetweenEvents", &GizmoLIRC::setMinimumTimeBetweenEvents)
-			.staticmethod("setMinimumTimeBetweenEvents")
 		;
 	
 	/// GizmoPowermate Python Class Export
@@ -1809,17 +1811,14 @@ void GizmoDaemon::registerLircDevice() {
 		cdbg << "LIRC device node [" + mLircDev + "] does not exist -- disabling LIRC support" << endl;
 		return;
 	}
-	int tfd;
-	if ((tfd = open(mLircDev.c_str(), O_RDONLY)) == -1) {
+	
+	boost::shared_ptr<FileWatchee> pWatchee = addUnixSocketToWatch(mLircDev, "LIRC");
+	if (!pWatchee) {
 		cdbg << "Could not connect to LIRC device node [" + mLircDev + "] -- disabling LIRC support" << endl;
 		cdbg << "    - Check permissions" << endl;
-		cdbg << "    - Ensure lircd is not running" << endl;
+		cdbg << "    - Ensure lircd is running" << endl;
 		return;
 	}
-	close(tfd);
-	
-	// register the directory itself
-	addFileToWatch(mLircDev, WATCH_IN, "LIRC");
 }
 
 /**

@@ -27,6 +27,7 @@
 */
 
 #include "GizmoLIRC.hpp"
+#include "GizmoEventLIRC.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/UtilTime.hpp"
@@ -50,8 +51,6 @@ using namespace H;
 // Type Defs
 ///////////////////////////////////////
 
-float GizmoLIRC::mMinTimeBetweenEvents = 0.15f;
-
 ////////////////////////////////////////////////////////////////////////////
 // Construction
 ///////////////////////////////////////
@@ -60,13 +59,18 @@ float GizmoLIRC::mMinTimeBetweenEvents = 0.15f;
  * \brief GizmoLIRC Default Constructor
  */
 GizmoLIRC::GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_LIRC, deviceInfo, DeviceID, DeviceClassID)  {
+	mDisabledRepeats = 1;
 	mLastEventTime = UtilTime::getTicks();
+	mMinTimeBetweenEvents = 0.05f;
 }
 
 /**
  * \brief GizmoLIRC Serialize Constructor
  */
 GizmoLIRC::GizmoLIRC()  {
+	mDisabledRepeats = 1;
+	mLastEventTime = UtilTime::getTicks();
+	mMinTimeBetweenEvents = 0.05f;
 }
 
 /**
@@ -96,9 +100,23 @@ bool GizmoLIRC::processEvent(GizmoEvent * pEvent) {
 	float TimeBetweenEvents = float(UtilTime::getTicks() - mLastEventTime) / 1000000.0f;
 	if (TimeBetweenEvents <= mMinTimeBetweenEvents)
 		return false;
+	GizmoEventLIRC * pEventLIRC = static_cast<GizmoEventLIRC *>(pEvent);
+	if ( (pEventLIRC->Repeat != 0) && (pEventLIRC->Repeat <= mDisabledRepeats) )
+		return false;
 	cdbg5 << "LIRC Time Between Events: " << TimeBetweenEvents << " Seconds" << endl;
 	mLastEventTime = UtilTime::getTicks();
 	return true;
+}
+
+/**
+ * \brief  Set the number of repeats to disable
+ * \param  Repeats Number to disable
+ *
+ * If repeats is 1 this will cancel the first repeat of a keypress
+ * This is intented to smooth out certain trigger happy remotes
+ */
+void GizmoLIRC::setDisableFirstRepeats(int Repeats) {
+	mDisabledRepeats = Repeats;
 }
 
 /**

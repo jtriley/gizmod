@@ -44,11 +44,7 @@ class CatchAllDebug:
 		if Event.Class == GizmoEventClass.WindowFocus:
 			print "onEvent: " + str(Event.Class) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"
 		elif Event.Class == GizmoEventClass.LIRC:
-			sys.stdout.write("onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(len(Event.LIRCData)) + "]")
-			for char in Event.LIRCData:
-				sys.stdout.write(" " + str(hex(ord(char))))
-			sys.stdout.write(" | " + Event.LIRCDataBitString)
-			sys.stdout.write("\n")
+			print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(hex(Event.Code)) + "] " + Event.Button + " <" + Event.Remote + "> Repeat: " + str(Event.Repeat)
 		elif Event.Class == GizmoEventClass.SoundCard:
 			if Event.Mixer:
 				sys.stdout.write("onEvent: " + str(Event.Class) + " -- " + str(Event.Type) + " [" + str(Event.SoundCard.CardName) + "] <" + str(Event.Mixer.Name) + ">")

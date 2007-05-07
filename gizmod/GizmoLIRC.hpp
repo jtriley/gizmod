@@ -54,21 +54,21 @@ public:
 	// public functions
 	virtual std::string		getType();		///< Get the type of the Gizmo
 	virtual bool 			processEvent(GizmoEvent * pEvent); ///< Process an event
+	void				setDisableFirstRepeats(int Repeats); ///< Set the number of repeats to disable
+	void				setMinimumTimeBetweenEvents(float Seconds); ///< Set the minimum time between events
 	
 	// construction / deconstruction	
 	GizmoLIRC();						///< Serialize Constructor
 	GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
 	virtual ~GizmoLIRC();					///< Destructor
-
-	// static public functions
-	static void			setMinimumTimeBetweenEvents(float Seconds); ///< Set the minimum time between events
 	
 protected:
 	// protected functions
 	
 	// protected member variables
-	unsigned long			mLastEventTime;		///< Time of last event
-	static float			mMinTimeBetweenEvents;	///< Minimum time between events (smooth out trigger happy controllers)
+	int				mDisabledRepeats;	///< Number of disabled repeats
+	long				mLastEventTime;		///< Time of last event
+	float				mMinTimeBetweenEvents;	///< Minimum time between events (smooth out trigger happy controllers)
 
 private:
 	// private functions
@@ -81,7 +81,9 @@ private:
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & boost::serialization::base_object<Gizmo>(*this);
+		ar & mDisabledRepeats;
 		ar & mLastEventTime;
+		ar & mMinTimeBetweenEvents;
 	}		
 };
 

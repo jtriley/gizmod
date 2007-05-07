@@ -31,9 +31,12 @@
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/Util.hpp"
+#include "../libH/stringconverter.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
-#include <bitset>
+#include <boost/lexical_cast.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
 using namespace boost;
@@ -51,19 +54,18 @@ using namespace H;
  * \brief GizmoEventLIRC Default Constructor
  */
 GizmoEventLIRC::GizmoEventLIRC() : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
+	Code = 0;
+	Repeat = 0;
 }
 
 /**
  * \brief GizmoEventLIRC Init Constructor
  */
-GizmoEventLIRC::GizmoEventLIRC(std::string const & InputEvent) : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
-	LIRCData = InputEvent;
-	
-	// create the bitstring	
-	for (size_t lp = 0; lp < LIRCData.length(); lp++) {
-		bitset<8> bits(LIRCData[lp]);
-		LIRCDataBitString += bits.to_string();
-	}
+GizmoEventLIRC::GizmoEventLIRC(unsigned long code, int repeat, std::string button, std::string remote) : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
+	Code = code;
+	Repeat = repeat;
+	Button = button;
+	Remote = remote;
 }
 
 /**
@@ -82,6 +84,46 @@ GizmoEventLIRC::~GizmoEventLIRC() {
  * \param  Buffer The bufer to convert into events
  */
 void GizmoEventLIRC::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventLIRC> > & EventVector, H::DynamicBuffer<char> const & Buffer) {
+	// create some data structures for parsing the info
+	typedef boost::tokenizer< boost::char_separator<char> > tokenizer;
+	char_separator<char> Separators(" ");
+	unsigned long Code;
+	int Repeat;
+	string Button;
+	string Remote;
+	
 	string LIRCData(Buffer.getBuffer(), Buffer.length());
-	EventVector.push_back(boost::shared_ptr<GizmoEventLIRC>(new GizmoEventLIRC(LIRCData)));
+	replace_all(LIRCData, "\n", "");
+	tokenizer tok(LIRCData, Separators);
+	int count = 0;
+	for(tokenizer::iterator iter = tok.begin(); iter!= tok.end(); iter ++, count ++) {
+		switch (count) {
+		case 0:
+			// get the code
+			if (!from_string<unsigned long>(Code, *iter, std::hex)) {
+				cdbg1 << "Bad LIRC Data Packet <Code> [" << LIRCData << "]" << endl;
+				return;
+			}
+			break;
+		case 1:
+			// get the repeats
+			try {
+				Repeat = lexical_cast<int>(*iter);
+			} catch (bad_lexical_cast const & e) {
+				cdbg1 << "Bad LIRC Data Packet <Repeat> [" << LIRCData << "]" << endl;
+				return;
+			}
+			break;
+		case 2:
+			// get the button
+			Button = *iter;
+			break;
+		case 3:
+			// get the button
+			Remote = *iter;
+			EventVector.push_back(boost::shared_ptr<GizmoEventLIRC>(new GizmoEventLIRC(Code, Repeat, Button, Remote)));
+			count = 0;
+			break;
+		}
+	}
 }

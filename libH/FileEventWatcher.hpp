@@ -166,6 +166,7 @@ class FileEventWatcher {
 public:
 	// public functions
 	boost::shared_ptr<FileWatchee> 	addFileToWatch(std::string FileName, FileWatchType WatchType, std::string DefaultDeviceName = "Unknown"); ///< Add a file to watch for events 
+	boost::shared_ptr<FileWatchee> 	addUnixSocketToWatch(std::string FileName, std::string DeviceName); ///< Add a unix socket to the watch group
 	boost::shared_ptr<FileWatchee>	getWatcheeByFileDescriptor(int fd); ///< Get a Watchee by file descriptor
 	boost::shared_ptr<FileWatchee>	getWatcheeByPath(std::string Path); ///< Get a Watchee by file name
 	boost::shared_ptr<FileWatchee>	getWatcheeByWatchDescriptor(int wd); ///< Get a Watchee by watch descriptor

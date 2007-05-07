@@ -58,8 +58,10 @@
 class GizmoEventLIRC : public GizmoEvent {
 public:
 	// public variables
-	std::string			LIRCData;			///< Event string
-	std::string			LIRCDataBitString;		///< Event string as bits
+	unsigned long 			Code;				///< Event Code
+	int				Repeat;				///< Repeat count of the event
+	std::string			Button;				///< Button text from lircd.conf
+	std::string			Remote;				///< Name of the remote that triggered the event
 	
 	// public functions
 	
@@ -68,7 +70,7 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventLIRC();						///< Default Constructor
-	GizmoEventLIRC(std::string const & InputEvent);			///< Init Constructor
+	GizmoEventLIRC(unsigned long code, int repeat, std::string button, std::string remote); ///< Init Constructor
 	virtual ~GizmoEventLIRC();					///< Destructor
 
 protected:
@@ -86,8 +88,10 @@ private:
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & boost::serialization::base_object<GizmoEvent>(*this);
-		ar & LIRCData;
-		ar & LIRCDataBitString;
+		ar & Code;
+		ar & Repeat;
+		ar & Button;
+		ar & Remote;
 	}		
 };
 
