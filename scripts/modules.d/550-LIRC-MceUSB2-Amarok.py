@@ -3,7 +3,7 @@
 #*************************************************************************
 #*** 
 #*** GizmoDaemon Config Script v3:0
-#*** 	LIRCMceUSB2 Default config
+#*** 	LIRCMceUSB2 Amarok config
 #***
 #*****************************************
   #*****************************************
@@ -19,14 +19,15 @@ import subprocess
 ENABLED = True
 USES_LIRC_REMOTES = ["mceusb", "mceusb2"]
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
+INTERESTED_APPLICATION = "amarokapp"
 
 ############################
-# LIRCMceUSB2Default Class definition
+# LIRCMceUSB2Amarok Class definition
 ##########################
 
-class LIRCMceUSB2Default:
+class LIRCMceUSB2Amarok:
 	"""
-	Default LIRC Event Mapping for the MceUSB2 remote
+	Amarok LIRC Event Mapping for the MceUSB2 remote
 	"""
 	
 	############################
@@ -42,6 +43,7 @@ class LIRCMceUSB2Default:
 		# one of INTERESTED_WINDOWS and there is a keyboard and mouse attached 
 		# then process the event
 		if Event.Class in INTERESTED_CLASSES and Event.Remote in USES_LIRC_REMOTES \
+		   and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \
 		   and len(Gizmod.Mice) and len(Gizmod.Keyboards):
 			# process the key
 		   	if   Event.Button == "Power":
@@ -51,56 +53,53 @@ class LIRCMceUSB2Default:
 		   	elif Event.Button == "Music":
 		   		return False
 		   	elif Event.Button == "Pictures":
-		   		subprocess.Popen(["xset", "dpms", "force", "off"])
-		   		return True
+		   		return False
 		   	elif Event.Button == "Videos":
 		   		return False
 		   	elif Event.Button == "Stop":
-		   		return False
+			   	subprocess.Popen(["amarok", "--stop"])
+		   		return True
 		   	elif Event.Button == "Record":
 		   		return False
 		   	elif Event.Button == "Pause":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_P)
+			   	subprocess.Popen(["amarok", "--play-pause"])
 		   		return True
 		   	elif Event.Button == "Rewind":
-		   		return False
+			   	subprocess.Popen(["amarok", "--previous"])
+		   		return True
 		   	elif Event.Button == "Play":
-		   		return False
+			   	subprocess.Popen(["amarok", "--play-pause"])
+		   		return True
 		   	elif Event.Button == "Forward":
-		   		return False
+			   	subprocess.Popen(["amarok", "--next"])
+		   		return True
 		   	elif Event.Button == "Replay":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_BACKSPACE)
+			   	subprocess.Popen(["amarok", "--stop"])
+			   	subprocess.Popen(["amarok", "--play"])
 		   		return True
 		   	elif Event.Button == "Back":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
-		   		return True
-		   	elif Event.Button == "Up":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_UP)
-		   		return True
-		   	elif Event.Button == "Skip":
 		   		return False
+		   	elif Event.Button == "Up":
+		   		return False
+		   	elif Event.Button == "Skip":
+			   	subprocess.Popen(["amarok", "--next"])
+		   		return True
 		   	elif Event.Button == "More":
 		   		return False
 		   	elif Event.Button == "Left":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFT)
+			   	subprocess.Popen(["amarok", "--previous"])
 		   		return True
 		   	elif Event.Button == "OK":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Right":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHT)
+			   	subprocess.Popen(["amarok", "--next"])
 		   		return True
 		   	elif Event.Button == "Down":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
-		   		return True
+		   		return False
 		   	elif Event.Button == "VolUp":
-		   		if Gizmod.DefaultMixerVolume:
-		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent + 2.5
-		   		return True
+		   		return False
 		   	elif Event.Button == "VolDown":
-		   		if Gizmod.DefaultMixerVolume:
-		   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent - 2.5
-		   		return True
+		   		return False
 		   	elif Event.Button == "Home":
 		   		return False
 		   	elif Event.Button == "ChanUp":
@@ -110,8 +109,7 @@ class LIRCMceUSB2Default:
 		   	elif Event.Button == "RecTV":
 		   		return False
 		   	elif Event.Button == "Mute":
-	   			Gizmod.toggleMuteAllCards()
-		   		return True
+		   		return False
 		   	elif Event.Button == "DVD":
 		   		return False
 		   	elif Event.Button == "Guide":
@@ -119,47 +117,33 @@ class LIRCMceUSB2Default:
 		   	elif Event.Button == "LiveTV":
 		   		return False
 		   	elif Event.Button == "One":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_1)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Two":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_2)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Three":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_3)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Four":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_4)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Five":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_5)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Six":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_6)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Seven":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_7)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Eight":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_8)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Nine":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_9)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Star":
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTMETA, 1)
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_F12)
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTMETA, 0)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Zero":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_0)
-		   		return True
+		   		return False
 		   	elif Event.Button == "Hash":
 		   		return False
 		   	elif Event.Button == "Clear":
 		   		return False
 		   	elif Event.Button == "Enter":
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
-		   		return True
+		   		return False
 		   	else:
 		   		# unmatched event, keep processing
 				return False				
@@ -178,9 +162,9 @@ class LIRCMceUSB2Default:
 		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
 
 ############################
-# LIRCMceUSB2Default class end
+# LIRCMceUSB2Amarok class end
 ##########################
 
 # register the user script
 if ENABLED:
-	Gizmod.Dispatcher.userScripts.append(LIRCMceUSB2Default())
+	Gizmod.Dispatcher.userScripts.append(LIRCMceUSB2Amarok())
