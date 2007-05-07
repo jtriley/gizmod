@@ -34,6 +34,7 @@
 #include "../libGizmod/GizmoEventSoundCard.hpp"
 #include "../libGizmod/GizmoEventStandard.hpp"
 #include "../libGizmod/GizmoEventSoundCard.hpp"
+#include "../libGizmod/GizmoEventSoundVisualization.hpp"
 #include "../libGizmod/GizmoEventWindowFocus.hpp"
 #include "../libGizmod/GizmoATIX10.hpp"
 #include "../libGizmod/GizmoLIRC.hpp"
@@ -168,6 +169,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	void		onEvent(GizmoEventLIRC const * Event, GizmoLIRC const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventSoundCard const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
+	void		onEvent(GizmoEventSoundVisualization const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	void		onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) { return python::call_method<void>(self, "onEvent", ptr(Event), ptr(Device)); }
 	void		onEvent(GizmoEventWindowFocus const * Event) { return python::call_method<void>(self, "onEvent", ptr(Event)); }
 	GizmoClass	onQueryDeviceClass(DeviceInfo DeviceInformation) { return python::call_method<GizmoClass>(self, "onQueryDeviceClass", DeviceInformation); };
@@ -212,9 +214,17 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.value("LIRC",	 		GIZMO_EVENTCLASS_LIRC)
 		.value("Powermate", 		GIZMO_EVENTCLASS_POWERMATE)
 		.value("SoundCard",		GIZMO_EVENTCLASS_SOUNDCARD)
+		.value("SoundVisualization",	GIZMO_EVENTCLASS_SOUNDVISUALIZATION)
 		.value("Standard", 		GIZMO_EVENTCLASS_STANDARD)
 		.value("WindowFocus",		GIZMO_EVENTCLASS_WINDOWFOCUS)
 		;	
+	
+	/// SoundVisualizationEventType enum export
+	enum_<SoundVisualizationEventType>("SoundVisualizationEventType")
+		.value("Connect",		SOUNDVISUALIZATION_CONNECT)
+		.value("Disconnect", 		SOUNDVISUALIZATION_DISCONNECT)
+		.value("Render",		SOUNDVISUALIZATION_RENDER)
+		;
 	
 	/// X11FocusEventType enum export
 	enum_<X11FocusEventType>("X11FocusEventType")
@@ -457,6 +467,18 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.add_property("SoundCard", make_function(&GizmoEventSoundCard::getSoundCard, return_internal_reference<>()))
 		;
 
+	/// GizmoEventSoundVisualization Python Class Export
+	class_< GizmoEventSoundVisualization, bases<GizmoEvent> >("GizmoEventSoundVisualization")
+		.def("getVULeft", &GizmoEventSoundVisualization::getVULeft)
+		.add_property("VULeft", &GizmoEventSoundVisualization::getVULeft)
+		.def("getVURight", &GizmoEventSoundVisualization::getVURight)
+		.add_property("VURight", &GizmoEventSoundVisualization::getVURight)
+		.def("getVUCombined", &GizmoEventSoundVisualization::getVUCombined)
+		.add_property("VUCombined", &GizmoEventSoundVisualization::getVUCombined)
+		.def("getType", &GizmoEventSoundVisualization::getType)
+		.add_property("Type", &GizmoEventSoundVisualization::getType)
+		;
+		
 	/// X11FocusEvent Python Class Export
 	class_<X11FocusEvent>("X11FocusEvent", init<X11FocusEvent const &>())
 		.def_readonly("WindowEventType", &X11FocusEvent::EventType)
@@ -617,6 +639,9 @@ void GizmoDaemon::deserializeMessage(GizmoEventClass EventClass, std::string con
 	case GIZMO_EVENTCLASS_SOUNDCARD:
 		deserializeMessageSoundcard(Message);
 		break;
+	case GIZMO_EVENTCLASS_SOUNDVISUALIZATION:
+		deserializeMessageSoundVisualization(Message);
+		break;
 	case GIZMO_EVENTCLASS_STANDARD:
 		deserializeMessageStandard(Message);
 		break;
@@ -695,6 +720,24 @@ void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {
  * \param  Message The message to be deserialized
  */
 void GizmoDaemon::deserializeMessageSoundcard(std::string const & Message) {	
+}
+
+/**
+ * \brief  Deserialize a network message into event Objects
+ * \param  Message The message to be deserialized
+ */
+void GizmoDaemon::deserializeMessageSoundVisualization(std::string const & Message) {	
+	// deserialize
+	stringstream InStream(Message);
+	archive::text_iarchive InArchive(InStream);
+	GizmoEventSoundVisualization Event;
+	InArchive >> Event;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event);
+	}
 }
 
 /**
@@ -873,22 +916,12 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
 			if (!mLocalDisabled)
 				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
 			
-			// process the remote event
-			if (isClientConnected()) {
-				// serialize
-				stringstream OutStreamEvent;
-				archive::text_oarchive OutArchiveEvent(OutStreamEvent);
-				OutArchiveEvent << static_cast<GizmoEventLIRC const>(*EventVector[lp]);
-				
-				stringstream OutStreamDevice;
-				archive::text_oarchive OutArchiveDevice(OutStreamDevice);
-				OutArchiveDevice << static_cast<GizmoLIRC const>(Gizmo);
-				try {
-					sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_LIRC) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
-				} catch (SocketException const & e) {
-					cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
-				}
-			}					
+			// try to send the remote event
+			try {
+				sendEventLIRC(static_cast<GizmoEventLIRC const &>(*EventVector[lp]), static_cast<GizmoLIRC const &>(Gizmo));
+			} catch (SocketException const & e) {
+				cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
+			}
 		}
 	}
 }
@@ -1431,16 +1464,10 @@ void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > cons
 			mpPyDispatcher->onEvent(&EventCPUUsage);
 		
 		// process the remote event
-		if (isClientConnected()) {
-			// serialize
-			stringstream OutStream;
-			archive::text_oarchive OutArchive(OutStream);
-			OutArchive << EventCPUUsage;
-			try {
-				sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_CPUUSAGE) + "|" + OutStream.str());
-			} catch (SocketException const & e) {
-				cdbg << "Failed to send CPUUsage Message to Server -- " << e.getExceptionMessage() << endl;
-			}
+		try {
+			sendEventCPUUsage(Event);
+		} catch (SocketException const & e) {
+			cdbg << "Failed to send CPUUsage Message to Server -- " << e.getExceptionMessage() << endl;
 		}		
 	} catch (error_already_set) {
 		PyErr_Print();

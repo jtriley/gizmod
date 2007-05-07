@@ -38,6 +38,7 @@
 #include "../libGizmod/GizmoEventLIRC.hpp"
 #include "../libGizmod/GizmoEventPowermate.hpp"
 #include "../libGizmod/GizmoEventSoundCard.hpp"
+#include "../libGizmod/GizmoEventSoundVisualization.hpp"
 #include "../libGizmod/GizmoEventStandard.hpp"
 #include "../libGizmod/GizmoEventWindowFocus.hpp"
 #include "../libGizmod/Gizmo.hpp"
@@ -131,6 +132,12 @@ public:
 	 * \param  Event The event information 
 	 */
 	virtual void			onEvent(GizmoEventSoundCard const * Event) = 0;
+	
+	/**
+	 * \brief  SoundVisualization Event trigger
+	 * \param  Event The event information 
+	 */
+	virtual void			onEvent(GizmoEventSoundVisualization const * Event) = 0;
 	
 	/**
 	 * \brief  Standard Event trigger

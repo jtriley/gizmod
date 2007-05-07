@@ -2,8 +2,8 @@
   *********************************************************************
 *************************************************************************
 *** 
-*** \file  GizmodLibVisualPlugin.hpp
-*** \brief GizmodLibVisualPlugin class header
+*** \file  GizmoClient.hpp
+*** \brief GizmoClient class header
 ***
 *****************************************
   *****************************************
@@ -26,14 +26,18 @@
   
 */
 
-#ifndef __GizmodLibVisualPlugin_h
-#define __GizmodLibVisualPlugin_h
+#ifndef __GizmoClient_h
+#define __GizmoClient_h
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "../libGizmod/GizmoClient.hpp"
+#include "GizmoLIRC.hpp"
+#include "GizmoEventCPUUsage.hpp"
+#include "GizmoEventLIRC.hpp"
+#include "GizmoEventSoundVisualization.hpp"
+#include "../libH/SocketClient.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -44,26 +48,27 @@
 ///////////////////////////////////////
 
 /**
- * \class GizmodLibVisualPlugin
- * \brief Helper functions for the Gizmos
+ * \class GizmoClient
+ * \brief This class can be used to make a connection to the server
+ *
+ * All you need to do is call SocketClient::connectToServer!
+ * Then you're a client, and can use the rest of this class
  */
-class GizmodLibVisualPlugin : public GizmoClient {
+class GizmoClient : public H::SocketClient {
 public:
 	// public functions
-	void				init();				///< Initialize the plugin
-	void				shutdown();			///< Close the plugin
-	void				render(float VULeft, float VURight, float VUCombined); ///< Render the sound data
+	void				sendEventCPUUsage(GizmoEventCPUUsage const & Event); ///< Send CPUUsage Event to server
+	void				sendEventLIRC(GizmoEventLIRC const & Event, GizmoLIRC const & Gizmo); ///< Send LIRC Event to server
+	void				sendEventSoundVisualization(GizmoEventSoundVisualization const & Event); ///< Send Sound Visualization Event to server
 	
-	// construction / deconstruction 
-	GizmodLibVisualPlugin();					///< Default Constructor
-	virtual ~GizmodLibVisualPlugin();				///< Destructor
+	// construction / deconstruction
+	GizmoClient();							///< Default Constructor
+	virtual ~GizmoClient();						///< Destructor
 	
 private:
 	// private functions
 	
 	// private member variables
-	std::string			mServerHost;			///< Host to connect to
-	int				mServerPort;			///< Port to connect to
 };
 
-#endif // __GizmodLibVisualPlugin_h
+#endif // __GizmoClient_h

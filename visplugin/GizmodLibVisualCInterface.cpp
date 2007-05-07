@@ -32,6 +32,9 @@
 // C interface
 ///////////////////////////////////////
 
+/**
+ * The Plugin Object
+ */
 GizmodLibVisualPlugin Plugin;
 
 extern "C" {
@@ -41,6 +44,21 @@ extern "C" {
  */
 void GizmodLibVisual_Init() {
 	Plugin.init();
+}
+
+/**
+ * \brief  Clean up
+ */
+void GizmodLibVisual_CleanUp() {
+	Plugin.shutdown();
+}
+
+/** 
+ * \brief  Render the audio data
+ * \param  PCMData The audio data
+ */
+void GizmodLibVisual_Render(float VULeft, float VURight, float VUCombined) {
+	Plugin.render(VULeft, VURight, VUCombined);
 }
 
 }

@@ -28,8 +28,9 @@ class VisualizationType:
 	Types of visualizations
 	"""
 	
-	CPUUsage = "CPUUsage"
-	Volume = "Volume"
+	CPUUsage = 		"CPUUsage"
+	SoundVisualization = 	"SoundVisualization"
+	Volume = 		"Volume"
 
 ############################
 # PowermateVisualizer Class definition
@@ -57,6 +58,22 @@ class PowermateVisualizer:
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
 		
+		# take care of the interrupt count
+		if Event.Class == GizmoEventClass.CPUUsage:
+			if self.InterruptCount:
+				self.InterruptCount -= 1
+			if self.SoundVisCount:
+				self.SoundVisCount -= 1
+				if not self.SoundVisCount:
+					self.Visualization = self.LastVis
+		
+		# take care of the interrupt count
+		if Event.Class == GizmoEventClass.SoundVisualization:
+			if Event.Type == SoundVisualizationEventType.Connect:
+				self.LastVis = self.Visualization
+			self.Visualization = VisualizationType.SoundVisualization
+			self.SoundVisCount = INTERRUPT_LENGTH
+		
 		# check for mixer events
 		if (self.Visualization == VisualizationType.Volume or self.VolumeInterruptsOthers) \
 		   and Event.Class == GizmoEventClass.SoundCard \
@@ -79,10 +96,14 @@ class PowermateVisualizer:
 		elif self.Visualization == VisualizationType.CPUUsage \
 		   and Event.Class == GizmoEventClass.CPUUsage\
 		   and not (Gizmod.DefaultMixerSwitch and (not Gizmod.DefaultMixerSwitch.SwitchPlayback)):
-		   	if self.InterruptCount:
-		   		self.InterruptCount -= 1
-		   	else:
+		   	if not self.InterruptCount:
 				self.__applyVisualizationCPUUsage(Event)
+		# check for Sound Visualization events
+		elif self.Visualization == VisualizationType.SoundVisualization \
+		   and Event.Class == GizmoEventClass.SoundVisualization \
+		   and not (Gizmod.DefaultMixerSwitch and (not Gizmod.DefaultMixerSwitch.SwitchPlayback)):
+		   	if not self.InterruptCount:
+				self.__applyVisualizationSound(Event)
 
 		return False
 					
@@ -122,6 +143,16 @@ class PowermateVisualizer:
 			for Powermate in Gizmod.Powermates:
 				Powermate.pulseLED(255, 257, 2)
 			
+	def __applyVisualizationSound(self, Event):
+		"""
+		Set the Powermates' LEDs to the sound level
+		"""
+		
+		if len(Gizmod.Powermates) == 1:
+			Gizmod.Powermates[0].LEDPercent = Event.VUCombined * 100.0
+		else:
+			Gizmod.Powermates[0].LEDPercent = Event.VULeft * 100.0
+			Gizmod.Powermates[1].LEDPercent = Event.VURight * 100.0
 
 	def __init__(self):
 		""" 
@@ -133,8 +164,10 @@ class PowermateVisualizer:
 
 		# initialize member variables
 		self.Visualization = VisualizationType.CPUUsage	# Current LED visualizer
+		self.LastVis = self.Visualization		# Last known visualizer
 		self.VolumeInterruptsOthers = True		# Set to True if volume changes should interrupt other visualizations
 		self.InterruptCount = 0				# Length of time to remain interrupted
+		self.SoundVisCount = 0				# Amarok is buggy and doesn't notify on exit, so this is the workaround
 		
 		# apply the initial visualization
 		self.applyVisualization()

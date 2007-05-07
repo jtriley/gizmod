@@ -27,9 +27,10 @@
 */
 
 #include "GizmodLibVisualPlugin.hpp"
+#include "../libGizmod/GizmoEventSoundVisualization.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
-#include <bitset>
+#include "../libH/SocketException.hpp"
 
 using namespace std;
 using namespace H;
@@ -46,12 +47,17 @@ using namespace H;
  * \brief GizmodLibVisualPlugin Default Constructor
  */
 GizmodLibVisualPlugin::GizmodLibVisualPlugin() {
+	mServerHost = "localhost";
+	mServerPort = 30303;
+	Debug::setDebugEnabled(true);
+	Debug::setDebugLog("/tmp/actor_gizmod.log");
 }
 
 /**
  * \brief GizmodLibVisualPlugin Destructor
  */
 GizmodLibVisualPlugin::~GizmodLibVisualPlugin() {
+	closeSocket();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -62,7 +68,34 @@ GizmodLibVisualPlugin::~GizmodLibVisualPlugin() {
  * \brief  Initialize the plugin
  */
 void GizmodLibVisualPlugin::init() {
-	FILE * f = fopen("/tmp/actor_gizmod.log", "w");
-	fprintf(f, "nARF");
-	fclose(f);	
+	cdbg << "Init" << endl;
+	
+	// initialize the client
+	try {
+		cdbg << "Connecting to [" << mServerHost << "] at Port [" << mServerPort << "]..." << endl;
+		connectToServer(mServerHost, mServerPort);
+		cdbg << "Connected to [" << mServerHost << "] at Port [" << mServerPort << "]..." << endl;
+		GizmoEventSoundVisualization Event(SOUNDVISUALIZATION_CONNECT);
+		sendEventSoundVisualization(Event);
+	} catch (SocketException const & e) {
+		cdbg << e.getExceptionMessage() << endl;
+	}
+}
+
+/**
+ * \brief  Shutdown the plugin
+ */
+void GizmodLibVisualPlugin::shutdown() {
+	GizmoEventSoundVisualization Event(SOUNDVISUALIZATION_DISCONNECT);
+	sendEventSoundVisualization(Event);
+	cdbg << "Shutdown" << endl;
+}
+
+/**
+ * \brief  Render the sound data
+ * \param  PCMData The sound data
+ */
+void GizmodLibVisualPlugin::render(float VULeft, float VURight, float VUCombined) {
+	GizmoEventSoundVisualization Event(VULeft, VURight, VUCombined);
+	sendEventSoundVisualization(Event);
 }

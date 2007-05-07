@@ -28,14 +28,15 @@
 
 #include "Debug.hpp"
 
-using namespace H;
-
 ////////////////////////////////////////////////////////////////////////////
 // Globals
 ///////////////////////////////////////
 
-bool 	Debug::mDebug = false;
-int	Debug::mVerbosity = 0;
+bool 		H::Debug::mDebug = false;
+int		H::Debug::mVerbosity = 0;
+std::ofstream 	H::Debug::mLogFile;
+std::string	H::Debug::mLogPath;
+bool 		H::Debug::mLogToFile = false;
 
 ////////////////////////////////////////////////////////////////////////////
 // Type Defs
@@ -48,14 +49,14 @@ int	Debug::mVerbosity = 0;
 /**
  * \brief Default Constructor
  */
-Debug::Debug(int ThisVerbosity) {
+H::Debug::Debug(int ThisVerbosity) {
 	mThisVerbosity = ThisVerbosity;
 }
 
 /**
  * \brief Destructor
  */
-Debug::~Debug() {
+H::Debug::~Debug() {
 }
 
 ////////////////////////////////////////////////////////////////////////////

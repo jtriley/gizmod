@@ -38,12 +38,12 @@
 #include "../libGizmod/Alsa.hpp"
 #include "../libGizmod/CPUUsage.hpp"
 #include "../libGizmod/Gizmo.hpp"
+#include "../libGizmod/GizmoClient.hpp"
 #include "../libGizmod/Processes.hpp"
 #include "../libGizmod/X11FocusWatcher.hpp"
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include "../libH/SocketServer.hpp"
-#include "../libH/SocketClient.hpp"
 #include <ext/hash_map>
 #include <map>
 #include <string>
@@ -72,7 +72,7 @@ class GizmoDaemon :
 	public Processes,
 	public CPUUsage,
 	public SocketServer,
-	public SocketClient,
+	public GizmoClient,
 	public GizmoUtils
 {
 public:
@@ -102,6 +102,7 @@ private:
 	void				deserializeMessageLIRC(std::string const & Message); ///< Deserialize a network message into event Objects
 	void				deserializeMessagePowermate(std::string const & Message); ///< Deserialize a network message into event Objects
 	void				deserializeMessageSoundcard(std::string const & Message); ///< Deserialize a network message into event Objects
+	void				deserializeMessageSoundVisualization(std::string const & Message); ///< Deserialize a network message into event Objects
 	void				deserializeMessageStandard(std::string const & Message); ///< Deserialize a network message into event Objects
 	void				deserializeMessageWindowFocus(std::string const & Message); ///< Deserialize a network message into event Objects
 	int 				getGizmoClassID(GizmoClass Class); ///< Get number of Gizmos of a particular class

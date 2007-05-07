@@ -65,6 +65,9 @@ class CatchAllDebug:
 		elif Event.Class == GizmoEventClass.Powermate and Event.Type == GizmoEventType.EV_MSC:
 			# Don't print LED change events
 			pass
+		elif Event.Class == GizmoEventClass.SoundVisualization:
+			#print "onEvent: " + str(Event.Class) + " [" + str(Event.Type) + "] -- L: " + str(Event.VULeft) + " R: " + str(Event.VURight) + " C: " + str(Event.VUCombined)
+			pass
 		else:
 			if Event.Type == GizmoEventType.EV_KEY:
 				print "onEvent: " + str(Event.Class) + " -- " + Gizmo.FileName + " | [" + str(Event.Type) + "] <" + str(Event.Code) + "> c: " + str(hex(Event.RawCode)) + " v: " + str(hex(Event.Value))

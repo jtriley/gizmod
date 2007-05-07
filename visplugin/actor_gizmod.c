@@ -26,12 +26,6 @@ int lv_gizmod_events(VisPluginData *plugin, VisEventQueue *events);
 VisPalette *lv_gizmod_palette(VisPluginData *plugin);
 int lv_gizmod_render(VisPluginData *plugin, VisVideo *video, VisAudio *audio);
 
-void debugPrint(const char * text) {
-	FILE * f = fopen("/tmp/actor_gizmod.log", "a");
-	fprintf(f, text);
-	fclose(f);
-}
-
 // validate the version
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -43,8 +37,6 @@ VISUAL_PLUGIN_API_VERSION_VALIDATOR
  * with the very basic plugin information 
  */
 const VisPluginInfo * get_plugin_info(int *count) {
-	debugPrint("plugin info\n");
-	
 	/* Initialize the plugin specific data structure
 	 * with pointers to the functions that represent
 	 * the plugin interface it's implementation, more info:
@@ -97,7 +89,6 @@ const VisPluginInfo * get_plugin_info(int *count) {
  * This function is called before we really start rendering, it's the init function
  */
 int lv_gizmod_init(VisPluginData *plugin) {
-	// initialize
 	GizmodLibVisual_Init();
 	return 0;
 }
@@ -106,8 +97,7 @@ int lv_gizmod_init(VisPluginData *plugin) {
  * \brief  Cleanup
  */
 int lv_gizmod_cleanup(VisPluginData *plugin) {
-	// Cleanup, and thus also free our private 
-	debugPrint("cleanup\n");
+	GizmodLibVisual_CleanUp();
 	return 0;
 }
 
@@ -119,11 +109,8 @@ int lv_gizmod_cleanup(VisPluginData *plugin) {
  * required size 
  */
 int lv_gizmod_requisition(VisPluginData *plugin, int *width, int *height) {
-	debugPrint("requisition\n");
-	
 	*width = 0;
 	*height = 0;
-
 	return 0;
 }
 
@@ -131,8 +118,6 @@ int lv_gizmod_requisition(VisPluginData *plugin, int *width, int *height) {
  * \brief  Get the display dimensions
  */
 int lv_gizmod_dimension(VisPluginData *plugin, VisVideo *video, int width, int height) {
-	debugPrint("dimension\n");
-		
 	return 0;
 }
 
@@ -144,7 +129,6 @@ int lv_gizmod_dimension(VisPluginData *plugin, VisVideo *video, int width, int h
  * http://libvisual.sourceforge.net/newdocs/docs/html/union__VisEvent.html 
  */
 int lv_gizmod_events(VisPluginData *plugin, VisEventQueue *events) {
-	debugPrint("events\n");
 	return 0;
 }
 
@@ -165,6 +149,56 @@ VisPalette *lv_gizmod_palette(VisPluginData *plugin) {
  * a second to get our graphical frames. 
  */
 int lv_gizmod_render(VisPluginData *plugin, VisVideo *video, VisAudio *audio) {
-	debugPrint("render\n");
+	// pcm data
+	int lp;
+	VisBuffer pcmb;
+	float pcm[2][512];
+	visual_buffer_set_data_pair (&pcmb, pcm[0], sizeof (pcm[0]));
+	visual_audio_get_sample (audio, &pcmb, VISUAL_AUDIO_CHANNEL_LEFT);
+	visual_buffer_set_data_pair (&pcmb, pcm[1], sizeof (pcm[1]));
+	visual_audio_get_sample (audio, &pcmb, VISUAL_AUDIO_CHANNEL_RIGHT);
+	
+	float VULeft = 0.0f;
+	float VURight = 0.0f;
+	float VUCombined = 0.0f;
+	for (lp = 0; lp < 512; lp ++) {
+		float vall = fabs(pcm[0][lp]);
+		float valr = fabs(pcm[1][lp]);
+		float valc = (vall + valr) / 2.0f;
+		
+		if (vall > VULeft)
+			VULeft = vall;
+		if (valr > VURight)
+			VURight = valr;
+		if (valc > VUCombined)
+			VUCombined = valc;
+	}
+	
+	// send off to the server
+	GizmodLibVisual_Render(VULeft, VURight, VUCombined);
+	
+	/*
+	// freq data
+	const int BARS = 512; // bars is the number of freqs
+	float freq[BARS];
+	float freqL[BARS];
+	float freqR[BARS];
+	float pcm[BARS * 2];
+	VisBuffer buffer;
+	VisBuffer pcmb;
+	visual_buffer_set_data_pair(&buffer, freq, sizeof(freq));
+	visual_buffer_set_data_pair(&pcmb, pcm, sizeof(pcm));
+	visual_audio_get_sample_mixed_simple(audio, &pcmb, 2, VISUAL_AUDIO_CHANNEL_LEFT, VISUAL_AUDIO_CHANNEL_RIGHT);
+	visual_audio_get_spectrum_for_sample(&buffer, &pcmb, TRUE);
+	
+	visual_buffer_set_data_pair(&buffer, freqL, sizeof(freqL));
+	visual_audio_get_sample_simple(audio, &pcmb, 2, VISUAL_AUDIO_CHANNEL_LEFT);
+	visual_audio_get_spectrum_for_sample(&buffer, &pcmb, TRUE);
+	
+	visual_buffer_set_data_pair(&buffer, freqR, sizeof(freqR));
+	visual_audio_get_sample_simple(audio, &pcmb, 2, VISUAL_AUDIO_CHANNEL_RIGHT);
+	visual_audio_get_spectrum_for_sample(&buffer, &pcmb, TRUE);
+	*/
+	
 	return 0;
 }

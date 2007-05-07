@@ -293,7 +293,6 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 /**
  * \brief Add a unix socket to watch for events
  * \param FileName Absolute path of the file to watch
- * \param WatchType Type of watch to perform on the file
  * \param DeviceName Device name
  */
 boost::shared_ptr<FileWatchee> FileEventWatcher::addUnixSocketToWatch(std::string FileName, std::string DeviceName) {

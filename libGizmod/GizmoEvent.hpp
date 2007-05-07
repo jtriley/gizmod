@@ -54,6 +54,7 @@
  * GIZMO_EVENTCLASS_LIRC is used with LIRC (Infrared) devices (such as remote controls)
  * GIZMO_EVENTCLASS_POWERMATE is the class used for Griffin PowerMate, and SoundKnob devices
  * GIZMO_EVENTCLASS_SOUNDCARD is used for sound card event
+ * GIZMO_EVENTCLASS_SOUNDVISUALIZATION is used for sound visualization events
  * GIZMO_EVENTCLASS_STANDARD is the default class and is used for all devices except ones with
  * 	special handlers
  * GIZMO_EVENTCLASS_WINDOWFOCUS is triggered when a Window Focus event happens
@@ -64,6 +65,7 @@ typedef enum {
 	GIZMO_EVENTCLASS_LIRC,
 	GIZMO_EVENTCLASS_POWERMATE,
 	GIZMO_EVENTCLASS_SOUNDCARD,
+	GIZMO_EVENTCLASS_SOUNDVISUALIZATION,
 	GIZMO_EVENTCLASS_STANDARD,
 	GIZMO_EVENTCLASS_WINDOWFOCUS,
 } GizmoEventClass;
