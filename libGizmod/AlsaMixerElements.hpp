@@ -89,6 +89,35 @@ private:
 	// private functions
 		
 	// private member variables
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & IsActive;
+		ar & HasCommonVolume;
+		ar & HasPlaybackVolume;
+		ar & HasPlaybackVolumeJoined;
+		ar & HasCaptureVolume;
+		ar & HasCaptureVolumeJoined;
+		ar & HasCommonSwitch;
+		ar & HasPlaybackSwitch;
+		ar & HasPlaybackSwitchJoined;
+		ar & HasCaptureSwitch;
+		ar & HasCaptureSwitchJoined;
+		ar & HasCaptureSwitchExclusive;
+		ar & VolumePlayback;
+		ar & VolumePlaybackMin;
+		ar & VolumePlaybackMax;
+		ar & VolumePlaybackPercent;
+		ar & VolumeCapture;
+		ar & VolumeCaptureMin;
+		ar & VolumeCaptureMax;
+		ar & VolumeCapturePercent;
+		ar & SwitchPlayback;
+		ar & SwitchCapture;
+	}				
 };
 
 #endif // __AlsaMixerElements_h

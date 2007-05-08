@@ -35,6 +35,9 @@
 
 #include "Gizmo.hpp"
 #include "GizmoLinuxInputDevice.hpp"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -57,13 +60,23 @@ public:
 	virtual bool			processEvent(GizmoEvent * pEvent); ///< Process an event
 	
 	// construction / deconstruction	
+	GizmoATIX10(); 							///< Serialize Constructor
 	GizmoATIX10(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
-	virtual ~GizmoATIX10();					///< Destructor
+	virtual ~GizmoATIX10();						///< Destructor
 
 protected:
 	// private functions
 	
 	// private member variables
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<Gizmo>(*this);
+		ar & boost::serialization::base_object<GizmoLinuxInputDevice>(*this);
+	}			
 };
 
 #endif // __GizmoATIX10_h

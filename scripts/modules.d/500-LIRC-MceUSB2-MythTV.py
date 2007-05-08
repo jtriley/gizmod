@@ -106,10 +106,10 @@ class LIRCMceUSB2MythTV:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
 		   		return True
 		   	elif Event.Button == "Up":
+		   		return False
+		   	elif Event.Button == "Skip":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
 		   		return True
-		   	elif Event.Button == "Skip":
-		   		return False
 		   	elif Event.Button == "More":
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_M)
 		   		return True

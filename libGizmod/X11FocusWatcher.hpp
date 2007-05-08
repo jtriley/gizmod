@@ -41,6 +41,9 @@
 #include <X11/keysym.h>
 #include <string>
 #include <boost/tuple/tuple.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs
@@ -97,6 +100,17 @@ private:
 	// private functions
 		
 	// private member variables
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & EventType;
+		ar & WindowName;
+		ar & WindowNameFormal;
+		ar & WindowClass;
+	}				
 };
 
 //////////////////////////////////////////////////////////////////////////////

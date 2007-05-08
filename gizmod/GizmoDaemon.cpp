@@ -656,6 +656,31 @@ void GizmoDaemon::deserializeMessage(GizmoEventClass EventClass, std::string con
  * \param  Message The message to be deserialized
  */
 void GizmoDaemon::deserializeMessageATIX10(std::string const & Message) {	
+	// separate the two components of the message
+	size_t SepPos = Message.find("|");
+	if (SepPos == string::npos) {
+		cdbg << "Could not deserialize LIRC message -- invalid format" << endl;
+		return;
+	}
+	string MessageEvent = Message.substr(0, SepPos);
+	string MessageDevice = Message.substr(SepPos + 1);
+
+	// deserialize
+	stringstream InStreamEvent(MessageEvent);
+	archive::text_iarchive InArchiveEvent(InStreamEvent);
+	GizmoEventATIX10 Event;
+	InArchiveEvent >> Event;
+	
+	stringstream InStreamDevice(MessageDevice);
+	archive::text_iarchive InArchiveDevice(InStreamDevice);
+	GizmoATIX10 Gizmo;
+	InArchiveDevice >> Gizmo;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event, &Gizmo);
+	}
 }
 
 /**
@@ -713,6 +738,31 @@ void GizmoDaemon::deserializeMessageLIRC(std::string const & Message) {
  * \param  Message The message to be deserialized
  */
 void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {	
+	// separate the two components of the message
+	size_t SepPos = Message.find("|");
+	if (SepPos == string::npos) {
+		cdbg << "Could not deserialize LIRC message -- invalid format" << endl;
+		return;
+	}
+	string MessageEvent = Message.substr(0, SepPos);
+	string MessageDevice = Message.substr(SepPos + 1);
+
+	// deserialize
+	stringstream InStreamEvent(MessageEvent);
+	archive::text_iarchive InArchiveEvent(InStreamEvent);
+	GizmoEventPowermate Event;
+	InArchiveEvent >> Event;
+	
+	stringstream InStreamDevice(MessageDevice);
+	archive::text_iarchive InArchiveDevice(InStreamDevice);
+	GizmoPowermate Gizmo;
+	InArchiveDevice >> Gizmo;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event, &Gizmo);
+	}
 }
 
 /**
@@ -720,6 +770,17 @@ void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {
  * \param  Message The message to be deserialized
  */
 void GizmoDaemon::deserializeMessageSoundcard(std::string const & Message) {	
+	// deserialize
+	stringstream InStream(Message);
+	archive::text_iarchive InArchive(InStream);
+	GizmoEventSoundCard Event;
+	InArchive >> Event;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event);
+	}
 }
 
 /**
@@ -745,6 +806,31 @@ void GizmoDaemon::deserializeMessageSoundVisualization(std::string const & Messa
  * \param  Message The message to be deserialized
  */
 void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {	
+	// separate the two components of the message
+	size_t SepPos = Message.find("|");
+	if (SepPos == string::npos) {
+		cdbg << "Could not deserialize LIRC message -- invalid format" << endl;
+		return;
+	}
+	string MessageEvent = Message.substr(0, SepPos);
+	string MessageDevice = Message.substr(SepPos + 1);
+
+	// deserialize
+	stringstream InStreamEvent(MessageEvent);
+	archive::text_iarchive InArchiveEvent(InStreamEvent);
+	GizmoEventStandard Event;
+	InArchiveEvent >> Event;
+	
+	stringstream InStreamDevice(MessageDevice);
+	archive::text_iarchive InArchiveDevice(InStreamDevice);
+	GizmoStandard Gizmo;
+	InArchiveDevice >> Gizmo;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event, &Gizmo);
+	}
 }
 
 /**
@@ -752,6 +838,17 @@ void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {
  * \param  Message The message to be deserialized
  */
 void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {	
+	// deserialize
+	stringstream InStream(Message);
+	archive::text_iarchive InArchive(InStream);
+	GizmoEventWindowFocus Event;
+	InArchive >> Event;
+	
+	// process the remote event		
+	if (!mLocalDisabled) {
+		mutex::scoped_lock lock(mMutexScript);
+		mpPyDispatcher->onEvent(&Event);
+	}
 }
 
 /**
@@ -898,6 +995,13 @@ void GizmoDaemon::handleFileEventReadATIX10(GizmoATIX10 & Gizmo, DynamicBuffer<c
 		if (Gizmo.processEvent(EventVector[lp].get()))
 			if (!mLocalDisabled)
 				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+	
+			// try to send the remote event
+			try {
+				sendEventATIX10(static_cast<GizmoEventATIX10 const &>(*EventVector[lp]), static_cast<GizmoATIX10 const &>(Gizmo));
+			} catch (SocketException const & e) {
+				cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
+			}
 	}
 }
 
@@ -939,6 +1043,13 @@ void GizmoDaemon::handleFileEventReadPowermate(GizmoPowermate & Gizmo, DynamicBu
 		if (Gizmo.processEvent(EventVector[lp].get()))
 			if (!mLocalDisabled)
 				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+	
+			// try to send the remote event
+			try {
+				sendEventPowermate(static_cast<GizmoEventPowermate const &>(*EventVector[lp]), static_cast<GizmoPowermate const &>(Gizmo));
+			} catch (SocketException const & e) {
+				cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
+			}
 	}
 }
 
@@ -955,6 +1066,13 @@ void GizmoDaemon::handleFileEventReadStandard(GizmoStandard & Gizmo, DynamicBuff
 		if (Gizmo.processEvent(EventVector[lp].get()))
 			if (!mLocalDisabled)
 				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+		
+			// try to send the remote event
+			try {
+				sendEventStandard(static_cast<GizmoEventStandard const &>(*EventVector[lp]), static_cast<GizmoStandard const &>(Gizmo));
+			} catch (SocketException const & e) {
+				cdbg << "Failed to send LIRC Message to Server -- " << e.getExceptionMessage() << endl;
+			}
 	}
 }
 

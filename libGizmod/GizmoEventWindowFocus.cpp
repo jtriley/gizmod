@@ -53,6 +53,12 @@ GizmoEventWindowFocus::GizmoEventWindowFocus(X11FocusEvent const & Event) : X11F
 }
 
 /**
+ * \brief GizmoEventWindowFocus Serialize Constructor
+ */
+GizmoEventWindowFocus::GizmoEventWindowFocus() {
+}
+
+/**
  * \brief GizmoEventWindowFocus Destructor
  */
 GizmoEventWindowFocus::~GizmoEventWindowFocus() {

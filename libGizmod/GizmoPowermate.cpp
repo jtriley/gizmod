@@ -61,6 +61,14 @@ GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, i
 }
 
 /**
+ * \brief GizmoPowermate Serialize Constructor
+ */
+GizmoPowermate::GizmoPowermate() {
+	mRotated = false;
+	mPulseAsleep = true;
+}
+
+/**
  * \brief GizmoPowermate Destructor
  */
 GizmoPowermate::~GizmoPowermate() {

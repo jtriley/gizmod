@@ -107,6 +107,17 @@ private:
 	};		
 	bool				mThreading;			///< Variable to keep track if we're threading or not
 	AlsaSoundCardThreadProc		mThreadProc;			///< The thread procedure instance	
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & mCardID;
+		ar & mCardHWID;
+		ar & mCardName;
+		ar & mCardNameLong;
+	}				
 };
 
 #endif // __AlsaSoundCard_h

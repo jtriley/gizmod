@@ -38,6 +38,9 @@
 #include "AlsaSoundCard.hpp"
 #include "AlsaMixer.hpp"
 #include <string>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -62,6 +65,7 @@ public:
 	// public functions
 		
 	// construction / deconstruction
+	GizmoEventSoundCard();						///< Serialize Constructor
 	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Default Constructor
 	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Default Constructor
 	virtual ~GizmoEventSoundCard();					///< Destructor
@@ -72,6 +76,15 @@ protected:
 	// private member variables
 	AlsaMixer const * 			mpMixer;		///< The assocaited Mixer
 	AlsaSoundCard const * 			mpSoundCard;		///< The associated SoundCard
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<GizmoEvent>(*this);
+		ar & boost::serialization::base_object<AlsaEvent>(*this);
+	}				
 };
 
 #endif // __GizmoEventSoundCard_h

@@ -66,6 +66,29 @@ GizmoClient::~GizmoClient() {
 ///////////////////////////////////////
 
 /**
+ * \brief  Send LIRC Event to server
+ * \param  Event The Event
+ * \param  Gizmo The Gizmo that is creating the event
+ */
+void GizmoClient::sendEventATIX10(GizmoEventATIX10 const & Event, GizmoATIX10 const & Gizmo) {
+	// process the remote event
+	if (!isClientConnected())
+		return;
+	
+	// serialize
+	stringstream OutStreamEvent;
+	archive::text_oarchive OutArchiveEvent(OutStreamEvent);
+	OutArchiveEvent << Event;
+	
+	stringstream OutStreamDevice;
+	archive::text_oarchive OutArchiveDevice(OutStreamDevice);
+	OutArchiveDevice << Gizmo;
+		
+	// might raise an exception, catch elsewhere!
+	sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_ATIX10) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
+}
+
+/**
  * \brief  Send CPUUsage Event to server
  * \param  Event The Event
  */
@@ -107,6 +130,47 @@ void GizmoClient::sendEventLIRC(GizmoEventLIRC const & Event, GizmoLIRC const & 
 }
 
 /**
+ * \brief  Send LIRC Event to server
+ * \param  Event The Event
+ * \param  Gizmo The Gizmo that is creating the event
+ */
+void GizmoClient::sendEventPowermate(GizmoEventPowermate const & Event, GizmoPowermate const & Gizmo) {
+	// process the remote event
+	if (!isClientConnected())
+		return;
+	
+	// serialize
+	stringstream OutStreamEvent;
+	archive::text_oarchive OutArchiveEvent(OutStreamEvent);
+	OutArchiveEvent << Event;
+	
+	stringstream OutStreamDevice;
+	archive::text_oarchive OutArchiveDevice(OutStreamDevice);
+	OutArchiveDevice << Gizmo;
+		
+	// might raise an exception, catch elsewhere!
+	sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_POWERMATE) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
+}
+
+/**
+ * \brief  Send Sound Visualization Event to server
+ * \param  Event The Event
+ */
+void GizmoClient::sendEventSoundCard(GizmoEventSoundCard const & Event) {
+	// process the remote event
+	if (!isClientConnected())
+		return;
+		
+	// serialize
+	stringstream OutStream;
+	archive::text_oarchive OutArchive(OutStream);
+	OutArchive << Event;
+			
+	// can raise exception
+	sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_SOUNDCARD) + "|" + OutStream.str());
+}
+
+/**
  * \brief  Send Sound Visualization Event to server
  * \param  Event The Event
  */
@@ -122,4 +186,45 @@ void GizmoClient::sendEventSoundVisualization(GizmoEventSoundVisualization const
 			
 	// can raise exception
 	sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_SOUNDVISUALIZATION) + "|" + OutStream.str());
+}
+
+/**
+ * \brief  Send LIRC Event to server
+ * \param  Event The Event
+ * \param  Gizmo The Gizmo that is creating the event
+ */
+void GizmoClient::sendEventStandard(GizmoEventStandard const & Event, GizmoStandard const & Gizmo) {
+	// process the remote event
+	if (!isClientConnected())
+		return;
+	
+	// serialize
+	stringstream OutStreamEvent;
+	archive::text_oarchive OutArchiveEvent(OutStreamEvent);
+	OutArchiveEvent << Event;
+	
+	stringstream OutStreamDevice;
+	archive::text_oarchive OutArchiveDevice(OutStreamDevice);
+	OutArchiveDevice << Gizmo;
+		
+	// might raise an exception, catch elsewhere!
+	sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_STANDARD) + "|" + OutStreamEvent.str() + "|" + OutStreamDevice.str());
+}
+
+/**
+ * \brief  Send Sound Visualization Event to server
+ * \param  Event The Event
+ */
+void GizmoClient::sendEventWindowFocus(GizmoEventWindowFocus const & Event) {
+	// process the remote event
+	if (!isClientConnected())
+		return;
+		
+	// serialize
+	stringstream OutStream;
+	archive::text_oarchive OutArchive(OutStream);
+	OutArchive << Event;
+			
+	// can raise exception
+	sendToServer(lexical_cast<string>(GIZMO_EVENTCLASS_WINDOWFOCUS) + "|" + OutStream.str());
 }

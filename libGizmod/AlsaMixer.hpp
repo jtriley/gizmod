@@ -90,6 +90,18 @@ private:
 	unsigned int			mMixerID;			///< ID of the mixer
 	AlsaMixerElements 		mOldState;			///< Old state of the mixer
 	AlsaSoundCardInterface *	mpiSoundCard;			///< Associated sound card
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<AlsaMixerElements>(*this);
+		ar & mMixerName;
+		ar & mMixerNameUnique;
+		ar & mMixerID;
+		ar & mOldState;
+	}				
 };
 
 #endif // __AlsaMixer_h

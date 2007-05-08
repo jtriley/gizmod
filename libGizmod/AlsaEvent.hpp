@@ -37,6 +37,9 @@
 #include <vector>
 #include <alsa/asoundlib.h>
 #include <boost/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs
@@ -89,6 +92,21 @@ private:
 	// private functions
 		
 	// private member variables
+
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & Type;
+		ar & Mask;
+		ar & IsActiveChanged;
+		ar & ElementsChanged;
+		ar & VolumePlaybackChanged;
+		ar & VolumeCaptureChanged;
+		ar & SwitchPlaybackChanged;
+		ar & SwitchCaptureChanged;			
+	}			
 };
 
 #endif // __AlsaEvent_h

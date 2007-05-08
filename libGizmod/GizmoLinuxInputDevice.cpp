@@ -46,7 +46,16 @@ using namespace H;
  * \brief GizmoLinuxInputDevice Default Constructor
  */
 GizmoLinuxInputDevice::GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo) {
-	mDeviceInfo= DeviceInfo;
+	mDeviceInfo = DeviceInfo;
+	mSendNullEvents = false;
+	mLastEventTime = 0;
+	mMinTimeBetweenEvents = 0;
+}
+
+/**
+ * \brief GizmoLinuxInputDevice Serialize Constructor
+ */
+GizmoLinuxInputDevice::GizmoLinuxInputDevice() {
 	mSendNullEvents = false;
 	mLastEventTime = 0;
 	mMinTimeBetweenEvents = 0;

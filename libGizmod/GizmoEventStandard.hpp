@@ -37,6 +37,9 @@
 #include "GizmoLinuxInputEvent.hpp"
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -71,6 +74,15 @@ protected:
 	
 	// static private functions
 	static void 			buildEventsVectorFromBufferFunctor(struct input_event & InputEvent, std::vector< boost::shared_ptr<GizmoEventStandard> > * pEventVector, bool SendNullEvents); ///< Functor for building the events list
+
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<GizmoEvent>(*this);
+		ar & boost::serialization::base_object<GizmoLinuxInputEvent>(*this);
+	}			
 };
 
 #endif // __GizmoEventStandard_h

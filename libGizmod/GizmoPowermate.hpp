@@ -35,6 +35,9 @@
 
 #include "Gizmo.hpp"
 #include "GizmoLinuxInputDevice.hpp"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -66,6 +69,7 @@ public:
 	void				setLEDPulseAsleep(bool Enabled);///< Pulse while sleeping
 	
 	// construction / deconstruction	
+	GizmoPowermate(); 						///< Serialize Constructor
 	GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID); ///< Default Constructor
 	virtual ~GizmoPowermate();					///< Destructor
 
@@ -76,6 +80,18 @@ protected:
 	bool				mRotated;			///< Has the dial rotated since last click
 	unsigned char			mLevel;				///< Current intensity level of the LED
 	bool				mPulseAsleep;			///< Pulse when going to sleep
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<Gizmo>(*this);
+		ar & boost::serialization::base_object<GizmoLinuxInputDevice>(*this);
+		ar & mRotated;
+		ar & mLevel;
+		ar & mPulseAsleep;
+	}
 };
 
 #endif // __GizmoPowermate_h

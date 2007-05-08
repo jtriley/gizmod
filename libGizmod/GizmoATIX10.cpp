@@ -64,6 +64,13 @@ GizmoATIX10::GizmoATIX10(const H::DeviceInfo & deviceInfo, int DeviceID, int Dev
 }
 
 /**
+ * \brief GizmoATIX10 Serialize Constructor
+ */
+GizmoATIX10::GizmoATIX10() {
+	setMinimumTimeBetweenEvents(GIZMO_ATIX10_EVENTDELAY);
+}
+
+/**
  * \brief GizmoATIX10 Destructor
  */
 GizmoATIX10::~GizmoATIX10() {

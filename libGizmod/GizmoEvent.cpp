@@ -51,6 +51,13 @@ GizmoEvent::GizmoEvent(GizmoEventClass Class) {
 }
 
 /**
+ * \brief GizmoEvent Serialize Constructor
+ */
+GizmoEvent::GizmoEvent() {
+	mClass = GIZMO_EVENTCLASS_STANDARD;
+}
+
+/**
  * \brief GizmoEvent Destructor
  */
 GizmoEvent::~GizmoEvent() {

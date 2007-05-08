@@ -33,10 +33,18 @@
 #include "config.h"
 #endif
 
+#include "GizmoATIX10.hpp"
 #include "GizmoLIRC.hpp"
+#include "GizmoPowermate.hpp"
+#include "GizmoStandard.hpp"
+#include "GizmoEventATIX10.hpp"
 #include "GizmoEventCPUUsage.hpp"
 #include "GizmoEventLIRC.hpp"
+#include "GizmoEventPowermate.hpp"
+#include "GizmoEventSoundCard.hpp"
 #include "GizmoEventSoundVisualization.hpp"
+#include "GizmoEventStandard.hpp"
+#include "GizmoEventWindowFocus.hpp"
 #include "../libH/SocketClient.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,9 +65,14 @@
 class GizmoClient : public H::SocketClient {
 public:
 	// public functions
+	void				sendEventATIX10(GizmoEventATIX10 const & Event, GizmoATIX10 const & Gizmo); ///< Send ATIX10 Event to server
 	void				sendEventCPUUsage(GizmoEventCPUUsage const & Event); ///< Send CPUUsage Event to server
 	void				sendEventLIRC(GizmoEventLIRC const & Event, GizmoLIRC const & Gizmo); ///< Send LIRC Event to server
+	void				sendEventPowermate(GizmoEventPowermate const & Event, GizmoPowermate const & Gizmo); ///< Send Powermate Event to server
+	void				sendEventSoundCard(GizmoEventSoundCard const & Event); ///< Send Sound Card Event to server
 	void				sendEventSoundVisualization(GizmoEventSoundVisualization const & Event); ///< Send Sound Visualization Event to server
+	void				sendEventStandard(GizmoEventStandard const & Event, GizmoStandard const & Gizmo); ///< Send Powermate Event to server
+	void				sendEventWindowFocus(GizmoEventWindowFocus const & Event); ///< Send Window Focus Event to server
 	
 	// construction / deconstruction
 	GizmoClient();							///< Default Constructor

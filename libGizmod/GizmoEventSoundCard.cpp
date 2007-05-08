@@ -66,6 +66,12 @@ GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard 
 }
 
 /**
+ * \brief GizmoEventSoundCard Serialize Constructor
+ */
+GizmoEventSoundCard::GizmoEventSoundCard() {
+}
+
+/**
  * \brief GizmoEventSoundCard Destructor
  */
 GizmoEventSoundCard::~GizmoEventSoundCard() {

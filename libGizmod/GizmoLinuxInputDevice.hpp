@@ -38,6 +38,9 @@
 #include "../libH/FileEventWatcher.hpp"
 #include <linux/input.h>
 #include <vector>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -65,6 +68,7 @@ public:
 	void				setSendNullEvents(bool SendNull); ///< Set whether or not the Gizmo sends NULL events
 
 	// construction / deconstruction
+	GizmoLinuxInputDevice();					///< Serialize Constructor
 	GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo);	///< Default Constructor
 	virtual ~GizmoLinuxInputDevice();				///< Destructor
 
@@ -79,6 +83,17 @@ protected:
 	unsigned long			mLastEventTime;			///< Time of last event
 	unsigned long 			mMinTimeBetweenEvents;		///< Minimum time between events (smooth out trigger happy controllers)
 	bool				mSendNullEvents;		///< Send NULL events if the device creates them?
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & mDeviceInfo;
+		ar & mLastEventTime;
+		ar & mMinTimeBetweenEvents;
+		ar & mSendNullEvents;
+	}			
 };
 
 #endif // __GizmoLinuxInputDevice_h

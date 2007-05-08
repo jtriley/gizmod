@@ -37,6 +37,8 @@
 #include "../libH/DynamicBuffer.hpp"
 #include <linux/input.h>
 #include <vector>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -49,6 +51,14 @@
 typedef struct GizmoTimeVal {
 	unsigned int Seconds;							///< Time in Seconds
 	unsigned int MicroSeconds;						///< Time remaining (after Seconds) in MicroSeconds
+	
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & Seconds;
+		ar & MicroSeconds;
+	}					
 };
 	
 //////////////////////////////////////////////////////////////////////////////
@@ -80,6 +90,19 @@ protected:
 	// private functions
 	
 	// private member variables
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & RawType;
+		ar & RawCode;
+		ar & TimeStamp;
+		ar & Code;
+		ar & Type;
+		ar & Value;
+	}				
 };
 
 #endif // __GizmoLinuxInputEvent_h

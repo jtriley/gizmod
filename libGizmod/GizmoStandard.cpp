@@ -57,6 +57,12 @@ GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo, int DeviceID, int
 }
 
 /**
+ * \brief GizmoStandard Serialize Constructor
+ */
+GizmoStandard::GizmoStandard() {
+}
+
+/**
  * \brief GizmoStandard Destructor
  */
 GizmoStandard::~GizmoStandard() {

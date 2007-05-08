@@ -93,6 +93,7 @@ public:
 	GizmoEventClass			getClass();			///< Get the class of the Gizmo
 	
 	// construction / deconstruction
+	GizmoEvent();							///< Serialize Constructor
 	GizmoEvent(GizmoEventClass Class);				///< Default Constructor
 	virtual ~GizmoEvent();						///< Destructor
 	

@@ -37,6 +37,9 @@
 #include "X11FocusWatcher.hpp"
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -65,6 +68,7 @@ public:
 	// public functions
 		
 	// construction / deconstruction
+	GizmoEventWindowFocus();					///< Serialize Constructor
 	GizmoEventWindowFocus(X11FocusEvent const & Event);		///< Default Constructor
 	virtual ~GizmoEventWindowFocus();				///< Destructor
 
@@ -72,6 +76,15 @@ protected:
 	// private functions
 	
 	// private member variables
+	
+private: 
+	// serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<X11FocusEvent>(*this);
+		ar & boost::serialization::base_object<GizmoEvent>(*this);
+	}			
 };
 
 #endif // __GizmoEventWindowFocus_h
