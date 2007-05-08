@@ -53,6 +53,16 @@ using namespace std;
 // Defines / Type Defs
 ///////////////////////////////////////
 
+/**
+ * \def   DIRCHAR
+ * \brief Platform dependant directory separator char
+ */
+
+/**
+ * \def   DIRSTR
+ * \brief Platform dependant directory separator string
+ */
+
 #ifdef WIN32
 	#define DIRCHAR		'\\'
 	#define DIRSTR		"\\"
