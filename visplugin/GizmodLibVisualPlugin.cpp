@@ -93,7 +93,9 @@ void GizmodLibVisualPlugin::shutdown() {
 
 /**
  * \brief  Render the sound data
- * \param  PCMData The sound data
+ * \param  VULeft VU information for the left channel
+ * \param  VURight VU information for the right channel
+ * \param  VUCombined VU information for both channels
  */
 void GizmodLibVisualPlugin::render(float VULeft, float VURight, float VUCombined) {
 	GizmoEventSoundVisualization Event(VULeft, VURight, VUCombined);

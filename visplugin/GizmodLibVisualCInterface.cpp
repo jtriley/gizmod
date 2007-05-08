@@ -55,7 +55,9 @@ void GizmodLibVisual_CleanUp() {
 
 /** 
  * \brief  Render the audio data
- * \param  PCMData The audio data
+ * \param  VULeft VU information for the left channel
+ * \param  VURight VU information for the right channel
+ * \param  VUCombined VU information for both channels
  */
 void GizmodLibVisual_Render(float VULeft, float VURight, float VUCombined) {
 	Plugin.render(VULeft, VURight, VUCombined);

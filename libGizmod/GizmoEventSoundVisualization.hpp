@@ -42,6 +42,10 @@
 // Typedef, enum's
 ///////////////////////////////////////
 
+/**
+ * \enum   SoundVisualizationEventType
+ * \brief  Type of the SoundVisualization event
+ */
 typedef enum {
 	SOUNDVISUALIZATION_CONNECT,
 	SOUNDVISUALIZATION_DISCONNECT,
