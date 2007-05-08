@@ -2,7 +2,7 @@
   #*********************************************************************
 #*************************************************************************
 #*** 
-#*** GizmoDaemon Config Script v3:0
+#*** GizmoDaemon Config Script
 #*** 	Powermate Default config
 #***
 #*****************************************
@@ -17,6 +17,7 @@ from GizmoDaemon import *
 import time
 
 ENABLED = True
+VERSION_NEEDED = 3.0
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 
 ############################
@@ -84,4 +85,7 @@ class PowermateDefault:
 
 # register the user script
 if ENABLED:
-	Gizmod.Dispatcher.userScripts.append(PowermateDefault())
+	if not Gizmod.checkVersion(VERSION_NEEDED, False):
+		Gizmod.printNiceScriptInit(1, " * PowermateDefault", "NOT LOADED", "Version Needed: " + str(VERSION_NEEDED))
+	else:
+		Gizmod.Dispatcher.userScripts.append(PowermateDefault())

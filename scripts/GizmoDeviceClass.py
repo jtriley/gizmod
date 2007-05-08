@@ -2,7 +2,7 @@
   #*********************************************************************
 #*************************************************************************
 #*** 
-#*** GizmoDaemon Config Script v3:0
+#*** GizmoDaemon Config Script
 #*** 	GizmoDeviceClass.py
 #***
 #*****************************************
@@ -74,7 +74,7 @@ class GizmoDeviceClass:
 		""" 
 		Default Constructor
 		"""
-		
+				
 		self.DeviceInfo = DeviceInformation
 		self.DeviceClass = GizmoClass.Standard
 		

@@ -2,7 +2,7 @@
   #*********************************************************************
 #*************************************************************************
 #*** 
-#*** GizmoDaemon Config Script v3:0
+#*** GizmoDaemon Config Script
 #*** 	ATIX10 MPlayer config
 #***
 #*****************************************
@@ -17,6 +17,7 @@ from GizmoDaemon import *
 import subprocess
 
 ENABLED = True
+VERSION_NEEDED = 3.0
 INTERESTED_CLASSES = [GizmoEventClass.ATIX10]
 INTERESTED_WINDOWS = ["mplayer"]
 
@@ -108,4 +109,7 @@ class ATIX10MPlayer:
 
 # register the user script
 if ENABLED:
-	Gizmod.Dispatcher.userScripts.append(ATIX10MPlayer())
+	if not Gizmod.checkVersion(VERSION_NEEDED, False):
+		Gizmod.printNiceScriptInit(1, " * ATIX10MPlayer", "NOT LOADED", "Version Needed: " + str(VERSION_NEEDED))
+	else:
+		Gizmod.Dispatcher.userScripts.append(ATIX10MPlayer())

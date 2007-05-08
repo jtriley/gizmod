@@ -2,7 +2,7 @@
   #*********************************************************************
 #*************************************************************************
 #*** 
-#*** GizmoDaemon Config Script v3:0
+#*** GizmoDaemon Config Script
 #*** 	GizmodDispatcher.py
 #***
 #*****************************************
@@ -126,6 +126,11 @@ class GizmodDispatcher(GizmodEventHandler):
 		""" 
 		Default Constructor
 		"""
+
+		# version check
+		if not Gizmod.checkVersion(VERSION_REQUIRED, True):
+			print "Script Version mismatch -- Gizmo Daemon v" + str(VERSION_REQUIRED) + " Required."
+			Gizmod.signalShutdown()
 
 		# Must explicitely call the base's constructor
 		GizmodEventHandler.__init__(self)

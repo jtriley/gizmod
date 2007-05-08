@@ -2,18 +2,26 @@
   #*********************************************************************
 #*************************************************************************
 #*** 
-#*** GizmoDaemon Config Script v3:0
+#*** GizmoDaemon Config Script
 #*** 	GizmoDeviceStrings.py
 #***
 #*****************************************
   #*****************************************
     #***
-
+    
 ############################
 # Imports
 ##########################
 
 from GizmoDaemon import *
+
+############################
+# Version Information
+##########################
+
+# This covers all of the base scripts (ie those not in modules.d) users
+# likely don't have to modify
+VERSION_REQUIRED = 3.0
 
 ############################
 # Device Strings

@@ -2,7 +2,7 @@
   #*********************************************************************
 #*************************************************************************
 #*** 
-#*** GizmoDaemon Config Script v3:0
+#*** GizmoDaemon Config Script
 #*** 	Powermate Amarok config
 #***
 #*****************************************
@@ -17,6 +17,7 @@ from GizmoDaemon import *
 import subprocess
 
 ENABLED = True
+VERSION_NEEDED = 3.0
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 INTERESTED_APPLICATION = "amarokapp"
 
@@ -78,4 +79,7 @@ class PowermateAmarok:
 
 # register the user script
 if ENABLED:
-	Gizmod.Dispatcher.userScripts.append(PowermateAmarok())
+	if not Gizmod.checkVersion(VERSION_NEEDED, False):
+		Gizmod.printNiceScriptInit(1, " * PowermateAmarok", "NOT LOADED", "Version Needed: " + str(VERSION_NEEDED))
+	else:
+		Gizmod.Dispatcher.userScripts.append(PowermateAmarok())
