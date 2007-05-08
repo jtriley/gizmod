@@ -31,6 +31,8 @@
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/SocketException.hpp"
+#include "../libH/UtilFile.hpp"
+#include <fstream>
 
 using namespace std;
 using namespace H;
@@ -38,6 +40,24 @@ using namespace H;
 ////////////////////////////////////////////////////////////////////////////
 // Type Defs
 ///////////////////////////////////////
+
+/**
+ * \def    DEFAULT_HOST
+ * \brief  Default host to connect to
+ */
+#define DEFAULT_HOST	"localhost"
+
+/**
+ * \def    DEFAULT_PORT
+ * \brief  Default port to connect to
+ */
+#define DEFAULT_PORT	30303
+
+/**
+ * \def    CONFIG_FILE
+ * \brief  Path of the config file
+ */
+#define CONFIG_FILE	"~/.gizmod/libVisualPlugin.config"
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -47,10 +67,10 @@ using namespace H;
  * \brief GizmodLibVisualPlugin Default Constructor
  */
 GizmodLibVisualPlugin::GizmodLibVisualPlugin() {
-	mServerHost = "localhost";
-	mServerPort = 30303;
-	Debug::setDebugEnabled(true);
-	Debug::setDebugLog("/tmp/actor_gizmod.log");
+	mServerHost = DEFAULT_HOST;
+	mServerPort = DEFAULT_PORT;
+	//Debug::setDebugEnabled(true);
+	//Debug::setDebugLog("/tmp/actor_gizmod.log");
 }
 
 /**
@@ -69,6 +89,7 @@ GizmodLibVisualPlugin::~GizmodLibVisualPlugin() {
  */
 void GizmodLibVisualPlugin::init() {
 	cdbg << "Init" << endl;
+	readConfig();
 	
 	// initialize the client
 	try {
@@ -79,6 +100,34 @@ void GizmodLibVisualPlugin::init() {
 		sendEventSoundVisualization(Event);
 	} catch (SocketException const & e) {
 		cdbg << e.getExceptionMessage() << endl;
+	}
+}
+
+/**
+ * \brief  Read the config file
+ */
+void GizmodLibVisualPlugin::readConfig() {
+	string ConfigFile = CONFIG_FILE;
+	UtilFile::relativeToAbsolute(ConfigFile);
+	cdbg << "Read Config [" << ConfigFile << "]" << endl;
+	ifstream ifs(ConfigFile.c_str());
+	if (!ifs.is_open()) {
+		writeConfig();
+		return;
+	}
+	
+	string Line;
+	while (getline(ifs, Line)) {
+		size_t eqPos = Line.find("=");
+		if (eqPos == string::npos)
+			continue;
+		string Var = Line.substr(0, eqPos);
+		string Val = Line.substr(eqPos + 1);
+		
+		if (Var == "host")
+			mServerHost = Val;
+		else if (Var == "port")
+			mServerPort = atoi(Val.c_str());
 	}
 }
 
@@ -100,4 +149,19 @@ void GizmodLibVisualPlugin::shutdown() {
 void GizmodLibVisualPlugin::render(float VULeft, float VURight, float VUCombined) {
 	GizmoEventSoundVisualization Event(VULeft, VURight, VUCombined);
 	sendEventSoundVisualization(Event);
+}
+
+/**
+ * \brief  Write a config file
+ */
+void GizmodLibVisualPlugin::writeConfig() {
+	string ConfigFile = CONFIG_FILE;
+	UtilFile::relativeToAbsolute(ConfigFile);
+	cdbg << "Write Config [" << ConfigFile << "]" << endl;
+	UtilFile::touchRecursive(ConfigFile);
+	ofstream ofs(ConfigFile.c_str());
+	if (!ofs.is_open())
+		return;
+	ofs << "host=" << DEFAULT_HOST << endl;
+	ofs << "port=" << DEFAULT_PORT << endl;
 }

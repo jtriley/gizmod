@@ -51,8 +51,8 @@ class GizmodLibVisualPlugin : public GizmoClient {
 public:
 	// public functions
 	void				init();				///< Initialize the plugin
-	void				shutdown();			///< Close the plugin
 	void				render(float VULeft, float VURight, float VUCombined); ///< Render the sound data
+	void				shutdown();			///< Close the plugin
 	
 	// construction / deconstruction 
 	GizmodLibVisualPlugin();					///< Default Constructor
@@ -60,6 +60,8 @@ public:
 	
 private:
 	// private functions
+	void				readConfig();			///< Read the config file
+	void				writeConfig();			///< Write a config file
 	
 	// private member variables
 	std::string			mServerHost;			///< Host to connect to

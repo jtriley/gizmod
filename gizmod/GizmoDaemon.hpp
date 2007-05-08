@@ -77,13 +77,14 @@ class GizmoDaemon :
 {
 public:
 	// public functions
+	bool				checkVersion(float Version, bool Strict); ///< See if a version matches ours
 	void				enterLoop();			///< Enter the main run loop
 	X11FocusEvent 	 		getCurrentFocus();		///< Get currently focused window
 	bool				getDebugEnabled();		///< Is debug mode enabled?
 	GizmodEventHandlerInterface *	getDispatcher();		///< Get the event handler / dispatcher
 	boost::shared_ptr<Gizmo>	getGizmoByFileName(std::string FileName); ///< Get a Gizmo by its file name
 	int 				getNumGizmosByClass(GizmoClass Class); ///< Get number of Gizmos of a particular class
-	std::string			getVersion();			///< Get version string
+	float				getVersion();			///< Get version string
 	void				initGizmod();			///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 	void 				printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3); ///< Print a nice looking init string
@@ -148,6 +149,7 @@ private:
 	void				registerInputEventDevices();	///< Register input event devices (/dev/input/*)
 	void 				registerLircDevice();		///< Register the LIRC device
 	void				setConfigDir();			///< Set the config dir
+	void				setVersionInfo();		///< Set the version information
 	
 	// private member vars
 	std::string			mClientHost;			///< Remote host to forward events to 
@@ -168,6 +170,9 @@ private:
 	bool				mServerEnabled;			///< Allow incoming connections
 	int				mServerPort;			///< Port of the server
 	bool				mShuttingDown;			///< Shutting down?
+	float				mVersion;			///< Version
+	int				mVersionMajor;			///< Version majorus
+	int				mVersionMinor;			///< Version minorus
 	
 	// static private member vars
 	static boost::mutex		mMutexScript;			///< Mutex for the python script

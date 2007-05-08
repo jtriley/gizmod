@@ -369,14 +369,16 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	
 	/// GizmoDaemon Python Class Export
 	class_<GizmoDaemon, bases<Alsa, X11FocusWatcher, Processes, CPUUsage, GizmoUtils> >("PyGizmoDaemon")
+		.def("checkVersion", &GizmoDaemon::checkVersion)
 		.def("getCurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.add_property("CurrentFocus", &GizmoDaemon::getCurrentFocus)
 		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.add_property("DebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.def("getNumGizmosByClass", &GizmoDaemon::getNumGizmosByClass)
 		.def("getVersion", &GizmoDaemon::getVersion)
-		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
 		.add_property("Version", &GizmoDaemon::getVersion)
+		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
+		.def("signalShutdown", &GizmoDaemon::signalShutdown)
 		;
 	
 	/// GizmoTimeVal Python Class Export
@@ -552,6 +554,7 @@ GizmoDaemon::GizmoDaemon() {
 	mServerPort = DEFAULT_PORT;
 	mServerEnabled = false;
 	mShuttingDown = false;
+	setVersionInfo();
 }
 
 /**
@@ -571,6 +574,23 @@ GizmoDaemon::~GizmoDaemon() {
 ////////////////////////////////////////////////////////////////////////////
 // Class Body
 ///////////////////////////////////////
+
+/**
+ * \brief  See if a script's version matches GizmoDaemon
+ * \param  Version The script's version
+ * \param  Strict If set, the versions need to exactly match otherwise the script's Version signifies a minimum version level that Gizmod needs to be
+ * \return True if versions are okay
+ */
+bool GizmoDaemon::checkVersion(float Version, bool Strict) {
+	if (Strict) {
+		return Version == mVersion;
+	} else {
+		if (Version <= mVersion)
+			return true;
+		else
+			return false;
+	}
+}
 
 /**
  * \brief  Delete a Gizmo
@@ -855,6 +875,8 @@ void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {
  * \brief  Enter the main run loop
  */
 void GizmoDaemon::enterLoop() {
+	if (mShuttingDown)
+		return;
 	if (!mInitialized)
 		throw H::Exception("You must initialize GizmoDaemon first!", __FILE__, __FUNCTION__, __LINE__);
 	
@@ -943,7 +965,7 @@ int GizmoDaemon::getGizmoClassID(GizmoClass Class) {
  * \brief  Get the program's propers
  */
 string GizmoDaemon::getProps() {
-	return "\nGizmoDaemon v" + getVersion() + " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n-----------\n";
+	return "\nGizmoDaemon v" PACKAGE_VERSION " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n-----------\n";
 }
 
 /**
@@ -978,8 +1000,8 @@ std::string GizmoDaemon::getUserScriptDirPaths() {
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".Version"
  */
-string GizmoDaemon::getVersion() {
-	return string(PACKAGE_VERSION);
+float GizmoDaemon::getVersion() {
+	return mVersion;
 }
 
 /**
@@ -1091,6 +1113,8 @@ void GizmoDaemon::initGizmod() {
 	// init python
 	try {
 		initPython();
+		if (mShuttingDown)
+			return;
 	} catch (H::Exception & e) {
 		throw e;
 	} catch (exception & e) {
@@ -1102,6 +1126,8 @@ void GizmoDaemon::initGizmod() {
 		try {
 			cout << "Connecting to [" << mClientHost << "] at Port [" << mClientPort << "]..." << endl;
 			connectToServer(mClientHost, mClientPort);
+			if (mShuttingDown)
+				return;
 		} catch (SocketException const & e) {
 			throw H::Exception(e.getExceptionMessage(), __FILE__, __FUNCTION__, __LINE__);
 		}
@@ -1110,6 +1136,8 @@ void GizmoDaemon::initGizmod() {
 	// register all the devices
 	try {
 		registerDevices();
+		if (mShuttingDown)
+			return;
 	} catch (H::Exception & e) {
 		throw e;
 	}
@@ -1117,6 +1145,8 @@ void GizmoDaemon::initGizmod() {
 	// load the user scripts
 	try {
 		loadUserScripts();
+		if (mShuttingDown)
+			return;
 	} catch (H::Exception & e) {
 		cerr << e.getExceptionMessage() << endl;
 	}
@@ -1992,6 +2022,29 @@ void GizmoDaemon::setConfigDir() {
 		mConfigDir = SCRIPT_DIR;
 		replace_all(mConfigDir, "${prefix}", PACKAGE_PREFIX);
 	}
+}
+
+/**
+ * \brief  Set the version information
+ */
+void GizmoDaemon::setVersionInfo() {
+	string Version = PACKAGE_VERSION;
+	size_t cPos = Version.find(":");
+	if (cPos == string::npos) {
+		mVersionMajor = 0;
+		mVersionMinor = 0;
+	} else {
+		try {
+			mVersionMajor = lexical_cast<int>(Version.substr(0, cPos));
+			mVersionMinor = lexical_cast<int>(Version.substr(cPos + 1));
+		} catch (bad_lexical_cast const & e) {
+			mVersionMajor = 0;
+			mVersionMinor = 0;
+			return;
+		}
+	}
+	
+	mVersion = mVersionMajor + (mVersionMinor / 10.0f);
 }
 
 /**
