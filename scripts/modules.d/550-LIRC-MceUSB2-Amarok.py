@@ -40,8 +40,8 @@ class LIRCMceUSB2Amarok:
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
 		
-		# if the event class is in INTERESTED_CLASSES and the active window is
-		# one of INTERESTED_WINDOWS and there is a keyboard and mouse attached 
+		# if the event class is in INTERESTED_CLASSES and the application
+		# INTERESTED_APPLICATION is running and there is a keyboard and mouse attached 
 		# then process the event
 		if Event.Class in INTERESTED_CLASSES and Event.Remote in USES_LIRC_REMOTES \
 		   and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \

@@ -40,7 +40,7 @@ class ATIX10Amarok:
 		"""
 		
 		# if the event is not a key release and the class is in INTERESTED_CLASSES 
-		# and there is a ATIX10 and mouse attached then process the event
+		# and Amarok is running and there is a keyboard and mouse attached then process the event
 		if Event.Class in INTERESTED_CLASSES and Event.Value != 0 and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \
 		   and len(Gizmod.Keyboards) and len(Gizmod.Mice):
 			# process the key
