@@ -66,20 +66,21 @@ class GizmodDispatcher(GizmodEventHandler):
 		This method gets called whenever Gizmo Daemon detects an event from a device
 		 
 		The Event object passed in will be of the type associated with that event,
-		so for example if it's a Powermate event the Event class will be "Powermate"
+		so for example if it's a Powermate event the Event class will be "GizmoPowermate"
 		
 		Similarly the Gizmo object will of the class of the device that generated
 		the event. Ie, if it's a Powermate event the class will also be "Powermate".  If
 		there is no associated Gizmo (ie with WindowFocus events), this field will be
 		set to None.
 		
-		All Event classes share the same base "Event" class, and you can use the Event
-		class method "getEventType" (amongst others) to figure out what type of event it 
-		is.  See the C++ API documention on the specific GizmoEvent* type for more details
+		All Event classes share the same base "GizmoEvent" class, and you can use the 
+		GizmoEvent class method "getClass" to figure out what type of event it 
+		is.  See the C++ API documention (http://gizmod.sourceforge.net/documentation/apidocs)
+		on the specific GizmoEvent* type for more details
 
 		All Gizmo classes share the same base "Gizmo" class, and you can use the Gizmo
-		class method "getGizmoType" (amongst others) to figure out what type of event it 
-		is.  See the C++ API documention on the specific Gizmo* type for more details
+		class method "getType" to figure out what type of event it is.  See the C++ API 
+		documention on the specific Gizmo* type for more details
 		"""
 		
 		# Pass on the event to the user scripts in order of their priority

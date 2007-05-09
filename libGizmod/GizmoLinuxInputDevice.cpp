@@ -87,6 +87,11 @@ void GizmoLinuxInputDevice::buildInputEventsVectorFromBuffer(std::vector<struct 
  * \param  Value Value of the event
  * \return True on success
  *
+ * See GizmoKeyDefs.hpp for a list of the available Types, and Codes
+ * 
+ * The Value field can mean many things, however for key press events
+ * a Value of 1 means turn the key "on", and 0 means turn the key "off"
+ *
  * Note: Writes the event, and a NULL event to signal a refresh
  */
 bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
@@ -106,6 +111,8 @@ bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
  * \param  Code GizmoKey (or other code) of the event
  * \return True on success
  *
+ * See GizmoKeyDefs.hpp for a list of the available Types, and Codes
+ * 
  * This creates two events, to simulate a key press
  * First send event with value 1, then value 0
  */
@@ -124,6 +131,11 @@ bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
  * \param  Value Value of the event
  * \param  NumWrites Number of time to write the event (default == 1)
  * \return True on success
+ *
+ * See GizmoKeyDefs.hpp for a list of the available Types, and Codes
+ * 
+ * The Value field can mean many things, however for key press events
+ * a Value of 1 means turn the key "on", and 0 means turn the key "off"
  *
  * Note: Writes the events, then a NULL event to signal a refresh
  */

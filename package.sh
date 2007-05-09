@@ -19,7 +19,7 @@ grc ./configure --with-boost
 echo "Cleaning"
 make distclean
 echo "removing non-dist files"
-rm -rf *.kdev* autom4te.cache config.h.in~ debug dependencies optimized valgrind HOWTO *.tag autogen.sh package.sh
+rm -rf *.kdev* autom4te.cache config.h.in~ documentation debug dependencies optimized valgrind HOWTO *.tag autogen.sh package.sh
 for remove in `find . -name \*\.svn` ; do
 	rm -rf $remove
 done
