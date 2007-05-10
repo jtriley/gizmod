@@ -21,7 +21,7 @@ from GizmoDaemon import *
 
 # This covers all of the base scripts (ie those not in modules.d) users
 # likely don't have to modify
-VERSION_REQUIRED = 3.0
+VERSION_REQUIRED = 3.1
 
 ############################
 # Device Strings
@@ -55,3 +55,15 @@ POWERMATE_GIZMOS = ["powermate", "soundknob"]
 # Master mixer, and Gizmod.DefaultMixerSwitch will be the PCM mixer.
 DEFAULT_MIXERS = ["master", "pcm", "front", "center", "side", "surround"]
 
+# KEYBOARD_LEDS defines how the keyboard LED visualizer will use the LEDs
+# The keyboard LEDs can be different on each keyboard, as there is no
+# standard way of defining them set to hardware manufacturers. 
+# Usually they are defined in this order:
+# 	- Num Lock: 0
+#	- Caps Lock: 1
+#	- Scroll Lock: 2
+# If your keyboard LEDs differ, simply change the following variable so that
+# the first spot in the array points to the integer value of the "first"
+# LED on your keyboard, the second spot in the array points to the "second"
+# LED and so on.
+KEYBOARD_LEDS = [0, 1, 2]
