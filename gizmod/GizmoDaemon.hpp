@@ -159,6 +159,7 @@ private:
 	bool				mDisabledALSA;			///< Disable ALSA support
 	bool				mDisabledCPUUsage;		///< Disable CPU Usage reporting
 	bool				mDisabledX11;			///< Disable X11 support
+	bool				mDisableShutdownMessage;	///< Disable the shutdown message / animation
 	std::string			mEventsDir;			///< Event node directory
 	std::map< std::string, boost::shared_ptr<Gizmo> > mGizmos; 	///< Map of Gizmos
 	bool				mInitialized;			///< Has GizmoDaemon been properly initialized?

@@ -555,6 +555,7 @@ GizmoDaemon::GizmoDaemon() {
 	mDisabledALSA = false;
 	mDisabledCPUUsage = false;
 	mDisabledX11 = false;
+	mDisableShutdownMessage = false;
 	mEventsDir = EVENT_NODE_DIR;
 	mInitialized = false;
 	mLircDev = LIRC_DEV;
@@ -570,14 +571,16 @@ GizmoDaemon::GizmoDaemon() {
  * \brief  Default Destructor
  */
 GizmoDaemon::~GizmoDaemon() {
-	cout << "GizmoDaemon Shutting Down... ";
+	if (!mDisableShutdownMessage)
+		cout << "GizmoDaemon Shutting Down... ";
 	mShuttingDown = true;	
-					cout << "|"; flush(cout);
-	X11FocusWatcher::shutdown();	cout << "\b/"; flush(cout);
-	Alsa::shutdown();		cout << "\b-"; flush(cout);
-	CPUUsage::shutdown();		cout << "\b\\"; flush(cout);
-	SocketServer::shutdown();	cout << "\b|"; flush(cout);
-	cout << "\b\b\b\b\b\b\b\b\b\b\b\b\b\b Down.                  " << endl << endl;
+					if (!mDisableShutdownMessage) cout << "|"; flush(cout);
+	X11FocusWatcher::shutdown();	if (!mDisableShutdownMessage) cout << "\b/"; flush(cout);
+	Alsa::shutdown();		if (!mDisableShutdownMessage) cout << "\b-"; flush(cout);
+	CPUUsage::shutdown();		if (!mDisableShutdownMessage) cout << "\b\\"; flush(cout);
+	SocketServer::shutdown();	if (!mDisableShutdownMessage) cout << "\b|"; flush(cout);
+	if (!mDisableShutdownMessage) 
+		cout << "\b\b\b\b\b\b\b\b\b\b\b\b\b\b Down.                  " << endl << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1334,10 +1337,12 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	// check for options
 	if (VarMap.count("help")) {
 		cout << VisibleOptions << endl;
+		mDisableShutdownMessage = true;
 		return false;
 	}
 	if (VarMap.count("version")) {
 		cout << endl;
+		mDisableShutdownMessage = true;
 		return false;
 	}
 	if (VarMap.count("debug")) {
