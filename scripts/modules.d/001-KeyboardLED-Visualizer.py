@@ -19,7 +19,7 @@ import sys
 ENABLED = True
 VERSION_NEEDED = 3.0
 INTERRUPT_LENGTH = 10
-LEDS = [0, 1, 2]
+LEDS = [2, 1, 0]
 
 ############################
 # Visualization Class definition
@@ -122,10 +122,10 @@ class KeyboardVisualizer:
 		
 		CurVal = 0
 		for i in range(len(LEDS)):
-			if Percent >= CurVal and Percent >= 5.0:
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, i, 1)
+			if Percent >= CurVal and Percent >= 10.0:
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, LEDS[i], 1)
 			else:
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, i, 0)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, LEDS[i], 0)
 			CurVal += self.RangePerLED	
 	
 	def __applyVisualizationCPUUsage(self, Event):
