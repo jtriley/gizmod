@@ -1895,6 +1895,9 @@ void GizmoDaemon::onSocketServerDisconnect(Socket const & socket) {
  * \param  Message The message
  */
 void GizmoDaemon::onSocketServerMessage(Socket const & socket, std::string const & Message) {
+	if (mShuttingDown)
+		return;
+	
 	//cdbg << "Socket Message [" << Message.length() << "] Bytes -- " << Message << endl;
 	size_t dPos = Message.find("|");
 	if (dPos == string::npos) {
