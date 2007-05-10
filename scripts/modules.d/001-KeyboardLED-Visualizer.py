@@ -56,7 +56,7 @@ class KeyboardVisualizer(VisualizerDefault):
 			self.__setLEDsPercent(Gizmod.DefaultMixerVolume.VolumePlaybackPercent)
 		else:
 			# if muted pulse the led
-			for i in range(len(LEDS)):
+			for i in range(len(KEYBOARD_LEDS)):
 				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, i, 0)
 			
 	def applyVisualizationSound(self, Event):
