@@ -67,7 +67,7 @@
 class GizmoDaemon : 
 	public H::FileEventWatcher, 
 	private H::SignalHandler, 
-	public X11FocusWatcher, 
+	public X11FocusWatcher,
 	public Alsa,
 	public Processes,
 	public CPUUsage,

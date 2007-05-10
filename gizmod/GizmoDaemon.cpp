@@ -355,11 +355,12 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("updateProcessTree", &Processes::updateProcessTree)
 			.staticmethod("updateProcessTree")
 		;		
-				
+	
 	/// X11FocusWatcher Python Class Export
 	class_<X11FocusWatcher>("X11FocusWatcher")
 		.def("isApplicationRunning", &X11FocusWatcher::isApplicationRunning)
 		;		
+
 	
 	/// GizmoUtils Python Class Export
 	class_<GizmoUtils>("GizmoUtils")
