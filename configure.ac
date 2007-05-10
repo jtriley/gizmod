@@ -21,7 +21,7 @@ AX_BOOST_BASE([1.33.1])
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED([PACKAGE_PREFIX], ["${prefix}"], [Package Prefix (--prefix)])
 AC_DEFINE_UNQUOTED([PACKAGE_SYSCONFDIR], ["$sysconfdir"], [system configuration directory] )
-AC_DEFINE([PACKAGE_WHIMSICAL_NAME], ["Harness the blue"], [Package Pet Name / Dedication])
+AC_DEFINE([PACKAGE_WHIMSICAL_NAME], ["LEDs RULE!"], [Package Pet Name / Dedication])
 
 #########
 
@@ -218,6 +218,7 @@ AC_CONFIG_FILES([
 	gizmod/Makefile
 	scripts/Makefile
 	scripts/modules.d/Makefile
+	scripts/modules.d/visualizers/Makefile
 	visplugin/Makefile
 ])
 AC_OUTPUT
