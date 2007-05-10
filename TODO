@@ -2,3 +2,7 @@ TODO:
 
 - internal script "restart"
 - macro recorder
+
+BUGS:
+
+- segfault if quit gizmod while clients connected

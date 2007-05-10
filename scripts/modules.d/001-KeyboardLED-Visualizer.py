@@ -19,7 +19,7 @@ import sys
 ENABLED = True
 VERSION_NEEDED = 3.0
 INTERRUPT_LENGTH = 10
-LEDS = [2, 1, 0]
+LEDS = [0, 1, 2]
 
 ############################
 # Visualization Class definition
