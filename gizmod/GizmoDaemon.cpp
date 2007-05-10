@@ -43,6 +43,7 @@
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/Util.hpp"
+#include "../libH/UtilFile.hpp"
 #include "../libH/SocketException.hpp"
 #include <cstdlib>
 #include <iostream>
@@ -61,6 +62,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/list.hpp>
+#include <boost/tokenizer.hpp>
 #include <fcntl.h>
 
 using namespace std;
@@ -91,6 +93,12 @@ using namespace H;
  * \brief  The default path of the users home script dir
  */
 #define HOME_SCRIPT_DIR		"~/.gizmod/"
+
+/** 
+ * \def    CONFIG_FILE_PATH
+ * \brief  The default full path of the config file
+ */
+#define CONFIG_FILE_PATH	HOME_SCRIPT_DIR PACKAGE_NAME ".conf"
 
 /** 
  * \def    USER_SCRIPT_DIR
@@ -1310,8 +1318,11 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 
 	// try parsing the config file
 	try {
-		ifstream ifs(CONFIG_FILE);
-		store(parse_config_file(ifs, ConfigFileOptions), VarMap);
+		string ConfigFile = CONFIG_FILE_PATH;
+		UtilFile::relativeToAbsolute(ConfigFile);
+		ifstream ifs(ConfigFile.c_str());
+		if (ifs.is_open())
+			store(parse_config_file(ifs, ConfigFileOptions), VarMap);
 	} catch (exception & e) {
 		cout << VisibleOptions;
 		throw H::Exception("Invalid Configuration File");
