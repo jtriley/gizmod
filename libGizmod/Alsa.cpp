@@ -151,7 +151,7 @@ void Alsa::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard 
 	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) 
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << stringconverter(Event.IsActiveChanged) << stringconverter(Event.ElementsChanged) << stringconverter(Event.VolumePlaybackChanged) << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
 	else
-		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.Mask << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << stringconverter(Event.Mask) << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
 }
 
 /**
