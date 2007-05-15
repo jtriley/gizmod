@@ -59,6 +59,8 @@ SignalHandler::SignalHandler() {
  * \brief Destructor
  */
 SignalHandler::~SignalHandler() {
+	if (mpThis)
+		mpThis = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -59,7 +59,6 @@ int main (int argc, char * argv []) {
 	bool ReloadGizmod;
 	do {
 		// create the Gizmod
-		ReloadGizmod = false;
 		shared_ptr<GizmoDaemon> pGizmod(new GizmoDaemon);
 		
 		// try initializing
