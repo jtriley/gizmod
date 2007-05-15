@@ -561,6 +561,7 @@ GizmoDaemon::GizmoDaemon() {
 	mLircDev = LIRC_DEV;
 	mLocalDisabled = false;
 	mpPyDispatcher = NULL;
+	mReloadConfig = false;
 	mServerPort = DEFAULT_PORT;
 	mServerEnabled = false;
 	mShuttingDown = false;
@@ -978,6 +979,14 @@ int GizmoDaemon::getGizmoClassID(GizmoClass Class) {
  */
 string GizmoDaemon::getProps() {
 	return "\nGizmoDaemon v" PACKAGE_VERSION " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n-----------\n";
+}
+
+/**
+ * \brief  Get whether or not to reload the config
+ * \return True if yes
+ */
+bool GizmoDaemon::getReloadConfig() {
+	return mReloadConfig;
 }
 
 /**
@@ -1813,7 +1822,9 @@ void GizmoDaemon::onSignalInt() {
  * \brief Signal handler for HUP
  */
 void GizmoDaemon::onSignalHup() {
-	cerr << "Unhandled HUP Signal" << endl;
+	cout << "HUP signal received, reloading config..." << endl;
+	mReloadConfig = true;
+	signalShutdown();
 }
 
 /**

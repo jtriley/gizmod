@@ -84,6 +84,7 @@ public:
 	GizmodEventHandlerInterface *	getDispatcher();		///< Get the event handler / dispatcher
 	boost::shared_ptr<Gizmo>	getGizmoByFileName(std::string FileName); ///< Get a Gizmo by its file name
 	int 				getNumGizmosByClass(GizmoClass Class); ///< Get number of Gizmos of a particular class
+	bool				getReloadConfig();		///< Get whether or not to reload the config file
 	float				getVersion();			///< Get version string
 	void				initGizmod();			///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
@@ -168,6 +169,7 @@ private:
 	GizmodEventHandlerInterface * 	mpPyDispatcher;			///< The GizmoDaemonDispatcher Python object
 	boost::python::object		mPyMainModule;			///< The Python Main Module
 	boost::python::object		mPyMainNamespace;		///< The Python Main Namespace
+	bool				mReloadConfig;			///< Reload the config rather than exit?
 	bool				mServerEnabled;			///< Allow incoming connections
 	int				mServerPort;			///< Port of the server
 	bool				mShuttingDown;			///< Shutting down?

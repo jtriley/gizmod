@@ -56,33 +56,40 @@ int main (int argc, char * argv []) {
 	// set filesystem to native filesystem checking
 	path::default_name_check(native);
 	
-	// create the Gizmod
-	shared_ptr<GizmoDaemon> pGizmod(new GizmoDaemon);
-	
-	// try initializing
-	try {
-		if (!pGizmod->initialize(argc, argv))
-			return EXIT_SUCCESS;
-	} catch (H::Exception & e) {
-		cerr << "\nUnable to Initialize Gizmod :: " << e.message() << "\n\n";
-		return EXIT_FAILURE;
-	}
-	
-	// Setup
-	try {
-		pGizmod->initGizmod();
-	} catch (H::Exception & e) {
-		cerr << "Unable to Initialize Gizmod :: " << e.message() << "\n\n";
-		return EXIT_FAILURE;
-	}
-	
-	// enter the run loop
-	try {
-		pGizmod->enterLoop();
-	} catch (H::Exception & e) {
-		cerr << "Fatal Error :: " << e.message() << "\n\n";
-		return EXIT_FAILURE;
-	}
+	bool ReloadGizmod;
+	do {
+		// create the Gizmod
+		ReloadGizmod = false;
+		shared_ptr<GizmoDaemon> pGizmod(new GizmoDaemon);
+		
+		// try initializing
+		try {
+			if (!pGizmod->initialize(argc, argv))
+				return EXIT_SUCCESS;
+		} catch (H::Exception & e) {
+			cerr << "\nUnable to Initialize Gizmod :: " << e.message() << "\n\n";
+			return EXIT_FAILURE;
+		}
+		
+		// Setup
+		try {
+			pGizmod->initGizmod();
+		} catch (H::Exception & e) {
+			cerr << "Unable to Initialize Gizmod :: " << e.message() << "\n\n";
+			return EXIT_FAILURE;
+		}
+		
+		// enter the run loop
+		try {
+			pGizmod->enterLoop();
+		} catch (H::Exception & e) {
+			cerr << "Fatal Error :: " << e.message() << "\n\n";
+			return EXIT_FAILURE;
+		}
+		
+		// check whether or not to reload the config
+		ReloadGizmod = pGizmod->getReloadConfig();
+	} while (ReloadGizmod);
 		
 	return EXIT_SUCCESS;
 }
