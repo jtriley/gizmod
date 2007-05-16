@@ -53,7 +53,6 @@ using namespace H;
  * \brief GizmoClient Default Constructor
  */
 GizmoClient::GizmoClient() {
-	mNoSendLEDEvents = true;
 }
 
 /**
@@ -196,7 +195,7 @@ void GizmoClient::sendEventSoundVisualization(GizmoEventSoundVisualization const
  */
 void GizmoClient::sendEventStandard(GizmoEventStandard const & Event, GizmoStandard const & Gizmo) {
 	// process the remote event
-	if ( (!isClientConnected()) || (Event.Type == GIZMO_EV_LED && mNoSendLEDEvents) )
+	if (!isClientConnected())
 		return;
 	
 	// serialize
