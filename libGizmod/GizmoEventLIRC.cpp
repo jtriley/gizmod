@@ -53,14 +53,14 @@ using namespace H;
 /**
  * \brief GizmoEventLIRC Default Constructor
  */
-GizmoEventLIRC::GizmoEventLIRC() : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
+GizmoEventLIRC::GizmoEventLIRC() : GizmoEvent(GIZMO_EVENTCLASS_LIRC, false) {
 	Repeat = 0;
 }
 
 /**
  * \brief GizmoEventLIRC Init Constructor
  */
-GizmoEventLIRC::GizmoEventLIRC(std::string code, int repeat, std::string button, std::string remote) : GizmoEvent(GIZMO_EVENTCLASS_LIRC) {
+GizmoEventLIRC::GizmoEventLIRC(std::string code, int repeat, std::string button, std::string remote, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_LIRC, IsRemote) {
 	Code = code;
 	Repeat = repeat;
 	Button = button;

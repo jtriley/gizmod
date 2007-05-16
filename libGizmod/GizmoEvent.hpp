@@ -91,15 +91,18 @@ class GizmoEvent {
 public:
 	// public functions
 	GizmoEventClass			getClass();			///< Get the class of the Gizmo
+	bool				isRemote();			///< Get whether or not it's a remote event
+	void				setIsRemote(bool IsRemote);	///< Set whether or not it's a remote event
 	
 	// construction / deconstruction
 	GizmoEvent();							///< Serialize Constructor
-	GizmoEvent(GizmoEventClass Class);				///< Default Constructor
+	GizmoEvent(GizmoEventClass Class, bool IsRemote);		///< Default Constructor
 	virtual ~GizmoEvent();						///< Destructor
 	
 protected:
 	// protected member variables
 	GizmoEventClass			mClass;				///< Class of the Gizmo
+	bool				mIsRemote;			///< True if the event is a remote event
 	
 private:
 	// private functions

@@ -46,9 +46,9 @@ using namespace H;
 /**
  * \brief GizmoEventSoundCard Default Constructor
  */
-GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) : 
+GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, bool IsRemote) : 
 	AlsaEvent(Event),
-	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD)
+	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD, IsRemote)
 {
 	mpSoundCard = &SoundCard;
 	mpMixer = NULL;
@@ -57,9 +57,9 @@ GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard 
 /**
  * \brief GizmoEventSoundCard Default Constructor
  */
-GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) : 
+GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer, bool IsRemote) : 
 	AlsaEvent(Event),
-	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD)
+	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD, IsRemote)
 {
 	mpSoundCard = &SoundCard;
 	mpMixer = &Mixer;

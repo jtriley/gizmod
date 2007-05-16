@@ -80,6 +80,7 @@ public:
 	
 private:
 	// private functions
+	bool				mNoSendLEDEvents;		///< Don't send LED events if True
 	
 	// private member variables
 };

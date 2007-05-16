@@ -386,6 +386,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getNumGizmosByClass", &GizmoDaemon::getNumGizmosByClass)
 		.def("getUseKeyboardLEDs", &GizmoDaemon::getUseKeyboardLEDs)
 		.add_property("UseKeyboardLEDs", &GizmoDaemon::getUseKeyboardLEDs)
+		.def("getUseRemoteControl", &GizmoDaemon::getUseRemoteControl)
+		.add_property("UseRemoteControl", &GizmoDaemon::getUseRemoteControl)
 		.def("getVersion", &GizmoDaemon::getVersion)
 		.add_property("Version", &GizmoDaemon::getVersion)
 		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
@@ -419,9 +421,11 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		;
 
 	/// GizmoEvent Python Class Export
- 	class_<GizmoEvent>("GizmoEvent", init<GizmoEventClass>())
+ 	class_<GizmoEvent>("GizmoEvent", init<GizmoEventClass, bool>())
 		.def("getClass", &GizmoEvent::getClass)
 		.add_property("Class", &GizmoEvent::getClass)
+		.def("isRemote", &GizmoEvent::isRemote)
+		.add_property("Remote", &GizmoEvent::isRemote)
 		;
 		
 	/// GizmoEventCPU Python Class Export
@@ -568,6 +572,7 @@ GizmoDaemon::GizmoDaemon() {
 	mServerEnabled = false;
 	mShuttingDown = false;
 	mUseKeyboardLEDs = false;
+	mUseRemoteControl = false;
 	mVersion = 0.0;
 	setVersionInfo();
 }
@@ -710,6 +715,7 @@ void GizmoDaemon::deserializeMessageATIX10(std::string const & Message) {
 	archive::text_iarchive InArchiveEvent(InStreamEvent);
 	GizmoEventATIX10 Event;
 	InArchiveEvent >> Event;
+	Event.setIsRemote(true);
 	
 	stringstream InStreamDevice(MessageDevice);
 	archive::text_iarchive InArchiveDevice(InStreamDevice);
@@ -733,6 +739,7 @@ void GizmoDaemon::deserializeMessageCPUUsage(std::string const & Message) {
 	archive::text_iarchive InArchive(InStream);
 	GizmoEventCPUUsage Event;
 	InArchive >> Event;
+	Event.setIsRemote(true);
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
@@ -760,6 +767,7 @@ void GizmoDaemon::deserializeMessageLIRC(std::string const & Message) {
 	archive::text_iarchive InArchiveEvent(InStreamEvent);
 	GizmoEventLIRC Event;
 	InArchiveEvent >> Event;
+	Event.setIsRemote(true);
 	
 	stringstream InStreamDevice(MessageDevice);
 	archive::text_iarchive InArchiveDevice(InStreamDevice);
@@ -792,6 +800,7 @@ void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {
 	archive::text_iarchive InArchiveEvent(InStreamEvent);
 	GizmoEventPowermate Event;
 	InArchiveEvent >> Event;
+	Event.setIsRemote(true);
 	
 	stringstream InStreamDevice(MessageDevice);
 	archive::text_iarchive InArchiveDevice(InStreamDevice);
@@ -815,6 +824,7 @@ void GizmoDaemon::deserializeMessageSoundcard(std::string const & Message) {
 	archive::text_iarchive InArchive(InStream);
 	GizmoEventSoundCard Event;
 	InArchive >> Event;
+	Event.setIsRemote(true);
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
@@ -833,6 +843,7 @@ void GizmoDaemon::deserializeMessageSoundVisualization(std::string const & Messa
 	archive::text_iarchive InArchive(InStream);
 	GizmoEventSoundVisualization Event;
 	InArchive >> Event;
+	Event.setIsRemote(true);
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
@@ -860,6 +871,7 @@ void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {
 	archive::text_iarchive InArchiveEvent(InStreamEvent);
 	GizmoEventStandard Event;
 	InArchiveEvent >> Event;
+	Event.setIsRemote(true);
 	
 	stringstream InStreamDevice(MessageDevice);
 	archive::text_iarchive InArchiveDevice(InStreamDevice);
@@ -883,6 +895,7 @@ void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {
 	archive::text_iarchive InArchive(InStream);
 	GizmoEventWindowFocus Event;
 	InArchive >> Event;
+	Event.setIsRemote(true);
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
@@ -1002,6 +1015,14 @@ bool GizmoDaemon::getReloadConfig() {
  */
 bool GizmoDaemon::getUseKeyboardLEDs() {
 	return mUseKeyboardLEDs;
+}
+
+/**
+ * \brief  Get whether or not to load the remote control script
+ * \return True if yes
+ */
+bool GizmoDaemon::getUseRemoteControl() {
+	return mUseRemoteControl;
 }
 
 /**
@@ -1313,6 +1334,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		("no-cpuusage,U",				"Disable CPU Usage reporting")
 		("no-local,N",					"Disable local processing of events")
 		("no-x11,X",					"Disable X11 support")
+		("remote-control,r",				"Enable Remote Control mode")
 		("server,s",					"Enable server (default: not enabled)")
 		("server-port,p",	value<int>(),		"Port to start Gizmod server on (default: " DEFAULT_PORT_STR ")")
 		;
@@ -1421,6 +1443,10 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	if (VarMap.count("no-x11")) {
 		mDisabledX11 = true;
 		cdbg << "X11 Support Disabled" << endl;
+	}
+	if (VarMap.count("remote-control")) {
+		mUseRemoteControl = true;
+		cdbg << "Remote Control Mode Enabled" << endl;
 	}
 	if (VarMap.count("server")) {
 		mServerEnabled = !mServerEnabled;

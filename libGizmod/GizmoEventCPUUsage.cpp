@@ -46,13 +46,13 @@ using namespace H;
 /**
  * \brief GizmoEventCPUUsage Default Constructor
  */
-GizmoEventCPUUsage::GizmoEventCPUUsage() : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE) {
+GizmoEventCPUUsage::GizmoEventCPUUsage() : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE, false) {
 }
 
 /**
  * \brief GizmoEventCPUUsage Default Constructor
  */
-GizmoEventCPUUsage::GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE) {
+GizmoEventCPUUsage::GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE, IsRemote) {
 	mEvent = Event;
 }
 

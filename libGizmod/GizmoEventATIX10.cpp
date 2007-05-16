@@ -49,13 +49,13 @@ using namespace H;
 /**
  * \brief GizmoEventATIX10 Default Constructor
  */
-GizmoEventATIX10::GizmoEventATIX10() : GizmoEvent(GIZMO_EVENTCLASS_ATIX10) {
+GizmoEventATIX10::GizmoEventATIX10() : GizmoEvent(GIZMO_EVENTCLASS_ATIX10, false) {
 }
 
 /**
  * \brief GizmoEventATIX10 Init Constructor
  */
-GizmoEventATIX10::GizmoEventATIX10(struct input_event const & InputEvent) : GizmoEvent(GIZMO_EVENTCLASS_ATIX10), GizmoLinuxInputEvent(InputEvent) {
+GizmoEventATIX10::GizmoEventATIX10(struct input_event const & InputEvent, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_ATIX10, IsRemote), GizmoLinuxInputEvent(InputEvent) {
 }
 
 /**

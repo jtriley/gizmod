@@ -66,7 +66,7 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventCPUUsage(); 							///< Default Constructor
-	GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event); ///< Default Constructor
+	GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event, bool IsRemote = false); ///< Default Constructor
 	virtual ~GizmoEventCPUUsage();						///< Destructor
 
 protected:

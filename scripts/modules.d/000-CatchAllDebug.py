@@ -40,7 +40,11 @@ class CatchAllDebug:
 		# if debug mode isn't enabled, don't bother!
 		if not Gizmod.DebugEnabled:
 			return False
-
+		
+		# check if it's a remote event
+		if Event.Remote:
+			sys.stdout.write("[R] ")
+		
 		# debug mode enabled so print the event
 		if Event.Class == GizmoEventClass.WindowFocus:
 			print "onEvent: " + str(Event.Class) + " [" + str(Event.WindowEventType) + "] -- <WindowTitle:" + Event.WindowName + "> <FormalName:" + Event.WindowNameFormal + "> <Class:" + Event.WindowClass + ">"

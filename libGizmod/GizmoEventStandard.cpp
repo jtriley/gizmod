@@ -49,13 +49,13 @@ using namespace H;
 /**
  * \brief GizmoEventStandard Default Constructor
  */
-GizmoEventStandard::GizmoEventStandard() : GizmoEvent(GIZMO_EVENTCLASS_STANDARD) {
+GizmoEventStandard::GizmoEventStandard() : GizmoEvent(GIZMO_EVENTCLASS_STANDARD, false) {
 }
 
 /**
  * \brief GizmoEventStandard Init Constructor
  */
-GizmoEventStandard::GizmoEventStandard(struct input_event const & InputEvent) : GizmoEvent(GIZMO_EVENTCLASS_STANDARD), GizmoLinuxInputEvent(InputEvent) {
+GizmoEventStandard::GizmoEventStandard(struct input_event const & InputEvent, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_STANDARD, IsRemote), GizmoLinuxInputEvent(InputEvent) {
 }
 
 /**

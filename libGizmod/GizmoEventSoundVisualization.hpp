@@ -74,8 +74,8 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventSoundVisualization(); 					///< Default Constructor
-	GizmoEventSoundVisualization(SoundVisualizationEventType Type);		///< Init Constructor
-	GizmoEventSoundVisualization(float vuLeft, float vuRight, float vuCombined); ///< Init Constructor
+	GizmoEventSoundVisualization(SoundVisualizationEventType Type, bool IsRemote = false); ///< Init Constructor
+	GizmoEventSoundVisualization(float vuLeft, float vuRight, float vuCombined, bool IsRemote = false); ///< Init Constructor
 	virtual ~GizmoEventSoundVisualization();				///< Destructor
 
 private:

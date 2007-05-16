@@ -66,8 +66,8 @@ public:
 		
 	// construction / deconstruction
 	GizmoEventSoundCard();						///< Serialize Constructor
-	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard); ///< Default Constructor
-	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer); ///< Default Constructor
+	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, bool IsRemote = false); ///< Default Constructor
+	GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer, bool IsRemote = false); ///< Default Constructor
 	virtual ~GizmoEventSoundCard();					///< Destructor
 
 protected:

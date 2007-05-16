@@ -46,7 +46,7 @@ using namespace H;
 /**
  * \brief GizmoEventSoundVisualization Default Constructor
  */
-GizmoEventSoundVisualization::GizmoEventSoundVisualization() : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION) {
+GizmoEventSoundVisualization::GizmoEventSoundVisualization() : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION, false) {
 	mVULeft = mVURight = mVUCombined = 0;
 	mType = SOUNDVISUALIZATION_RENDER;
 }
@@ -54,7 +54,7 @@ GizmoEventSoundVisualization::GizmoEventSoundVisualization() : GizmoEvent(GIZMO_
 /**
  * \brief GizmoEventSoundVisualization Init Constructor
  */
-GizmoEventSoundVisualization::GizmoEventSoundVisualization(float VULeft, float VURight, float VUCombined) : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION) {
+GizmoEventSoundVisualization::GizmoEventSoundVisualization(float VULeft, float VURight, float VUCombined, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION, IsRemote) {
 	mVULeft = VULeft;
 	mVURight = VURight;
 	mVUCombined = VUCombined;
@@ -64,7 +64,7 @@ GizmoEventSoundVisualization::GizmoEventSoundVisualization(float VULeft, float V
 /**
  * \brief GizmoEventSoundVisualization Init Constructor
  */
-GizmoEventSoundVisualization::GizmoEventSoundVisualization(SoundVisualizationEventType Type) : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION) {
+GizmoEventSoundVisualization::GizmoEventSoundVisualization(SoundVisualizationEventType Type, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION, IsRemote) {
 	mVULeft = mVURight = mVUCombined = 0;
 	mType = Type;
 }

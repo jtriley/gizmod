@@ -69,7 +69,7 @@ public:
 		
 	// construction / deconstruction
 	GizmoEventWindowFocus();					///< Serialize Constructor
-	GizmoEventWindowFocus(X11FocusEvent const & Event);		///< Default Constructor
+	GizmoEventWindowFocus(X11FocusEvent const & Event, bool IsRemote = false); ///< Default Constructor
 	virtual ~GizmoEventWindowFocus();				///< Destructor
 
 protected:

@@ -64,7 +64,7 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventStandard();						///< Default Constructor
-	GizmoEventStandard(struct input_event const & InputEvent);	///< Init Constructor
+	GizmoEventStandard(struct input_event const & InputEvent, bool IsRemote = false); ///< Init Constructor
 	virtual ~GizmoEventStandard();					///< Destructor
 
 protected:

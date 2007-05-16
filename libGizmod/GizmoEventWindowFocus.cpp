@@ -49,7 +49,7 @@ using namespace H;
 /**
  * \brief GizmoEventWindowFocus Default Constructor
  */
-GizmoEventWindowFocus::GizmoEventWindowFocus(X11FocusEvent const & Event) : X11FocusEvent(Event), GizmoEvent(GIZMO_EVENTCLASS_WINDOWFOCUS) {
+GizmoEventWindowFocus::GizmoEventWindowFocus(X11FocusEvent const & Event, bool IsRemote) : X11FocusEvent(Event), GizmoEvent(GIZMO_EVENTCLASS_WINDOWFOCUS, false) {
 }
 
 /**

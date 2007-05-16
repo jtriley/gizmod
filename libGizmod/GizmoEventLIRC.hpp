@@ -70,7 +70,7 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventLIRC();						///< Default Constructor
-	GizmoEventLIRC(std::string code, int repeat, std::string button, std::string remote); ///< Init Constructor
+	GizmoEventLIRC(std::string code, int repeat, std::string button, std::string remote, bool IsRemote = false); ///< Init Constructor
 	virtual ~GizmoEventLIRC();					///< Destructor
 
 protected:

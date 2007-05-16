@@ -46,8 +46,9 @@ using namespace H;
 /**
  * \brief GizmoEvent Default Constructor
  */
-GizmoEvent::GizmoEvent(GizmoEventClass Class) {
+GizmoEvent::GizmoEvent(GizmoEventClass Class, bool IsRemote) {
 	mClass = Class;
+	mIsRemote = IsRemote;
 }
 
 /**
@@ -55,6 +56,7 @@ GizmoEvent::GizmoEvent(GizmoEventClass Class) {
  */
 GizmoEvent::GizmoEvent() {
 	mClass = GIZMO_EVENTCLASS_STANDARD;
+	mIsRemote = false;
 }
 
 /**
@@ -76,4 +78,23 @@ GizmoEvent::~GizmoEvent() {
  */
 GizmoEventClass GizmoEvent::getClass() {
 	return mClass;
+}
+
+/**
+ * \brief  Get whether or not it's a remote event
+ * \return True if the remote is from afar
+ * 
+ * Note that this is also implemented in Python as a property so it can
+ * be accessed as a variable by referencing ".RemoteEvent"
+ */
+bool GizmoEvent::isRemote() {
+	return mIsRemote;
+}
+
+/**
+ * \brief  Set whether or not it's a remote event
+ * \param  IsRemote True if the remote is from afar
+ */
+void GizmoEvent::setIsRemote(bool IsRemote) {
+	mIsRemote = IsRemote;
 }

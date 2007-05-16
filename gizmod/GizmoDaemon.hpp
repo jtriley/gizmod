@@ -86,6 +86,7 @@ public:
 	int 				getNumGizmosByClass(GizmoClass Class); ///< Get number of Gizmos of a particular class
 	bool				getReloadConfig();		///< Get whether or not to reload the config file
 	bool				getUseKeyboardLEDs();		///< Get whether or not to visualize on the Keyboard LEDs
+	bool				getUseRemoteControl();		///< Get whether or not to allow remote control
 	double				getVersion();			///< Get version string
 	void				initGizmod();			///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
@@ -175,6 +176,7 @@ private:
 	int				mServerPort;			///< Port of the server
 	bool				mShuttingDown;			///< Shutting down?
 	bool				mUseKeyboardLEDs;		///< Allow Gizmod to visualize on the Keyboard LEDs
+	bool				mUseRemoteControl;		///< Allow remote translation of events into local events
 	double				mVersion;			///< Version
 	int				mVersionMajor;			///< Version majorus
 	int				mVersionMinor;			///< Version minorus

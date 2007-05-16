@@ -64,7 +64,7 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventATIX10();						///< Default Constructor
-	GizmoEventATIX10(struct input_event const & InputEvent);	///< Init Constructor
+	GizmoEventATIX10(struct input_event const & InputEvent, bool IsRemote = false);	///< Init Constructor
 	virtual ~GizmoEventATIX10();					///< Destructor
 
 protected:

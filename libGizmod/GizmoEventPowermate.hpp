@@ -64,7 +64,7 @@ public:
 	
 	// construction / deconstruction
 	GizmoEventPowermate();						///< Default Constructor
-	GizmoEventPowermate(struct input_event const & InputEvent);	///< Default Constructor
+	GizmoEventPowermate(struct input_event const & InputEvent, bool IsRemote = false); ///< Default Constructor
 	virtual ~GizmoEventPowermate();					///< Destructor
 
 protected:
