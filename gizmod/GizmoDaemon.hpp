@@ -77,7 +77,7 @@ class GizmoDaemon :
 {
 public:
 	// public functions
-	bool				checkVersion(float Version, bool Strict); ///< See if a version matches ours
+	bool				checkVersion(double Version, bool Strict); ///< See if a version matches ours
 	void				enterLoop();			///< Enter the main run loop
 	X11FocusEvent 	 		getCurrentFocus();		///< Get currently focused window
 	bool				getDebugEnabled();		///< Is debug mode enabled?
@@ -85,7 +85,8 @@ public:
 	boost::shared_ptr<Gizmo>	getGizmoByFileName(std::string FileName); ///< Get a Gizmo by its file name
 	int 				getNumGizmosByClass(GizmoClass Class); ///< Get number of Gizmos of a particular class
 	bool				getReloadConfig();		///< Get whether or not to reload the config file
-	float				getVersion();			///< Get version string
+	bool				getUseKeyboardLEDs();		///< Get whether or not to visualize on the Keyboard LEDs
+	double				getVersion();			///< Get version string
 	void				initGizmod();			///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 	void 				printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3); ///< Print a nice looking init string
@@ -173,7 +174,8 @@ private:
 	bool				mServerEnabled;			///< Allow incoming connections
 	int				mServerPort;			///< Port of the server
 	bool				mShuttingDown;			///< Shutting down?
-	float				mVersion;			///< Version
+	bool				mUseKeyboardLEDs;		///< Allow Gizmod to visualize on the Keyboard LEDs
+	double				mVersion;			///< Version
 	int				mVersionMajor;			///< Version majorus
 	int				mVersionMinor;			///< Version minorus
 	

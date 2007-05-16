@@ -111,7 +111,7 @@ class KeyboardVisualizer(VisualizerDefault):
 ##########################
 
 # register the user script
-if ENABLED:
+if ENABLED and Gizmod.UseKeyboardLEDs:
 	if not Gizmod.checkVersion(VERSION_NEEDED, False):
 		Gizmod.printNiceScriptInit(1, " * KeyboardVisualizer", "NOT LOADED", "Version Needed: " + str(VERSION_NEEDED))
 	else:

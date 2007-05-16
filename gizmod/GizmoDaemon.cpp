@@ -384,6 +384,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getDebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.add_property("DebugEnabled", &GizmoDaemon::getDebugEnabled)
 		.def("getNumGizmosByClass", &GizmoDaemon::getNumGizmosByClass)
+		.def("getUseKeyboardLEDs", &GizmoDaemon::getUseKeyboardLEDs)
+		.add_property("UseKeyboardLEDs", &GizmoDaemon::getUseKeyboardLEDs)
 		.def("getVersion", &GizmoDaemon::getVersion)
 		.add_property("Version", &GizmoDaemon::getVersion)
 		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
@@ -565,6 +567,8 @@ GizmoDaemon::GizmoDaemon() {
 	mServerPort = DEFAULT_PORT;
 	mServerEnabled = false;
 	mShuttingDown = false;
+	mUseKeyboardLEDs = false;
+	mVersion = 0.0;
 	setVersionInfo();
 }
 
@@ -580,6 +584,8 @@ GizmoDaemon::~GizmoDaemon() {
 	Alsa::shutdown();		if (!mDisableShutdownMessage) cout << "\b-"; flush(cout);
 	CPUUsage::shutdown();		if (!mDisableShutdownMessage) cout << "\b\\"; flush(cout);
 	SocketServer::shutdown();	if (!mDisableShutdownMessage) cout << "\b|"; flush(cout);
+	Py_Finalize();
+	Py_Initialize();
 	if (!mDisableShutdownMessage) 
 		cout << "\b\b\b\b\b\b\b\b\b\b\b\b\b\b Down.                  " << endl << endl;
 }
@@ -594,11 +600,12 @@ GizmoDaemon::~GizmoDaemon() {
  * \param  Strict If set, the versions need to exactly match otherwise the script's Version signifies a minimum version level that Gizmod needs to be
  * \return True if versions are okay
  */
-bool GizmoDaemon::checkVersion(float Version, bool Strict) {
+bool GizmoDaemon::checkVersion(double Version, bool Strict) {
+	double VersionDiff = fabs(Version - mVersion);
 	if (Strict) {
-		return Version == mVersion;
+		return VersionDiff < 0.1;
 	} else {
-		if (Version <= mVersion)
+		if (Version - 0.05 <= mVersion)
 			return true;
 		else
 			return false;
@@ -990,6 +997,14 @@ bool GizmoDaemon::getReloadConfig() {
 }
 
 /**
+ * \brief  Get whether or not to visualize on the keyboard LEDs
+ * \return True if yes
+ */
+bool GizmoDaemon::getUseKeyboardLEDs() {
+	return mUseKeyboardLEDs;
+}
+
+/**
  * \brief  Get all the directories inside the user script dir
  *
  * This is for modifying the import path so that users can 
@@ -1021,7 +1036,7 @@ std::string GizmoDaemon::getUserScriptDirPaths() {
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".Version"
  */
-float GizmoDaemon::getVersion() {
+double GizmoDaemon::getVersion() {
 	return mVersion;
 }
 
@@ -1292,6 +1307,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		("client-port,P",	value<int>(),		"Port to forward events to (default: " DEFAULT_PORT_STR ")")
 		("config-dir,C",	value<string>(),	"Set config scripts directory") 
 		("events-dir,e",	value<string>(),	"Set event node directory (default: " EVENT_NODE_DIR ")")
+		("keyboard-leds,k",				"Allow Gizmod to Visualize on the Keyboard LEDs")
 		("lirc-dev,l",		value<string>(),	"Set LIRC device node (default: " LIRC_DEV ")")
 		("no-alsa,A",					"Disable ALSA support")
 		("no-cpuusage,U",				"Disable CPU Usage reporting")
@@ -1382,6 +1398,10 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 			mEventsDir += "/";
 		cdbg << "Event Node Directory set to [" << mEventsDir << "]" << endl;
 	}
+	if (VarMap.count("keyboard-leds")) {
+		cdbg << "Allowing takeover of Keyboard LEDs" << endl;
+		mUseKeyboardLEDs = true;
+	}	
 	if (VarMap.count("lirc-dev")) {
 		mLircDev = VarMap["lirc-dev"].as<string>();
 		cdbg << "LIRC Device Node set to [" << mLircDev << "]" << endl;
@@ -2075,7 +2095,7 @@ void GizmoDaemon::setVersionInfo() {
 		}
 	}
 	
-	mVersion = mVersionMajor + (mVersionMinor / 10.0f);
+	mVersion = double(mVersionMajor) + (double(mVersionMinor) / 10.0);
 }
 
 /**

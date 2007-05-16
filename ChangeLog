@@ -3,8 +3,11 @@
 ----------------------------------------
 	- Add new Visualization API
 	- Add keyboard LED visualizations
+	- Add keyboard LED command line switch (--keyboard-leds)
 	- Fix segfault when shutting down gizmod, and clients 
 	  are connected and sending messages
+	- Add HUP script reloading (mostly works, but needs more
+	  upstream support from boost.python for Py_Finalize)
 
 ----------------------------------------
 -- v 3.0

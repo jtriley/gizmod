@@ -53,7 +53,7 @@ POWERMATE_GIZMOS = ["powermate", "soundknob"]
 # element has a playback volume, but no mute switch, and the PCM channel has 
 # playback # volume and a mute switch, Gizmod.DefaultMixerVolume will be the 
 # Master mixer, and Gizmod.DefaultMixerSwitch will be the PCM mixer.
-DEFAULT_MIXERS = ["master", "pcm", "front", "center", "side", "surround"]
+DEFAULT_MIXERS = ["master", "pcm", "front", "center", "side", "surround", "headphones"]
 
 # KEYBOARD_LEDS defines how the keyboard LED visualizer will use the LEDs
 # The keyboard LEDs can be different on each keyboard, as there is no
