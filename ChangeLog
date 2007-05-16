@@ -8,6 +8,7 @@
 	  are connected and sending messages
 	- Add HUP script reloading (mostly works, but needs more
 	  upstream support from boost.python for Py_Finalize)
+	- Remote control mode (--remote-control)
 
 ----------------------------------------
 -- v 3.0
