@@ -21,7 +21,7 @@ from GizmoDaemon import *
 
 # This covers all of the base scripts (ie those not in modules.d) users
 # likely don't have to modify
-VERSION_REQUIRED = 3.1
+VERSION_REQUIRED = 3.2
 
 ############################
 # Device Strings
