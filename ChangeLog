@@ -11,6 +11,8 @@
 	- Remote control mode (--remote-control)
 	- Fix the configure script so that it doesn't need
 	  slocate!
+	- PowerMate LED events only get send across USB bus
+	  if absolutely necessary
 
 ----------------------------------------
 -- v 3.0

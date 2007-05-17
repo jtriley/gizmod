@@ -199,6 +199,8 @@ void GizmoPowermate::pulseLED(int Level, int PulseSpeed, int PulseTable) {
  * \param  Level of intensity from 0 - 255
  */
 void GizmoPowermate::setLED(unsigned char Level) {
+	if (Level == mLevel)
+		return;
 	changeLEDState((int) Level, 255, 0, mPulseAsleep, 0);
 	mLevel = Level;
 }
@@ -212,7 +214,10 @@ void GizmoPowermate::setLEDPercent(float Percent) {
 		Percent = 0.0f;
 	else if (Percent > 100.0f)
 		Percent = 100.0f;
-	setLED( (unsigned char) (255.0f * (Percent / 100.0f)));
+	unsigned char Level = (unsigned char) (255.0f * (Percent / 100.0f));
+	if (Level == mLevel)
+		return;
+	setLED(Level);
 }
 
 /**
