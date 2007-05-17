@@ -1,6 +1,12 @@
 ----------------------------------------
+-- v 3.2
+----------------------------------------
+	- Nothing yet
+
+----------------------------------------
 -- v 3.1
 ----------------------------------------
+May 17 2007
 	- Add new Visualization API
 	- Add keyboard LED visualizations
 	- Add keyboard LED command line switch (--keyboard-leds)

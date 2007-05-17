@@ -3,7 +3,7 @@
 ## gizmod autoconf script
 ##
 
-AC_INIT([gizmod], [3:1],
+AC_INIT([gizmod], [3:2],
         [Tim Burrell <tim.burrell@gmail.com>],
 	[gizmod])
 AM_INIT_AUTOMAKE
@@ -21,7 +21,7 @@ AX_BOOST_BASE([1.33.1])
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED([PACKAGE_PREFIX], ["${prefix}"], [Package Prefix (--prefix)])
 AC_DEFINE_UNQUOTED([PACKAGE_SYSCONFDIR], ["$sysconfdir"], [system configuration directory] )
-AC_DEFINE([PACKAGE_WHIMSICAL_NAME], ["LEDs RULE!"], [Package Pet Name / Dedication])
+AC_DEFINE([PACKAGE_WHIMSICAL_NAME], ["Inputastico"], [Package Pet Name / Dedication])
 
 #########
 
