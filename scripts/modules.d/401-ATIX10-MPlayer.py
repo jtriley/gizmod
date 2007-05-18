@@ -46,43 +46,43 @@ class ATIX10MPlayer:
 		   and Event.Value != 0 and len(Gizmod.Keyboards) and len(Gizmod.Mice):
 			# process the key
 		   	if Event.Code == GizmoKey.KEY_POWER:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_PAUSE:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_PLAY:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_STOP:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_BOOKMARKS:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_V)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_V)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_EDIT:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_O)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_O)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_REWIND:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_FORWARD:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_COFFEE:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_Q)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_Q)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_C:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_MINUS)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_MINUS)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_D:
 				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_EQUAL, [GizmoKey.KEY_RIGHTSHIFT])
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_E:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_E)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_E)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_F:
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_F)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_F)
 		   		return True
 		   	else:
 		   		# unmatched event, keep processing

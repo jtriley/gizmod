@@ -125,6 +125,9 @@ bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
  * 
  * This creates two events, to simulate a key press
  * First send event with value 1, then value 0
+ *
+ * Note: This is available in Python as createEvent as well as
+ * createEventPress
  */
 bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
 	if (!createEvent(Type, Code, 1))
@@ -146,6 +149,9 @@ bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
  * Send modifiers with value 1, then
  * send event with value 1, then value 0, then
  * send modifiers with value 0
+ *
+ * Note: This is available in Python as createEvent as well as
+ * createEventPress, and createEventPressMod
  */
 bool GizmoLinuxInputDevice::createEventPressMod(int Type, int Code, boost::python::list Modifiers) {
 	for (int lp = 0; lp < len(Modifiers); lp ++) 
