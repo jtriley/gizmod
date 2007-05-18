@@ -84,9 +84,15 @@ if test "$ac_cv_boost_python" = "yes"; then
      ax_python_lib=$with_boost_python
      ax_boost_python_lib=boost_python-$with_boost_python
    fi])
-  for ax_lib in $ax_python_lib $ax_boost_python_lib boost_python; do
+  CFLAGS_SAVE="$CFLAGS"
+  CPPFLAGS_SAVE="$CPPFLAGS"
+  CFLAGS="-l$PYTHON_LIB $CFLAGS"
+  CPPFLAGS="-l$PYTHON_LIB $CPPFLAGS"
+  for ax_lib in $ax_python_lib $ax_boost_python_lib boost_python boost_python-mt; do
     AC_CHECK_LIB($ax_lib, main, [BOOST_PYTHON_LIB=$ax_lib break])
   done
+  CFLAGS="$CFLAGS_SAVE"
+  CPPFLAGS="$CPPFLAGS_SAVE"
   AC_SUBST(BOOST_PYTHON_LIB)
 fi
 ])dnl

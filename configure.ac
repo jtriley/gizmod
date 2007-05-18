@@ -63,7 +63,7 @@ CFLAGS="$CFLAGS $BOOST_CFLAGS"
 
 AX_BOOST_PYTHON
 CFLAGS="$CFLAGS -I$PYTHON_INCLUDE_DIR"
-BOOST_PYTHON_LIB="-l$PYTHON_LIB -lboost_python"
+BOOST_PYTHON_LIB="-l$PYTHON_LIB -l$BOOST_PYTHON_LIB"
 AC_SUBST(BOOST_PYTHON_LIB)
 
 #############################################################################
