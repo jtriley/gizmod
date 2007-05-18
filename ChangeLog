@@ -6,6 +6,8 @@
 	  ie, inherit from GizmoScriptApplicationRunning if the
 	  device application mapping should be used when a specific
 	  app has foreground focus
+	- Fix potential crash bugs in network object deserialization
+	  code.
 
 ----------------------------------------
 -- v 3.1

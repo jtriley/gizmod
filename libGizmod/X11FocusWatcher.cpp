@@ -465,9 +465,11 @@ void X11FocusWatcher::shutdown() {
 	}
 	
 	// wait until thread exits
-	while (mThreading) {
+	int count = 5;
+	while (mThreading && count) {
 		cdbg5 << "Waiting on X11FocusWatcher Thread to Finish..." << endl;
 		UtilTime::sleep(0.1f);
+		count --;
 	}
 }
 
