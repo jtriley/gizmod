@@ -15,16 +15,17 @@
 
 from GizmoDaemon import *
 from GizmoRegistrar import *
+from GizmoScriptEnableChecker import *
 import sys
 
 ENABLED = True
-VERSION_NEEDED = 3.1
+VERSION_NEEDED = 3.2
 
 ############################
 # RemoteControl Class definition
 ##########################
 
-class RemoteControl:
+class RemoteControl(GizmoScriptEnableChecker):
 	"""
 	Remote Control Event Mapping
 	"""
@@ -71,7 +72,7 @@ class RemoteControl:
 		Default Constructor
 		"""
 		
-		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
+		GizmoScriptEnableChecker.__init__(self, ENABLED, VERSION_NEEDED)
 		self.LastX = -1
 		self.LastY = -1
 
@@ -80,8 +81,4 @@ class RemoteControl:
 ##########################
 
 # register the user script
-if ENABLED and Gizmod.UseRemoteControl:
-	if not Gizmod.checkVersion(VERSION_NEEDED, False):
-		Gizmod.printNiceScriptInit(1, " * RemoteControl", "NOT LOADED", "Version Needed: " + str(VERSION_NEEDED))
-	else:
-		Gizmod.Dispatcher.userScripts.append(RemoteControl())
+RemoteControl()

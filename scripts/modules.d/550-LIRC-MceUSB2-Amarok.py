@@ -18,7 +18,7 @@ from GizmoScriptRunningApplication import *
 import subprocess
 
 ENABLED = True
-VERSION_NEEDED = 3.0
+VERSION_NEEDED = 3.2
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 INTERESTED_APPLICATION = "amarokapp"
 USES_LIRC_REMOTES = ["mceusb", "mceusb2"]

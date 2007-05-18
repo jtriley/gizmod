@@ -14,10 +14,11 @@
 ##########################
 
 from GizmoDaemon import *
+from GizmoScriptRunningApplication import *
 import subprocess
 
 ENABLED = True
-VERSION_NEEDED = 3.0
+VERSION_NEEDED = 3.2
 INTERESTED_CLASSES = [GizmoEventClass.ATIX10]
 INTERESTED_APPLICATION = "amarokapp"
 
@@ -25,7 +26,7 @@ INTERESTED_APPLICATION = "amarokapp"
 # ATIX10Amarok Class definition
 ##########################
 
-class ATIX10Amarok:
+class ATIX10Amarok(GizmoScriptRunningApplication):
 	"""
 	Amarok ATIX10 Event Mapping
 	"""
@@ -34,42 +35,41 @@ class ATIX10Amarok:
 	# Public Functions
 	##########################
 			
-	def onEvent(self, Event, Gizmo = None):
+	def onDeviceEvent(self, Event, Gizmo = None):
 		"""
+		Called from Base Class' onEvent method.
 		See GizmodDispatcher.onEvent documention for an explanation of this function
 		"""
 		
-		# if the event is not a key release and the class is in INTERESTED_CLASSES 
-		# and Amarok is running and there is a keyboard and mouse attached then process the event
-		if Event.Class in INTERESTED_CLASSES and Event.Value != 0 and Gizmod.isProcessRunning(INTERESTED_APPLICATION) >= 0 \
-		   and len(Gizmod.Keyboards) and len(Gizmod.Mice):
-			# process the key
-		   	if Event.Code == GizmoKey.KEY_PAUSE:
-			   	subprocess.Popen(["amarok", "--play-pause"])
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_PLAY:
-			   	subprocess.Popen(["amarok", "--play-pause"])
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_STOP:
-			   	subprocess.Popen(["amarok", "--stop"])
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_LEFT:
-			   	subprocess.Popen(["amarok", "--previous"])
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_REWIND:
-			   	subprocess.Popen(["amarok", "--previous"])
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_RIGHT:
-			   	subprocess.Popen(["amarok", "--next"])
-		   		return True
-		   	elif Event.Code == GizmoKey.KEY_FORWARD:
-			   	subprocess.Popen(["amarok", "--next"])
-		   		return True
-		   	else:
-		   		# unmatched event, keep processing
-				return False				
-		# event not of interest
-		return False
+		# ensure only one event per button press		
+		if Event.Value == 0:
+			return False
+			
+		# process the key
+	   	if Event.Code == GizmoKey.KEY_PAUSE:
+		   	subprocess.Popen(["amarok", "--play-pause"])
+	   		return True
+	   	elif Event.Code == GizmoKey.KEY_PLAY:
+		   	subprocess.Popen(["amarok", "--play-pause"])
+	   		return True
+	   	elif Event.Code == GizmoKey.KEY_STOP:
+		   	subprocess.Popen(["amarok", "--stop"])
+	   		return True
+	   	elif Event.Code == GizmoKey.KEY_LEFT:
+		   	subprocess.Popen(["amarok", "--previous"])
+	   		return True
+	   	elif Event.Code == GizmoKey.KEY_REWIND:
+		   	subprocess.Popen(["amarok", "--previous"])
+	   		return True
+	   	elif Event.Code == GizmoKey.KEY_RIGHT:
+		   	subprocess.Popen(["amarok", "--next"])
+	   		return True
+	   	elif Event.Code == GizmoKey.KEY_FORWARD:
+		   	subprocess.Popen(["amarok", "--next"])
+	   		return True
+	   	else:
+	   		# unmatched event, keep processing
+			return False				
 	
 	############################
 	# Private Functions
@@ -80,15 +80,11 @@ class ATIX10Amarok:
 		Default Constructor
 		"""
 		
-		Gizmod.printNiceScriptInit(1, self.__class__.__name__, self.__class__.__doc__, "")
+		GizmoScriptRunningApplication.__init__(self, ENABLED, VERSION_NEEDED, INTERESTED_CLASSES, INTERESTED_APPLICATION)
 
 ############################
 # ATIX10Amarok class end
 ##########################
 
 # register the user script
-if ENABLED:
-	if not Gizmod.checkVersion(VERSION_NEEDED, False):
-		Gizmod.printNiceScriptInit(1, " * ATIX10Amarok", "NOT LOADED", "Version Needed: " + str(VERSION_NEEDED))
-	else:
-		Gizmod.Dispatcher.userScripts.append(ATIX10Amarok())
+ATIX10Amarok()

@@ -39,13 +39,13 @@ class GizmoScriptActiveApplication(GizmoScriptDefault):
 		"""
 		
 		# check with the base class to see if we're interested in the event
-		if not GizmoScriptDefault.onEvent(self, Event, Gizmo):
+		if not GizmoScriptDefault.checkEvent(self, Event, Gizmo):
 			return False
 
 		# make sure the event is interesting to us
 		if [i for i in self.InterestedWindows if Gizmod.CurrentFocus.WindowName.lower().find(i) > -1]:
 			# process the key
-			self.onDeviceEvent(Event, Gizmo)
+			return self.onDeviceEvent(Event, Gizmo)
 	   	else:
 	   		# unmatched event, keep processing
 			return False				
