@@ -8,6 +8,7 @@
 	  app has foreground focus
 	- Fix potential crash bugs in network object deserialization
 	  code.
+	- Fix potential infinite loop in X11FocusWatcher on shutdown
 
 ----------------------------------------
 -- v 3.1
