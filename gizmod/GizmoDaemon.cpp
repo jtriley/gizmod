@@ -728,8 +728,13 @@ void GizmoDaemon::deserializeMessageATIX10(std::string const & Message) {
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event, &Gizmo);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event, &Gizmo);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -747,8 +752,13 @@ void GizmoDaemon::deserializeMessageCPUUsage(std::string const & Message) {
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -780,8 +790,13 @@ void GizmoDaemon::deserializeMessageLIRC(std::string const & Message) {
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event, &Gizmo);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event, &Gizmo);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -813,8 +828,13 @@ void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event, &Gizmo);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event, &Gizmo);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -832,8 +852,13 @@ void GizmoDaemon::deserializeMessageSoundcard(std::string const & Message) {
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -851,8 +876,13 @@ void GizmoDaemon::deserializeMessageSoundVisualization(std::string const & Messa
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -884,8 +914,13 @@ void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event, &Gizmo);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event, &Gizmo);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -903,8 +938,13 @@ void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {
 	
 	// process the remote event		
 	if (!mLocalDisabled) {
-		mutex::scoped_lock lock(mMutexScript);
-		mpPyDispatcher->onEvent(&Event);
+		try {
+			mutex::scoped_lock lock(mMutexScript);
+			mpPyDispatcher->onEvent(&Event);
+		} catch (error_already_set) {
+			PyErr_Print();
+			cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+		}
 	}
 }
 
@@ -1074,10 +1114,16 @@ void GizmoDaemon::handleFileEventReadATIX10(GizmoATIX10 & Gizmo, DynamicBuffer<c
 	std::vector< boost::shared_ptr<GizmoEventATIX10> > EventVector;
 	GizmoEventATIX10::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
 	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-		mutex::scoped_lock lock(mMutexScript);
 		if (Gizmo.processEvent(EventVector[lp].get()))
-			if (!mLocalDisabled)
-				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+			if (!mLocalDisabled) {
+				try {
+					mutex::scoped_lock lock(mMutexScript);
+					mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+				} catch (error_already_set) {
+					PyErr_Print();
+					cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+				}
+			}
 	
 			// try to send the remote event
 			try {
@@ -1097,11 +1143,17 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
 	std::vector< boost::shared_ptr<GizmoEventLIRC> > EventVector;
 	GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
 	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-		mutex::scoped_lock lock(mMutexScript);
 		if (Gizmo.processEvent(EventVector[lp].get())) {
 			// process the local event
-			if (!mLocalDisabled)
-				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+			if (!mLocalDisabled) {
+				try {
+					mutex::scoped_lock lock(mMutexScript);
+					mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+				} catch (error_already_set) {
+					PyErr_Print();
+					cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+				}
+			}
 			
 			// try to send the remote event
 			try {
@@ -1122,10 +1174,16 @@ void GizmoDaemon::handleFileEventReadPowermate(GizmoPowermate & Gizmo, DynamicBu
 	std::vector< boost::shared_ptr<GizmoEventPowermate> > EventVector;
 	GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
 	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-		mutex::scoped_lock lock(mMutexScript);
 		if (Gizmo.processEvent(EventVector[lp].get()))
-			if (!mLocalDisabled)
-				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+			if (!mLocalDisabled) {
+				try {
+					mutex::scoped_lock lock(mMutexScript);
+					mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+				} catch (error_already_set) {
+					PyErr_Print();
+					cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+				}
+			}
 	
 			// try to send the remote event
 			try {
@@ -1145,10 +1203,16 @@ void GizmoDaemon::handleFileEventReadStandard(GizmoStandard & Gizmo, DynamicBuff
 	std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
 	GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
 	for (size_t lp = 0; lp < EventVector.size(); lp ++) {
-		mutex::scoped_lock lock(mMutexScript);
 		if (Gizmo.processEvent(EventVector[lp].get()))
-			if (!mLocalDisabled)
-				mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+			if (!mLocalDisabled) {
+				try {
+					mutex::scoped_lock lock(mMutexScript);
+					mpPyDispatcher->onEvent(EventVector[lp].get(), &Gizmo);
+				} catch (error_already_set) {
+					PyErr_Print();
+					cerr << "Failed to call GizmodDispatcher.onEvent for deserializeMessage" << endl;
+				}
+			}
 		
 			// try to send the remote event
 			try {
