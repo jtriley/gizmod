@@ -1,7 +1,11 @@
 ----------------------------------------
 -- v 3.2
 ----------------------------------------
-	- Nothing yet
+	- Updated the Python API so that scripts can just inherit
+	  a desirable base class, and gain required functionality
+	  ie, inherit from GizmoScriptApplicationRunning if the
+	  device application mapping should be used when a specific
+	  app has foreground focus
 
 ----------------------------------------
 -- v 3.1
