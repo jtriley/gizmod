@@ -41,6 +41,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/python/list.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Typedef, enum's
@@ -59,6 +60,7 @@ public:
 	// public functions
 	bool 				createEvent(int Type, int Code, int Value); ///< Write event to the device
 	bool 				createEventPress(int Type, int Code); ///< Write a "press" event to the device (two events, with value 1, then 0)
+	bool 				createEventPressMod(int Type, int Code, boost::python::list Modifiers); ///< Write event to the device with modifiers
 	bool 				createEvents(int Type, int Code, int Value, int NumWrites); ///< Write multiple similar events to the device
 	bool				getSendNullEvents() const;		///< Get whether or not the Gizmo sends NULL events
 	bool 				grabExclusiveAccess(bool Grab); ///< Grab a device for exlusive access (or ungrab)
@@ -76,13 +78,18 @@ public:
 	static void			buildInputEventsVectorFromBuffer(std::vector<struct input_event> & EventVector, H::DynamicBuffer<char> const & Buffer); ///< Build an event list from a read buffer
 
 protected:
-	// private functions
+	// protected functions
 	
-	// private member variables
+	// protected member variables
 	H::DeviceInfo 			mDeviceInfo;			///< Info about the device
 	unsigned long			mLastEventTime;			///< Time of last event
 	unsigned long 			mMinTimeBetweenEvents;		///< Minimum time between events (smooth out trigger happy controllers)
 	bool				mSendNullEvents;		///< Send NULL events if the device creates them?
+	
+private:
+	// private functions
+	
+	// private member variables
 	
 private: 
 	// serialization

@@ -27,11 +27,21 @@
 */
 
 #include "GizmoLinuxInputDevice.hpp"
+#include "GizmoKeyDefs.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/UtilTime.hpp"
+#include "../libH/Util.hpp"
+#include <boost/python/list.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/detail/api_placeholder.hpp>
+#include <boost/python/extract.hpp>
+#include <boost/bind.hpp>
+#include <list>
 
 using namespace std;
+using namespace boost;
+using namespace boost::python;
 using namespace H;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -121,6 +131,36 @@ bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
 		return false;
 	if (!createEvent(Type, Code, 0))
 		return false;
+	return true;
+}
+
+/**
+ * \brief  Create a key press event on the device plus modifiers
+ * \param  Type GizmoEventType of the event
+ * \param  Code GizmoKey (or other code) of the event
+ * \param  Modifiers List of modifiers
+ * \return True on success
+ *
+ * See GizmoKeyDefs.hpp for a list of the available Types, and Codes
+ * 
+ * Send modifiers with value 1, then
+ * send event with value 1, then value 0, then
+ * send modifiers with value 0
+ */
+bool GizmoLinuxInputDevice::createEventPressMod(int Type, int Code, boost::python::list Modifiers) {
+	for (int lp = 0; lp < len(Modifiers); lp ++) 
+		if (!createEvent(Type, extract<int>(Modifiers[lp]), 1))
+			return false;
+	
+	if (!createEvent(Type, Code, 1))
+		return false;
+	if (!createEvent(Type, Code, 0))
+		return false;
+	
+	for (int lp = 0; lp < len(Modifiers); lp ++) 
+		if (!createEvent(Type, extract<int>(Modifiers[lp]), 0))
+			return false;
+	
 	return true;
 }
 
