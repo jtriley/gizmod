@@ -76,9 +76,7 @@ class ATIX10MPlayer:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_MINUS)
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_D:
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 1)
-				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_EQUAL)
-				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTSHIFT, 0)
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_EQUAL, [GizmoKey.KEY_RIGHTSHIFT])
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_E:
 				Gizmod.Keyboards[0].createEventPress(GizmoEventType.EV_KEY, GizmoKey.KEY_E)
