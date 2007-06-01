@@ -78,9 +78,10 @@ public:
 	inline friend const Debug& 	operator << (const Debug & dbg, const std::string & s);
 	inline friend const Debug& 	operator << (const Debug & dbg, const char c);
 	inline friend const Debug& 	operator << (const Debug & dbg, const int d);
+	inline friend const Debug& 	operator << (const Debug & dbg, const unsigned int d);
 	inline friend const Debug& 	operator << (const Debug & dbg, const long l);
 	inline friend const Debug& 	operator << (const Debug & dbg, const bool b);
-	inline friend const Debug& 	operator << (const Debug & dbg, const size_t d);
+	inline friend const Debug& 	operator << (const Debug & dbg, const unsigned long l);
 	inline friend const Debug& 	operator << (const Debug & dbg, const double lf);
 	inline friend const Debug& 	operator << (const Debug & dbg, std::ostream&(*f)(std::ostream&)); // for endl
 
@@ -184,6 +185,23 @@ inline const Debug& operator << (const Debug & dbg, const int d) {
 }
 
 /**
+ * \brief  Debug insertion operator for uint
+ */
+inline const Debug& operator << (const Debug & dbg, const unsigned int d) {
+	if (Debug::testPrint(dbg)) {
+		std::cout << d;
+		if (Debug::mLogToFile) {
+			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
+			if (Debug::mLogFile.is_open()) {
+				Debug::mLogFile << d;
+				Debug::mLogFile.close();
+			}
+		}
+	}	
+	return dbg;
+}
+
+/**
  * \brief  Debug insertion operator for long
  */
 inline const Debug& operator << (const Debug & dbg, const long l) {
@@ -218,15 +236,15 @@ inline const Debug& operator << (const Debug & dbg, const bool b) {
 }
 
 /**
- * \brief  Debug insertion operator for size_t
+ * \brief  Debug insertion operator for ulong
  */
-inline const Debug& operator << (const Debug & dbg, const size_t i) {
+inline const Debug& operator << (const Debug & dbg, const unsigned long l) {
 	if (Debug::testPrint(dbg)) {
-		std::cout << i;
+		std::cout << l;
 		if (Debug::mLogToFile) {
 			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
 			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << i;
+				Debug::mLogFile << l;
 				Debug::mLogFile.close();
 			}
 		}

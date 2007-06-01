@@ -96,7 +96,8 @@ class LIRCMceUSB2MPlayer(GizmoScriptActiveApplication):
 	   	elif Event.Button == "Left":
 	   		return False
 	   	elif Event.Button == "OK":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_SPACE)
+	   		return True
 	   	elif Event.Button == "Right":
 	   		return False
 	   	elif Event.Button == "Down":
