@@ -444,6 +444,37 @@ void X11FocusWatcher::setFocusEventMasks() {
 }
 
 /**
+ * \brief  Sets the currently focused window
+ * \param  WindowTitle The title of the window to raise
+ *
+ * Note this opens a new display so that the focus watcher
+ * can remain using single threaded X11
+ */
+bool X11FocusWatcher::setInputFocus(std::string WindowTitle) {
+	Display * Dsp;
+	if ( (Dsp = XOpenDisplay(mDisplayName.c_str())) == NULL )
+		return false;
+	
+	Window RootRet, ParentRet;
+	unsigned int nChildren;
+	Window * Children = NULL;
+	XQueryTree(Dsp, RootWindow(Dsp, DefaultScreen(Dsp)), &RootRet, &ParentRet, &Children, &nChildren);
+	for (unsigned int lp = 0; lp < nChildren; lp ++) {
+		tuple<string, string, string> WindowInfo = getWindowName(Dsp, Children[lp]);
+		if (stringconverter::toLower(WindowInfo.get<0>()).find(stringconverter::toLower(WindowTitle)) != string::npos) {
+			XSetInputFocus(Dsp, Children[lp], RevertToParent, CurrentTime);
+			XFree(Children);	
+			XCloseDisplay(Dsp);
+			return true;
+		}
+	}
+	if (Children)
+		XFree(Children);
+	XCloseDisplay(Dsp);
+	return false;
+}
+
+/**
  * \brief  Signal the watching thread to shut itself down
  */
 void X11FocusWatcher::shutdown() {

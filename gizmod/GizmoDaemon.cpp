@@ -367,8 +367,8 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// X11FocusWatcher Python Class Export
 	class_<X11FocusWatcher>("X11FocusWatcher")
 		.def("isApplicationRunning", &X11FocusWatcher::isApplicationRunning)
+		.def("setInputFocus", &X11FocusWatcher::setInputFocus)
 		;		
-
 	
 	/// GizmoUtils Python Class Export
 	class_<GizmoUtils>("GizmoUtils")

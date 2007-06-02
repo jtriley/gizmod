@@ -126,6 +126,7 @@ public:
 	bool				isApplicationRunning(std::string WindowTitle); ///< Is an application running? (by window title)
 	virtual void			onFocusIn(X11FocusEvent const & Event); ///< Event triggered on a Focus In
 	virtual void			onFocusOut(X11FocusEvent const & Event); ///< Event triggered on a Focus Out
+	bool 				setInputFocus(std::string WindowTitle); ///< Set the current input focus
 	void 				shutdown();		///< Shutdown the thread that watches for focus changes
 
 	// construction / deconstruction
