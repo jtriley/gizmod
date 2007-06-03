@@ -70,7 +70,7 @@ class PowermateVisualizer(VisualizerDefault):
 		"""
 
 		# make sure there's a mixer available		
-		if not Gizmod.DefaultMixerVolume:
+		if not Gizmod.DefaultMixerVolume or not Gizmod.DefaultMixerSwitch:
 			return
 			
 		# update the Powermates' LEDs
