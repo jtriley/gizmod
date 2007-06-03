@@ -9,6 +9,7 @@
 	- Fix potential crash bugs in network object deserialization
 	  code.
 	- Fix potential infinite loop in X11FocusWatcher on shutdown
+	- Add 64 bit patch from ubuntu package team
 	- Add setInputFocus method for raising windows by window title
 	  from the Python scripts
 	- Add copyright disclaimers to all of the scripts as per
