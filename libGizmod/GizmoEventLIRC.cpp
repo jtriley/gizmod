@@ -87,7 +87,7 @@ void GizmoEventLIRC::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<
 	typedef boost::tokenizer< boost::char_separator<char> > tokenizer;
 	char_separator<char> Separators(" ");
 	string Code;
-	int Repeat;
+	int Repeat = 0;
 	string Button;
 	string Remote;
 	
