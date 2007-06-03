@@ -95,11 +95,11 @@ class KeyboardVisualizer(VisualizerDefault):
 		for i in range(len(KEYBOARD_LEDS)):
 			if Percent >= CurVal and Percent >= 7.5:
 				if self.LEDs[i] != 1:
-					Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, KEYBOARD_LEDS[i], 1)
+					Gizmod.Keyboards[0].createEventRaw(GizmoEventType.EV_LED, KEYBOARD_LEDS[i], 1)
 					self.LEDs[i] = 1
 			else:
 				if self.LEDs[i] != 0:
-					Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, KEYBOARD_LEDS[i], 0)
+					Gizmod.Keyboards[0].createEventRaw(GizmoEventType.EV_LED, KEYBOARD_LEDS[i], 0)
 					self.LEDs[i] = 0
 			CurVal += self.RangePerLED	
 	
@@ -121,7 +121,7 @@ class KeyboardVisualizer(VisualizerDefault):
 		self.LEDs = []
 		for i in range(len(KEYBOARD_LEDS)):
 			self.LEDs.append(0)
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_LED, i, 0)
+			Gizmod.Keyboards[0].createEventRaw(GizmoEventType.EV_LED, i, 0)
 
 ############################
 # KeyboardVisualization class end

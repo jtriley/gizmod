@@ -446,7 +446,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		
 	/// GizmoLinuxInputDevice Python Class Export
 	class_<GizmoLinuxInputDevice>("GizmoLinuxInputDevice", init<const DeviceInfo &>())
-		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
+		.def("createEventRaw", &GizmoLinuxInputDevice::createEventRaw)
 		.def("createEventPress", &GizmoLinuxInputDevice::createEventPress)
 		.def("createEvent", &GizmoLinuxInputDevice::createEventPress)
 		.def("createEventPressMod", &GizmoLinuxInputDevice::createEventPressMod)
@@ -522,7 +522,6 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 
 	/// GizmoLIRC Python Class Export
 	class_< GizmoLIRC, bases<Gizmo> >("GizmoLIRC", init<const DeviceInfo &, int, int>())
-		.def("createEvent", &GizmoLinuxInputDevice::createEvent)
 		.def("setDisableFirstRepeats", &GizmoLIRC::setDisableFirstRepeats)
 		.def("setMinimumTimeBetweenEvents", &GizmoLIRC::setMinimumTimeBetweenEvents)
 		;

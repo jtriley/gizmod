@@ -58,9 +58,9 @@
 class GizmoLinuxInputDevice {
 public:
 	// public functions
-	bool 				createEvent(int Type, int Code, int Value); ///< Write event to the device
 	bool 				createEventPress(int Type, int Code); ///< Write a "press" event to the device (two events, with value 1, then 0)
-	bool 				createEventPressMod(int Type, int Code, boost::python::list Modifiers); ///< Write event to the device with modifiers
+	bool 				createEventPressMod(int Type, int Code, boost::python::object Modifiers); ///< Write event to the device with modifiers
+	bool 				createEventRaw(int Type, int Code, int Value); ///< Write event to the device
 	bool 				createEvents(int Type, int Code, int Value, int NumWrites); ///< Write multiple similar events to the device
 	bool				getSendNullEvents() const;		///< Get whether or not the Gizmo sends NULL events
 	bool 				grabExclusiveAccess(bool Grab); ///< Grab a device for exlusive access (or ungrab)

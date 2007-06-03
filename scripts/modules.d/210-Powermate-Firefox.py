@@ -65,7 +65,7 @@ class PowermateFirefox(GizmoScriptActiveApplication):
 				# and fast if the button is down
 				if not Gizmo.getKeyState(GizmoKey.BTN_0):
 					# scroll slowly (create a mouse wheel event)
-					Gizmod.Mice[0].createEvent(GizmoEventType.EV_REL, GizmoMouseAxis.WHEEL, -Event.Value)
+					Gizmod.Mice[0].createEventRaw(GizmoEventType.EV_REL, GizmoMouseAxis.WHEEL, -Event.Value)
 				else:
 					# scroll quickly (by pages using the page up / page down keys)
 					if Event.Value > 0:

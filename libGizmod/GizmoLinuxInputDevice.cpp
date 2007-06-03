@@ -104,7 +104,7 @@ void GizmoLinuxInputDevice::buildInputEventsVectorFromBuffer(std::vector<struct 
  *
  * Note: Writes the event, and a NULL event to signal a refresh
  */
-bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
+bool GizmoLinuxInputDevice::createEventRaw(int Type, int Code, int Value) {
 	struct input_event ev[2];
 	memset(&ev, 0, sizeof(struct input_event) * 2);
 	ev[0].type = Type;
@@ -130,9 +130,9 @@ bool GizmoLinuxInputDevice::createEvent(int Type, int Code, int Value) {
  * createEventPress
  */
 bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
-	if (!createEvent(Type, Code, 1))
+	if (!createEventRaw(Type, Code, 1))
 		return false;
-	if (!createEvent(Type, Code, 0))
+	if (!createEventRaw(Type, Code, 0))
 		return false;
 	return true;
 }
@@ -153,18 +153,18 @@ bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
  * Note: This is available in Python as createEvent as well as
  * createEventPress, and createEventPressMod
  */
-bool GizmoLinuxInputDevice::createEventPressMod(int Type, int Code, boost::python::list Modifiers) {
+bool GizmoLinuxInputDevice::createEventPressMod(int Type, int Code, boost::python::object Modifiers) {
 	for (int lp = 0; lp < len(Modifiers); lp ++) 
-		if (!createEvent(Type, extract<int>(Modifiers[lp]), 1))
+		if (!createEventRaw(Type, extract<int>(Modifiers[lp]), 1))
 			return false;
 	
-	if (!createEvent(Type, Code, 1))
+	if (!createEventRaw(Type, Code, 1))
 		return false;
-	if (!createEvent(Type, Code, 0))
+	if (!createEventRaw(Type, Code, 0))
 		return false;
 	
 	for (int lp = 0; lp < len(Modifiers); lp ++) 
-		if (!createEvent(Type, extract<int>(Modifiers[lp]), 0))
+		if (!createEventRaw(Type, extract<int>(Modifiers[lp]), 0))
 			return false;
 	
 	return true;

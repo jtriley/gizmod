@@ -60,15 +60,15 @@ class ATIX10Default(GizmoScriptDefault):
 		# process the key
 		if Event.Code == GizmoKey.BTN_LEFT:
 			# do mouse left click
-			Gizmod.Mice[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_BTN_LFT, Event.Value)
+			Gizmod.Mice[0].createEventRaw(GizmoEventType.EV_KEY, GizmoKey.KEY_BTN_LFT, Event.Value)
 			return True
 		elif Event.Code == GizmoKey.BTN_RIGHT:
 			# do mouse right click
-			Gizmod.Mice[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_BTN_RIGHT, Event.Value)
+			Gizmod.Mice[0].createEventRaw(GizmoEventType.EV_KEY, GizmoKey.KEY_BTN_RIGHT, Event.Value)
 			return True
 		elif Event.Type == GizmoEventType.EV_REL:
 			# do mouse movements
-			Gizmod.Mice[0].createEvent(GizmoEventType.EV_REL, Event.Code, Event.Value)
+			Gizmod.Mice[0].createEventRaw(GizmoEventType.EV_REL, Event.Code, Event.Value)
 			return True
 		elif Event.Value != 0:
 			# do button presses
