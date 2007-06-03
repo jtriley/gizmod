@@ -213,9 +213,9 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 	cdbg1 << "Adding File [" << FileName << "] to Watch List with Mode [" << WatchType << "]" << endl;
 	
 	// get mode mask
-	int 	flags;
+	int 	flags = 0;
 	string 	ModeString;
-	short	events;
+	short	events = 0;
 	switch (WatchType) {
 	case WATCH_IN:
 		flags = O_RDONLY;
