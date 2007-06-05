@@ -538,10 +538,12 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("setLED", &GizmoPowermate::setLED)
 		.def("setLEDPercent", &GizmoPowermate::setLEDPercent)
 		.def("setLEDPulseAsleep", &GizmoPowermate::setLEDPulseAsleep)
+		.def("setRotateSensitivity", &GizmoPowermate::setRotateSensitivity)
 		.add_property("LED", &GizmoPowermate::getLED, &GizmoPowermate::setLED)
 		.add_property("LEDPercent", &GizmoPowermate::getLEDPercent, &GizmoPowermate::setLEDPercent)
 		.add_property("LEDPulseAsleep", &GizmoPowermate::getLEDPulseAsleep, &GizmoPowermate::setLEDPulseAsleep)
 		.add_property("Rotated", &GizmoPowermate::getRotated)
+		.add_property("RotateSensitivity", &GizmoPowermate::setRotateSensitivity)
 		;
 
 	/// GizmoStandard Python Class Export

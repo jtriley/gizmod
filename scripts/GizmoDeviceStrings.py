@@ -66,6 +66,12 @@ POWERMATE_GIZMOS = ["powermate", "soundknob"]
 # Powermate long click duration
 POWERMATE_LONG_CLICK = 0.4
 
+# Powermate rotate sensitivity
+# This is done in clicks per event, so if it's set to 1 it's a one to 
+# one mapping between events
+# If it's set to 2 it take 2 rotate ticks to generate one event.
+POWERMATE_ROTATE_SENSITIVITY = 1
+
 # Default mixer element preferences (in order of priority)
 # Gizmo Daemon will scan all of the specified DEFAULT_MIXERS and apply the first
 # one it finds from the list that has the needed control as the default mixing

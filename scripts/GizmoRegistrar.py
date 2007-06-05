@@ -85,6 +85,7 @@ class GizmoRegistrar:
 		elif self.DeviceType == DeviceType.Powermate:
 			Gizmod.printNiceScriptInit(0, "Powermate", self.Device.DeviceName, self.Device.FileName)
 			Gizmod.Powermates.append(self.Device)
+			self.Device.setRotateSensitivity(POWERMATE_ROTATE_SENSITIVITY)
 		elif self.DeviceType == DeviceType.ATIX10:
 			Gizmod.printNiceScriptInit(0, "ATI X10", self.Device.DeviceName, self.Device.FileName)
 			Gizmod.ATIX10Remotes.append(self.Device)
