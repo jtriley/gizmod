@@ -2,6 +2,8 @@
 -- v 3.3
 ----------------------------------------
 	- Add Powermate setRotateSensitivity function
+		- New variable in GizmoDeviceStrings.py called
+		  POWERMATE_ROTATE_SENSITIVITY for this!
 	- Add PowermateEvent ClickTime property (duration of button press)
 
 ----------------------------------------
