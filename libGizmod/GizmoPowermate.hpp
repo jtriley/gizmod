@@ -67,6 +67,7 @@ public:
 	void 				setLED(unsigned char Level);	///< Set the LED intensity
 	void 				setLEDPercent(float Percent);	///< Set the LED intensity as a percentage
 	void				setLEDPulseAsleep(bool Enabled);///< Pulse while sleeping
+	void				setRotateSensitivity(int TicksPerEvent); /// Set the rotate sensitivity in wheel ticks per generated event (default 1)
 	
 	// construction / deconstruction	
 	GizmoPowermate(); 						///< Serialize Constructor
@@ -77,9 +78,13 @@ protected:
 	// private functions
 	
 	// private member variables
-	bool				mRotated;			///< Has the dial rotated since last click
+	unsigned long			mClickTimer;			///< Time of last button press
 	unsigned char			mLevel;				///< Current intensity level of the LED
 	bool				mPulseAsleep;			///< Pulse when going to sleep
+	int				mRotateCurDir;			///< Rotation sensitivity direction keeper
+	int				mRotateCurTick;			///< Rotation sensitivity counter
+	bool				mRotated;			///< Has the dial rotated since last click
+	int				mRotateTicksPerEvent;		///< Rotation sensitivity
 	
 private: 
 	// serialization
@@ -88,9 +93,12 @@ private:
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & boost::serialization::base_object<Gizmo>(*this);
 		ar & boost::serialization::base_object<GizmoLinuxInputDevice>(*this);
-		ar & mRotated;
 		ar & mLevel;
 		ar & mPulseAsleep;
+		ar & mRotateCurDir;
+		ar & mRotateCurTick;
+		ar & mRotated;
+		ar & mRotateTicksPerEvent;
 	}
 };
 

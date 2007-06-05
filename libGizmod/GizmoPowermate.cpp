@@ -31,6 +31,7 @@
 #include "GizmoKeyDefs.hpp"
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
+#include "../libH/UtilTime.hpp"
 #include <boost/shared_ptr.hpp>
 #include <errno.h>
 
@@ -56,16 +57,22 @@ using namespace H;
  * \brief GizmoPowermate Default Constructor
  */
 GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
-	mRotated = false;
 	mPulseAsleep = true;
+	mRotateCurDir = -1;
+	mRotateCurTick = 0;
+	mRotated = false;
+	mRotateTicksPerEvent = 1;
 }
 
 /**
  * \brief GizmoPowermate Serialize Constructor
  */
 GizmoPowermate::GizmoPowermate() {
-	mRotated = false;
 	mPulseAsleep = true;
+	mRotateCurDir = -1;
+	mRotateCurTick = 0;
+	mRotated = false;
+	mRotateTicksPerEvent = 1;
 }
 
 /**
@@ -168,9 +175,18 @@ bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 	
 	switch (pPowermateEvent->Type) {
 	case EV_REL:
+		mRotateCurTick ++;
+		if ( (mRotateCurTick < mRotateTicksPerEvent) && (mRotateCurDir == pPowermateEvent->Value) )
+			return false;
+		mRotateCurDir = pPowermateEvent->Value;
+		mRotateCurTick = 0;
 		mRotated = true;
 		break;
 	case EV_KEY:
+		if (pPowermateEvent->Value)
+			mClickTimer = UtilTime::getTicks();
+		else
+			pPowermateEvent->ClickTime = float(UtilTime::getTicks() - mClickTimer) / 1000000.0f;
 		setKeyState(pPowermateEvent->Code, pPowermateEvent->Value);
 		if (pPowermateEvent->Value)
 			mRotated = false;
@@ -227,3 +243,12 @@ void GizmoPowermate::setLEDPercent(float Percent) {
 void GizmoPowermate::setLEDPulseAsleep(bool Enabled) {
 	mPulseAsleep = Enabled;
 } 
+
+/**
+ * \brief  Set the rotate sensitivity in wheel ticks per generated event (default 1)
+ * \param  TicksPerEvent The number of ticks required to generate an event
+ */
+void GizmoPowermate::setRotateSensitivity(int TicksPerEvent) {
+	mRotateTicksPerEvent = TicksPerEvent;
+	cdbg << "Powermate Rotate Sensitivity set to " << TicksPerEvent << " Ticks per Generated Event" << endl;
+}

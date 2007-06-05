@@ -57,6 +57,9 @@
  */
 class GizmoEventPowermate : public GizmoEvent, public GizmoLinuxInputEvent {
 public:
+	// public member variabled
+	float				ClickTime;			///< Length of button press in seconds
+	
 	// public functions
 	
 	// static public functions
@@ -82,6 +85,7 @@ private:
 	void serialize(Archive & ar, const unsigned int version) {
 		ar & boost::serialization::base_object<GizmoEvent>(*this);
 		ar & boost::serialization::base_object<GizmoLinuxInputEvent>(*this);
+		ar & ClickTime;
 	}			
 };
 

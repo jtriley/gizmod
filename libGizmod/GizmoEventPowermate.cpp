@@ -50,18 +50,21 @@ using namespace H;
  * \brief GizmoEventPowermate Default Constructor
  */
 GizmoEventPowermate::GizmoEventPowermate() : GizmoEvent(GIZMO_EVENTCLASS_POWERMATE, false) {
+	ClickTime = 0.0f;
 }
 
 /**
  * \brief GizmoEventPowermate Init Constructor
  */
 GizmoEventPowermate::GizmoEventPowermate(struct input_event const & InputEvent, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_POWERMATE, IsRemote), GizmoLinuxInputEvent(InputEvent) {
+	ClickTime = 0.0f;
 }
 
 /**
  * \brief GizmoEventPowermate Destructor
  */
 GizmoEventPowermate::~GizmoEventPowermate() {
+	ClickTime = 0.0f;
 }
 
 ////////////////////////////////////////////////////////////////////////////

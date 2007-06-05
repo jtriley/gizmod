@@ -1,7 +1,8 @@
 ----------------------------------------
 -- v 3.3
 ----------------------------------------
-	- Nothing yet!
+	- Add Powermate setRotateSensitivity function
+	- Add PowermateEvent ClickTime property (duration of button press)
 
 ----------------------------------------
 -- v 3.2

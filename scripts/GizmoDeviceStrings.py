@@ -63,6 +63,9 @@ LIRC_GIZMOS = ["lirc"]
 # List of devices to enumerate as mice
 POWERMATE_GIZMOS = ["powermate", "soundknob"]
 
+# Powermate long click duration
+POWERMATE_LONG_CLICK = 0.4
+
 # Default mixer element preferences (in order of priority)
 # Gizmo Daemon will scan all of the specified DEFAULT_MIXERS and apply the first
 # one it finds from the list that has the needed control as the default mixing

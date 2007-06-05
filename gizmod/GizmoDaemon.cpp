@@ -474,6 +474,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	
 	/// GizmoEventPowermate Python Class Export
 	class_< GizmoEventPowermate, bases<GizmoEvent, GizmoLinuxInputEvent> >("GizmoEventPowermate")
+		.def_readonly("ClickTime", &GizmoEventPowermate::ClickTime)
 		;
 
 	/// GizmoEventPowermate Python Class Export
