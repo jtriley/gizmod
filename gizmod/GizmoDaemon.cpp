@@ -433,6 +433,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def(init<float, boost::python::object, boost::python::object>())
 		.def("start", &GizmodTimer::start)
 		.def("setUserData", &GizmodTimer::setUserData)
+		.def("resetTimer", &GizmodTimer::resetTimer)
 		.def("cancel", &GizmodTimer::cancel)
 		;	
 	

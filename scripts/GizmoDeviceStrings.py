@@ -96,3 +96,8 @@ DEFAULT_MIXERS = ["master", "pcm", "front", "center", "side", "surround", "headp
 # LED on your keyboard, the second spot in the array points to the "second"
 # LED and so on.
 KEYBOARD_LEDS = [0, 1, 2]
+
+# Time in seconds to timeout the Alt-Tab events
+# Alt-Tabbing will stop after an Alt-Tab button press is not detected
+# in this amount of time
+ALT_TAB_TIMEOUT = 0.75

@@ -98,6 +98,13 @@ void GizmodTimer::cancel() {
 }
 
 /**
+ * \brief  Reset the timer's time
+ */
+void GizmodTimer::resetTimer() {
+	mTotalSlept = 0.0f;
+}
+
+/**
  * \brief  Set the Timer's user data
  * \param  UserData User defined data
  */
@@ -112,15 +119,15 @@ void GizmodTimer::threadProc() {
 	cdbg4 << "GizmodTimer :: Sleeping [" << mSleepTime << "s]" << endl;
 	
 	// sleep the desired amount of time
-	float TotalSlept = 0.0f;
+	mTotalSlept = 0.0f;
 	mCancel = false;
-	while ( (!mCancel) && (TotalSlept < mSleepTime) ) {
+	while ( (!mCancel) && (mTotalSlept < mSleepTime) ) {
 		float SleepStep = TIMER_GRANULARITY;
-		if (TotalSlept + SleepStep > mSleepTime)
-			SleepStep = mSleepTime - TotalSlept;
-		cdbg5 << "GizmodTimer :: Slept [" << TotalSlept<< "s] of [" << mSleepTime << "s] -- Sleeping [" << SleepStep << "s]" << endl;
+		if (mTotalSlept + SleepStep > mSleepTime)
+			SleepStep = mSleepTime - mTotalSlept;
+		cdbg5 << "GizmodTimer :: Slept [" << mTotalSlept<< "s] of [" << mSleepTime << "s] -- Sleeping [" << SleepStep << "s]" << endl;
 		UtilTime::sleep(SleepStep);
-		TotalSlept += SleepStep + 0.01f;
+		mTotalSlept += SleepStep + 0.01f;
 	}
 	
 	if (mCancel) {

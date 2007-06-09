@@ -32,6 +32,7 @@
 
 from GizmoDaemon import *
 from GizmoScriptDefault import *
+from GizmoScriptAltTabber import *
 import subprocess
 
 ENABLED = True
@@ -121,7 +122,8 @@ class LIRCMceUSB2Default(GizmoScriptDefault):
 	   			Gizmod.DefaultMixerVolume.VolumePlaybackPercent = Gizmod.DefaultMixerVolume.VolumePlaybackPercent - 2.5
 	   		return True
 	   	elif Event.Button == "Home":
-	   		return False
+	   		self.AltTabber.doAltTab()
+	   		return True
 	   	elif Event.Button == "ChanUp":
 	   		return False
 	   	elif Event.Button == "ChanDown":
@@ -191,6 +193,7 @@ class LIRCMceUSB2Default(GizmoScriptDefault):
 		"""
 		
 		GizmoScriptDefault.__init__(self, ENABLED, VERSION_NEEDED, INTERESTED_CLASSES)
+		self.AltTabber = GizmoScriptAltTabber()
 
 ############################
 # LIRCMceUSB2Default class end

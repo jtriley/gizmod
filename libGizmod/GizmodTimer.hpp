@@ -54,6 +54,7 @@ class GizmodTimer {
 public:
 	// public functions
 	void				cancel();		///< Cancel a timer's execution
+	void				resetTimer();		///< Reset the timer's time
 	void				setUserData(boost::python::object UserData); ///< Set the Timer's user data
 	void				start();		///< Start a timer's execution
 	
@@ -70,6 +71,7 @@ private:
 	bool				mCancel;		///< Cancel Timer
 	float				mSleepTime;		///< Amount of time to sleep between firings
 	boost::python::object 		mTimerFunction;		///< The Timer function
+	float				mTotalSlept;		///< Total time slept so far
 	boost::python::object 		mUserData;		///< User Data for the Timer function
 	
 	/**
