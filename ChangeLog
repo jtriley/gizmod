@@ -17,6 +17,8 @@
 		  cube with the dial
 	- Add base script GizmoScriptAltTabber so that devices have an 
 	  easy way of sending Alt-Tab events
+		- New variable in GizmoDeviceStrings.py called
+		  ALT_TAB_TIMEOUT for this!
 
 ----------------------------------------
 -- v 3.2
