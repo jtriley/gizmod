@@ -51,18 +51,18 @@ class GizmoScriptAltTabber:
 		"""
 		Figure out what combination of keys to press to do the next iteration of the Alt-Tab events
 		"""
-		
+				
 		if not self.AltTabbing:
 			Gizmod.Keyboards[0].createEventRaw(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTALT, 1)
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_TAB)
-			self.TimeoutTimer = GizmodTimer(ALT_TAB_TIMEOUT, self.timerCallback, Gizmo)
+			self.TimeoutTimer = GizmodTimer(ALT_TAB_TIMEOUT, self.timerCallback, None)
 			self.TimeoutTimer.start()
 			self.AltTabbing = True
 		else:
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_TAB)
 			self.TimeoutTimer.resetTimer()
 			
-	def timerCallback(self):
+	def timerCallback(self, UserData):
 		"""
 		Callback function for the timer
 		"""

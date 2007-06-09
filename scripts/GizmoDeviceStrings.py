@@ -100,4 +100,4 @@ KEYBOARD_LEDS = [0, 1, 2]
 # Time in seconds to timeout the Alt-Tab events
 # Alt-Tabbing will stop after an Alt-Tab button press is not detected
 # in this amount of time
-ALT_TAB_TIMEOUT = 0.75
+ALT_TAB_TIMEOUT = 1.25

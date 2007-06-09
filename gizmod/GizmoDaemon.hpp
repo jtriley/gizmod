@@ -39,6 +39,7 @@
 #include "../libGizmod/CPUUsage.hpp"
 #include "../libGizmod/Gizmo.hpp"
 #include "../libGizmod/GizmoClient.hpp"
+#include "../libGizmod/GizmodShared.hpp"
 #include "../libGizmod/Processes.hpp"
 #include "../libGizmod/X11FocusWatcher.hpp"
 #include "../libH/FileEventWatcher.hpp"
@@ -65,6 +66,7 @@
  * \todo  Replace for loops (in onFileEventRead) with boost::foreach when the new version comes out!
  */
 class GizmoDaemon : 
+	public GizmodShared,
 	public H::FileEventWatcher, 
 	private H::SignalHandler, 
 	public X11FocusWatcher,
@@ -182,9 +184,6 @@ private:
 	double				mVersion;			///< Version
 	int				mVersionMajor;			///< Version majorus
 	int				mVersionMinor;			///< Version minorus
-	
-	// static private member vars
-	static boost::mutex		mMutexScript;			///< Mutex for the python script
 };
 
 #endif // __GizmoDaemon_h

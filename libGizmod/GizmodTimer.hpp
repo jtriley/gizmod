@@ -33,6 +33,7 @@
 #include "config.h"
 #endif
 
+#include "GizmodShared.hpp"
 #include <boost/python.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +51,7 @@
  * Note that for some reason Python's threading API doesn't
  * work very well embedded inside C++
  */
-class GizmodTimer {
+class GizmodTimer : public GizmodShared {
 public:
 	// public functions
 	void				cancel();		///< Cancel a timer's execution

@@ -137,6 +137,7 @@ void GizmodTimer::threadProc() {
 	
 	// call the python timer function
 	cdbg4 << "GizmodTimer :: Calling Python timerFunction" << endl;
+	mutex::scoped_lock lock(mMutexScript);
 	mTimerFunction(mUserData);
 	
 	cdbg5 << "GizmodTimer :: Python timerFunction exited." << endl;
