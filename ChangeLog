@@ -11,6 +11,10 @@
 	  timeout events
 		- New variable in GizmoDeviceStrings.py called
 		  POWERMATE_BUTTON_TIMEOUT for this!
+	- Add script 201-Powermate-Beryl
+		- So far this detects a powermate button timeout and
+		  unfolds the beryl cube, and lets you scroll the unfolded
+		  cube with the dial
 
 ----------------------------------------
 -- v 3.2
