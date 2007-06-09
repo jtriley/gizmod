@@ -67,9 +67,11 @@ class GizmoScriptAltTabber:
 		Callback function for the timer
 		"""
 		
+		if not self.AltTabbing:
+			return
+			
 		Gizmod.Keyboards[0].createEventRaw(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTALT, 0)
 		self.AltTabbing = False
-		self.TimeoutTimer = None
 		
 	############################
 	# Private Functions
