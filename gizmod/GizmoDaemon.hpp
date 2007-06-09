@@ -130,6 +130,8 @@ private:
 	virtual void			onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
 	virtual void			onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer); ///< Event triggered when data is waiting on a device
 	virtual void			onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee); ///< Event triggered when a new device is registered
+	virtual void			onFileEventWatchBegin();	///< Event called when the class will begin watching for events (and blocking)
+	virtual void			onFileEventWatchEnd();		///< Event called when the class has ended watching for events (and done blocking)
 	virtual void			onFocusIn(X11FocusEvent const & Event); ///< Event triggered on a Focus In
 	virtual void			onFocusOut(X11FocusEvent const & Event); ///< Event triggered on a Focus Out
 	virtual void			onSignalSegv();			///< Signal handler for SEGV

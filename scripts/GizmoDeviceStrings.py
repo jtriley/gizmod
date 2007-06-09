@@ -66,6 +66,9 @@ POWERMATE_GIZMOS = ["powermate", "soundknob"]
 # Powermate long click duration
 POWERMATE_LONG_CLICK = 0.4
 
+# Powermate button timeout duration
+POWERMATE_BUTTON_TIMEOUT = 0.75
+
 # Powermate rotate sensitivity
 # This is done in clicks per event, so if it's set to 1 it's a one to 
 # one mapping between events

@@ -175,6 +175,8 @@ public:
 	virtual void			onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a device is disconnected
 	virtual void			onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer); ///< Event triggered when data is waiting on a device
 	virtual void			onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee); ///< Event triggered when a new device is registered
+	virtual void			onFileEventWatchBegin();	///< Event called when the class will begin watching for events (and blocking)
+	virtual void			onFileEventWatchEnd();		///< Event called when the class has ended watching for events (and done blocking)
 	void 				removeWatchee(boost::shared_ptr<FileWatchee> pWatchee); ///< Remove a Watchee from the list
 	void				shutdown();			///< Disable event watching
 	void 				watchForFileEvents();		///< Watch for events on already specified files

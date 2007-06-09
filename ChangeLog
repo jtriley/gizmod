@@ -5,6 +5,12 @@
 		- New variable in GizmoDeviceStrings.py called
 		  POWERMATE_ROTATE_SENSITIVITY for this!
 	- Add PowermateEvent ClickTime property (duration of button press)
+	- Add GizmodThread class for creating threads from Python
+	- Add GizmodTimer class for creating timer objects from Python
+	- Add script 200-Powermate-ButtonTimeout for generating button
+	  timeout events
+		- New variable in GizmoDeviceStrings.py called
+		  POWERMATE_BUTTON_TIMEOUT for this!
 
 ----------------------------------------
 -- v 3.2

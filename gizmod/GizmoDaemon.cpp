@@ -27,6 +27,8 @@
 */
 
 #include "GizmoDaemon.hpp"
+#include "../libGizmod/GizmodThread.hpp"
+#include "../libGizmod/GizmodTimer.hpp"
 #include "../libGizmod/GizmoEventATIX10.hpp"
 #include "../libGizmod/GizmoEventCPUUsage.hpp"
 #include "../libGizmod/GizmoEventLIRC.hpp"
@@ -64,6 +66,7 @@
 #include <boost/serialization/list.hpp>
 #include <boost/tokenizer.hpp>
 #include <fcntl.h>
+#include <pystate.h>
 
 using namespace std;
 using namespace boost;
@@ -393,7 +396,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
 		.def("signalShutdown", &GizmoDaemon::signalShutdown)
 		;
-	
+			
 	/// GizmoTimeVal Python Class Export
 	class_<GizmoTimeVal>("GizmoTimeVal")
 		.def_readonly("Seconds", &GizmoTimeVal::Seconds)
@@ -419,7 +422,20 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// GizmodEventHandlerInterface Python Class Export	
 	class_<GizmodEventHandlerInterface, GizmodEventHandlerInterfaceWrap, boost::noncopyable>("GizmodEventHandler")
 		;
+	
+	/// GizmodThread Python Class Export
+	class_<GizmodThread>("GizmodThread", init<boost::python::object>())
+		.def("create", &GizmodThread::create)
+		;	
 
+	/// GizmodTimer Python Class Export
+	class_<GizmodTimer>("GizmodTimer", init<float, boost::python::object>())
+		.def(init<float, boost::python::object, boost::python::object>())
+		.def("start", &GizmodTimer::start)
+		.def("setUserData", &GizmodTimer::setUserData)
+		.def("cancel", &GizmodTimer::cancel)
+		;	
+	
 	/// GizmoEvent Python Class Export
  	class_<GizmoEvent>("GizmoEvent", init<GizmoEventClass, bool>())
 		.def("getClass", &GizmoEvent::getClass)
@@ -1258,7 +1274,7 @@ void GizmoDaemon::initGizmod() {
 		} catch (SocketException const & e) {
 			throw H::Exception(e.getExceptionMessage(), __FILE__, __FUNCTION__, __LINE__);
 		}
-	}		
+	}
 	
 	// register all the devices
 	try {
@@ -1275,7 +1291,7 @@ void GizmoDaemon::initGizmod() {
 		if (mShuttingDown)
 			return;
 	} catch (H::Exception & e) {
-		cerr << e.getExceptionMessage() << endl;
+		throw e;
 	}
 	
 	// initialize the server
@@ -1315,6 +1331,8 @@ void GizmoDaemon::initPython() {
 	try {
 		cdbg1 << "Embedding Python Interpreter..." << endl;
 		PyImport_AppendInittab("GizmoDaemon", &initGizmoDaemon);
+		
+		// initialize python and threads
 		Py_Initialize();
 		
 		cdbg1 << "Initializing Python Environment..." << endl;
@@ -1875,6 +1893,18 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 		PyErr_Print();
 		throw H::Exception("Failed to call GizmodDispatcher.onRegisterDevice for onFileEventRegister", __FILE__, __FUNCTION__, __LINE__);
 	}
+}
+
+/**
+ * \brief Event called when the class will begin watching for events (and blocking)
+ */
+void GizmoDaemon::onFileEventWatchBegin() {
+}
+
+/**
+ * \brief Event called when the class has ended watching for events (and done blocking)
+ */
+void GizmoDaemon::onFileEventWatchEnd() {
 }
 
 /**

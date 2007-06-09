@@ -584,6 +584,20 @@ void FileEventWatcher::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatch
 }
 
 /**
+ * \brief Event called when the class will begin watching for events (and blocking)
+ */
+void FileEventWatcher::onFileEventWatchBegin() {
+	// override me
+}
+
+/**
+ * \brief Event called when the class has ended watching for events (and done blocking)
+ */
+void FileEventWatcher::onFileEventWatchEnd() {
+	// override me
+}
+
+/**
  * \brief Unregister a watch descriptor with inotify
  * \param wd The watch descriptor
  */
@@ -641,19 +655,25 @@ void FileEventWatcher::watchForFileEvents() {
 		cdbg << "FileEventWatcher :: watchForFileEvents -- No file to watch!" << endl;
 		return;
 	}
+		
+	// fire notification of blocking
+	onFileEventWatchBegin();
 	
 	cdbg1 << "FileEventWatcher :: Watching [" << (int) mPollFDs.size() << " Files] for Events..." << endl;
 	mPolling = true;
 	int ret;
-	do {
+	do {	
 		// poll the open files
 		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), POLL_TIMEOUT)) == -1) {
 			// error
 			cdbg1 << "Poll error: " << strerror(errno) << endl;
 			//continue; // <-- for debugging, since the debugger fires signals and causes poll to abort
+			
+			// fire notification of end of blocking
+			onFileEventWatchEnd();
 			return;
 		}
-						
+
 		if (!ret)
 			// timeout
 			continue;
@@ -663,4 +683,7 @@ void FileEventWatcher::watchForFileEvents() {
 		apply_func(mPollFDs, &FileEventWatcher::handleEventsOnFile, this);
 	} while (mPolling);
 	cdbg1 << "FileEventWatcher :: Done Watching for File Events" << endl;
+	
+	// fire notification of end of blocking
+	onFileEventWatchEnd();
 }
