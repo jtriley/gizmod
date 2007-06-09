@@ -32,6 +32,7 @@
 
 from GizmoDaemon import *
 from GizmoScriptDefault import *
+from GizmoScriptAltTabber import *
 import subprocess
 
 ENABLED = True
@@ -64,7 +65,8 @@ class LIRCHauppaugeDefault(GizmoScriptDefault):
 
 		# process the key
 	   	if   Event.Button == "Go":
-	   		return False
+	   		self.AltTabber.doAltTab()
+	   		return True
 	   	elif Event.Button == "Power":
 	   		return False
 	   	elif Event.Button == "TV":
@@ -192,6 +194,7 @@ class LIRCHauppaugeDefault(GizmoScriptDefault):
 		"""
 		
 		GizmoScriptDefault.__init__(self, ENABLED, VERSION_NEEDED, INTERESTED_CLASSES)
+		self.AltTabber = GizmoScriptAltTabber()
 
 ############################
 # LIRCHauppaugeDefault class end

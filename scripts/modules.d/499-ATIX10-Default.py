@@ -32,6 +32,7 @@
 
 from GizmoDaemon import *
 from GizmoScriptDefault import *
+from GizmoScriptAltTabber import *
 import subprocess
 
 ENABLED = True
@@ -74,6 +75,9 @@ class ATIX10Default(GizmoScriptDefault):
 			# do button presses
 		   	if Event.Code == GizmoKey.KEY_WWW:
 	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
+		   		return True
+		   	elif Event.Code == GizmoKey.KEY_BOOKMARKS:
+		   		self.AltTabber.doAltTab()
 		   		return True
 		   	elif Event.Code == GizmoKey.KEY_VOLUMEUP:
 	   			Gizmod.DefaultMixerVolume.VolumePlayback = Gizmod.DefaultMixerVolume.VolumePlayback + 1
@@ -148,6 +152,7 @@ class ATIX10Default(GizmoScriptDefault):
 		"""
 		
 		GizmoScriptDefault.__init__(self, ENABLED, VERSION_NEEDED, INTERESTED_CLASSES)
+		self.AltTabber = GizmoScriptAltTabber()
 
 ############################
 # ATIX10Default class end
