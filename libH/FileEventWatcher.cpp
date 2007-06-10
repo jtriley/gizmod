@@ -662,7 +662,7 @@ void FileEventWatcher::watchForFileEvents() {
 	cdbg1 << "FileEventWatcher :: Watching [" << (int) mPollFDs.size() << " Files] for Events..." << endl;
 	mPolling = true;
 	int ret;
-	do {	
+	do {
 		// poll the open files
 		if ((ret = poll(&mPollFDs[0], mPollFDs.size(), POLL_TIMEOUT)) == -1) {
 			// error

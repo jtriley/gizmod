@@ -82,6 +82,9 @@ class PowermateButtonTimeout(GizmoScriptDefault):
 							if UserScript.onDeviceEventEaten(Event, Gizmo):
 								break
 					return True
+		elif Event.Type == GizmoEventType.EV_REL:
+			if self.ButtonTimeoutTimers[Gizmo.FileName]:
+				self.ButtonTimeoutTimers[Gizmo.FileName].cancel()
 		return False
 		
 	def onDeviceEventButtonTimeout(self, Gizmo):
