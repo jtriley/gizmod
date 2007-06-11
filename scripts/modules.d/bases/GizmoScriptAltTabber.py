@@ -51,27 +51,34 @@ class GizmoScriptAltTabber:
 		"""
 		Figure out what combination of keys to press to do the next iteration of the Alt-Tab events
 		"""
-				
-		if not self.AltTabbing:
+		
+		if not Gizmod.Dispatcher.AltTabbing:
 			Gizmod.Keyboards[0].createEventRaw(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTALT, 1)
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_TAB)
-			self.TimeoutTimer = GizmodTimer(ALT_TAB_TIMEOUT, self.timerCallback, None)
-			self.TimeoutTimer.start()
-			self.AltTabbing = True
+			Gizmod.Dispatcher.AltTabbingTimeoutTimer = GizmodTimer(ALT_TAB_TIMEOUT, self.timerCallback, None)
+			Gizmod.Dispatcher.AltTabbingTimeoutTimer.start()
+			Gizmod.Dispatcher.AltTabbing = True
 		else:
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_TAB)
-			self.TimeoutTimer.resetTimer()
+			Gizmod.Dispatcher.AltTabbingTimeoutTimer.resetTimer()
+			
+	def isAltTabbing(self):
+		"""
+		Return whether or not alt-tabbing is taking place
+		"""
+		
+		return Gizmod.Dispatcher.AltTabbing
 			
 	def timerCallback(self, UserData):
 		"""
 		Callback function for the timer
 		"""
 		
-		if not self.AltTabbing:
+		if not Gizmod.Dispatcher.AltTabbing:
 			return
 			
 		Gizmod.Keyboards[0].createEventRaw(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTALT, 0)
-		self.AltTabbing = False
+		Gizmod.Dispatcher.AltTabbing = False
 		
 	############################
 	# Private Functions
@@ -82,8 +89,9 @@ class GizmoScriptAltTabber:
 		Default Constructor
 		"""
 		
-		self.AltTabbing = False
-		self.TimeoutTimer = None
+		if "AltTabbing" not in dir(Gizmod.Dispatcher):
+			Gizmod.Dispatcher.AltTabbing = False
+			Gizmod.Dispatcher.AltTabbingTimeoutTimer = None
 
 ############################
 # GizmoScriptDefault class end

@@ -166,7 +166,7 @@ class ATIX10MythTV(GizmoScriptActiveApplication):
 	   		return False
 
 		# call base classe' onEvent method
-		GizmoScriptActiveApplication.onEvent(self, Event, Gizmo)
+		return GizmoScriptActiveApplication.onEvent(self, Event, Gizmo)
 
 	############################
 	# Private Functions

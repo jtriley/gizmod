@@ -19,6 +19,11 @@
 	  easy way of sending Alt-Tab events
 		- New variable in GizmoDeviceStrings.py called
 		  ALT_TAB_TIMEOUT for this!
+	- Add remote ?00-Intercept scripts for alt-tabbing support
+		- This allows the default mapping to start alt-tab
+		  and to still alt-tab passed applications (if alt-tab
+		  actually focuses apps) if those apps happen to use
+		  the same button that initialized the alt-tab
 
 ----------------------------------------
 -- v 3.2

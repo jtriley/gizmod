@@ -3,7 +3,7 @@
 #*************************************************************************
 #*** 
 #*** GizmoDaemon Config Script
-#*** 	LIRCHauppauge MythTV config
+#*** 	LIRCMceUSB2 MythTV config
 #***
 #*****************************************
   #*****************************************
@@ -32,22 +32,23 @@
 
 from GizmoDaemon import *
 from GizmoScriptActiveApplication import *
+from GizmoScriptAltTabber import *
 import subprocess
 
 ENABLED = True
 VERSION_NEEDED = 3.2
 INTERESTED_CLASSES = [GizmoEventClass.LIRC]
 INTERESTED_WINDOWS = ["mythfrontend"]
-USES_LIRC_REMOTES = ["Hauppauge_350"]
+USES_LIRC_REMOTES = ["mceusb", "mceusb2"]
 POWER_APPLICATION = "mythfrontend"
 
 ############################
-# LIRCHauppaugeMythTV Class definition
+# LIRCMceUSB2MythTV Class definition
 ##########################
 
-class LIRCHauppaugeMythTV(GizmoScriptActiveApplication):
+class LIRCMceUSB2MythTV(GizmoScriptActiveApplication):
 	"""
-	MythTV LIRC Event Mapping for the Hauppauge remote
+	MythTV LIRC Event Mapping for the MceUSB2 remote
 	"""
 	
 	############################
@@ -65,73 +66,30 @@ class LIRCHauppaugeMythTV(GizmoScriptActiveApplication):
 			return False
 
 		# process the key
-	   	if   Event.Button == "Go":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_A)
-	   		return True
-	   	elif Event.Button == "Power":
+	   	if   Event.Button == "Power":
 	   		# if mythfrontend is open, kill it
    			subprocess.Popen(["killall", "mythfrontend"])
 	   		return True
 	   	elif Event.Button == "TV":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_A)
+	   		return True
+	   	elif Event.Button == "Music":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_B)
 	   		return True
-	   	elif Event.Button == "Videos":
+	   	elif Event.Button == "Pictures":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_SLASH)
 	   		return True
-	   	elif Event.Button == "Music":		   	
+	   	elif Event.Button == "Videos":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_SLASH, [GizmoKey.KEY_RIGHTSHIFT])
 	   		return True
-	   	elif Event.Button == "Pictures":
-	   		return False
-	   	elif Event.Button == "Guide":
+	   	elif Event.Button == "Stop":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_S)
-	   		return True
-	   	elif Event.Button == "Up":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_UP)
-	   		return True
-	   	elif Event.Button == "Radio":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_N)
-	   		return True
-	   	elif Event.Button == "Left":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFT)
-	   		return True
-	   	elif Event.Button == "OK":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
-	   		return True
-	   	elif Event.Button == "Right":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHT)
-	   		return True
-	   	elif Event.Button == "Back/Exit":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
-	   		return True
-	   	elif Event.Button == "Down":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
-	   		return True
-	   	elif Event.Button == "Menu/i":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_M)
-	   		return True
-	   	elif Event.Button == "Vol+":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTBRACE)
-	   		return True
-	   	elif Event.Button == "Vol-":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTBRACE)
-	   		return True
-	   	elif Event.Button == "Prev.Ch":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_H)
-	   		return True
-	   	elif Event.Button == "Mute":
-	   		return False
-	   	elif Event.Button == "Ch+":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_UP)
-	   		return True
-	   	elif Event.Button == "Ch-":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
 	   		return True
 	   	elif Event.Button == "Record":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_R)
 	   		return True
-	   	elif Event.Button == "Stop":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_S)
+	   	elif Event.Button == "Pause":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_P)
 	   		return True
 	   	elif Event.Button == "Rewind":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_COMMA, [GizmoKey.KEY_RIGHTSHIFT])
@@ -142,65 +100,91 @@ class LIRCHauppaugeMythTV(GizmoScriptActiveApplication):
 	   	elif Event.Button == "Forward":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_DOT, [GizmoKey.KEY_RIGHTSHIFT])
 	   		return True
-	   	elif Event.Button == "Replay/SkipBackward":
+	   	elif Event.Button == "Replay":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
 	   		return True
-	   	elif Event.Button == "Pause":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_P)
+	   	elif Event.Button == "Back":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_ESC)
 	   		return True
-	   	elif Event.Button == "SkipForward":
+	   	elif Event.Button == "Up":
+	   		return False
+	   	elif Event.Button == "Skip":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
 	   		return True
-	   	elif Event.Button == "1":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_1)
+	   	elif Event.Button == "More":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_M)
 	   		return True
-	   	elif Event.Button == "2":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_2)
-	   		return True
-	   	elif Event.Button == "3":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_3)
-	   		return True
-	   	elif Event.Button == "4":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_4)
-	   		return True
-	   	elif Event.Button == "5":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_5)
-	   		return True
-	   	elif Event.Button == "6":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_6)
-	   		return True
-	   	elif Event.Button == "7":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_7)
-	   		return True
-	   	elif Event.Button == "8":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_8)
-	   		return True
-	   	elif Event.Button == "9":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_9)
-	   		return True
-	   	elif Event.Button == "Asterix":
+	   	elif Event.Button == "Left":
 	   		return False
-	   	elif Event.Button == "0":
-			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_0)
-	   		return True
-	   	elif Event.Button == "#":
+	   	elif Event.Button == "OK":
 	   		return False
-	   	elif Event.Button == "Red":
+	   	elif Event.Button == "Right":
+	   		return False
+	   	elif Event.Button == "Down":
+	   		return False
+	   	elif Event.Button == "VolUp":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHTBRACE)
+	   		return True
+	   	elif Event.Button == "VolDown":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFTBRACE)
+	   		return True
+	   	elif Event.Button == "Home":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_END)
 	   		return True
-	   	elif Event.Button == "Green":
+	   	elif Event.Button == "ChanUp":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_UP)
+	   		return True
+	   	elif Event.Button == "ChanDown":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_DOWN)
+	   		return True
+	   	elif Event.Button == "RecTV":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_HOME)
 	   		return True
-	   	elif Event.Button == "Yellow":
+	   	elif Event.Button == "Mute":
+	   		return False
+	   	elif Event.Button == "DVD":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_H)
+	   		return True
+	   	elif Event.Button == "Guide":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_S)
+	   		return True
+	   	elif Event.Button == "LiveTV":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_N)
+	   		return True
+	   	elif Event.Button == "One":
+	   		return False
+	   	elif Event.Button == "Two":
+	   		return False
+	   	elif Event.Button == "Three":
+	   		return False
+	   	elif Event.Button == "Four":
+	   		return False
+	   	elif Event.Button == "Five":
+	   		return False
+	   	elif Event.Button == "Six":
+	   		return False
+	   	elif Event.Button == "Seven":
+	   		return False
+	   	elif Event.Button == "Eight":
+	   		return False
+	   	elif Event.Button == "Nine":
+	   		return False
+	   	elif Event.Button == "Star":
+	   		return False
+	   	elif Event.Button == "Zero":
+	   		return False
+	   	elif Event.Button == "Hash":
+	   		return False
+	   	elif Event.Button == "Clear":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_C)
 	   		return True
-	   	elif Event.Button == "Blue":
+	   	elif Event.Button == "Enter":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_I)
 	   		return True
 	   	else:
 	   		# unmatched event, keep processing
 			return False				
-		
+	
 	def onEvent(self, Event, Gizmo = None):
 		"""
 		Overloading Base Class' onEvent method!
@@ -220,8 +204,8 @@ class LIRCHauppaugeMythTV(GizmoScriptActiveApplication):
 	   		return False
 
 		# call base classe' onEvent method
-		GizmoScriptActiveApplication.onEvent(self, Event, Gizmo)		
-	
+		return GizmoScriptActiveApplication.onEvent(self, Event, Gizmo)
+		
 	############################
 	# Private Functions
 	##########################
@@ -234,8 +218,8 @@ class LIRCHauppaugeMythTV(GizmoScriptActiveApplication):
 		GizmoScriptActiveApplication.__init__(self, ENABLED, VERSION_NEEDED, INTERESTED_CLASSES, INTERESTED_WINDOWS)
 
 ############################
-# LIRCHauppaugeMythTV class end
+# LIRCMceUSB2MythTV class end
 ##########################
 
 # register the user script
-LIRCHauppaugeMythTV()
+LIRCMceUSB2MythTV()
