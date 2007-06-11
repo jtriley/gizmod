@@ -6,6 +6,7 @@
 		  POWERMATE_ROTATE_SENSITIVITY for this!
 	- Add PowermateEvent ClickTime property (duration of button press)
 	- Add GizmodThread class for creating threads from Python
+		- DO NOT USE!! (HIGHLY EXPERIMENTAL!)
 	- Add GizmodTimer class for creating timer objects from Python
 	- Add script 200-Powermate-ButtonTimeout for generating button
 	  timeout events
@@ -24,6 +25,7 @@
 		  and to still alt-tab passed applications (if alt-tab
 		  actually focuses apps) if those apps happen to use
 		  the same button that initialized the alt-tab
+	- Add Gizmod namespace to libGizmod
 
 ----------------------------------------
 -- v 3.2
