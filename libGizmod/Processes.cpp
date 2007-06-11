@@ -41,6 +41,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::filesystem;
 using namespace H;
+using namespace Gizmod;
 
 ////////////////////////////////////////////////////////////////////////////
 // Typedef's / defines

@@ -47,7 +47,7 @@
  * \class GizmodLibVisualPlugin
  * \brief Helper functions for the Gizmos
  */
-class GizmodLibVisualPlugin : public GizmoClient {
+class GizmodLibVisualPlugin : public Gizmod::GizmoClient {
 public:
 	// public functions
 	void				init();				///< Initialize the plugin

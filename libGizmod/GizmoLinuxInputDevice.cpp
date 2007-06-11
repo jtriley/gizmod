@@ -43,6 +43,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::python;
 using namespace H;
+using namespace Gizmod;
 
 ////////////////////////////////////////////////////////////////////////////
 // Type Defs

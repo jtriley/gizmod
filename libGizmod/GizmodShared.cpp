@@ -34,6 +34,7 @@
 using namespace std;
 using namespace boost;
 using namespace H;
+using namespace Gizmod;
 
 ////////////////////////////////////////////////////////////////////////////
 // Type Defs
