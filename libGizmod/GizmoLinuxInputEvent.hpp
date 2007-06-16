@@ -83,7 +83,7 @@ public:
 	GizmoTimeVal			TimeStamp;				///< Time stamp of the event
 	GizmoKey			Code;					///< Human decipherable code of the event
 	GizmoEventType			Type;					///< Human decipherable type of the event
-	int				Value;					///< value of the event
+	int				Value;					///< Value of the event -- For Standard button events, this value will be 0 if a button is unpressed, 1 if pressed, and 2 if held and repeat events are generated
 	
 	// public functions
 
