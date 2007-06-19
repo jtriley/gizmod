@@ -992,7 +992,7 @@ X11FocusEvent GizmoDaemon::getCurrentFocus() {
  * be accessed as a variable by referencing ".DebugEnabled"
  */
 bool GizmoDaemon::getDebugEnabled() {
-	return Debug::getDebugEnabled();
+	return Debug::getEnabled();
 }
 
 /**
@@ -1476,11 +1476,11 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		return false;
 	}
 	if (VarMap.count("debug")) {
-		Debug::setDebugEnabled(true);	
+		Debug::setEnabled(true);	
 		cdbg << "Debug Mode Enabled" << endl;
 	}
 	if (VarMap.count("verbosity")) {
-		Debug::setDebugVerbosity(VarMap["verbosity"].as<int>());
+		Debug::setVerbosity(VarMap["verbosity"].as<int>());
 		cdbg << "Debug Verbosity set to [" << VarMap["verbosity"].as<int>() << "]" << endl;
 	}
 	if (VarMap.count("client-host")) {

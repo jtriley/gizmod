@@ -54,7 +54,7 @@ Exception::Exception(const std::string & Message, ExceptionType Type) {
  * \brief Exception Advanced Constructor
  */
 Exception::Exception(const std::string & Message, const std::string & File, const std::string & Function, int LineNumber, ExceptionType Type) {
-	if (Debug::getDebugEnabled())
+	if (Debug::getEnabled())
 		mMessage = "Exception in [" + File + "] :: [" + Function + "] @ [Line " + stringconverter(LineNumber) + "] -- " + Message;
 	else
 		mMessage = Message;

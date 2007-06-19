@@ -60,19 +60,19 @@ namespace H {
 class Debug {
 public:
 	/// Get whether or not debug is enabled
-	inline static bool	 	getDebugEnabled() { return mDebug; };
+	inline static bool	 	getEnabled() { return mDebug; };
 	
 	/// Get the verbosity level
-	inline static bool	 	getDebugVerbosity() { return mVerbosity; };
+	inline static int	 	getVerbosity() { return mVerbosity; };
 	
 	/// Set whether or not debug is enabled
-	inline static void 		setDebugEnabled(bool Enable) { mDebug = Enable; };
+	inline static void 		setEnabled(bool Enable) { mDebug = Enable; };
 	
 	/// Set whether or not debug is enabled
-	inline static void 		setDebugLog(std::string const & LogFile);
+	inline static void 		setLog(std::string const & LogFile);
 	
 	/// Set the verbosity level
-	inline static void 		setDebugVerbosity(int Verbosity) { mVerbosity = Verbosity; };
+	inline static void 		setVerbosity(int Verbosity) { mVerbosity = Verbosity; };
 	
 	inline friend const Debug& 	operator << (const Debug & dbg, const char * s);
 	inline friend const Debug& 	operator << (const Debug & dbg, const std::string & s);
@@ -104,7 +104,7 @@ private:
 /**
  * \brief  Set the debug log
  */
-inline void Debug::setDebugLog(std::string const & LogFile) {
+inline void Debug::setLog(std::string const & LogFile) {
 	Debug::mLogFile.open(LogFile.c_str(), std::ios::app);
 	if (!Debug::mLogFile.is_open()) {
 		Debug::mLogPath = "";
