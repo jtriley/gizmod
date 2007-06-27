@@ -3,7 +3,7 @@
 ## gizmod autoconf script
 ##
 
-AC_INIT([gizmod], [3:3],
+AC_INIT([gizmod], [3:4],
         [Tim Burrell <tim.burrell@gmail.com>],
 	[gizmod])
 AM_INIT_AUTOMAKE
