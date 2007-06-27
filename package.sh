@@ -29,4 +29,5 @@ done
 echo "Packaging"
 cd ..
 tar jcfh $PACKAGE-$1.tar.bz2 $PACKAGE-$1/*
+tar zcfh $PACKAGE-$1.tar.gz $PACKAGE-$1/*
 echo "Done"
