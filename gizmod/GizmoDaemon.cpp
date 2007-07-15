@@ -425,8 +425,10 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/// GizmodTimer Python Class Export
 	class_<GizmodTimer>("GizmodTimer", init<float, boost::python::object>())
 		.def(init<float, boost::python::object, boost::python::object>())
+		.def(init<float, boost::python::object, int, boost::python::object>())
 		.def("start", &GizmodTimer::start)
 		.def("setUserData", &GizmodTimer::setUserData)
+		.def("setTime", &GizmodTimer::setTime)
 		.def("resetTimer", &GizmodTimer::resetTimer)
 		.def("cancel", &GizmodTimer::cancel)
 		;	

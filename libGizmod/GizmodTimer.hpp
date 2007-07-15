@@ -63,11 +63,13 @@ public:
 	void				cancel();		///< Cancel a timer's execution
 	void				resetTimer();		///< Reset the timer's time
 	void				setUserData(boost::python::object UserData); ///< Set the Timer's user data
+       	void				setTime(float Seconds);	///< Set the time to sleep before firing timer event
 	void				start();		///< Start a timer's execution
 	
 	// construction / deconstruction	
 	GizmodTimer(float Seconds, boost::python::object TimerFunction); ///< Default Constructor
 	GizmodTimer(float Seconds, boost::python::object TimerFunction, boost::python::object UserData); ///< Init Constructor
+	GizmodTimer(float Seconds, boost::python::object TimerFunction, int Repeats, boost::python::object UserData); ///< Init Constructor
 	virtual ~GizmodTimer();					///< Destructor
 
 private:
@@ -76,8 +78,10 @@ private:
 	
 	// private member variables
 	bool				mCancel;		///< Cancel Timer
+	int				mRepeats;		///< Number of times the timer has repeated
 	float				mSleepTime;		///< Amount of time to sleep between firings
 	boost::python::object 		mTimerFunction;		///< The Timer function
+	int				mTotalRepeats;		///< Times to repeat
 	float				mTotalSlept;		///< Total time slept so far
 	boost::python::object 		mUserData;		///< User Data for the Timer function
 	

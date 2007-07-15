@@ -57,7 +57,11 @@ class RemoteControl(GizmoScriptEnableChecker):
 		"""
 		
 		# if it's not a remote event we're not interested!
-		if not Event.Remote or not Gizmo:
+		try:
+			if not Event.Remote or not Gizmo:
+				return False
+		except AttributeError, msg:
+			# this is fine
 			return False
 			
 		Registrar = GizmoRegistrar(Gizmo)

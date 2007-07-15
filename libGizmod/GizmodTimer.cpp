@@ -47,7 +47,7 @@ using namespace Gizmod;
  * \def    TIMER_GRANULARITY
  * \brief  Amount of time to wait before checking for a cancel
  */
-#define	TIMER_GRANULARITY	0.5f
+#define	TIMER_GRANULARITY	0.05f
 
 ////////////////////////////////////////////////////////////////////////////
 // Construction
@@ -58,6 +58,8 @@ using namespace Gizmod;
  */
 GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction) : mThreadProc(this) {
 	mCancel = false;
+	mRepeats = 0;
+	mTotalRepeats = 0;
 	mSleepTime = Seconds;
 	mTimerFunction = TimerFunction;
 }
@@ -67,6 +69,20 @@ GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction) : m
  */
 GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction, boost::python::object UserData) : mThreadProc(this) {
 	mCancel = false;
+	mRepeats = 0;
+	mTotalRepeats = 0;
+	mSleepTime = Seconds;
+	mTimerFunction = TimerFunction;
+	setUserData(UserData);
+}
+
+/**
+ * \brief GizmodTimer Init Constructor
+ */
+GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction, int Repeats, boost::python::object UserData) : mThreadProc(this) {
+	mCancel = false;
+	mRepeats = 0;
+	mTotalRepeats = Repeats;
 	mSleepTime = Seconds;
 	mTimerFunction = TimerFunction;
 	setUserData(UserData);
@@ -113,33 +129,47 @@ void GizmodTimer::setUserData(boost::python::object UserData) {
 	mUserData = UserData;
 }
 
+/**
+ * \brief  Set the time to sleep before firing timer event
+ * \param  Seconds Time to sleep
+ */
+void GizmodTimer::setTime(float Seconds) {
+	mSleepTime = Seconds;
+}
+
 /** 
  * \brief  The ThreadProc
  */
 void GizmodTimer::threadProc() {
 	cdbg4 << "GizmodTimer :: Sleeping [" << mSleepTime << "s]" << endl;
 	
-	// sleep the desired amount of time
-	mTotalSlept = 0.0f;
-	mCancel = false;
-	while ( (!mCancel) && (mTotalSlept < mSleepTime) ) {
-		float SleepStep = TIMER_GRANULARITY;
-		if (mTotalSlept + SleepStep > mSleepTime)
-			SleepStep = mSleepTime - mTotalSlept;
-		cdbg5 << "GizmodTimer :: Slept [" << mTotalSlept<< "s] of [" << mSleepTime << "s] -- Sleeping [" << SleepStep << "s]" << endl;
-		UtilTime::sleep(SleepStep);
-		mTotalSlept += SleepStep + 0.01f;
-	}
-	
-	if (mCancel) {
-		cdbg5 << "GizmodTimer :: Cancel Called" << endl;
-		return;
-	}		
-	
-	// call the python timer function
-	cdbg4 << "GizmodTimer :: Calling Python timerFunction" << endl;
-	mutex::scoped_lock lock(mMutexScript);
-	mTimerFunction(mUserData);
-	
-	cdbg5 << "GizmodTimer :: Python timerFunction exited." << endl;
+	mRepeats = -1;
+	do {
+		// count the number of times we've repeated
+		mRepeats ++;
+		
+		// sleep the desired amount of time
+		mTotalSlept = 0.0f;
+		mCancel = false;
+		while ( (!mCancel) && (mTotalSlept < mSleepTime) ) {
+			float SleepStep = TIMER_GRANULARITY;
+			if (mTotalSlept + SleepStep > mSleepTime)
+				SleepStep = mSleepTime - mTotalSlept;
+			cdbg5 << "GizmodTimer :: Slept [" << mTotalSlept<< "s] of [" << mSleepTime << "s] -- Sleeping [" << SleepStep << "s]" << endl;
+			UtilTime::sleep(SleepStep);
+			mTotalSlept += SleepStep + 0.0001f;
+		}
+		
+		if (mCancel) {
+			cdbg5 << "GizmodTimer :: Cancel Called" << endl;
+			return;
+		}		
+		
+		// call the python timer function
+		cdbg4 << "GizmodTimer :: Calling Python timerFunction" << endl;
+		mutex::scoped_lock lock(mMutexScript);
+		mTimerFunction(mUserData);		
+		cdbg5 << "GizmodTimer :: Python timerFunction exited." << endl;
+		cdbg5 << "GizmodTimer :: Repeating: " << mRepeats << " of " << mTotalRepeats << endl;
+	} while ( (!mCancel) && ( (mTotalRepeats == -1) || (mRepeats <= mTotalRepeats) ) );
 }
