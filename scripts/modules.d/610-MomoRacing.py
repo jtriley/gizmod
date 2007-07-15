@@ -78,12 +78,6 @@ class MomoRacing(GizmoScriptDefault):
 			return
 			
 		# start scrolling
-		Percent = abs(self.scrollSpeed) / 128.0
-		print Percent
-		#if Percent > 0.75:
-		#	self.scrollTimeout = 2.0 / abs(self.scrollSpeed)
-		#else:
-		#	self.scrollTimeout = 10.0 / abs(self.scrollSpeed)
 		ss = abs(self.scrollSpeed)
 		self.scrollTimeout = 250.0 / (ss * ss)
 		if self.scrollSpeed < 0:
