@@ -75,6 +75,12 @@ class PowermateFirefox(GizmoScriptActiveApplication):
 						for repeat in range(abs(Event.Value)):
 							Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
 				return True
+			# check for button press
+			elif Event.Type == GizmoEventType.EV_KEY:
+				if Event.Value == 0 and not Gizmo.Rotated:
+					# issue a close tab if the button is pressed
+					Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_W, [GizmoKey.KEY_LEFTCTRL])
+					return True
 			else:
 				return False
 		else:
