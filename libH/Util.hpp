@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <boost/function.hpp>
+#include <boost/foreach.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Namespace
@@ -47,6 +48,12 @@ namespace H {
 //////////////////////////////////////////////////////////////////////////////
 // Global Algorithms
 ///////////////////////////////////////
+	
+/**
+ * \def    foreach
+ * \brief  rename BOOST_FOREACH to foreach for nice readability
+ */
+#define foreach BOOST_FOREACH
 		
 /**
  * \brief  Apply function f to all elements in Object o

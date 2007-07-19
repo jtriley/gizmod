@@ -11,7 +11,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-AX_BOOST_BASE([1.33.1])
+AX_BOOST_BASE([1.34])
 
 ###########################################################################
 ##
@@ -49,7 +49,7 @@ AC_CHECK_FUNC(inotify_init, [
 ## Check for Boost
 ##
 
-AX_BOOST([1.33.1])
+AX_BOOST([1.34])
 CFLAGS="$CFLAGS -fexceptions"
 if test "$with_boost" != "yes" ; then
 	AC_MSG_ERROR([You must install / configure with Boost (--with-boost)])

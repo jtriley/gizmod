@@ -80,8 +80,10 @@ public:
 	inline friend const Debug& 	operator << (const Debug & dbg, const int d);
 	inline friend const Debug& 	operator << (const Debug & dbg, const unsigned int d);
 	inline friend const Debug& 	operator << (const Debug & dbg, const long l);
+	inline friend const Debug& 	operator << (const Debug & dbg, const long long ll);
 	inline friend const Debug& 	operator << (const Debug & dbg, const bool b);
 	inline friend const Debug& 	operator << (const Debug & dbg, const unsigned long l);
+	inline friend const Debug& 	operator << (const Debug & dbg, const unsigned long long ll);
 	inline friend const Debug& 	operator << (const Debug & dbg, const double lf);
 	inline friend const Debug& 	operator << (const Debug & dbg, std::ostream&(*f)(std::ostream&)); // for endl
 
@@ -219,6 +221,23 @@ inline const Debug& operator << (const Debug & dbg, const long l) {
 }
 
 /**
+ * \brief  Debug insertion operator for long
+ */
+inline const Debug& operator << (const Debug & dbg, const long long ll) {
+	if (Debug::testPrint(dbg)) {
+		std::cout << ll;
+		if (Debug::mLogToFile) {
+			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
+			if (Debug::mLogFile.is_open()) {
+				Debug::mLogFile << ll;
+				Debug::mLogFile.close();
+			}
+		}
+	}	
+	return dbg;
+}
+
+/**
  * \brief  Debug insertion operator for bool
  */
 inline const Debug& operator << (const Debug & dbg, const bool b) {
@@ -245,6 +264,23 @@ inline const Debug& operator << (const Debug & dbg, const unsigned long l) {
 			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
 			if (Debug::mLogFile.is_open()) {
 				Debug::mLogFile << l;
+				Debug::mLogFile.close();
+			}
+		}
+	}	
+	return dbg;
+}
+
+/**
+ * \brief  Debug insertion operator for ulong
+ */
+inline const Debug& operator << (const Debug & dbg, const unsigned long long ll) {
+	if (Debug::testPrint(dbg)) {
+		std::cout << ll;
+		if (Debug::mLogToFile) {
+			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
+			if (Debug::mLogFile.is_open()) {
+				Debug::mLogFile << ll;
 				Debug::mLogFile.close();
 			}
 		}
