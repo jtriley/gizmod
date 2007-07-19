@@ -59,7 +59,13 @@ int main (int argc, char * argv []) {
 	bool ReloadGizmod;
 	do {
 		// create the Gizmod
-		shared_ptr<GizmoDaemon> pGizmod(new GizmoDaemon);
+		shared_ptr<GizmoDaemon> pGizmod;
+		try {
+			pGizmod = shared_ptr<GizmoDaemon>(new GizmoDaemon);
+		} catch (H::Exception & e) {
+			cerr << "\nUnable to Initialize Gizmod :: " << e.message() << "\n\n";
+			return EXIT_FAILURE;
+		}
 		
 		// try initializing
 		try {

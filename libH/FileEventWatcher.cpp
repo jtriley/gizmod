@@ -147,7 +147,7 @@ DeviceInfo::~DeviceInfo() {
 FileEventWatcher::FileEventWatcher() {
 	mPolling = false;
 	if ((mInotifyFD = inotify_init()) < 0)
-		throw H::Exception("Failed to Initialize Inotify!", __FILE__, __FUNCTION__, __LINE__);	
+		throw H::Exception("Failed to Initialize Inotify!\n    - Inotify must be compiled into the kernel, or installed as a kernel module\n    - Set kernel options CONFIG_INOTIFY, and CONFIG_INOTIFY_USER to yes", __FILE__, __FUNCTION__, __LINE__);
 }
 
 /**
