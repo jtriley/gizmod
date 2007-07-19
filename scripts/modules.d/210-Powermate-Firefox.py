@@ -36,7 +36,7 @@ from GizmoScriptActiveApplication import *
 ENABLED = True
 VERSION_NEEDED = 3.2
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
-INTERESTED_WINDOWS = ["firefox"]
+INTERESTED_WINDOWS = ["firefox", "swiftfox", "iceweasel"]
 
 ############################
 # PowermateFirefox Class definition
