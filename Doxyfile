@@ -49,7 +49,7 @@ SUBGROUPING            = YES
 #---------------------------------------------------------------------------
 EXTRACT_ALL            = NO
 EXTRACT_PRIVATE        = NO
-EXTRACT_STATIC         = NO
+EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = YES
 EXTRACT_LOCAL_METHODS  = NO
 HIDE_UNDOC_MEMBERS     = NO
@@ -150,7 +150,7 @@ FILTER_SOURCE_FILES    = NO
 #---------------------------------------------------------------------------
 # configuration options related to source browsing
 #---------------------------------------------------------------------------
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 INLINE_SOURCES         = NO
 STRIP_CODE_COMMENTS    = YES
 REFERENCED_BY_RELATION = YES

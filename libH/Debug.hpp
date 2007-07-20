@@ -322,12 +322,12 @@ inline const Debug& operator << (const Debug & dbg, std::ostream&(* f)(std::ostr
 	return dbg;
 }
 
-static const Debug cdbg(0);
-static const Debug cdbg1(1);
-static const Debug cdbg2(2);
-static const Debug cdbg3(3);
-static const Debug cdbg4(4);
-static const Debug cdbg5(5);
+static const Debug cdbg(0);  ///< Instantiation of cdbg level 0
+static const Debug cdbg1(1); ///< Instantiation of cdbg level 1
+static const Debug cdbg2(2); ///< Instantiation of cdbg level 2
+static const Debug cdbg3(3); ///< Instantiation of cdbg level 3
+static const Debug cdbg4(4); ///< Instantiation of cdbg level 4
+static const Debug cdbg5(5); ///< Instantiation of cdbg level 5
 
 } // H namespace
 
