@@ -31,7 +31,6 @@
 #include "../libH/Debug.hpp"
 #include "../libH/Exception.hpp"
 #include "../libH/Util.hpp"
-#include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
 
 using namespace std;

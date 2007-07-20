@@ -36,8 +36,6 @@
 #include "Debug.hpp"
 #include <cstdlib>
 #include <iostream>
-#include <boost/function.hpp>
-#include <boost/foreach.hpp>
 
 //////////////////////////////////////////////////////////////////////////////
 // Namespace
