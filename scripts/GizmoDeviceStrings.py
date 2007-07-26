@@ -52,8 +52,11 @@ This file contains defitions for what device strings get claimed as which device
 # - they matches against the product description as seen when gizmod starts up
 # - you can also put combinations of vendor / product ID codes in here
 #   - example: "keyboard" will match any device with keyboard in its description
-#   - example: "0x303:0x909" will math any device with Vendor ID: 0x303 
+#   - example: "0x303:0x909" will match any device with Vendor ID: 0x303 
 #     and Product ID: 0x909
+# - you can also specify by device node
+#   - example: "/dev/input/event5" will match any device with that device node
+#   - example: "event5" will also match any device with device node "event5" in the path
 
 # list of devices to enumerate as ATI X10 RF remotes
 ATIX10_GIZMOS = ["x10 wireless technology"]
