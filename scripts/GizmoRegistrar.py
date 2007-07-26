@@ -144,16 +144,21 @@ class GizmoRegistrar:
 	def __checkDeviceType(self, DeviceTypes):
 		""" check a device type """
 		
+		Result = False
 		for i in DeviceTypes:
 			# see if the device descrption matches
-			if self.Device.DeviceName.lower().find(i) > -1:
-				if i[0] == "!":
+			NegativeMatch = False
+			if i[0] == "!":
+				NegativeMatch = True
+				i = i[1 : len(i)]
+			if self.Device.DeviceName.lower().find(i.lower()) > -1:
+				if NegativeMatch:
 					return False
 				else:
-					return True
+					Result = True
 			# see if they specified by device node
-			elif self.Device.FileName.lower().find(i) > -1:
-				return True
+			elif self.Device.FileName.lower().find(i.lower()) > -1:
+				Result = True
 			else:
 				# check for venfor / product IDs
 				cPos =  i.find(":")
@@ -161,9 +166,8 @@ class GizmoRegistrar:
 					Vendor = i[0 : cPos]
 					Product = i[cPos + 1 : len(i)]
 					if Vendor == str(hex(self.Device.DeviceIDVendor)) and Product == str(hex(self.Device.DeviceIDProduct)):
-						return True
-				
-		return False
+						Result = True
+		return Result
 		
 	def __setDeviceType(self):
 		"""
