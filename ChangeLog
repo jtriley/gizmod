@@ -3,6 +3,7 @@
 ----------------------------------------
 	- Add ability to specify devices by product and vendor IDs
 	- Add ability to specify devices by device node
+	- Add ability to specify negative device matches (! operator)
 
 ----------------------------------------
 -- v 3.3

@@ -57,6 +57,9 @@ This file contains defitions for what device strings get claimed as which device
 # - you can also specify by device node
 #   - example: "/dev/input/event5" will match any device with that device node
 #   - example: "event5" will also match any device with device node "event5" in the path
+# - you can also specify devices that will NOT match
+#   - example: ["mouse", "!mouse emulation"] will match any device with a description
+#     containing "mouse", but NOT "mouse emulation"
 
 # list of devices to enumerate as ATI X10 RF remotes
 ATIX10_GIZMOS = ["x10 wireless technology"]
@@ -70,7 +73,7 @@ ATIX10_GIZMOS = ["x10 wireless technology"]
 KEYBOARD_GIZMOS = ["keyboard"]
 
 # List of devices to enumerate as mice
-MOUSE_GIZMOS = ["mouse", "trackball", "touchpad"]
+MOUSE_GIZMOS = ["mouse", "trackball", "touchpad", "!Macintosh mouse button emulation"]
 
 # list of devices to enumerate as ATI X10 RF remotes
 LIRC_GIZMOS = ["lirc"]

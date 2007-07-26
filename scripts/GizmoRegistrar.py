@@ -147,7 +147,10 @@ class GizmoRegistrar:
 		for i in DeviceTypes:
 			# see if the device descrption matches
 			if self.Device.DeviceName.lower().find(i) > -1:
-				return True
+				if i[0] == "!":
+					return False
+				else:
+					return True
 			# see if they specified by device node
 			elif self.Device.FileName.lower().find(i) > -1:
 				return True
