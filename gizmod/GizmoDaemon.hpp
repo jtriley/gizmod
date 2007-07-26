@@ -95,6 +95,7 @@ public:
 	void				initGizmod();			///< Initialize GizmoDaemon Evolution
 	bool				initialize(int argc, char ** argv); ///< generic init stuff, command line, etc
 	void 				printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3); ///< Print a nice looking init string
+	void 				printNiceScriptRegister(int Width, std::string Text1, std::string Text2, std::string Text3, std::string Text4, std::string Text5); ///< Print a nice looking register string
 	void				signalShutdown();		///< Shutdown gizmod
 		
 	// construction / deconstruction

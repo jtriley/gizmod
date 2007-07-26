@@ -388,6 +388,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 		.def("getVersion", &GizmoDaemon::getVersion)
 		.add_property("Version", &GizmoDaemon::getVersion)
 		.def("printNiceScriptInit", &GizmoDaemon::printNiceScriptInit)
+		.def("printNiceScriptRegister", &GizmoDaemon::printNiceScriptRegister)
 		.def("signalShutdown", &GizmoDaemon::signalShutdown)
 		;
 			
@@ -1612,7 +1613,7 @@ void GizmoDaemon::loadUserScriptsFunctor(std::string UserScript) {
 void GizmoDaemon::printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3) {
 	replace_all(Text1, "\n", ""); 
 	replace_all(Text2, "\n", ""); 
-	replace_all(Text2, "\n", "");
+	replace_all(Text3, "\n", "");
 	trim(Text1); 
 	trim(Text2); 
 	trim(Text3);
@@ -1632,6 +1633,53 @@ void GizmoDaemon::printNiceScriptInit(int Width, std::string Text1, std::string 
 		cout << " - " << Text2;
 	if (Text3 != "")
 		cout << " [" << Text3 << "]";
+	cout << endl;
+}
+
+/**
+ * \brief  Scripts can call this to print a nice looking register string
+ * \param  Width Placement positions
+ * \param  Text1 Text field 1
+ * \param  Text2 Text field 2
+ * \param  Text3 Text field 3
+ * \param  Text4 Text field 4
+ * \param  Text5 Text field 5
+ */
+void GizmoDaemon::printNiceScriptRegister(int Width, std::string Text1, std::string Text2, std::string Text3, std::string Text4, std::string Text5) {
+	replace_all(Text1, "\n", ""); 
+	replace_all(Text2, "\n", ""); 
+	replace_all(Text3, "\n", "");
+	replace_all(Text4, "\n", ""); 
+	replace_all(Text5, "\n", "");
+	trim(Text1); 
+	trim(Text2); 
+	trim(Text3);
+	trim(Text4);
+	trim(Text5);
+	switch (Width) {
+	case 0:
+		Width = 12;
+		break;
+	case 1:
+		Width = 22;
+		break;
+	}
+	int StartPos = Width - Text1.length();
+	for (int lp = 0; lp < StartPos; lp ++)
+		cout << " ";
+	cout << Text1;
+	if (Text2 != "")
+		cout << " - " << Text2;
+	if (Text3 != "") {
+		size_t lastSPos = Text3.rfind("/");
+		if (lastSPos != string::npos)
+			Text3 = Text3.substr(lastSPos + 1);
+		cout << " [" << Text3 << "]";
+	}
+	if ( (Text4 != "") && (Text4 != "-0x1") && (Text4 != "0xffff") )
+		cout << " vId: " << Text4;
+	if ( (Text4 != "") && (Text5 != "-0x1") && (Text5 != "0xffff") )
+		cout << " pId: " << Text5;
 	cout << endl;
 }
 

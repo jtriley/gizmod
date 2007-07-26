@@ -48,14 +48,26 @@ VERSION_REQUIRED = 3.4
 This file contains defitions for what device strings get claimed as which devices
 """
 
+# note all of the GIZMOS defines have the following properties:
+# - they matches against the product description as seen when gizmod starts up
+# - you can also put combinations of vendor / product ID codes in here
+#   - example: "keyboard" will match any device with keyboard in its description
+#   - example: "0x303:0x909" will math any device with Vendor ID: 0x303 
+#     and Product ID: 0x909
+
 # list of devices to enumerate as ATI X10 RF remotes
 ATIX10_GIZMOS = ["x10 wireless technology"]
 
 # List of devices to enumerate as keyboards
+# this matches against the product description as seen when gizmod starts up
+# note that you can also put combinations of vendor / product ID codes in here
+#   - example: "keyboard" will match any device with keyboard in its description
+#   - example: "0x303:0x909" will math any device with Vendor ID: 0x303 
+#     and Product ID: 0x909
 KEYBOARD_GIZMOS = ["keyboard"]
 
 # List of devices to enumerate as mice
-MOUSE_GIZMOS = ["mouse", "trackball", "touchpad", "logitech usb receiver"]
+MOUSE_GIZMOS = ["mouse", "trackball", "touchpad"]
 
 # list of devices to enumerate as ATI X10 RF remotes
 LIRC_GIZMOS = ["lirc"]

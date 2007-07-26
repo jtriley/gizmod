@@ -77,24 +77,24 @@ class GizmoRegistrar:
 		"""
 		
 		if self.DeviceType == DeviceType.Keyboard:
-			Gizmod.printNiceScriptInit(0, "Keyboard", self.Device.DeviceName, self.Device.FileName)
+			Gizmod.printNiceScriptRegister(0, "Keyboard", self.Device.DeviceName, self.Device.FileName, hex((self.Device.DeviceIDVendor)), hex((self.Device.DeviceIDProduct)))
 			Gizmod.Keyboards.append(self.Device)
 		elif self.DeviceType == DeviceType.Mouse:
-			Gizmod.printNiceScriptInit(0, "Mouse", self.Device.DeviceName, self.Device.FileName)
+			Gizmod.printNiceScriptRegister(0, "Mouse", self.Device.DeviceName, self.Device.FileName, hex((self.Device.DeviceIDVendor)), hex((self.Device.DeviceIDProduct)))
 			Gizmod.Mice.append(self.Device)
 		elif self.DeviceType == DeviceType.Powermate:
-			Gizmod.printNiceScriptInit(0, "Powermate", self.Device.DeviceName, self.Device.FileName)
+			Gizmod.printNiceScriptRegister(0, "Powermate", self.Device.DeviceName, self.Device.FileName, hex((self.Device.DeviceIDVendor)), hex((self.Device.DeviceIDProduct)))
 			Gizmod.Powermates.append(self.Device)
 			self.Device.setRotateSensitivity(POWERMATE_ROTATE_SENSITIVITY)
 		elif self.DeviceType == DeviceType.ATIX10:
-			Gizmod.printNiceScriptInit(0, "ATI X10", self.Device.DeviceName, self.Device.FileName)
+			Gizmod.printNiceScriptRegister(0, "ATI X10", self.Device.DeviceName, self.Device.FileName, hex((self.Device.DeviceIDVendor)), hex((self.Device.DeviceIDProduct)))
 			Gizmod.ATIX10Remotes.append(self.Device)
 			# set exlusive mode
 			self.Device.grabExclusiveAccess(True)
 		elif self.DeviceType == DeviceType.LIRC:
-			Gizmod.printNiceScriptInit(0, "LIRC", self.Device.DeviceName, self.Device.FileName)
+			Gizmod.printNiceScriptRegister(0, "LIRC", self.Device.DeviceName, self.Device.FileName, hex((self.Device.DeviceIDVendor)), hex((self.Device.DeviceIDProduct)))
 		else:
-			Gizmod.printNiceScriptInit(0, "Standard", self.Device.DeviceName, self.Device.FileName)
+			Gizmod.printNiceScriptRegister(0, "Standard", self.Device.DeviceName, self.Device.FileName, hex((self.Device.DeviceIDVendor)), hex((self.Device.DeviceIDProduct)))
 
 	def handleDeviceRemoval(self):
 		"""
@@ -141,20 +141,35 @@ class GizmoRegistrar:
 		self.DeviceType = "Unknown"
 		self.__setDeviceType()
 		
+	def __checkDeviceType(self, DeviceTypes):
+		""" check a device type """
+		
+		for i in DeviceTypes:
+			if self.Device.DeviceName.lower().find(i) > -1:
+				return True
+			else:
+				cPos =  i.find(":")
+				if cPos > -1:
+					Vendor = i[0 : cPos]
+					Product = i[cPos + 1 : len(i)]
+					if Vendor == str(hex(self.Device.DeviceIDVendor)) and Product == str(hex(self.Device.DeviceIDProduct)):
+						return True
+		return False
+		
 	def __setDeviceType(self):
 		"""
 		Set the device type
 		"""
-
-		if [i for i in KEYBOARD_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+		
+		if self.__checkDeviceType(KEYBOARD_GIZMOS):	
 			self.DeviceType = DeviceType.Keyboard
-		elif [i for i in MOUSE_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+		elif self.__checkDeviceType(MOUSE_GIZMOS):
 			self.DeviceType = DeviceType.Mouse
-		elif [i for i in POWERMATE_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+		elif self.__checkDeviceType(POWERMATE_GIZMOS):
 			self.DeviceType = DeviceType.Powermate
-		elif [i for i in ATIX10_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+		elif self.__checkDeviceType(ATIX10_GIZMOS):
 			self.DeviceType = DeviceType.ATIX10
-		elif [i for i in LIRC_GIZMOS if self.Device.DeviceName.lower().find(i) > -1]:
+		elif self.__checkDeviceType(LIRC_GIZMOS):
 			self.DeviceType = DeviceType.LIRC
 		else:
 			self.DeviceType = DeviceType.Standard
