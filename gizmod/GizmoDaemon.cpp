@@ -1059,7 +1059,7 @@ int GizmoDaemon::getGizmoClassID(GizmoClass Class) {
  * \brief  Get the program's propers
  */
 string GizmoDaemon::getProps() {
-	return "\nGizmoDaemon v" VERSION " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n-----------\n";
+	return "\nGizmoDaemon v" VERSION " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n=---------=\n";
 }
 
 /**
