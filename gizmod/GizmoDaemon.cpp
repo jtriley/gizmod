@@ -27,6 +27,7 @@
 */
 
 #include "GizmoDaemon.hpp"
+#include "GizmoDaemonDefs.hpp"
 #include "../libGizmod/GizmodThread.hpp"
 #include "../libGizmod/GizmodTimer.hpp"
 #include "../libGizmod/GizmoEventATIX10.hpp"
