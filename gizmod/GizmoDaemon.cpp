@@ -83,13 +83,13 @@ using namespace H;
  * \def    CONFIG_FILE
  * \brief  The default path of the config file
  */
-#define CONFIG_FILE		PACKAGE_NAME ".conf"
+#define CONFIG_FILE		PACKAGE ".conf"
 
 /** 
  * \def    SCRIPT_DIR
  * \brief  The default path of the config file
  */
-#define SCRIPT_DIR		PACKAGE_SYSCONFDIR "/gizmod/"
+#define SCRIPT_DIR		SYSCONFDIR "/gizmod/"
 
 /** 
  * \def    HOME_SCRIPT_DIR
@@ -101,7 +101,7 @@ using namespace H;
  * \def    CONFIG_FILE_PATH
  * \brief  The default full path of the config file
  */
-#define CONFIG_FILE_PATH	HOME_SCRIPT_DIR PACKAGE_NAME ".conf"
+#define CONFIG_FILE_PATH	HOME_SCRIPT_DIR PACKAGE ".conf"
 
 /** 
  * \def    USER_SCRIPT_DIR
@@ -1058,7 +1058,7 @@ int GizmoDaemon::getGizmoClassID(GizmoClass Class) {
  * \brief  Get the program's propers
  */
 string GizmoDaemon::getProps() {
-	return "\nGizmoDaemon v" PACKAGE_VERSION " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n-----------\n";
+	return "\nGizmoDaemon v" VERSION " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n-----------\n";
 }
 
 /**
@@ -2242,7 +2242,7 @@ void GizmoDaemon::setConfigDir() {
 		mConfigDir = HomeScriptDir;
 	} else {
 		mConfigDir = SCRIPT_DIR;
-		replace_all(mConfigDir, "${prefix}", PACKAGE_PREFIX);
+		replace_all(mConfigDir, "${prefix}", PREFIX);
 	}
 }
 
@@ -2250,7 +2250,7 @@ void GizmoDaemon::setConfigDir() {
  * \brief  Set the version information
  */
 void GizmoDaemon::setVersionInfo() {
-	string Version = PACKAGE_VERSION;
+	string Version = VERSION;
 	size_t cPos = Version.find(":");
 	if (cPos == string::npos) {
 		mVersionMajor = 0;
