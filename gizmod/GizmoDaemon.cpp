@@ -2253,6 +2253,8 @@ void GizmoDaemon::setConfigDir() {
 void GizmoDaemon::setVersionInfo() {
 	string Version = VERSION;
 	size_t cPos = Version.find(":");
+	if (cPos == string::npos)
+		cPos = Version.find(".");
 	if (cPos == string::npos) {
 		mVersionMajor = 0;
 		mVersionMinor = 0;
