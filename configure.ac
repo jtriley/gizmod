@@ -54,7 +54,7 @@ CFLAGS="$CFLAGS -fexceptions"
 if test "$with_boost" != "yes" ; then
 	AC_MSG_ERROR([You must install / configure with Boost (--with-boost)])
 fi
-CFLAGS="$CFLAGS $BOOST_CFLAGS"
+CFLAGS="$CFLAGS $BOOST_CPPFLAGS"
 
 #############################################################################
 ##
