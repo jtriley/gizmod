@@ -61,7 +61,7 @@ namespace H {
 class Average {
 public:
 	// public functions
-	void 				push(double Value);		///< Push a value
+	void  				push(double Value);		///< Push a value
 	double 				average();			///< Get the average
 	
 	// construct / deconstruction

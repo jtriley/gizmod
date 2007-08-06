@@ -51,6 +51,7 @@ subdirs(libH libGizmod gizmod visplugin)
 ##############
 
 message(STATUS "Installation Variables:
+	Build Type     (CMAKE_BUILD_TYPE):     ${CMAKE_BUILD_TYPE}
 	Install Prefix (CMAKE_INSTALL_PREFIX): ${CMAKE_INSTALL_PREFIX}
 	Data Dir       (DATA_INSTALL_DIR):     ${DATA_INSTALL_DIR}
 	Lib Dir        (LIB_INSTALL_DIR):      ${LIB_INSTALL_DIR}
