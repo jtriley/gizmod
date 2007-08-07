@@ -44,7 +44,7 @@ configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 # Sub-directories
 ##############
 
-subdirs(libH libGizmod gizmod visplugin)
+subdirs(libH libGizmod gizmod scripts visplugin)
 
 #################################
 # Information

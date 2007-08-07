@@ -10,14 +10,6 @@ fi
 echo "Copying to ../$PACKAGE-$1"
 cp -r . ../$PACKAGE-$1
 cd ../$PACKAGE-$1
-echo "Running Autogen"
-pwd
-sleep 3
-./autogen.sh
-echo "Configuring"
-grc ./configure --with-boost
-echo "Cleaning"
-make distclean
 echo "removing non-dist files"
 rm -rf *.kdev* autom4te.cache config.h.in~ documentation debug dependencies optimized valgrind HOWTO *.tag autogen.sh package.sh
 for remove in `find . -name \*\.svn` ; do

@@ -3,9 +3,3 @@ TODO:
 - macro recorder
 - script merge utility for when new gizmod versions get released
 - PyOSD support?
-
-BUGS:
-
-- Potential Segfault in GizmodThread because ScriptMutex can not be 
-  locked while in thread function.  Python Global Interpreter Lock 
-  functions don't appear to work in embedded environment.  No known fix.

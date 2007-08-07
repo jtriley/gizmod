@@ -1,3 +1,10 @@
-Gizmo Daemon -=- Copyright (c) 2007, Tim Burrell <tim.burrell@gmail.com>
+Gizmo Daemon -=- (c) 2007 Tim Burrell
+=----------= -=- [tim [dot] burrell [at] gmail [dot] com]
 
 http://gizmod.sourceforge.net
+
+This software is published under the Apache 2.0 Software License.  Any 
+application including code from this software must include a copy of 
+this NOTICE file.
+
+See the INSTALL file for more information about the Apache 2.0 License.

@@ -11,9 +11,10 @@ site.
 
 The basics are as follows:
 
+tar jxvf gizmod-X.x.tar.bz2
 mkdir build
 cd build
-cmake -D CMAKE_INSTALL_PREFIX=/usr ..
+cmake -D CMAKE_INSTALL_PREFIX=/usr ../gizmod-X.x
 make
 sudo make install
 

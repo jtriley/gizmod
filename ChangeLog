@@ -4,6 +4,9 @@
 	- Add ability to specify devices by product and vendor IDs
 	- Add ability to specify devices by device node
 	- Add ability to specify negative device matches (! operator)
+	- Switch to CMake from autotools
+	- Add initial suport for Logitech MOMO Racing Wheel
+		- Can mouse scroll via foot pedals
 
 ----------------------------------------
 -- v 3.3
