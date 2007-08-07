@@ -11,7 +11,7 @@ echo "Copying to ../$PACKAGE-$1"
 cp -r . ../$PACKAGE-$1
 cd ../$PACKAGE-$1
 echo "removing non-dist files"
-rm -rf *.kdev* autom4te.cache config.h.in~ documentation debug dependencies optimized valgrind HOWTO *.tag autogen.sh package.sh
+rm -rf *.kdev* documentation debug optimized valgrind *.tag package.sh
 for remove in `find . -name \*\.svn` ; do
 	rm -rf $remove
 done
