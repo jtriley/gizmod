@@ -14,10 +14,7 @@ find_package(Libvisual)
 
 #################################
 
-if (NOT LIBVISUAL_FOUND)
-      message(STATUS "NOT building libvisual plugin!")
-else (NOT LIBVISUAL_FOUND)
-      message(STATUS "Building libvisual plugin")
+if (LIBVISUAL_FOUND AND BUILD_VIS_PLUGIN)
 
 #################################
 # Compiler Switches
@@ -27,11 +24,12 @@ include_directories(
 	${includes} 
 	${CMAKE_BINARY_DIR}
 	${LIBVISUAL_INCLUDE_DIR}
-	${Boost_INCLUDE_DIRS}
+	${BOOST_INCLUDE_DIRS}
 	${PYTHON_INCLUDE_PATH}
 )
 
 add_definitions(
+	${BOOST_DEFINITIONS}
 	${LIBVISUAL_DEFINITIONS}
 )
 
@@ -50,6 +48,7 @@ add_library(actor_gizmod SHARED
 ##############
 
 link_directories(
+	${BOOST_LIBRARY_DIRS}
 	${GIZMOD_BINARY_DIR}/libH
 	${GIZMOD_BINARY_DIR}/libGizmod
 )
@@ -78,4 +77,8 @@ install(TARGETS actor_gizmod
 
 #################################
 
-endif (NOT LIBVISUAL_FOUND)
+else (LIBVISUAL_FOUND AND BUILD_VIS_PLUGIN)
+	if (BUILD_VIS_PLUGIN)
+		message(STATUS "WARNING: libvisual plugin requested, but libvisual NOT FOUND!\n   Not building libvisual plugin!")
+	endif (BUILD_VIS_PLUGIN)
+endif (LIBVISUAL_FOUND AND BUILD_VIS_PLUGIN)

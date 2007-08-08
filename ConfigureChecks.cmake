@@ -22,6 +22,21 @@ SET(PLUGINDIR ${PLUGIN_INSTALL_DIR})
 SET(SYSCONFDIR ${SYSCONF_INSTALL_DIR})
 
 #################################
+# Build libvisual plugin?
+##############
+
+# set default build type to release
+if (NOT BUILD_VIS_PLUGIN)
+	set(BUILD_VIS_PLUGIN True CACHE BOOLEAN TRUE FORCE)
+endif (NOT BUILD_VIS_PLUGIN)
+
+#################################
+# Boost
+##############
+
+find_package(Boost REQUIRED)
+
+#################################
 # Inotify
 ##############
 
@@ -34,3 +49,12 @@ check_function_exists(inotify_init	HAVE_INOTIFY_INIT)	# inotify
 if (NOT HAVE_INOTIFY_INIT)
 	message(FATAL_ERROR "You must have inotify_init!")
 endif (NOT HAVE_INOTIFY_INIT)
+
+#################################
+# Evdev
+##############
+
+check_include_file(linux/input.h	HAVE_INPUT_H)		# evdev
+if (NOT HAVE_INPUT_H)
+	message(FATAL_ERROR "You must have linux/input.h!")
+endif (NOT HAVE_INPUT_H)

@@ -16,7 +16,8 @@ set(APPLICATION_VERSION "3.4")
 # Preamble
 ##############
 
-# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is check$
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ 
+# is checked
 set(CMAKE_MODULE_PATH
   ${CMAKE_SOURCE_DIR}/cmake/Modules
 )
@@ -51,10 +52,11 @@ subdirs(libH libGizmod gizmod scripts visplugin)
 ##############
 
 message(STATUS "Installation Variables:
-	Build Type     (CMAKE_BUILD_TYPE):     ${CMAKE_BUILD_TYPE}
-	Install Prefix (CMAKE_INSTALL_PREFIX): ${CMAKE_INSTALL_PREFIX}
-	Data Dir       (DATA_INSTALL_DIR):     ${DATA_INSTALL_DIR}
-	Lib Dir        (LIB_INSTALL_DIR):      ${LIB_INSTALL_DIR}
-	Plugin Dir     (PLUGIN_INSTALL_DIR):   ${PLUGIN_INSTALL_DIR}
-	Config Dir     (SYSCONF_INSTALL_DIR):  ${SYSCONF_INSTALL_DIR}"
+   Build Type       (CMAKE_BUILD_TYPE):     ${CMAKE_BUILD_TYPE}
+   Install Prefix   (CMAKE_INSTALL_PREFIX): ${CMAKE_INSTALL_PREFIX}
+   Data Dir         (DATA_INSTALL_DIR):     ${DATA_INSTALL_DIR}
+   Lib Dir          (LIB_INSTALL_DIR):      ${LIB_INSTALL_DIR}
+   Plugin Dir       (PLUGIN_INSTALL_DIR):   ${PLUGIN_INSTALL_DIR}
+   Config Dir       (SYSCONF_INSTALL_DIR):  ${SYSCONF_INSTALL_DIR}
+   Build vis plugin (BUILD_VIS_PLUGIN):     ${BUILD_VIS_PLUGIN}"
 )
