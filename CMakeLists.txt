@@ -10,7 +10,10 @@ project(Gizmod)
 
 # global needed variables
 set(APPLICATION_NAME ${PROJECT_NAME})
-set(APPLICATION_VERSION "3.4")
+set(CPACK_PACKAGE_VERSION_MAJOR "3")
+set(CPACK_PACKAGE_VERSION_MINOR "4")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(APPLICATION_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
 
 #################################
 # Preamble
@@ -19,7 +22,7 @@ set(APPLICATION_VERSION "3.4")
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ 
 # is checked
 set(CMAKE_MODULE_PATH
-  ${CMAKE_SOURCE_DIR}/cmake/Modules
+	${CMAKE_SOURCE_DIR}/cmake/Modules
 )
 
 # set default build type to release
@@ -60,3 +63,34 @@ message(STATUS "Installation Variables:
    Config Dir       (SYSCONF_INSTALL_DIR):  ${SYSCONF_INSTALL_DIR}
    Build vis plugin (BUILD_VIS_PLUGIN):     ${BUILD_VIS_PLUGIN}"
 )
+
+#################################
+# Packing
+##############
+
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Gizmo Daemon")
+set(CPACK_PACKAGE_VENDOR "Gizmod")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+set(CPACK_PACKAGE_FILE_NAME "gizmod-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}-linux-i686")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "gizmod-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
+set(CPACK_GENERATOR "TGZ;TBZ2;ZIP")
+set(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
+set(CPACK_SOURCE_IGNORE_FILES "\\\\.svn/;/debug/;/optimized/;/documentation/;[a-z]*\\\\.kdev*;[a-z]*\\\\.tag;[a-z]*\\\\.pyc")
+if (WIN32 AND NOT UNIX)
+	# There is a bug in NSI that does not handle full unix paths properly. Make
+	# sure there is at least one set of four (4) backlasshes.
+	SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+	SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
+	SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} My Famous Project")
+	SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.my-project-home-page.org")
+	SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.my-personal-home-page.com")
+	SET(CPACK_NSIS_CONTACT "me@my-personal-home-page.com")
+	SET(CPACK_NSIS_MODIFY_PATH ON)
+else (WIN32 AND NOT UNIX)
+	set(CPACK_STRIP_FILES "gizmod/gizmod")
+	set(CPACK_SOURCE_STRIP_FILES "")
+endif (WIN32 AND NOT UNIX)
+set(CPACK_PACKAGE_EXECUTABLES "gizmod" "gizmod")
+include(CPack)
