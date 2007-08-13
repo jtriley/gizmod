@@ -58,3 +58,19 @@ check_include_file(linux/input.h	HAVE_INPUT_H)		# evdev
 if (NOT HAVE_INPUT_H)
 	message(FATAL_ERROR "You must have linux/input.h!")
 endif (NOT HAVE_INPUT_H)
+
+#################################
+# openpty / forkpty
+##############
+
+#set(CMAKE_REQUIRED_LIBRARIES util) 
+check_function_exists(openpty		HAVE_OPENPTY)		# openpty
+if (NOT HAVE_OPENPTY)
+	check_library_exists(util openpty "" HAVE_LIBUTIL)
+	if (HAVE_LIBUTIL)
+		set(HAVE_OPENPTY True)
+		set(LIBUTIL_LIBRARIES "util")
+	else (HAVE_LIBUTIL)
+		message(FATAL_ERROR "You must have openpty in libutil!")
+	endif (HAVE_LIBUTIL)
+endif (NOT HAVE_OPENPTY)

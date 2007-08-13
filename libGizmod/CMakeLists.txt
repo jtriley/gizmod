@@ -100,6 +100,7 @@ target_link_libraries(Gizmod
 	${PYTHON_LIBRARIES}
 	${ASOUND_LIBRARY}
 	${X11_LIBRARIES}
+	${LIBUTIL_LIBRARIES}
 )
 
 #################################

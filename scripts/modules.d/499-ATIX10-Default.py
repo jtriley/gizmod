@@ -76,9 +76,18 @@ class ATIX10Default(GizmoScriptDefault):
 		   	if Event.Code == GizmoKey.KEY_WWW:
 	   			subprocess.Popen(["firefox", "http://gizmod.sf.net"])
 		   		return True
-		   	elif Event.Code == GizmoKey.KEY_BOOKMARKS:
-		   		self.AltTabber.doAltTab()
-		   		return True
+			elif Event.Code == GizmoKey.KEY_A:
+				subprocess.Popen(["amarok"])
+				return True
+			elif Event.Code == GizmoKey.KEY_DVD:
+				subprocess.Popen(["xine", "-f", "--no-splash", "dvd:/"])
+				return True
+			elif Event.Code == GizmoKey.KEY_POWER:
+				Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_F4, [GizmoKey.KEY_RIGHTALT])
+				return True
+			elif Event.Code == GizmoKey.KEY_BOOKMARKS:
+				self.AltTabber.doAltTab()
+				return True
 		   	elif Event.Code == GizmoKey.KEY_VOLUMEUP:
 	   			Gizmod.DefaultMixerVolume.VolumePlayback = Gizmod.DefaultMixerVolume.VolumePlayback + 1
 		   		return True
