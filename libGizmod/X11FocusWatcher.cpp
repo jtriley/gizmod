@@ -552,8 +552,8 @@ void X11FocusWatcher::threadProc() {
 			if (mCurrentWindow == event.xany.window)
 				break;
 			X11FocusEvent Event = createFocusEvent(event.xany.window, X11FOCUSEVENT_IN);
+			mCurrentWindow = event.xany.window;
 			if ( (!Event.isNull()) && (Event != mLastEventIn) ) {
-				mCurrentWindow = event.xany.window;
 				onFocusIn(Event);
 				mLastEventIn = Event;
 			}
