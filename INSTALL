@@ -14,7 +14,7 @@ The basics are as follows:
 tar jxvf gizmod-X.x.tar.bz2
 mkdir build
 cd build
-cmake -D CMAKE_INSTALL_PREFIX=/usr ../gizmod-X.x
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc ../gizmod-X.x
 make
 sudo make install
 
