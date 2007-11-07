@@ -28,7 +28,7 @@ Dependencies:
 -------------
 
 Gizmo Daemon depends on the Linux Kernel's event input system, X11, 
-ALSA, boost, and Python in order to be compiled.  Note that compiling 
+ALSA, Boost, and Python in order to be compiled.  Note that compiling 
 from source means you need to have the development packages installed.
 
 Installation:
@@ -51,11 +51,13 @@ Installation:
 	   USB support --->
 	      <M> Griffin PowerMate and Contour Jog support
 
+- Install CMake.  http://cmake.org
+
 - Install the Python scripting language via your distributions package management
   system (Note: be sure to install the dev packages too!).  Or download and 
   install from http://python.org.
 
-- Install boost.  http://boost.org
+- Install Boost.  http://boost.org
 
 - If you wish to use Gizmo Daemon's libVisual support you should 
   have it installed prior to compilation.
@@ -65,10 +67,12 @@ Installation:
 - Unpack, and install:
 
 	tar jxvf gizmod-version.tar.bz2
-	CFLAGS="-O2" CXXFLAGS="-O2" ./configure --prefix=/usr \
-		--sysconfdir=/etc --with-boost
+	cd gizmod-version
+	mkdir build
+	cd build
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc ..
 	make
-	make install
+	sudo make install
 	
 - Note that the configuration files are stored in: /etc/gizmod
 
