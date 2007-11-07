@@ -3,7 +3,7 @@
 #*************************************************************************
 #*** 
 #*** GizmoDaemon Config Script
-#*** 	Powermate Beryl config
+#*** 	Powermate Compiz config
 #***
 #*****************************************
   #*****************************************
@@ -39,12 +39,12 @@ VERSION_NEEDED = 3.3
 INTERESTED_CLASSES = [GizmoEventClass.Powermate]
 
 ############################
-# PowermateBeryl Class definition
+# PowermateCompiz Class definition
 ##########################
 
-class PowermateBeryl(GizmoScriptDefault):
+class PowermateCompiz(GizmoScriptDefault):
 	"""
-	Beryl Powermate Event Mapping
+	Compiz Powermate Event Mapping
 	"""
 	
 	############################
@@ -112,8 +112,8 @@ class PowermateBeryl(GizmoScriptDefault):
 		self.Unfolded = False
 
 ############################
-# PowermateBeryl class end
+# PowermateCompiz class end
 ##########################
 
 # register the user script
-PowermateBeryl()
+PowermateCompiz()

@@ -82,11 +82,11 @@ class KeyboardDefault(GizmoScriptDefault):
    			Gizmod.toggleMuteAllCards()
 	   		return True
 	   	elif Event.Code == GizmoKey.KEY_NEXTSONG:
-	   		# ctrl alt right (switch workspace in beryl)
+	   		# ctrl alt right (switch workspace in compiz)
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHT, [GizmoKey.KEY_LEFTCTRL, GizmoKey.KEY_LEFTALT])
 	   		return True
 	   	elif Event.Code == GizmoKey.KEY_PREVIOUSSONG:
-	   		# ctrl alt left (switch workspace in beryl)
+	   		# ctrl alt left (switch workspace in compiz)
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFT, [GizmoKey.KEY_LEFTCTRL, GizmoKey.KEY_LEFTALT])
 	   		return True
 	   	else:
