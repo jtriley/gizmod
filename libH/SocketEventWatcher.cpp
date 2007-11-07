@@ -43,13 +43,13 @@ using namespace std;
 
 /**
  * \brief Default Constructor
- */
+**/
 SocketEventWatcher::SocketEventWatcher() {
 }
 
 /**
  * \brief Destructor
- */
+**/
 SocketEventWatcher::~SocketEventWatcher() {
 }
 

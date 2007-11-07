@@ -52,7 +52,7 @@ namespace Gizmod {
 /**
  * \enum   ProcStatField
  * \brief  Enumeration to match /proc/stat
- */
+**/
 typedef enum {
 	CPUUSAGE_USER		= 0,
 	CPUUSAGE_NICE 		= 1,
@@ -72,7 +72,7 @@ typedef enum {
 /**
  * \class  CPUUsageInfo
  * \brief  Structure that holds info about each CPU
- */
+**/
 class CPUUsageInfo {
 friend class CPUUsage;
 public:
@@ -109,7 +109,7 @@ private:
 /**
  * \class CPUUsage
  * \brief CPU Usage monitor
- */
+**/
 class CPUUsage {
 public:
 	// public functions
@@ -135,7 +135,7 @@ private:
 	
 	/**
 	 * Thread callback procedure struct
-	 */
+	**/
 	struct CPUUsageThreadProc {
 		CPUUsageThreadProc(CPUUsage * pCPUUsage) : mpCPUUsage(pCPUUsage) {
 			mpCPUUsage->mThreading = false;

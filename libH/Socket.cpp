@@ -51,31 +51,31 @@ using namespace std;
 /**
  * \def    DEFAULT_BACKLOG
  * \brief  Default backlog setting for listen sockets
- */
+**/
 #define DEFAULT_BACKLOG	64
 
 /**
  * \def    PACKET_SIZE
  * \brief  Size of the buffer when reading from a socket
- */
+**/
 #define PACKET_SIZE	4096
 
 /**
  * \def    POLL_TIMEOUT
  * \brief  Poll timeout in milliseconds
- */
+**/
 #define POLL_TIMEOUT	1000
 
 /**
  * \def    STOP_CODON
  * \brief  Message stop signififer
- */
+**/
 #define STOP_CODON	"\255"
 
 /**
  * \def    STOP_CODON_CHAR
  * \brief  Message stop signififer
- */
+**/
 #define STOP_CODON_CHAR	'\255'
 
 ////////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ using namespace std;
 
 /**
  * \brief Default Constructor
- */
+**/
 Socket::Socket() : mThreadProcRead(this) {
 	mpEventWatcher = NULL;
 	init();
@@ -92,7 +92,7 @@ Socket::Socket() : mThreadProcRead(this) {
 
 /**
  * \brief Default Constructor
- */
+**/
 Socket::Socket(Socket const & InitFrom) : mThreadProcRead(this) {
 	mpEventWatcher = NULL;
 	init();
@@ -102,7 +102,7 @@ Socket::Socket(Socket const & InitFrom) : mThreadProcRead(this) {
 
 /**
  * \brief Destructor
- */
+**/
 Socket::~Socket() {
 	shutdown();
 }
@@ -116,7 +116,7 @@ Socket::~Socket() {
  * \return The new socket
  *
  * Note: blocking
- */
+**/
 boost::shared_ptr<Socket> Socket::accept() {
 	// error checking
 	if (mSocket == SOCKET_ERROR)
@@ -155,7 +155,7 @@ boost::shared_ptr<Socket> Socket::accept() {
 
 /**
  * \brief  Add to the message buffer
- */
+**/
 void Socket::addToMessageBuffer(char * Data, int BufLen) {
 	if (!mMessageMode)
 		return;
@@ -192,7 +192,7 @@ void Socket::addToMessageBuffer(char * Data, int BufLen) {
 /**
  * \brief  Bind a socket to a port
  * \param  Port The port to bind to
- */
+**/
 void Socket::bind(int Port) {
 	mPort = Port;
 	memset(&mSockAddr, 0, sizeof(mSockAddr));
@@ -200,14 +200,14 @@ void Socket::bind(int Port) {
 	mSockAddr.sin_port = htons(mPort);
 	mSockAddr.sin_addr.s_addr = INADDR_ANY;
 	
-	/* bind the socket to the newly formed address */
+	/* bind the socket to the newly formed address**/
 	if (::bind(mSocket, (struct sockaddr *) &mSockAddr, sizeof(mSockAddr)))
 		throw SocketException("Failed to Bind to Port [" + lexical_cast<string>(mPort) + "]", __FILE__, __FUNCTION__, __LINE__);
 }
 
 /**
  * \brief  Close the socket
- */
+**/
 void Socket::closeSocket() {
 	if (mSocket != SOCKET_ERROR) {
 		#ifndef WIN32
@@ -233,7 +233,7 @@ void Socket::closeSocket() {
  * \brief  Connect to a server on Port at Host
  * \param  Host The server to connect to
  * \param  Port The port to connect to
- */
+**/
 void Socket::connect(std::string Host, int Port) {
 	// error checking
 	if (mSocket == SOCKET_ERROR)
@@ -276,7 +276,7 @@ void Socket::connect(std::string Host, int Port) {
 
 /**
  * \brief  Create a socket
- */
+**/
 void Socket::createSocket(SocketDomain Domain, SocketType Type) {
 	mDomain = Domain;
 	mType = Type;
@@ -295,7 +295,7 @@ void Socket::createSocket(SocketDomain Domain, SocketType Type) {
 /**
  * \brief  Get the socket's address / hostname
  * \return The address / hostname
- */
+**/
 std::string Socket::getAddress() const {
 	return mAddress;
 }
@@ -303,7 +303,7 @@ std::string Socket::getAddress() const {
 /**
  * \brief  Get the old socket (what it was before disconnect)
  * \return The old socket
- */
+**/
 int Socket::getOldSocket() const {
 	return mOldSocket;
 }
@@ -311,14 +311,14 @@ int Socket::getOldSocket() const {
 /**
  * \brief  Get the socket
  * \return The socket
- */
+**/
 int Socket::getSocket() const {
 	return mSocket;
 }
 
 /**
  * \brief Handle a socket disconnect
- */
+**/
 void Socket::handleSocketDisconnect() {
 	closeSocket();
 	if (mpEventWatcher)
@@ -327,7 +327,7 @@ void Socket::handleSocketDisconnect() {
 
 /**
  * \brief Handle a socket read
- */
+**/
 void Socket::handleSocketRead(DynamicBuffer<char> & ReadBuffer) {
 	if (mpEventWatcher)
 		mpEventWatcher->onSocketRead(*this, ReadBuffer);
@@ -335,7 +335,7 @@ void Socket::handleSocketRead(DynamicBuffer<char> & ReadBuffer) {
 
 /**
  * \brief  Init the socket
- */
+**/
 void Socket::init() {
 	mBacklog = DEFAULT_BACKLOG;
 	mDomain = SOCKET_INTERNET;
@@ -351,14 +351,14 @@ void Socket::init() {
 /**
  * \brief  Test if a socket is valid or not
  * \return True if valid
- */
+**/
 bool Socket::isSocketValid() const {
 	return (mSocket != SOCKET_ERROR);
 }
 
 /**
  * \brief  Listen on a socket
- */
+**/
 void Socket::listen() {
 	if (::listen(mSocket, mBacklog) == -1)
 		throw SocketException(string("Failed to Listen on Socket -- ") + strerror(errno), __FILE__, __FUNCTION__, __LINE__);
@@ -366,7 +366,7 @@ void Socket::listen() {
 
 /**
  * \brief  Process events on the socket
- */
+**/
 void Socket::processEvents() {
 	// initialize the read thread
 	thread thrd(mThreadProcRead);
@@ -376,7 +376,7 @@ void Socket::processEvents() {
  * \brief  Read from a socket
  * \param  Buffer The buffer to read into
  * \param  BufLen The length of the buffer
- */
+**/
 int Socket::read(char * Buffer, int BufLen) {
 	// do the receiving
 	int ret;
@@ -400,7 +400,7 @@ int Socket::read(char * Buffer, int BufLen) {
  * \brief  Read from the socket, info a buffer
  * \param  Buffer The buffer to read into
  * \return Number of bytes read from socket
- */
+**/
 int Socket::readIntoBuffer(DynamicBuffer<char> & Buffer) {
 	char Packet[PACKET_SIZE];
 	int TotalBytesRead = 0;
@@ -439,7 +439,7 @@ int Socket::readIntoBuffer(DynamicBuffer<char> & Buffer) {
 
 /**
  * \brief  Set the socket's address from internal structures
- */
+**/
 void Socket::setAddress() {
 	mAddress = inet_ntoa(mSockAddr.sin_addr);
 }
@@ -447,7 +447,7 @@ void Socket::setAddress() {
 /**
  * \brief  Set the event watcher
  * \param  pWatcher The event watcher
- */
+**/
 void Socket::setEventWatcher(SocketEventWatcher * pWatcher) {
 	mpEventWatcher = pWatcher;
 }
@@ -455,7 +455,7 @@ void Socket::setEventWatcher(SocketEventWatcher * pWatcher) {
 /**
  * \brief  Enable automatic message handling mode?
  * \param  Enabled True if message mode should be enabled
- */
+**/
 void Socket::setMessageMode(bool Enabled) {
 	mMessageMode = Enabled;
 }
@@ -463,7 +463,7 @@ void Socket::setMessageMode(bool Enabled) {
 /**
  * \brief  Set the current socket to another socket
  * \param  SocketToBecome The socket to copy from
- */
+**/
 void Socket::setTo(Socket const & SocketToBecome) {
 	mProtocol = SocketToBecome.mProtocol;
 	mDomain = SocketToBecome.mDomain;
@@ -479,14 +479,14 @@ void Socket::setTo(Socket const & SocketToBecome) {
 
 /**
  * \brief  Shutdown all socket processing
- */
+**/
 void Socket::shutdown() {
 	mProcessing = false;
 }
 
 /**
  * \brief  Thread procedure for reading from the socket
- */
+**/
 void Socket::threadProcRead() {
 	// set up the poll structure
 	struct pollfd PollFD;
@@ -518,7 +518,7 @@ void Socket::threadProcRead() {
  * \param  Buffer The data to send
  * \param  BufLen Length of data to send
  * \return Bytes sent
- */
+**/
 int Socket::write(const char * Buffer, int BufLen) {
 	#ifdef HAVE_OPENSSL
 	if (mSSLMode) {
@@ -548,7 +548,7 @@ int Socket::write(const char * Buffer, int BufLen) {
  * or else it throws an exception
  *
  * It also formats the message for easy decomposition by SocketServer
- */
+**/
 void Socket::writeMessage(std::string const & Message, bool FormatMessage) {
 	// format the message
 	string OutMessage = Message;

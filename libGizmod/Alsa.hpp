@@ -51,7 +51,7 @@
  * \brief     Gizmod namespace
  *
  * Gizmo Daemon Name Space
- */
+**/
 namespace Gizmod {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ namespace Gizmod {
  *
  * Note this creates 1 thread per sound card, and watches for mixer events
  * on all sound cards and all sound card elements when initted
- */
+**/
 class Alsa : public AlsaInterface { friend class AlsaMixer;
 public:	
 	// public functions

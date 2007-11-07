@@ -56,43 +56,43 @@ using namespace H;
 /**
  * \def   READ_BUF_SIZE 
  * \brief Default size of the read buffer for the automatic file reader
- */
+**/
 #define READ_BUF_SIZE		65536
 
 /**
  * \def   NOTIFY_EVENT_SIZE	
  * \brief Human friendly size of the inotify_event struct
- */
+**/
 #define NOTIFY_EVENT_SIZE	(sizeof(struct inotify_event))
 
 /**
  * \def   NOTIFY_READ_BUF_SIZE 
  * \brief Default size of the inotify read buffer for the automatic file reader
- */
+**/
 #define NOTIFY_READ_BUF_SIZE	1024 * (NOTIFY_EVENT_SIZE + 16)
 
 /**
  * \def   DEVICE_NAME_BUF_SIZE
  * \brief Default size of the device name buffer
- */
+**/
 #define DEVICE_NAME_BUF_SIZE	1024
 
 /**
  * \def   RETRY_FAIL_WAIT_NSECS
  * \brief Amount of nanoseconds to wait on an open of a new device before retrying
- */
+**/
 #define RETRY_FAIL_WAIT_NSECS	100000000
 
 /**
  * \def   MAX_RETRIES
  * \brief Maximum number of retries when opening a new device
- */
+**/
 #define MAX_RETRIES		5
 
 /**
  * \def    POLL_TIMEOUT
  * \brief  Poll timeout in milliseconds
- */
+**/
 #define POLL_TIMEOUT	1000
 
 ////////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ using namespace H;
 
 /**
  * \brief DeviceInfo Default Constructor
- */
+**/
 DeviceInfo::DeviceInfo() {
 	DeviceIDBusType = -1;
 	DeviceIDProduct = -1;
@@ -111,7 +111,7 @@ DeviceInfo::DeviceInfo() {
 
 /**
  * \brief DeviceInfo Init Constructor
- */
+**/
 DeviceInfo::DeviceInfo(std::string deviceName, std::string fileName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion, int fileDescriptor) {
 	DeviceName = deviceName;
 	FileName = fileName;
@@ -124,7 +124,7 @@ DeviceInfo::DeviceInfo(std::string deviceName, std::string fileName, int deviceI
 
 /**
  * \brief DeviceInfo Init Constructor
- */
+**/
 DeviceInfo::DeviceInfo(const DeviceInfo & DeviceInformation) {
 	DeviceName = DeviceInformation.DeviceName;
 	FileName = DeviceInformation.FileName;
@@ -137,13 +137,13 @@ DeviceInfo::DeviceInfo(const DeviceInfo & DeviceInformation) {
 
 /**
  * \brief DeviceInfo Destructor
- */
+**/
 DeviceInfo::~DeviceInfo() {
 }
 
 /**
  * \brief FileEventWatcher Default Constructor
- */
+**/
 FileEventWatcher::FileEventWatcher() {
 	mPolling = false;
 	if ((mInotifyFD = inotify_init()) < 0)
@@ -152,7 +152,7 @@ FileEventWatcher::FileEventWatcher() {
 
 /**
  * \brief FileEventWatcher Destructor
- */
+**/
 FileEventWatcher::~FileEventWatcher() {
 	removeAllWatchDescriptors();
 	if (mInotifyFD != -1)
@@ -161,7 +161,7 @@ FileEventWatcher::~FileEventWatcher() {
 
 /**
  * \brief FileWatchee Default Constructor
- */
+**/
 FileWatchee::FileWatchee() {
 	WatchType = WATCH_IN;
 	fd = -1;
@@ -170,7 +170,7 @@ FileWatchee::FileWatchee() {
 
 /**
  * \brief FileWatchee Init Constructor
- */
+**/
 FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short events, int fileDescriptor, int watchDescriptor, std::string deviceName, int deviceIDBusType, int deviceIDVendor, int deviceIDProduct, int deviceIDVersion) :
 	DeviceInfo(deviceName, fileName, deviceIDBusType, deviceIDVendor, deviceIDProduct, deviceIDVersion, fileDescriptor)
 {
@@ -186,7 +186,7 @@ FileWatchee::FileWatchee(std::string fileName, FileWatchType watchType, short ev
 
 /**
  * \brief FileWatchee Destructor
- */
+**/
 FileWatchee::~FileWatchee() {
 	if (fd > -1)
 		close(fd);
@@ -201,11 +201,13 @@ FileWatchee::~FileWatchee() {
  * \param FileName Absolute path of the file to watch
  * \param WatchType Type of watch to perform on the file
  * \param DefaultDeviceName Default device name if the device does not support having a name
- */
+**/
 boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string FileName, FileWatchType WatchType, std::string DefaultDeviceName) {
 	// make sure we're not already watching this file
 	shared_ptr<FileWatchee> pDupWatchee = getWatcheeByPath(FileName);
 	if (pDupWatchee) {
+		//if (H::Debug::testPrint(dbg0))
+		//	H::dbg0 << "Already Watching File [" << FileName << "]" << endl;
 		cdbg << "Already Watching File [" << FileName << "]" << endl;
 		return shared_ptr<FileWatchee>();
 	}
@@ -294,7 +296,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
  * \brief Add a unix socket to watch for events
  * \param FileName Absolute path of the file to watch
  * \param DeviceName Device name
- */
+**/
 boost::shared_ptr<FileWatchee> FileEventWatcher::addUnixSocketToWatch(std::string FileName, std::string DeviceName) {
 	// get mode mask
 	string	 	ModeString = "Read";
@@ -336,7 +338,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addUnixSocketToWatch(std::strin
 
 /**
  * \brief  Build the mPollFDs array from the list of watchees
- */
+**/
 void FileEventWatcher::buildPollFDArrayFromWatchees() {
 	// clear out the pollfsd
 	mPollFDs.clear();
@@ -355,7 +357,7 @@ void FileEventWatcher::buildPollFDArrayFromWatchees() {
 /**
  * \brief Functor for building the array of mPollFDs
  * \param pWatchee The Watchee
- */
+**/
 void FileEventWatcher::buildPollFDArrayFunctor(std::pair< int, boost::shared_ptr<FileWatchee> > WatcheePair) {
 	boost::shared_ptr<FileWatchee> pWatchee = WatcheePair.second;
 	if ( (!pWatchee) || (pWatchee->fd < 0) )
@@ -373,7 +375,7 @@ void FileEventWatcher::buildPollFDArrayFunctor(std::pair< int, boost::shared_ptr
  * \brief  Get the type of the file event
  * \param  Index The index of the file to check
  * \return Type of the event (FileWatchType)
- */
+**/
 FileWatchType FileEventWatcher::getType(int Index) {
 	if (mPollFDs[Index].revents & POLLIN)
 		return WATCH_IN;
@@ -389,7 +391,7 @@ FileWatchType FileEventWatcher::getType(int Index) {
  * \brief  Get a Watchee by its file descriptor
  * \param  fd File Desriptor of the desired watchee
  * \return The watchee (shared_ptr to FileWatchee)
- */
+**/
 boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByFileDescriptor(int fd) {
 	return mWatchees[fd];
 }
@@ -398,7 +400,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByFileDescriptor(int 
  * \brief  Get a Watchee by its file name
  * \param  FileName File name of watchee to get
  * \return The watchee (shared_ptr to FileWatchee)
- */
+**/
 boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByPath(std::string FileName) {
 	map< int, shared_ptr<FileWatchee> >::iterator iter;
 	for (iter = mWatchees.begin(); iter != mWatchees.end(); iter ++) {
@@ -419,7 +421,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByPath(std::string Fi
  * \brief  Get a Watchee by its watch descriptor
  * \param  wd Watch Desriptor of the desired watchee
  * \return The watchee (shared_ptr to FileWatchee)
- */
+**/
 boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByWatchDescriptor(int wd) {
 	return mWatchees[-wd];
 }
@@ -428,7 +430,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::getWatcheeByWatchDescriptor(int
  * \brief  Read the input event waiting on a file descriptor
  * \param  fd The file descriptor
  * \param  Buffer The buffer to place contents into
- */
+**/
 void FileEventWatcher::readFromFile(int fd, DynamicBuffer<char> & Buffer) {
 	char ReadBuffer[READ_BUF_SIZE];
 	ssize_t BytesRead;
@@ -442,7 +444,7 @@ void FileEventWatcher::readFromFile(int fd, DynamicBuffer<char> & Buffer) {
 /**
  * \brief Functor that checks for and handles events on a pollfd object
  * \param item The item to check and handle events for
- */
+**/
 void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 	if (item.fd == mInotifyFD) {
 		if (item.revents & POLLERR) {
@@ -543,7 +545,7 @@ void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
  * \param pWatchee The Watchee that triggered the event
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
- */
+**/
 void FileEventWatcher::onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	// override me
 }
@@ -553,7 +555,7 @@ void FileEventWatcher::onFileEventCreate(boost::shared_ptr<FileWatchee> pWatchee
  * \param pWatchee The Watchee that triggered the event
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
- */
+**/
 void FileEventWatcher::onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	// override me
 }
@@ -561,7 +563,7 @@ void FileEventWatcher::onFileEventDelete(boost::shared_ptr<FileWatchee> pWatchee
 /**
  * \brief Event triggered when a file is disconnected
  * \param pWatchee The Watchee that triggered the event
- */
+**/
 void FileEventWatcher::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWatchee) {
 	// override me
 }
@@ -570,7 +572,7 @@ void FileEventWatcher::onFileEventDisconnect(boost::shared_ptr<FileWatchee> pWat
  * \brief Event triggered when data is waiting on a device
  * \param pWatchee The Watchee that triggered the event
  * \param ReadBuffer The data that was waiting on the device
- */
+**/
 void FileEventWatcher::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer) {
 	// override me
 }
@@ -578,21 +580,21 @@ void FileEventWatcher::onFileEventRead(boost::shared_ptr<FileWatchee> pWatchee, 
 /**
  * \brief Event triggered when a new device is registered
  * \param pWatchee The Watchee that triggered the event
- */
+**/
 void FileEventWatcher::onFileEventRegister(boost::shared_ptr<FileWatchee> pWatchee) {
 	// override me
 }
 
 /**
  * \brief Event called when the class will begin watching for events (and blocking)
- */
+**/
 void FileEventWatcher::onFileEventWatchBegin() {
 	// override me
 }
 
 /**
  * \brief Event called when the class has ended watching for events (and done blocking)
- */
+**/
 void FileEventWatcher::onFileEventWatchEnd() {
 	// override me
 }
@@ -600,14 +602,14 @@ void FileEventWatcher::onFileEventWatchEnd() {
 /**
  * \brief Unregister a watch descriptor with inotify
  * \param wd The watch descriptor
- */
+**/
 void FileEventWatcher::removeWatchDescriptor(int wd) {
 	inotify_rm_watch(mInotifyFD, wd);
 }
 
 /**
  * \brief Remove all watch descriptors
- */
+**/
 void FileEventWatcher::removeAllWatchDescriptors() {
 	apply_func(mInotifyWDs, &FileEventWatcher::removeWatchDescriptor, this);
 }
@@ -615,7 +617,7 @@ void FileEventWatcher::removeAllWatchDescriptors() {
 /**
  * \brief Remove a watchee from the watch list
  * \param pWatchee The watchee to remove
- */
+**/
 void FileEventWatcher::removeWatchee(boost::shared_ptr<FileWatchee> pWatchee) {
 	if (!pWatchee)
 		return;
@@ -640,7 +642,7 @@ void FileEventWatcher::removeWatchee(boost::shared_ptr<FileWatchee> pWatchee) {
  * 
  * This does not interrupt a current call to poll, so watchForFileEvents will only
  * exit after this function is called, and then the next event is received
- */
+**/
 void FileEventWatcher::shutdown() {
 	mPolling = false;
 }
@@ -649,7 +651,7 @@ void FileEventWatcher::shutdown() {
  * \brief Watch for file events on already specified files
  *
  * Note: Blocking
- */
+**/
 void FileEventWatcher::watchForFileEvents() {
 	if (mPollFDs.size() == 0) {
 		cdbg << "FileEventWatcher :: watchForFileEvents -- No file to watch!" << endl;

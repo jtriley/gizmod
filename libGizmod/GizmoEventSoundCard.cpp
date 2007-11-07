@@ -46,7 +46,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoEventSoundCard Default Constructor
- */
+**/
 GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, bool IsRemote) : 
 	AlsaEvent(Event),
 	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD, IsRemote)
@@ -57,7 +57,7 @@ GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard 
 
 /**
  * \brief GizmoEventSoundCard Default Constructor
- */
+**/
 GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer, bool IsRemote) : 
 	AlsaEvent(Event),
 	GizmoEvent(GIZMO_EVENTCLASS_SOUNDCARD, IsRemote)
@@ -68,13 +68,13 @@ GizmoEventSoundCard::GizmoEventSoundCard(AlsaEvent const & Event, AlsaSoundCard 
 
 /**
  * \brief GizmoEventSoundCard Serialize Constructor
- */
+**/
 GizmoEventSoundCard::GizmoEventSoundCard() {
 }
 
 /**
  * \brief GizmoEventSoundCard Destructor
- */
+**/
 GizmoEventSoundCard::~GizmoEventSoundCard() {
 }
 
@@ -85,7 +85,7 @@ GizmoEventSoundCard::~GizmoEventSoundCard() {
 /**
  * \brief  Get the associated Mixer
  * \return The Mixer
- */
+**/
 AlsaMixer const * GizmoEventSoundCard::getMixer() {
 	return mpMixer;
 }
@@ -93,7 +93,7 @@ AlsaMixer const * GizmoEventSoundCard::getMixer() {
 /**
  * \brief  Get the associated SoundCard
  * \return The SoundCard
- */
+**/
 AlsaSoundCard const * GizmoEventSoundCard::getSoundCard() {
 	return mpSoundCard;
 }

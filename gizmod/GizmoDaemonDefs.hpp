@@ -42,7 +42,7 @@ using namespace Gizmod;
 /** 
  * \def    VERSION
  * \brief  Program's version
- */
+**/
 #ifndef VERSION
 #define VERSION		PACKAGE_VERSION
 #endif
@@ -50,7 +50,7 @@ using namespace Gizmod;
 /** 
  * \def    PREFIX
  * \brief  Program's install prefix
- */
+**/
 #ifndef PREFIX
 #define PREFIX		PACKAGE_PREFIX
 #endif
@@ -58,7 +58,7 @@ using namespace Gizmod;
 /** 
  * \def    SYSCONFDIR
  * \brief  System config dir
- */
+**/
 #ifndef SYSCONFDIR
 #define SYSCONFDIR	PACKAGE_SYSCONFDIR
 #endif

@@ -61,7 +61,7 @@ namespace H {
  * WATCH_IN    dictates that the file should only be watched for reads
  * WATCH_OUT   dictates that the file should only be watched for writes
  * WATCH_INOUT dictates that the file should be watched for reads and writes
- */
+**/
 typedef enum {
 	WATCH_INVALID = -1,
 	WATCH_IN,
@@ -75,7 +75,7 @@ typedef enum {
  *
  * WATCH_POLL     dictates that the file is a poll device
  * WATCH_INOTIFY  dictates that the file is an inotify device
- */
+**/
 typedef enum {
 	WATCH_POLL,
 	WATCH_INOTIFY
@@ -88,7 +88,7 @@ typedef enum {
 /**
  * \class DeviceInfo
  * \brief Structure to hold information about devices
- */
+**/
 class DeviceInfo {
 public:
 	// public member variables
@@ -128,7 +128,7 @@ private:
 /**
  * \class FileWatchee
  * \brief Structure to hold information about file watchees
- */
+**/
 class FileWatchee : public DeviceInfo {
 public:
 	// public member variables
@@ -161,7 +161,7 @@ public:
  * Also use the linux kernel's inotify event to get information about directory changes
  * (add / remove files, etc).  Unfortunately inotify doesn't work with event node updates
  * so poll is still required
- */
+**/
 class FileEventWatcher {
 public:
 	// public functions

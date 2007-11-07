@@ -58,7 +58,7 @@ namespace H {
  * \brief Main SignalHandler class
  *
  * This class provides an easy way for dealing with signals
- */
+**/
 class SignalHandler {
 public:
 	// Public Member Functions

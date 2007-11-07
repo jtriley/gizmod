@@ -62,7 +62,7 @@ namespace H {
 /**
  * \enum   SocketDomain
  * \brief  Domain of the socket
- */
+**/
 typedef enum {
 #ifndef WIN32
 	SOCKET_INTERNET 		= PF_INET,
@@ -80,7 +80,7 @@ typedef enum {
 /**
  * \enum   SocketType
  * \brief  Type of the socket
- */
+**/
 typedef enum {
 	SOCKET_STREAM 			= SOCK_STREAM,
 	SOCKET_DGRAM 			= SOCK_DGRAM,
@@ -92,7 +92,7 @@ typedef enum {
 /**
  * \enum   SocketProtocol
  * \brief  Protocol of the socket
- */
+**/
 typedef enum {
 	SOCKET_PROTO_TCP 		= IPPROTO_TCP,
 	SOCKET_PROTO_UDP	 	= IPPROTO_UDP
@@ -102,7 +102,7 @@ typedef enum {
 /**
  * \def    SOCKET_ERROR
  * \brief  Constant used to indicate a socket is in an error state
- */
+**/
 #ifndef SOCKET_ERROR
 	#define SOCKET_ERROR	-1
 #endif
@@ -116,7 +116,7 @@ typedef enum {
  * \brief Main Socket class
  *
  * This class represents an abstraction to the BSD socket interface
- */
+**/
 class Socket : public SocketInterface {
 public:
 	// Public Member Functions
@@ -173,7 +173,7 @@ protected:
 private:	
 	/**
 	 * Thread callback procedure struct
-	 */
+	**/
 	struct SocketReadThreadProc {
 		SocketReadThreadProc(Socket * pSocketRead) : mpSocketRead(pSocketRead) {
 			mpSocketRead->mThreading = false;

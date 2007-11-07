@@ -44,13 +44,13 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoLinuxInputEvent Default Constructor
- */
+**/
 GizmoLinuxInputEvent::GizmoLinuxInputEvent() {
 }
 
 /**
  * \brief GizmoLinuxInputEvent Init Constructor
- */
+**/
 GizmoLinuxInputEvent::GizmoLinuxInputEvent(struct input_event const & InputEvent) {
 	TimeStamp.Seconds = InputEvent.time.tv_sec;
 	TimeStamp.MicroSeconds = InputEvent.time.tv_usec;
@@ -63,7 +63,7 @@ GizmoLinuxInputEvent::GizmoLinuxInputEvent(struct input_event const & InputEvent
 
 /**
  * \brief GizmoLinuxInputEvent Destructor
- */
+**/
 GizmoLinuxInputEvent::~GizmoLinuxInputEvent() {
 }
 

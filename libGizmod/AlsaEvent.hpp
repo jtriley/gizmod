@@ -54,7 +54,7 @@ namespace Gizmod {
 /**
  * \enum   AlsaEventType
  * \brief  Type that indicates the type of AlsaEvent
- */
+**/
 typedef enum {
 	ALSAEVENT_ERROR,
 	ALSAEVENT_SOUNDCARD_ATTACH,
@@ -71,7 +71,7 @@ typedef enum {
 /**
  * \class  AlsaEvent
  * \brief  Data structure that holds information about Alsa events
- */
+**/
 class AlsaEvent {
 public:	
 	// public member variables

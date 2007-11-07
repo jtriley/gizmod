@@ -67,7 +67,7 @@ namespace Gizmod {
  *
  * All you need to do is call SocketClient::connectToServer!
  * Then you're a client, and can use the rest of this class
- */
+**/
 class GizmoClient : public H::SocketClient {
 public:
 	// public functions

@@ -56,7 +56,7 @@ namespace Gizmod {
 /**
  * \enum   X11FocusEventType
  * \brief  Type that indicates the type of X11FocusEvent
- */
+**/
 typedef enum {
 	X11FOCUSEVENT_IN,
 	X11FOCUSEVENT_OUT
@@ -78,7 +78,7 @@ typedef enum {
  * This is due to the way X (and your WM's focus stealing prevention)
  * works (or perhaps doesn't work).
  *
- */
+**/
 class X11FocusEvent {
 public:	
 	// public member variables
@@ -124,7 +124,7 @@ private:
 /**
  * \class  X11FocusWatcher
  * \brief  Watches for focus changes on X11 windows
- */
+**/
 class X11FocusWatcher {
 public:	
 	// public functions
@@ -163,7 +163,7 @@ private:
 	
 	/**
 	 * Thread callback procedure struct
-	 */
+	**/
 	struct X11FocusWatcherThreadProc {
 		X11FocusWatcherThreadProc(X11FocusWatcher * pX11FocusWatcher) : mpX11FocusWatcher(pX11FocusWatcher) {
 			mpX11FocusWatcher->mThreading = false;

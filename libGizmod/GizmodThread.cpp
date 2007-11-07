@@ -53,14 +53,14 @@ using namespace Gizmod;
 
 /**
  * \brief GizmodThread Default Constructor
- */
+**/
 GizmodThread::GizmodThread(boost::python::object ThreadFunction) : mThreadProc(this) {
 	mThreadFunction = ThreadFunction;
 }
 
 /**
  * \brief GizmodThread Destructor
- */
+**/
 GizmodThread::~GizmodThread() {
 }
 
@@ -70,7 +70,7 @@ GizmodThread::~GizmodThread() {
 
 /**
  * \brief  Create a thread and start its execution
- */
+**/
 void GizmodThread::create() {
 	cdbg4 << "GizmodThread :: create" << endl;
 	boost::thread thrd(mThreadProc);
@@ -78,7 +78,7 @@ void GizmodThread::create() {
 
 /** 
  * \brief  The ThreadProc
- */
+**/
 void GizmodThread::threadProc() {
 	cdbg4 << "GizmodThread :: Calling Python threadFunction" << endl;
 	

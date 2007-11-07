@@ -57,7 +57,7 @@ namespace Gizmod {
  * \brief LIRC Gizmos
  *
  * This class contains all of the helper functions for making use of LIRC devices
- */
+**/
 class GizmoLIRC : public Gizmo {
 public:
 	// public functions

@@ -63,7 +63,7 @@ namespace Gizmod {
  * GIZMO_CLASS_POWERMATE is the class used for Griffin PowerMate, and SoundKnob devices
  * GIZMO_CLASS_STANDARD is the default class and is used for all devices except ones with
  * 	special handlers
- */
+**/
 typedef enum {
 	GIZMO_CLASS_ATIX10,
 	GIZMO_CLASS_LIRC,
@@ -81,7 +81,7 @@ typedef enum {
  *
  * This class is the base of all Gizmos attached to the system.
  * Each Gizmo must inherit this class
- */
+**/
 class Gizmo : public H::DeviceInfo {
 public:
 	// public functions

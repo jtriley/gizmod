@@ -64,7 +64,7 @@ namespace Gizmod {
  * GIZMO_EVENTCLASS_STANDARD is the default class and is used for all devices except ones with
  * 	special handlers
  * GIZMO_EVENTCLASS_WINDOWFOCUS is triggered when a Window Focus event happens
- */
+**/
 typedef enum {
 	GIZMO_EVENTCLASS_ATIX10,
 	GIZMO_EVENTCLASS_CPUUSAGE,
@@ -79,7 +79,7 @@ typedef enum {
 /**
  * \def    GIZMO_EVENTCLASS_MAX
  * \brief  Max event class value
- */
+**/
 #define GIZMO_EVENTCLASS_MAX	GIZMO_EVENTCLASS_WINDOWFOCUS
 	
 //////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ typedef enum {
  *
  * This class is the base of all GizmoEvents attached to the system.
  * Each gizmo must inherit this class
- */
+**/
 class GizmoEvent {
 public:
 	// public functions

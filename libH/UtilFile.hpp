@@ -56,7 +56,7 @@ namespace H {
  * \brief Main UtilFile class
  *
  * This is an interface for classes wishing to receive socket events
- */
+**/
 class UtilFile {
 public:
 	// Public Member Functions

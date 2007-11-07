@@ -45,19 +45,19 @@ using namespace Gizmod;
 /**
  * \def    DEFAULT_HOST
  * \brief  Default host to connect to
- */
+**/
 #define DEFAULT_HOST	"localhost"
 
 /**
  * \def    DEFAULT_PORT
  * \brief  Default port to connect to
- */
+**/
 #define DEFAULT_PORT	30303
 
 /**
  * \def    CONFIG_FILE
  * \brief  Path of the config file
- */
+**/
 #define CONFIG_FILE	"~/.gizmod/libVisualPlugin.config"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmodLibVisualPlugin Default Constructor
- */
+**/
 GizmodLibVisualPlugin::GizmodLibVisualPlugin() {
 	mServerHost = DEFAULT_HOST;
 	mServerPort = DEFAULT_PORT;
@@ -76,7 +76,7 @@ GizmodLibVisualPlugin::GizmodLibVisualPlugin() {
 
 /**
  * \brief GizmodLibVisualPlugin Destructor
- */
+**/
 GizmodLibVisualPlugin::~GizmodLibVisualPlugin() {
 	closeSocket();
 }
@@ -87,7 +87,7 @@ GizmodLibVisualPlugin::~GizmodLibVisualPlugin() {
 
 /**
  * \brief  Initialize the plugin
- */
+**/
 void GizmodLibVisualPlugin::init() {
 	cdbg << "Init" << endl;
 	readConfig();
@@ -106,7 +106,7 @@ void GizmodLibVisualPlugin::init() {
 
 /**
  * \brief  Read the config file
- */
+**/
 void GizmodLibVisualPlugin::readConfig() {
 	string ConfigFile = CONFIG_FILE;
 	UtilFile::relativeToAbsolute(ConfigFile);
@@ -134,7 +134,7 @@ void GizmodLibVisualPlugin::readConfig() {
 
 /**
  * \brief  Shutdown the plugin
- */
+**/
 void GizmodLibVisualPlugin::shutdown() {
 	GizmoEventSoundVisualization Event(SOUNDVISUALIZATION_DISCONNECT);
 	sendEventSoundVisualization(Event);
@@ -146,7 +146,7 @@ void GizmodLibVisualPlugin::shutdown() {
  * \param  VULeft VU information for the left channel
  * \param  VURight VU information for the right channel
  * \param  VUCombined VU information for both channels
- */
+**/
 void GizmodLibVisualPlugin::render(float VULeft, float VURight, float VUCombined) {
 	GizmoEventSoundVisualization Event(VULeft, VURight, VUCombined);
 	sendEventSoundVisualization(Event);
@@ -154,7 +154,7 @@ void GizmodLibVisualPlugin::render(float VULeft, float VURight, float VUCombined
 
 /**
  * \brief  Write a config file
- */
+**/
 void GizmodLibVisualPlugin::writeConfig() {
 	string ConfigFile = CONFIG_FILE;
 	UtilFile::relativeToAbsolute(ConfigFile);

@@ -47,7 +47,7 @@ using namespace Gizmod;
 /**
  * \def   GIZMO_POWERMATE_TYPE
  * \brief String type of this gizmo
- */
+**/
 #define GIZMO_POWERMATE_TYPE	"Powermate"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoPowermate Default Constructor
- */
+**/
 GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_POWERMATE, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
 	mPulseAsleep = true;
 	mRotateCurDir = -1;
@@ -67,7 +67,7 @@ GizmoPowermate::GizmoPowermate(const H::DeviceInfo & deviceInfo, int DeviceID, i
 
 /**
  * \brief GizmoPowermate Serialize Constructor
- */
+**/
 GizmoPowermate::GizmoPowermate() {
 	mPulseAsleep = true;
 	mRotateCurDir = -1;
@@ -78,7 +78,7 @@ GizmoPowermate::GizmoPowermate() {
 
 /**
  * \brief GizmoPowermate Destructor
- */
+**/
 GizmoPowermate::~GizmoPowermate() {
 }
 
@@ -97,7 +97,7 @@ GizmoPowermate::~GizmoPowermate() {
  * This function is what sends raw event codes to the Powermate
  * All other functions use this as their base, as this function
  * encompasses the complete functionality of the Powermate.
- */
+**/
 void GizmoPowermate::changeLEDState(int StaticBrightness, int PulseSpeed, int PulseTable, int PulseAsleep, int PulseAwake) {
 	struct input_event ev;
 	memset(&ev, 0, sizeof(struct input_event));
@@ -126,7 +126,7 @@ void GizmoPowermate::changeLEDState(int StaticBrightness, int PulseSpeed, int Pu
 /**
  * \brief  Get the Powermate's LED Value
  * \return LED value (0-255)
- */
+**/
 unsigned char GizmoPowermate::getLED() {
 	return mLevel;
 }
@@ -134,7 +134,7 @@ unsigned char GizmoPowermate::getLED() {
 /**
  * \brief  Get the Powermate's LED Value as a percentage 
  * \return LED value (0.0-100.0)
- */
+**/
 float GizmoPowermate::getLEDPercent() {
 	return ((float) mLevel / 255.0f) * 100.0f;
 }
@@ -142,7 +142,7 @@ float GizmoPowermate::getLEDPercent() {
 /**
  * \brief  Get pulse while sleeping
  * \return True if the powermate will pulse when it goes to sleep
- */
+**/
 bool GizmoPowermate::getLEDPulseAsleep() {
 	return mPulseAsleep;
 } 
@@ -150,7 +150,7 @@ bool GizmoPowermate::getLEDPulseAsleep() {
 /**
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
- */
+**/
 std::string GizmoPowermate::getType() {
 	return GIZMO_POWERMATE_TYPE;
 }
@@ -158,7 +158,7 @@ std::string GizmoPowermate::getType() {
 /**
  * \brief  Get whether or not the dial has rotated since the last button event
  * \return True if the dial has moved
- */
+**/
 bool GizmoPowermate::getRotated() {
 	return mRotated;
 }
@@ -167,7 +167,7 @@ bool GizmoPowermate::getRotated() {
  * \brief  Process an event
  * \param  pEvent The event to process
  * \return True on if the event should get passed on to the script
- */
+**/
 bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
 	if (!GizmoLinuxInputDevice::processEvent())
 		return false;
@@ -205,7 +205,7 @@ bool GizmoPowermate::processEvent(GizmoEvent * pEvent) {
  * \param  Level The Level of the Pulsing (255 is a good value)
  * \param  PulseSpeed Speed of the pulsing (255-270 are good values)
  * \param  PulseTable Type of the pulsing
- */
+**/
 void GizmoPowermate::pulseLED(int Level, int PulseSpeed, int PulseTable) {
 	changeLEDState(Level, PulseSpeed, PulseTable, 1, 1);
 	cdbg2 << "Pulsing LED [Speed " << PulseSpeed << " @ Table " << PulseTable << "]" << endl;
@@ -214,7 +214,7 @@ void GizmoPowermate::pulseLED(int Level, int PulseSpeed, int PulseTable) {
 /**
  * \brief  Set the intensity of the Powermate's LED
  * \param  Level of intensity from 0 - 255
- */
+**/
 void GizmoPowermate::setLED(unsigned char Level) {
 	if (Level == mLevel)
 		return;
@@ -225,7 +225,7 @@ void GizmoPowermate::setLED(unsigned char Level) {
 /**
  * \brief  Set the intensity of the Powermate's LED as a percentage
  * \param  Percent The intensity of the powermate as a range between 0.0 and 100.0
- */
+**/
 void GizmoPowermate::setLEDPercent(float Percent) {
 	if (Percent < 0.0f)
 		Percent = 0.0f;
@@ -240,7 +240,7 @@ void GizmoPowermate::setLEDPercent(float Percent) {
 /**
  * \brief  Set LED pulse while sleeping
  * \param  Enabled Set to true if the powermate should pulse when it goes to sleep
- */
+**/
 void GizmoPowermate::setLEDPulseAsleep(bool Enabled) {
 	mPulseAsleep = Enabled;
 } 
@@ -248,7 +248,7 @@ void GizmoPowermate::setLEDPulseAsleep(bool Enabled) {
 /**
  * \brief  Set the rotate sensitivity in wheel ticks per generated event (default 1)
  * \param  TicksPerEvent The number of ticks required to generate an event
- */
+**/
 void GizmoPowermate::setRotateSensitivity(int TicksPerEvent) {
 	mRotateTicksPerEvent = TicksPerEvent;
 	cdbg << "Powermate Rotate Sensitivity set to " << TicksPerEvent << " Ticks per Generated Event" << endl;

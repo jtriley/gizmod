@@ -48,14 +48,14 @@ bool 		H::Debug::mLogToFile = false;
 
 /**
  * \brief Default Constructor
- */
+**/
 H::Debug::Debug(int ThisVerbosity) {
 	mThisVerbosity = ThisVerbosity;
 }
 
 /**
  * \brief Destructor
- */
+**/
 H::Debug::~Debug() {
 }
 

@@ -44,7 +44,7 @@
 /**
  * \class GizmoUtils
  * \brief Helper functions for the Gizmos
- */
+**/
 class GizmoUtils {
 public:
 	// static public functions

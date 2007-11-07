@@ -55,7 +55,7 @@ namespace H {
  *
  * Nothing in STL can currently be used as a buffer efficiently
  * This uses realloc, and memcpy to be as fast as possible
- */
+**/
 
 template <class DataType>
 class DynamicBuffer {
@@ -83,7 +83,7 @@ private:
 /**
  * \class DynamicBufferConverter
  * \brief Convert a Dynamic buffer to an array of structures or classes
- */
+**/
 
 template <class DataType, class ConvertTo>
 class DynamicBufferConverter {

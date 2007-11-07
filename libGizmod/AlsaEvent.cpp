@@ -44,7 +44,7 @@ using namespace Gizmod;
 
 /** 
  * \brief  AlsaEvent Default Constructor
- */
+**/
 AlsaEvent::AlsaEvent() {
 	Type = ALSAEVENT_ERROR;
 	Mask = 0;
@@ -58,7 +58,7 @@ AlsaEvent::AlsaEvent() {
 
 /** 
  * \brief  AlsaEvent Init Constructor
- */
+**/
 AlsaEvent::AlsaEvent(AlsaEventType type, unsigned int mask) {
 	Type = type;
 	Mask = mask;
@@ -72,7 +72,7 @@ AlsaEvent::AlsaEvent(AlsaEventType type, unsigned int mask) {
 
 /** 
  * \brief  AlsaEvent Init Constructor
- */
+**/
 AlsaEvent::AlsaEvent(AlsaEvent const & Event) {
 	Type = Event.Type;
 	Mask = Event.Mask;
@@ -86,7 +86,7 @@ AlsaEvent::AlsaEvent(AlsaEvent const & Event) {
 
 /**
  * \brief  AlsaEvent Destructor
- */
+**/
 AlsaEvent::~AlsaEvent() {
 }
 

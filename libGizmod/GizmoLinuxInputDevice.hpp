@@ -60,7 +60,7 @@ namespace Gizmod {
 /**
  * \class GizmoLinuxInputDevice
  * \brief Wrapper for functions dealing with Linux Input Event Interface Devices
- */
+**/
 class GizmoLinuxInputDevice {
 public:
 	// public functions

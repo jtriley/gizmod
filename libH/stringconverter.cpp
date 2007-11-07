@@ -46,7 +46,7 @@ using namespace H;
 
 /**
  * \brief Default Constructor
- */
+**/
 stringconverter::stringconverter(int Value) {
 	stringstream ss;
 	ss << Value;
@@ -55,7 +55,7 @@ stringconverter::stringconverter(int Value) {
 
 /**
  * \brief Destructor
- */
+**/
 stringconverter::~stringconverter() throw() {
 }
 
@@ -66,7 +66,7 @@ stringconverter::~stringconverter() throw() {
 /**
  * \brief  Convert a string to lower case
  * \param  convertee string to be converted
- */
+**/
 std::string stringconverter::toLower(std::string const & convertee) {
 	string t = convertee;
 	boost::to_lower(t);
@@ -76,7 +76,7 @@ std::string stringconverter::toLower(std::string const & convertee) {
 /**
  * \brief  Convert a string to upper case
  * \param  convertee string to be converted
- */
+**/
 std::string stringconverter::toUpper(std::string const & convertee) {
 	string t = convertee;
 	boost::to_upper(t);

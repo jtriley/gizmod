@@ -46,7 +46,7 @@ namespace Gizmod {
 /**
  * \enum  GizmoEventType
  * \brief These are the event types
- */
+**/
 typedef enum {
 	GIZMO_EV_SYN			= 0x00,
 	GIZMO_EV_KEY			= 0x01,
@@ -66,7 +66,7 @@ typedef enum {
 /**
  * \enum  GizmoMouseAxis
  * \brief Constants for the mouse axes
- */
+**/
 typedef enum {
 	GIZMO_MOUSE_AXIS_X		= 0x00,
 	GIZMO_MOUSE_AXIS_Y		= 0x01,
@@ -76,7 +76,7 @@ typedef enum {
 /**
  * \enum  GizmoKey
  * \brief These are the key definitions that devices emit
- */
+**/
 typedef enum {
 	GIZMO_KEY_RESERVED		= 0,
 	GIZMO_KEY_ESC			= 1,

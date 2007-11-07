@@ -50,7 +50,7 @@ namespace H {
 /**
  * \def    foreach
  * \brief  rename BOOST_FOREACH to foreach for nice readability
- */
+**/
 #define foreach BOOST_FOREACH
 		
 /**
@@ -60,7 +60,7 @@ namespace H {
  * \return result of std::for_each (unary_function)
  *
  * This is essentially a short cut for std::for_each
- */
+**/
 template<class Object, class Functor>
 inline Functor for_all(Object & object, Functor functor) {
 	return std::for_each(object.begin(), object.end(), functor);
@@ -75,7 +75,7 @@ inline Functor for_all(Object & object, Functor functor) {
  * \return result of for_all()
  *
  * This is a short cut for H::for_all
- */
+**/
 #define apply_func(object, functor, functee) \
 	for_all(object, boost::bind(functor, functee, _1))
 	
@@ -89,7 +89,7 @@ inline Functor for_all(Object & object, Functor functor) {
  * \return result of for_all()
  *
  * This is a short cut for H::for_all
- */
+**/
 #define apply_func_args(object, functor, functee, ...) \
 	for_all(object, boost::bind(functor, functee, _1, ## __VA_ARGS__))
 	
@@ -102,7 +102,7 @@ inline Functor for_all(Object & object, Functor functor) {
  * \return result of for_all()
  *
  * This is a short cut for H::for_all
- */
+**/
 #define apply_static_func_args(object, functor, ...) \
 	for_all(object, boost::bind(functor, _1, ## __VA_ARGS__))
 
@@ -110,7 +110,7 @@ inline Functor for_all(Object & object, Functor functor) {
  * \def    sort_all
  * \brief  Sort all elements
  * \param  object  The object to sort
- */
+**/
 #define sort_all(object) \
 	sort(object.begin(), object.end())
 
@@ -121,15 +121,15 @@ inline Functor for_all(Object & object, Functor functor) {
 /**
  * \brief  Functor that prints an item using the H:cdbg class
  * \param  object  The item to print
- */
+**/
 inline void dbg_print_item(std::string & object) {
-	H::cdbg << object << std::endl;
+	H::dbg0 << object << std::endl;
 }
 	
 /**
  * \brief  Functor that prints an item
  * \param  object  The item to print
- */
+**/
 inline void print_item(std::string & object) {
 	std::cout << object << std::endl;
 }
@@ -145,7 +145,7 @@ inline void print_item(std::string & object) {
  * This class provides static time routines for sleeping and finding the current time
  *
  * It also can be instantiated to provide a time duration watcher
- */
+**/
 class Util {
 public:
 	// Public Member Functions

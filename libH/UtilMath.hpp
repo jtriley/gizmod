@@ -50,7 +50,7 @@ namespace H {
  * This class provides static time routines for sleeping and finding the current time
  *
  * It also can be instantiated to provide a time duration watcher
- */
+**/
 class UtilMath {
 public:
 	static int 		intDivRoundUp(int Div1, int Div2);		///< integer divide and round up

@@ -51,7 +51,7 @@ namespace Gizmod {
 /**
  * \enum   SoundVisualizationEventType
  * \brief  Type of the SoundVisualization event
- */
+**/
 typedef enum {
 	SOUNDVISUALIZATION_CONNECT,
 	SOUNDVISUALIZATION_DISCONNECT,
@@ -67,7 +67,7 @@ typedef enum {
  * \brief Class for CPU events
  *
  * This class is for all GizmoEventSoundVisualizations attached to the system.
- */
+**/
 class GizmoEventSoundVisualization : public GizmoEvent {
 public:
 	// public member variables

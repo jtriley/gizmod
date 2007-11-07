@@ -44,13 +44,13 @@ using namespace Gizmod;
 /**
  * \def   GIZMO_ATIX10_TYPE
  * \brief String type of this gizmo
- */
+**/
 #define GIZMO_ATIX10_TYPE	"ATIX10"
 
 /**
  * \def   GIZMO_ATIX10_EVENTDELAY
  * \brief Default minimum time between ATIX10 events
- */
+**/
 #define GIZMO_ATIX10_EVENTDELAY	0.175f
 
 ////////////////////////////////////////////////////////////////////////////
@@ -59,21 +59,21 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoATIX10 Default Constructor
- */
+**/
 GizmoATIX10::GizmoATIX10(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_ATIX10, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
 	setMinimumTimeBetweenEvents(GIZMO_ATIX10_EVENTDELAY);
 }
 
 /**
  * \brief GizmoATIX10 Serialize Constructor
- */
+**/
 GizmoATIX10::GizmoATIX10() {
 	setMinimumTimeBetweenEvents(GIZMO_ATIX10_EVENTDELAY);
 }
 
 /**
  * \brief GizmoATIX10 Destructor
- */
+**/
 GizmoATIX10::~GizmoATIX10() {
 }
 
@@ -84,7 +84,7 @@ GizmoATIX10::~GizmoATIX10() {
 /**
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
- */
+**/
 std::string GizmoATIX10::getType() {
 	return GIZMO_ATIX10_TYPE;
 }
@@ -93,7 +93,7 @@ std::string GizmoATIX10::getType() {
  * \brief  Process an event
  * \param  pEvent The event to process
  * \return True on if the event should get passed on to the script
- */
+**/
 bool GizmoATIX10::processEvent(GizmoEvent * pEvent) {
 	if (!GizmoLinuxInputDevice::processEvent())
 		return false;

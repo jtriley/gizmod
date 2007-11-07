@@ -53,14 +53,14 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoEventLIRC Default Constructor
- */
+**/
 GizmoEventLIRC::GizmoEventLIRC() : GizmoEvent(GIZMO_EVENTCLASS_LIRC, false) {
 	Repeat = 0;
 }
 
 /**
  * \brief GizmoEventLIRC Init Constructor
- */
+**/
 GizmoEventLIRC::GizmoEventLIRC(std::string code, int repeat, std::string button, std::string remote, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_LIRC, IsRemote) {
 	Code = code;
 	Repeat = repeat;
@@ -70,7 +70,7 @@ GizmoEventLIRC::GizmoEventLIRC(std::string code, int repeat, std::string button,
 
 /**
  * \brief GizmoEventLIRC Destructor
- */
+**/
 GizmoEventLIRC::~GizmoEventLIRC() {
 }
 
@@ -82,7 +82,7 @@ GizmoEventLIRC::~GizmoEventLIRC() {
  * \brief  Build an event vector from a read buffer
  * \param  EventVector Reference to a vector which will contain the results
  * \param  Buffer The bufer to convert into events
- */
+**/
 void GizmoEventLIRC::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventLIRC> > & EventVector, H::DynamicBuffer<char> const & Buffer) {
 	// create some data structures for parsing the info
 	typedef boost::tokenizer< boost::char_separator<char> > tokenizer;

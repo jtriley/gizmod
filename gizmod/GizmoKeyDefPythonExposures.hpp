@@ -37,7 +37,7 @@
 
 /**
  * \brief GizmoEventType Python enum export
- */
+**/
 enum_<GizmoEventType>("GizmoEventType")
 	.value("EV_SYN",        	GIZMO_EV_SYN)			///< GIZMO_EV_SYN
 	.value("EV_KEY",        	GIZMO_EV_KEY)			///< GIZMO_EV_KEY
@@ -56,7 +56,7 @@ enum_<GizmoEventType>("GizmoEventType")
 	
 /**
  * \brief GizmoMouseAxis Python enum export
- */
+**/
 enum_<GizmoMouseAxis>("GizmoMouseAxis")
 	.value("X",        	GIZMO_MOUSE_AXIS_X)		///< GIZMO_MOUSE_AXIS_X
 	.value("Y",        	GIZMO_MOUSE_AXIS_Y)		///< GIZMO_MOUSE_AXIS_Y
@@ -66,7 +66,7 @@ enum_<GizmoMouseAxis>("GizmoMouseAxis")
 	
 /**
  * \brief GizmoKey Python enum export
- */
+**/
 enum_<GizmoKey>("GizmoKey")
 	.value("KEY_RESERVED",  	GIZMO_KEY_RESERVED)		///< GIZMO_KEY_RESERVED
 	.value("KEY_ESC",       	GIZMO_KEY_ESC)			///< GIZMO_KEY_ESC

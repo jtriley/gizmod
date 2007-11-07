@@ -43,14 +43,14 @@ using namespace H;
 
 /**
  * \brief Default Constructor
- */
+**/
 UtilTime::UtilTime() {
 	updateElapsedTimer();
 }
 
 /**
  * \brief Destructor
- */
+**/
 UtilTime::~UtilTime() {
 }
 
@@ -62,7 +62,7 @@ UtilTime::~UtilTime() {
  * \return cpu ticks
  *
  * Get the current number of cpu ticks in microseconds
- */
+**/
 unsigned long UtilTime::getTicks() {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
@@ -78,7 +78,7 @@ unsigned long UtilTime::getTicks() {
  * \brief Get time since last update
  *
  * Get the elapsed time since last update and update the timer if desired
- */
+**/
 unsigned long UtilTime::getElapsedTime() {
 	return getTicks() - mLastUpdate;
 }
@@ -89,7 +89,7 @@ unsigned long UtilTime::getElapsedTime() {
  * \return actual time slept
  * 
  * sleep a number of nanoseconds
- */
+**/
 int UtilTime::nanoSleep(int nanoSecs) {
 	struct 	timespec sleepTime;
 	struct 	timespec sleepRet;
@@ -109,7 +109,7 @@ int UtilTime::nanoSleep(int nanoSecs) {
  * \return actual time slept
  * 
  * Sleep a number of seconds using the nanosleep function
- */
+**/
 int UtilTime::nanoSleepSecs(int nanoSecs) {
 	struct 	timespec sleepTime;
 	struct 	timespec sleepRet;
@@ -129,7 +129,7 @@ int UtilTime::nanoSleepSecs(int nanoSecs) {
  * \param  Seconds Time to sleep in seconds
  * 
  * Sleep a number of seconds (precise to the nanosecond)
- */
+**/
 void UtilTime::sleep(float Seconds) {
 	struct 	timespec sleepTime;
 	struct 	timespec sleepRet;
@@ -145,7 +145,7 @@ void UtilTime::sleep(float Seconds) {
 
 /**
  * Update the time duration watcher
- */
+**/
 void	UtilTime::updateElapsedTimer() {
 	mLastUpdate = getTicks();
 }

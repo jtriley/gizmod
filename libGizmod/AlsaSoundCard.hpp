@@ -54,7 +54,7 @@ namespace Gizmod {
 /**
  * \class  AlsaSoundCard
  * \brief  Data structure that holds information about each Sound Card
- */
+**/
 class AlsaSoundCard : public AlsaSoundCardInterface {
 public:	
 	// public member variables
@@ -96,7 +96,7 @@ private:
 
 	/**
 	 * Thread callback procedure struct
-	 */
+	**/
 	struct AlsaSoundCardThreadProc {
 		AlsaSoundCardThreadProc(AlsaSoundCard * pAlsaSoundCard) : mpAlsaSoundCard(pAlsaSoundCard) {
 			mpAlsaSoundCard->mThreading = false;

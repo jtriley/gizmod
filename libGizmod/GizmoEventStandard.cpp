@@ -49,19 +49,19 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoEventStandard Default Constructor
- */
+**/
 GizmoEventStandard::GizmoEventStandard() : GizmoEvent(GIZMO_EVENTCLASS_STANDARD, false) {
 }
 
 /**
  * \brief GizmoEventStandard Init Constructor
- */
+**/
 GizmoEventStandard::GizmoEventStandard(struct input_event const & InputEvent, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_STANDARD, IsRemote), GizmoLinuxInputEvent(InputEvent) {
 }
 
 /**
  * \brief GizmoEventStandard Destructor
- */
+**/
 GizmoEventStandard::~GizmoEventStandard() {
 }
 
@@ -74,7 +74,7 @@ GizmoEventStandard::~GizmoEventStandard() {
  * \param  EventVector Reference to a vector which will contain the results
  * \param  Buffer The bufer to convert into events
  * \param  SendNullEvents Signals if NULL events should be passed onto the config script
- */
+**/
 void GizmoEventStandard::buildEventsVectorFromBuffer(std::vector< boost::shared_ptr<GizmoEventStandard> > & EventVector, H::DynamicBuffer<char> const & Buffer, bool SendNullEvents) {
 	std::vector<struct input_event> InputEvents;
 	GizmoLinuxInputDevice::buildInputEventsVectorFromBuffer(InputEvents, Buffer);
@@ -83,7 +83,7 @@ void GizmoEventStandard::buildEventsVectorFromBuffer(std::vector< boost::shared_
 
 /**
  * \brief  Functor for building events from Linnux input_events
- */
+**/
 void GizmoEventStandard::buildEventsVectorFromBufferFunctor(struct input_event & InputEvent, std::vector< boost::shared_ptr<GizmoEventStandard> > * pEventVector, bool SendNullEvents) {
 	if ( (!SendNullEvents) && (InputEvent.type == 0) && (InputEvent.code == 0) && (InputEvent.value == 0) )
 		return;

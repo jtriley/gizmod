@@ -48,7 +48,7 @@ SignalHandler * SignalHandler::mpThis = NULL;
 
 /**
  * \brief Default Constructor
- */
+**/
 SignalHandler::SignalHandler() {
 	if (mpThis)
 		throw H::Exception("There can only be one SignalHandler!", __FILE__, __FUNCTION__, __LINE__);
@@ -57,7 +57,7 @@ SignalHandler::SignalHandler() {
 
 /**
  * \brief Destructor
- */
+**/
 SignalHandler::~SignalHandler() {
 	if (mpThis)
 		mpThis = NULL;
@@ -69,7 +69,7 @@ SignalHandler::~SignalHandler() {
 
 /**
  * \brief Initialize the signal handler
- */
+**/
 void SignalHandler::initSignals() {
 	signal(SIGINT,   signalHandler);
 	signal(SIGHUP,   signalHandler);
@@ -81,7 +81,7 @@ void SignalHandler::initSignals() {
 
 /**
  * \brief Signal handler for SEGV
- */
+**/
 void SignalHandler::onSignalSegv() {
 	// override me
 	cerr << "Unhandled SEGV Signal" << endl;
@@ -89,7 +89,7 @@ void SignalHandler::onSignalSegv() {
 
 /**
  * \brief Signal handler for INT
- */
+**/
 void SignalHandler::onSignalInt() {
 	// override me
 	cerr << "Unhandled INT Signal" << endl;
@@ -97,7 +97,7 @@ void SignalHandler::onSignalInt() {
 
 /**
  * \brief Signal handler for HUP
- */
+**/
 void SignalHandler::onSignalHup() {
 	// override me
 	cerr << "Unhandled HUP Signal" << endl;
@@ -105,7 +105,7 @@ void SignalHandler::onSignalHup() {
 
 /**
  * \brief Signal handler for QUIT
- */
+**/
 void SignalHandler::onSignalQuit() {
 	// override me
 	cerr << "Unhandled QUIT Signal" << endl;
@@ -113,7 +113,7 @@ void SignalHandler::onSignalQuit() {
 
 /**
  * \brief Signal handler for KILL
- */
+**/
 void SignalHandler::onSignalKill() {
 	// override me
 	cerr << "Unhandled KILL Signal" << endl;
@@ -121,7 +121,7 @@ void SignalHandler::onSignalKill() {
 
 /**
  * \brief Signal handler for TERM
- */
+**/
 void SignalHandler::onSignalTerm() {
 	// override me
 	cerr << "Unhandled TERM Signal" << endl;
@@ -129,7 +129,7 @@ void SignalHandler::onSignalTerm() {
 
 /**
  * \brief Signal handler for STOP
- */
+**/
 void SignalHandler::onSignalStop() {
 	// override me
 	cerr << "Unhandled STOP Signal" << endl;
@@ -137,7 +137,7 @@ void SignalHandler::onSignalStop() {
 
 /**
  * \brief Signal handler for Unknown Signals
- */
+**/
 void SignalHandler::onSignalUnknown(int Signal) {
 	// override me
 	cerr << "Unhandled Unknown Signal" << endl;
@@ -145,7 +145,7 @@ void SignalHandler::onSignalUnknown(int Signal) {
 
 /**
  * \brief Signal handler
- */
+**/
 void SignalHandler::signalHandler(int Signal) {
 	if (!mpThis) {
 		cerr << "Unhandled Signal Caught!" << endl;

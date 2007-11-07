@@ -35,22 +35,22 @@ VISUAL_PLUGIN_API_VERSION_VALIDATOR
  * Main plugin stuff 
  * The get_plugin_info function provides the libvisual plugin registry, and plugin loader
  * with the very basic plugin information 
- */
+**/
 const VisPluginInfo * get_plugin_info(int *count) {
 	/* Initialize the plugin specific data structure
 	 * with pointers to the functions that represent
 	 * the plugin interface it's implementation, more info:
-	 * http://libvisual.sourceforge.net/newdocs/docs/html/struct__VisActorPlugin.html */
+	 * http://libvisual.sourceforge.net/newdocs/docs/html/struct__VisActorPlugin.html**/
 	static VisActorPlugin actor[] = {{
 		.requisition = 	lv_gizmod_requisition,
 		.palette = 	lv_gizmod_palette,
 		.render = 	lv_gizmod_render,
-		//.vidoptions.depth = VISUAL_VIDEO_DEPTH_GL /* We want GL clearly */
+		//.vidoptions.depth = VISUAL_VIDEO_DEPTH_GL /* We want GL clearly**/
 	}};
 
 	/* This is the non plugin specific data structure, containing
 	 * general informatie about the plugin itself, more info:
-	 * http://libvisual.sourceforge.net/newdocs/docs/html/struct__VisPluginInfo.html */
+	 * http://libvisual.sourceforge.net/newdocs/docs/html/struct__VisPluginInfo.html**/
 	static const VisPluginInfo info[] = {{
 		.type = 	VISUAL_PLUGIN_TYPE_ACTOR,
 
@@ -87,7 +87,7 @@ const VisPluginInfo * get_plugin_info(int *count) {
  * \brief  Initialize
  *
  * This function is called before we really start rendering, it's the init function
- */
+**/
 int lv_gizmod_init(VisPluginData *plugin) {
 	GizmodLibVisual_Init();
 	return 0;
@@ -95,7 +95,7 @@ int lv_gizmod_init(VisPluginData *plugin) {
 
 /**
  * \brief  Cleanup
- */
+**/
 int lv_gizmod_cleanup(VisPluginData *plugin) {
 	GizmodLibVisual_CleanUp();
 	return 0;
@@ -107,7 +107,7 @@ int lv_gizmod_cleanup(VisPluginData *plugin) {
  * This is used to ask a plugin if it can handle a certain size, and if not, to
  * set the size it wants by putting a value in width, height that represents the
  * required size 
- */
+**/
 int lv_gizmod_requisition(VisPluginData *plugin, int *width, int *height) {
 	*width = 0;
 	*height = 0;
@@ -116,7 +116,7 @@ int lv_gizmod_requisition(VisPluginData *plugin, int *width, int *height) {
 
 /**
  * \brief  Get the display dimensions
- */
+**/
 int lv_gizmod_dimension(VisPluginData *plugin, VisVideo *video, int width, int height) {
 	return 0;
 }
@@ -127,7 +127,7 @@ int lv_gizmod_dimension(VisPluginData *plugin, VisVideo *video, int width, int h
  * This is the main event loop, where all kind of events can be handled, more information
  * regarding these can be found at:
  * http://libvisual.sourceforge.net/newdocs/docs/html/union__VisEvent.html 
- */
+**/
 int lv_gizmod_events(VisPluginData *plugin, VisEventQueue *events) {
 	return 0;
 }
@@ -137,7 +137,7 @@ int lv_gizmod_events(VisPluginData *plugin, VisEventQueue *events) {
  *
  * Using this function we can update the palette when we're in 8bits mode, which
  * we aren't with gizmod, so just ignore :) 
- */
+**/
 VisPalette *lv_gizmod_palette(VisPluginData *plugin) {
 	return NULL;
 }
@@ -147,7 +147,7 @@ VisPalette *lv_gizmod_palette(VisPluginData *plugin) {
  *
  * This is where the real rendering happens! This function is what we call, many times
  * a second to get our graphical frames. 
- */
+**/
 int lv_gizmod_render(VisPluginData *plugin, VisVideo *video, VisAudio *audio) {
 	// pcm data
 	int lp;

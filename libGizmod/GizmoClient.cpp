@@ -52,13 +52,13 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoClient Default Constructor
- */
+**/
 GizmoClient::GizmoClient() {
 }
 
 /**
  * \brief GizmoClient Destructor
- */
+**/
 GizmoClient::~GizmoClient() {
 }
 
@@ -70,7 +70,7 @@ GizmoClient::~GizmoClient() {
  * \brief  Send LIRC Event to server
  * \param  Event The Event
  * \param  Gizmo The Gizmo that is creating the event
- */
+**/
 void GizmoClient::sendEventATIX10(GizmoEventATIX10 const & Event, GizmoATIX10 const & Gizmo) {
 	// process the remote event
 	if (!isClientConnected())
@@ -92,7 +92,7 @@ void GizmoClient::sendEventATIX10(GizmoEventATIX10 const & Event, GizmoATIX10 co
 /**
  * \brief  Send CPUUsage Event to server
  * \param  Event The Event
- */
+**/
 void GizmoClient::sendEventCPUUsage(GizmoEventCPUUsage const & Event) {
 	// process the remote event
 	if (!isClientConnected())
@@ -111,7 +111,7 @@ void GizmoClient::sendEventCPUUsage(GizmoEventCPUUsage const & Event) {
  * \brief  Send LIRC Event to server
  * \param  Event The Event
  * \param  Gizmo The Gizmo that is creating the event
- */
+**/
 void GizmoClient::sendEventLIRC(GizmoEventLIRC const & Event, GizmoLIRC const & Gizmo) {
 	// process the remote event
 	if (!isClientConnected())
@@ -134,7 +134,7 @@ void GizmoClient::sendEventLIRC(GizmoEventLIRC const & Event, GizmoLIRC const & 
  * \brief  Send LIRC Event to server
  * \param  Event The Event
  * \param  Gizmo The Gizmo that is creating the event
- */
+**/
 void GizmoClient::sendEventPowermate(GizmoEventPowermate const & Event, GizmoPowermate const & Gizmo) {
 	// process the remote event
 	if (!isClientConnected())
@@ -156,7 +156,7 @@ void GizmoClient::sendEventPowermate(GizmoEventPowermate const & Event, GizmoPow
 /**
  * \brief  Send Sound Visualization Event to server
  * \param  Event The Event
- */
+**/
 void GizmoClient::sendEventSoundCard(GizmoEventSoundCard const & Event) {
 	// process the remote event
 	if (!isClientConnected())
@@ -174,7 +174,7 @@ void GizmoClient::sendEventSoundCard(GizmoEventSoundCard const & Event) {
 /**
  * \brief  Send Sound Visualization Event to server
  * \param  Event The Event
- */
+**/
 void GizmoClient::sendEventSoundVisualization(GizmoEventSoundVisualization const & Event) {
 	// process the remote event
 	if (!isClientConnected())
@@ -193,7 +193,7 @@ void GizmoClient::sendEventSoundVisualization(GizmoEventSoundVisualization const
  * \brief  Send LIRC Event to server
  * \param  Event The Event
  * \param  Gizmo The Gizmo that is creating the event
- */
+**/
 void GizmoClient::sendEventStandard(GizmoEventStandard const & Event, GizmoStandard const & Gizmo) {
 	// process the remote event
 	if (!isClientConnected())
@@ -215,7 +215,7 @@ void GizmoClient::sendEventStandard(GizmoEventStandard const & Event, GizmoStand
 /**
  * \brief  Send Sound Visualization Event to server
  * \param  Event The Event
- */
+**/
 void GizmoClient::sendEventWindowFocus(GizmoEventWindowFocus const & Event) {
 	// process the remote event
 	if (!isClientConnected())

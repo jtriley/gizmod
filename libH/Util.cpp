@@ -41,13 +41,13 @@ using namespace H;
 
 /**
  * \brief Default Constructor
- */
+**/
 Util::Util() {
 }
 
 /**
  * \brief Destructor
- */
+**/
 Util::~Util() {
 }
 

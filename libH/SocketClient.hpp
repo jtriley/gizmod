@@ -56,7 +56,7 @@ namespace H {
  * \brief Main SocketClient class
  *
  * This is an interface for classes wishing to receive socket events
- */
+**/
 class SocketClient : public Socket, private SocketEventWatcher {
 public:
 	// Public Member Functions

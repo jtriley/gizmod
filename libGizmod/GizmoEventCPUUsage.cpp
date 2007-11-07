@@ -46,20 +46,20 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoEventCPUUsage Default Constructor
- */
+**/
 GizmoEventCPUUsage::GizmoEventCPUUsage() : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE, false) {
 }
 
 /**
  * \brief GizmoEventCPUUsage Default Constructor
- */
+**/
 GizmoEventCPUUsage::GizmoEventCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_CPUUSAGE, IsRemote) {
 	mEvent = Event;
 }
 
 /**
  * \brief GizmoEventCPUUsage Destructor
- */
+**/
 GizmoEventCPUUsage::~GizmoEventCPUUsage() {
 }
 
@@ -70,7 +70,7 @@ GizmoEventCPUUsage::~GizmoEventCPUUsage() {
 /**
  * \brief  Get the CPU Usage for CPU at the specified Index
  * \param  CPUIndex The CPU in question  (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
- */
+**/
 double GizmoEventCPUUsage::getCPUUsage(size_t CPUIndex) const {
 	if (CPUIndex < 0.0)
 		return 0.0;
@@ -82,7 +82,7 @@ double GizmoEventCPUUsage::getCPUUsage(size_t CPUIndex) const {
 /**
  * \brief  Get the CPU Usage for CPU at the specified Index
  * \param  CPUIndex The CPU in question  (0 for ALL cpus, 1 for CPU1, 2 for CPU2, etc)
- */
+**/
 double GizmoEventCPUUsage::getCPUUsageAvg(size_t CPUIndex) const {
 	if (CPUIndex < 0.0)
 		return 0.0;
@@ -94,7 +94,7 @@ double GizmoEventCPUUsage::getCPUUsageAvg(size_t CPUIndex) const {
 /**
  * \brief  Get the number of CPUs the event is describing
  * \return Number of CPUs
- */
+**/
 size_t GizmoEventCPUUsage::getNumCPUs() const {
 	return mEvent.size();
 }

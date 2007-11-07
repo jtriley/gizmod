@@ -47,19 +47,19 @@ using namespace Gizmod;
 /**
  * \def    CARD_NAME_UNKNOWN
  * \brief  Text that gets applied if a card's name is not known
- */
+**/
 #define CARD_NAME_UNKNOWN	"Unknown"
 
 /**
  * \def    ALSA_FAST_CALLS_BUG
  * \brief  Work around for a bug in Alsa
- */
+**/
 #define ALSA_FAST_CALLS_BUG	5000000
 
 /**
  * \def    POLL_TIMEOUT
  * \brief  Poll timeout in milliseconds
- */
+**/
 #define POLL_TIMEOUT		1000
 
 ////////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ using namespace Gizmod;
  * \return 0 on success otherwise a negative error code
  *
  * Just pass off the event to the appropriate alsa instantiation
- */
+**/
 int AlsaSoundCard::MixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, snd_mixer_elem_t * MixerElement) {
 	AlsaSoundCard * pAlsaSoundCard = static_cast<AlsaSoundCard*>(snd_mixer_get_callback_private(Mixer));
 	if (pAlsaSoundCard)
@@ -90,7 +90,7 @@ int AlsaSoundCard::MixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, sn
  * \return 0 on success otherwise a negative error code
  *
  * Just watch for Add events, and set up element callbacks that way
- */
+**/
 int AlsaSoundCard::mixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, snd_mixer_elem_t * MixerElement) {
 	if (EventMask && SND_CTL_EVENT_MASK_ADD) {
 		unsigned int MixerIndex = snd_mixer_selem_get_index(MixerElement);
@@ -117,7 +117,7 @@ int AlsaSoundCard::mixerCallback(snd_mixer_t * Mixer, unsigned int EventMask, sn
 
 /** 
  * \brief  AlsaSoundCard Default Constructor
- */
+**/
 AlsaSoundCard::AlsaSoundCard(AlsaInterface * piAlsa, int CardID) : AlsaSoundCardInterface(piAlsa), mThreadProc(this) {
 	mCardID = CardID;
 	mCTLHandle = NULL;
@@ -131,7 +131,7 @@ AlsaSoundCard::AlsaSoundCard(AlsaInterface * piAlsa, int CardID) : AlsaSoundCard
 
 /**
  * \brief  AlsaSoundCard Destructor
- */
+**/
 AlsaSoundCard::~AlsaSoundCard() {
 	shutdown();
 }
@@ -143,7 +143,7 @@ AlsaSoundCard::~AlsaSoundCard() {
 /**
  * \brief  Get the card's hardware ID
  * \return Hardware ID
- */
+**/
 std::string AlsaSoundCard::getCardHardwareID() const {
 	return mCardHWID;
 }
@@ -151,7 +151,7 @@ std::string AlsaSoundCard::getCardHardwareID() const {
 /**
  * \brief  Get the card ID
  * \return Card ID
- */
+**/
 int AlsaSoundCard::getCardID() const {
 	return mCardID;
 }
@@ -159,7 +159,7 @@ int AlsaSoundCard::getCardID() const {
 /**
  * \brief  Get the name of the card
  * \return Card name
- */
+**/
 std::string AlsaSoundCard::getCardName() const {
 	return mCardName;
 }
@@ -167,7 +167,7 @@ std::string AlsaSoundCard::getCardName() const {
 /**
  * \brief  Get the long name of the card
  * \return Card's long name
- */
+**/
 std::string AlsaSoundCard::getCardNameLong() const {
 	return mCardNameLong;
 }
@@ -175,7 +175,7 @@ std::string AlsaSoundCard::getCardNameLong() const {
 /**
  * \brief  Get a mixer element by index
  * \return The requested AlsaMixer
- */
+**/
 AlsaMixer const * AlsaSoundCard::getMixer(std::string Name) {
 	if (!mMixers.count(Name))
 		return NULL;
@@ -185,14 +185,14 @@ AlsaMixer const * AlsaSoundCard::getMixer(std::string Name) {
 /**
  * \brief  Get the number of mixers on the sound card
  * \return The number of mixers 
- */
+**/
 size_t AlsaSoundCard::getNumMixers() {
 	return mMixers.size();
 }
 
 /**
  * \brief  Initialize The AlsaSoundCard
- */
+**/
 void AlsaSoundCard::init() {
 	if (mWatching) {
 		cdbg << "AlsaSoundCard already watching!!" << endl;
@@ -261,7 +261,7 @@ void AlsaSoundCard::init() {
 /**
  * \brief  Set all playback switches to Enabled
  * \param  Enabled Value to set switches to 
- */
+**/
 void AlsaSoundCard::setAllPlaybackSwitches(bool Enabled) {
 	map< string, shared_ptr<AlsaMixer> >::iterator iter;
 	for (iter = mMixers.begin(); iter != mMixers.end(); iter ++) {
@@ -277,7 +277,7 @@ void AlsaSoundCard::setAllPlaybackSwitches(bool Enabled) {
 
 /**
  * \brief  Shutdown the AlsaSoundCard connection
- */
+**/
 void AlsaSoundCard::shutdown() {
 	if (mShutdown)
 		return;
@@ -312,7 +312,7 @@ void AlsaSoundCard::shutdown() {
  * \brief  The thread procedure loop
  *
  * Wait for events, and tell alsa to dispatch its own events
- */
+**/
 void AlsaSoundCard::threadProc() {
 	// wait for events to occur
 	int err;

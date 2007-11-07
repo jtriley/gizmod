@@ -58,7 +58,7 @@ namespace Gizmod {
  * \brief ATIX10 Gizmos
  *
  * This class contains all of the helper functions for making use of ATIX10 devices
- */
+**/
 class GizmoATIX10 : public Gizmo, public GizmoLinuxInputDevice {
 public:
 	// public functions

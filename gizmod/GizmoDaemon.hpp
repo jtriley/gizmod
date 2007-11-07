@@ -66,7 +66,7 @@ using namespace Gizmod;
  * \class GizmoDaemon
  * \brief Main GizmoDaemon class
  * \todo  Replace for loops (in onFileEventRead) with boost::foreach when the new version comes out!
- */
+**/
 class GizmoDaemon : 
 	public GizmodShared,
 	public H::FileEventWatcher, 

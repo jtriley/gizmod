@@ -44,7 +44,7 @@ using namespace Gizmod;
 /**
  * \def   GIZMO_STANDARD_TYPE
  * \brief String type of this gizmo
- */
+**/
 #define GIZMO_STANDARD_TYPE	"Standard"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -53,19 +53,19 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoStandard Default Constructor
- */
+**/
 GizmoStandard::GizmoStandard(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_STANDARD, deviceInfo, DeviceID, DeviceClassID), GizmoLinuxInputDevice(deviceInfo) {
 }
 
 /**
  * \brief GizmoStandard Serialize Constructor
- */
+**/
 GizmoStandard::GizmoStandard() {
 }
 
 /**
  * \brief GizmoStandard Destructor
- */
+**/
 GizmoStandard::~GizmoStandard() {
 }
 
@@ -76,7 +76,7 @@ GizmoStandard::~GizmoStandard() {
 /**
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
- */
+**/
 std::string GizmoStandard::getType() {
 	return GIZMO_STANDARD_TYPE;
 }
@@ -85,7 +85,7 @@ std::string GizmoStandard::getType() {
  * \brief  Process an event
  * \param  pEvent The event to process
  * \return True on if the event should get passed on to the script
- */
+**/
 bool GizmoStandard::processEvent(GizmoEvent * pEvent) {
 	if (!GizmoLinuxInputDevice::processEvent())
 		return false;

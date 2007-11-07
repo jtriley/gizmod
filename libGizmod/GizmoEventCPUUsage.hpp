@@ -62,7 +62,7 @@ namespace Gizmod {
  * \brief Class for CPU events
  *
  * This class is for all GizmoEventCPUUsages attached to the system.
- */
+**/
 class GizmoEventCPUUsage : public GizmoEvent {
 public:
 	// public functions

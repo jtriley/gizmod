@@ -46,7 +46,7 @@ using namespace Gizmod;
 /** 
  * \def    TIMER_GRANULARITY
  * \brief  Amount of time to wait before checking for a cancel
- */
+**/
 #define	TIMER_GRANULARITY	0.05f
 
 ////////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmodTimer Default Constructor
- */
+**/
 GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction) : mThreadProc(this) {
 	mCancel = false;
 	mRepeats = 0;
@@ -66,7 +66,7 @@ GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction) : m
 
 /**
  * \brief GizmodTimer Init Constructor
- */
+**/
 GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction, boost::python::object UserData) : mThreadProc(this) {
 	mCancel = false;
 	mRepeats = 0;
@@ -78,7 +78,7 @@ GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction, boo
 
 /**
  * \brief GizmodTimer Init Constructor
- */
+**/
 GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction, int Repeats, boost::python::object UserData) : mThreadProc(this) {
 	mCancel = false;
 	mRepeats = 0;
@@ -90,7 +90,7 @@ GizmodTimer::GizmodTimer(float Seconds, boost::python::object TimerFunction, int
 
 /**
  * \brief GizmodTimer Destructor
- */
+**/
 GizmodTimer::~GizmodTimer() {
 }
 
@@ -100,7 +100,7 @@ GizmodTimer::~GizmodTimer() {
 
 /**
  * \brief  Create a thread and start its execution
- */
+**/
 void GizmodTimer::start() {
 	cdbg4 << "GizmodTimer :: start" << endl;
 	boost::thread thrd(mThreadProc);
@@ -108,7 +108,7 @@ void GizmodTimer::start() {
 
 /**
  * \brief  Create a thread and start its execution
- */
+**/
 void GizmodTimer::cancel() {
 	cdbg4 << "GizmodTimer :: cancel" << endl;
 	mCancel = true;
@@ -116,7 +116,7 @@ void GizmodTimer::cancel() {
 
 /**
  * \brief  Reset the timer's time
- */
+**/
 void GizmodTimer::resetTimer() {
 	mTotalSlept = 0.0f;
 }
@@ -124,7 +124,7 @@ void GizmodTimer::resetTimer() {
 /**
  * \brief  Set the Timer's user data
  * \param  UserData User defined data
- */
+**/
 void GizmodTimer::setUserData(boost::python::object UserData) {
 	mUserData = UserData;
 }
@@ -132,14 +132,14 @@ void GizmodTimer::setUserData(boost::python::object UserData) {
 /**
  * \brief  Set the time to sleep before firing timer event
  * \param  Seconds Time to sleep
- */
+**/
 void GizmodTimer::setTime(float Seconds) {
 	mSleepTime = Seconds;
 }
 
 /** 
  * \brief  The ThreadProc
- */
+**/
 void GizmodTimer::threadProc() {
 	cdbg4 << "GizmodTimer :: Sleeping [" << mSleepTime << "s]" << endl;
 	

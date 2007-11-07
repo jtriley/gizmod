@@ -43,7 +43,7 @@ using namespace std;
 
 /**
  * \brief Default Constructor
- */
+**/
 SocketClient::SocketClient() {
 	mConnected = false;
 	setEventWatcher(this);
@@ -51,7 +51,7 @@ SocketClient::SocketClient() {
 
 /**
  * \brief Destructor
- */
+**/
 SocketClient::~SocketClient() {
 }
 
@@ -63,7 +63,7 @@ SocketClient::~SocketClient() {
  * \brief  Connect to a server
  * \param  Host Hostname of the server to connect to
  * \param  Port Port of the server to connect to
- */
+**/
 void SocketClient::connectToServer(std::string Host, int Port) {
 	createSocket(SOCKET_INTERNET, SOCKET_STREAM);
 	connect(Host, Port);
@@ -72,7 +72,7 @@ void SocketClient::connectToServer(std::string Host, int Port) {
 /**
  * \brief  Are we connected to the server?
  * \return True if yes
- */
+**/
 bool SocketClient::isClientConnected() {
 	return mConnected;
 }
@@ -80,7 +80,7 @@ bool SocketClient::isClientConnected() {
 /**
  * \brief  Event triggered on socket connect
  * \param  socket The socket 
- */
+**/
 void SocketClient::onSocketClientConnect(Socket const & socket) {
 	// override me
 	cdbg << "SocketClient :: Socket Connect Detected" << endl;
@@ -89,7 +89,7 @@ void SocketClient::onSocketClientConnect(Socket const & socket) {
 /**
  * \brief  Event triggered on socket disconnect
  * \param  socket The socket 
- */
+**/
 void SocketClient::onSocketClientDisconnect(Socket const & socket) {
 	// override me
 	cdbg << "SocketClient :: Socket Disconnect Detected" << endl;
@@ -99,7 +99,7 @@ void SocketClient::onSocketClientDisconnect(Socket const & socket) {
  * \brief  Event triggered on a socket client message
  * \param  socket The Socket that triggered the event
  * \param  Message The message
- */
+**/
 void SocketClient::onSocketClientMessage(Socket const & socket, std::string const & Message) {
 	// override me
 	cdbg << "SocketClient :: Socket Message [" << Message.length() << "] Bytes -- " << Message << endl;
@@ -109,7 +109,7 @@ void SocketClient::onSocketClientMessage(Socket const & socket, std::string cons
  * \brief  Event triggered on socket read
  * \param  socket The socket 
  * \param  ReadBuffer The data
- */
+**/
 void SocketClient::onSocketClientRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer) {
 	// override me
 	cdbg << "SocketClient :: Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
@@ -120,7 +120,7 @@ void SocketClient::onSocketClientRead(Socket const & socket, DynamicBuffer<char>
  * \param  iSocket The Socket that triggered the event
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketClient::onSocketConnect(SocketInterface const & iSocket) {
 	mConnected = true;
 	onSocketClientConnect(static_cast<Socket const &>(iSocket));
@@ -132,7 +132,7 @@ void SocketClient::onSocketConnect(SocketInterface const & iSocket) {
  * \param  iSocket The Socket that triggered the event
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketClient::onSocketDisconnect(SocketInterface const & iSocket) {
 	mConnected = false;
 	onSocketClientDisconnect(static_cast<Socket const &>(iSocket));
@@ -144,7 +144,7 @@ void SocketClient::onSocketDisconnect(SocketInterface const & iSocket) {
  * \param  Message The message
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketClient::onSocketMessage(SocketInterface const & iSocket, std::string const & Message) {
 	onSocketClientMessage(static_cast<Socket const &>(iSocket), Message);
 }
@@ -155,7 +155,7 @@ void SocketClient::onSocketMessage(SocketInterface const & iSocket, std::string 
  * \param  ReadBuffer The Buffer
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketClient::onSocketRead(SocketInterface const & iSocket, DynamicBuffer<char> & ReadBuffer) {
 	onSocketClientRead(static_cast<Socket const &>(iSocket), ReadBuffer);
 }
@@ -163,7 +163,7 @@ void SocketClient::onSocketRead(SocketInterface const & iSocket, DynamicBuffer<c
 /**
  * \brief  Send a formatted message to the server
  * \param  Message The message to send
- */
+**/
 void SocketClient::sendToServer(std::string const & Message) {
 	writeMessage(Message);
 }

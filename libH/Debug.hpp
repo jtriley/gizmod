@@ -46,6 +46,25 @@
 namespace H {
 	
 //////////////////////////////////////////////////////////////////////////////
+// Define's, typedefs
+///////////////////////////////////////
+
+/**
+ * \def   debugOutput
+ * \brief Macro to test and output the requested data
+**/
+#define debugOutput(out) \
+	std::cout << out; \
+	if (Debug::mLogToFile) { \
+		Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app); \
+		if (Debug::mLogFile.is_open()) { \
+			Debug::mLogFile << out; \
+			Debug::mLogFile.close(); \
+		} \
+	} \
+	return dbg
+
+//////////////////////////////////////////////////////////////////////////////
 // Class Definition
 ///////////////////////////////////////
 
@@ -56,7 +75,7 @@ namespace H {
  * Debug stream class that implements cdbg (with varying verbosity levels)
  * Use cdbg1 to send a debug message that will only be seen if the user has set
  * debug level 1 or higher.  The default is level 0.
- */
+**/
 class Debug {
 public:
 	/// Get whether or not debug is enabled
@@ -87,12 +106,12 @@ public:
 	inline friend const Debug& 	operator << (const Debug & dbg, const double lf);
 	inline friend const Debug& 	operator << (const Debug & dbg, std::ostream&(*f)(std::ostream&)); // for endl
 
+	inline static bool		testPrint(const Debug& dbg) { return ((dbg.mDebug) && (dbg.mVerbosity >= dbg.mThisVerbosity)); };
+	
 	Debug(int ThisVerbosity);
 	virtual ~Debug();
 	
 private:
-	inline static bool		testPrint(const Debug& dbg) { return ((dbg.mDebug) && (dbg.mVerbosity >= dbg.mThisVerbosity)); };
-
 	static bool			mDebug;			///< is debug mode enabled?
 	static std::ofstream		mLogFile;		///< the log file
 	static std::string		mLogPath;		///< the log's path
@@ -105,7 +124,7 @@ private:
 
 /**
  * \brief  Set the debug log
- */
+**/
 inline void Debug::setLog(std::string const & LogFile) {
 	Debug::mLogFile.open(LogFile.c_str(), std::ios::app);
 	if (!Debug::mLogFile.is_open()) {
@@ -120,215 +139,102 @@ inline void Debug::setLog(std::string const & LogFile) {
 
 /**
  * \brief  Debug insertion operator for string
- */
-inline const Debug& operator << (const Debug & dbg, const std::string & s) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << s;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << s;
-				Debug::mLogFile.close();
-			}
-		}
-	}
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const std::string & out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for const char *
- */
-inline const Debug& operator << (const Debug & dbg, const char * s) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << s;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << s;
-				Debug::mLogFile.close();
-			}
-		}
-	}
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const char * out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for char
- */
-inline const Debug& operator << (const Debug & dbg, const char c) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << c;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << c;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const char out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for int
- */
-inline const Debug& operator << (const Debug & dbg, const int d) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << d;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << d;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const int out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for uint
- */
-inline const Debug& operator << (const Debug & dbg, const unsigned int d) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << d;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << d;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const unsigned int out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for long
- */
-inline const Debug& operator << (const Debug & dbg, const long l) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << l;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << l;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const long out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for long
- */
-inline const Debug& operator << (const Debug & dbg, const long long ll) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << ll;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << ll;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const long long out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for bool
- */
-inline const Debug& operator << (const Debug & dbg, const bool b) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << b;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << b;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const bool out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for ulong
- */
-inline const Debug& operator << (const Debug & dbg, const unsigned long l) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << l;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << l;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const unsigned long out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for ulong
- */
-inline const Debug& operator << (const Debug & dbg, const unsigned long long ll) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << ll;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << ll;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const unsigned long long out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for double
- */
-inline const Debug& operator << (const Debug & dbg, const double lf) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << lf;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << lf;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, const double out) {
+	debugOutput(out);
 }
 
 /**
  * \brief  Debug insertion operator for endl et al
- */
-inline const Debug& operator << (const Debug & dbg, std::ostream&(* f)(std::ostream &)) {
-	if (Debug::testPrint(dbg)) {
-		std::cout << f;
-		if (Debug::mLogToFile) {
-			Debug::mLogFile.open(Debug::mLogPath.c_str(), std::ios::app);
-			if (Debug::mLogFile.is_open()) {
-				Debug::mLogFile << f;
-				Debug::mLogFile.close();
-			}
-		}
-	}	
-	return dbg;
+**/
+inline const Debug& operator << (const Debug & dbg, std::ostream&(* out)(std::ostream &)) {
+	debugOutput(out);
 }
 
-static const Debug cdbg(0);  ///< Instantiation of cdbg level 0
-static const Debug cdbg1(1); ///< Instantiation of cdbg level 1
-static const Debug cdbg2(2); ///< Instantiation of cdbg level 2
-static const Debug cdbg3(3); ///< Instantiation of cdbg level 3
-static const Debug cdbg4(4); ///< Instantiation of cdbg level 4
-static const Debug cdbg5(5); ///< Instantiation of cdbg level 5
+static const Debug dbg0(0); ///< Instantiation of cdbg level 0
+static const Debug dbg1(1); ///< Instantiation of cdbg level 1
+static const Debug dbg2(2); ///< Instantiation of cdbg level 2
+static const Debug dbg3(3); ///< Instantiation of cdbg level 3
+static const Debug dbg4(4); ///< Instantiation of cdbg level 4
+static const Debug dbg5(5); ///< Instantiation of cdbg level 5
 
+#define cdbg	if (H::Debug::testPrint(dbg0)) H::dbg0
+#define cdbg1	if (H::Debug::testPrint(dbg1)) H::dbg1
+#define cdbg2	if (H::Debug::testPrint(dbg2)) H::dbg2
+#define cdbg3	if (H::Debug::testPrint(dbg3)) H::dbg3
+#define cdbg4	if (H::Debug::testPrint(dbg4)) H::dbg4
+#define cdbg5	if (H::Debug::testPrint(dbg5)) H::dbg5
+				
 } // H namespace
 
 //////////////////////////////////////////////////////////////////////////////

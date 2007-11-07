@@ -60,7 +60,7 @@ namespace Gizmod {
  * \brief Class for ATIX10 events
  *
  * This class is for all GizmoEventATIX10s attached to the system.
- */
+**/
 class GizmoEventATIX10 : public GizmoEvent, public GizmoLinuxInputEvent {
 public:
 	// public functions

@@ -49,19 +49,19 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoEventWindowFocus Default Constructor
- */
+**/
 GizmoEventWindowFocus::GizmoEventWindowFocus(X11FocusEvent const & Event, bool IsRemote) : X11FocusEvent(Event), GizmoEvent(GIZMO_EVENTCLASS_WINDOWFOCUS, false) {
 }
 
 /**
  * \brief GizmoEventWindowFocus Serialize Constructor
- */
+**/
 GizmoEventWindowFocus::GizmoEventWindowFocus() {
 }
 
 /**
  * \brief GizmoEventWindowFocus Destructor
- */
+**/
 GizmoEventWindowFocus::~GizmoEventWindowFocus() {
 }
 

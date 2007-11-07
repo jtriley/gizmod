@@ -50,7 +50,7 @@ namespace H {
  * \typedef ExceptionType
  *
  * Enum for the different Exception types
- */
+**/
 typedef enum {
 	EXCEPTION_INFO,
 	EXCEPTION_WARNING,
@@ -68,7 +68,7 @@ typedef enum {
  *
  * Generic Exception class which takes a string message as a constructor
  * For throwing informative error messages
- */
+**/
 class Exception : public std::exception {
 public:
 	/// Get the type of exception

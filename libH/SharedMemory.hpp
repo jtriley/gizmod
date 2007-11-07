@@ -46,13 +46,13 @@ namespace H {
 /** 
  * \def   makeSharedPointer
  * Helper macro to define a new shared_ptr
- */
+**/
 #define makeSharedPointer(X)	typedef shared_ptr<X> X##Ptr
 
 /** 
  * \def   newSharedPtr
  * Helper macro to instantiate a new managed pointer
- */
+**/
 #define newSharedPtr(x, y)	x##Ptr y = x##Ptr(new x)
 
 //////////////////////////////////////////////////////////////////////////////

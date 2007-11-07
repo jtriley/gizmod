@@ -47,7 +47,7 @@
  *
  * All code in the H namespace gets its inspiration from the best movie ever made:
  *    Hackers
- */
+**/
 namespace H {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ namespace H {
 /**
  * \class Average
  * \brief Class for averaging things out over a number of iterations
- */
+**/
 class Average {
 public:
 	// public functions

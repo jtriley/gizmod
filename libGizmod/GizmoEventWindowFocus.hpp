@@ -68,7 +68,7 @@ namespace Gizmod {
  *
  * This is due to the way X (and your WM's focus stealing prevention)
  * works (or perhaps doesn't work).
- */
+**/
 class GizmoEventWindowFocus : public X11FocusEvent, public GizmoEvent {
 public:
 	// public functions

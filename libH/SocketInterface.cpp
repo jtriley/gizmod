@@ -43,13 +43,13 @@ using namespace std;
 
 /**
  * \brief Default Constructor
- */
+**/
 SocketInterface::SocketInterface() {
 }
 
 /**
  * \brief Destructor
- */
+**/
 SocketInterface::~SocketInterface() {
 }
 

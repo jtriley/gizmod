@@ -51,7 +51,7 @@ namespace Gizmod {
 /**
  * \class Process
  * \brief Class that holds info about each process
- */
+**/
 class Process {
 public:
 	// public member variables
@@ -78,7 +78,7 @@ private:
 /**
  * \class Processes
  * \brief Base class for functions related to operating system processes
- */
+**/
 class Processes {
 public:
 	// public functions

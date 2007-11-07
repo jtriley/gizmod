@@ -48,7 +48,7 @@ namespace Gizmod {
 /**
  * \class GizmodShared
  * \brief Base class for Shared Gizmod data 
- */
+**/
 class GizmodShared {
 public:
 	// public functions

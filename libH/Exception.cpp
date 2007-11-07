@@ -44,7 +44,7 @@ using namespace H;
 
 /**
  * \brief Exception Default Constructor
- */
+**/
 Exception::Exception(const std::string & Message, ExceptionType Type) {
 	mMessage = Message;
 	mType = Type;
@@ -52,7 +52,7 @@ Exception::Exception(const std::string & Message, ExceptionType Type) {
 
 /**
  * \brief Exception Advanced Constructor
- */
+**/
 Exception::Exception(const std::string & Message, const std::string & File, const std::string & Function, int LineNumber, ExceptionType Type) {
 	if (Debug::getEnabled())
 		mMessage = "Exception in [" + File + "] :: [" + Function + "] @ [Line " + stringconverter(LineNumber) + "] -- " + Message;
@@ -63,7 +63,7 @@ Exception::Exception(const std::string & Message, const std::string & File, cons
 
 /**
  * \brief Exception Destructor
- */
+**/
 Exception::~Exception() throw() {
 }
 

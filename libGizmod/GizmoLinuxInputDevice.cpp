@@ -55,7 +55,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoLinuxInputDevice Default Constructor
- */
+**/
 GizmoLinuxInputDevice::GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo) {
 	mDeviceInfo = DeviceInfo;
 	mSendNullEvents = false;
@@ -65,7 +65,7 @@ GizmoLinuxInputDevice::GizmoLinuxInputDevice(const H::DeviceInfo & DeviceInfo) {
 
 /**
  * \brief GizmoLinuxInputDevice Serialize Constructor
- */
+**/
 GizmoLinuxInputDevice::GizmoLinuxInputDevice() {
 	mSendNullEvents = false;
 	mLastEventTime = 0;
@@ -74,7 +74,7 @@ GizmoLinuxInputDevice::GizmoLinuxInputDevice() {
 
 /**
  * \brief GizmoLinuxInputDevice Destructor
- */
+**/
 GizmoLinuxInputDevice::~GizmoLinuxInputDevice() {
 }
 
@@ -86,7 +86,7 @@ GizmoLinuxInputDevice::~GizmoLinuxInputDevice() {
  * \brief  Build an event vector from a read buffer
  * \param  EventVector Reference to a vector which will contain the results
  * \param  Buffer The bufer to convert into events
- */
+**/
 void GizmoLinuxInputDevice::buildInputEventsVectorFromBuffer(std::vector<struct input_event> & EventVector, H::DynamicBuffer<char> const & Buffer) {
 	DynamicBufferConverter<char, struct input_event>::convert(EventVector, Buffer);
 }
@@ -104,7 +104,7 @@ void GizmoLinuxInputDevice::buildInputEventsVectorFromBuffer(std::vector<struct 
  * a Value of 1 means turn the key "on", and 0 means turn the key "off"
  *
  * Note: Writes the event, and a NULL event to signal a refresh
- */
+**/
 bool GizmoLinuxInputDevice::createEventRaw(int Type, int Code, int Value) {
 	struct input_event ev[2];
 	memset(&ev, 0, sizeof(struct input_event) * 2);
@@ -129,7 +129,7 @@ bool GizmoLinuxInputDevice::createEventRaw(int Type, int Code, int Value) {
  *
  * Note: This is available in Python as createEvent as well as
  * createEventPress
- */
+**/
 bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
 	if (!createEventRaw(Type, Code, 1))
 		return false;
@@ -153,7 +153,7 @@ bool GizmoLinuxInputDevice::createEventPress(int Type, int Code) {
  *
  * Note: This is available in Python as createEvent as well as
  * createEventPress, and createEventPressMod
- */
+**/
 bool GizmoLinuxInputDevice::createEventPressMod(int Type, int Code, boost::python::object Modifiers) {
 	for (int lp = 0; lp < len(Modifiers); lp ++) 
 		if (!createEventRaw(Type, extract<int>(Modifiers[lp]), 1))
@@ -185,7 +185,7 @@ bool GizmoLinuxInputDevice::createEventPressMod(int Type, int Code, boost::pytho
  * a Value of 1 means turn the key "on", and 0 means turn the key "off"
  *
  * Note: Writes the events, then a NULL event to signal a refresh
- */
+**/
 bool GizmoLinuxInputDevice::createEvents(int Type, int Code, int Value, int NumWrites) {
 	struct input_event ev;
 	memset(&ev, 0, sizeof(struct input_event));
@@ -204,7 +204,7 @@ bool GizmoLinuxInputDevice::createEvents(int Type, int Code, int Value, int NumW
 /**
  * \brief  Get whether or not the Gizmo sends NULL events
  * \return True if sends null events
- */
+**/
 bool GizmoLinuxInputDevice::getSendNullEvents() const {
 	return mSendNullEvents;
 }
@@ -218,7 +218,7 @@ bool GizmoLinuxInputDevice::getSendNullEvents() const {
  * receive events from it.  This allows intercepting the events
  * without the rest of the system knowing about them, and they
  * can then be translated into other events by issuing createEvent calls
- */
+**/
 bool GizmoLinuxInputDevice::grabExclusiveAccess(bool Grab) {
 	if (ioctl(mDeviceInfo.FileDescriptor, EVIOCGRAB, Grab ? 1 : 0)) {
 		cerr << "Device [" << mDeviceInfo.DeviceName <<"] Exclusive Access Grab Failed!" << endl;
@@ -232,7 +232,7 @@ bool GizmoLinuxInputDevice::grabExclusiveAccess(bool Grab) {
 /**
  * \brief  Should we process the event based on the minimum time between events?
  * \return True if we should, false if not
- */
+**/
 bool GizmoLinuxInputDevice::processEvent() {
 	if (UtilTime::getTicks() - mLastEventTime < mMinTimeBetweenEvents)
 		return false;
@@ -245,7 +245,7 @@ bool GizmoLinuxInputDevice::processEvent() {
  * \param  CurCode Key to change the mapping of
  * \param  NewCode New code of the key
  * \return True on success
- */
+**/
 bool GizmoLinuxInputDevice::remapKey(int CurCode, int NewCode) {
 	int codes[2];
 	codes[0] = CurCode;
@@ -265,7 +265,7 @@ bool GizmoLinuxInputDevice::remapKey(int CurCode, int NewCode) {
  *
  * This is for remotes that are a bit jittery, or trigger happy.
  * Set this to an appropriate value (issue -V 5 to see the timings)
- */
+**/
 void GizmoLinuxInputDevice::setMinimumTimeBetweenEvents(float Seconds) {
 	mMinTimeBetweenEvents = (long) (Seconds * 1000000.0f);
 }
@@ -273,7 +273,7 @@ void GizmoLinuxInputDevice::setMinimumTimeBetweenEvents(float Seconds) {
 /**
  * \brief  Set whether or not the Gizmo sends NULL events
  * \param  SendNull Set to true if the device should send NULL events
- */
+**/
 void GizmoLinuxInputDevice::setSendNullEvents(bool SendNull) {
 	mSendNullEvents = SendNull;
 }

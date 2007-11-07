@@ -43,13 +43,13 @@ using namespace H;
 
 /**
  * \brief Default Constructor
- */
+**/
 UtilMath::UtilMath() {
 }
 
 /**
  * \brief Destructor
- */
+**/
 UtilMath::~UtilMath() {
 }
 
@@ -60,7 +60,7 @@ UtilMath::~UtilMath() {
 /**
  * \brief integer divide and round up
  * \return calculation result
- */
+**/
 int UtilMath::intDivRoundUp(int Div1, int Div2) {
 	return (int) ceil((double)Div1/(double)Div2);
 }
@@ -68,7 +68,7 @@ int UtilMath::intDivRoundUp(int Div1, int Div2) {
 /**
  * \brief get a random floating point number
  * \return random float
- */
+**/
 float UtilMath::random() {
 	return rand() / (float) RAND_MAX;
 }
@@ -76,7 +76,7 @@ float UtilMath::random() {
 /**
  * \brief randomize
  * \return seed the random number generator
- */
+**/
 void UtilMath::randomize() {
 	srand((unsigned)time(NULL));
 }
@@ -84,7 +84,7 @@ void UtilMath::randomize() {
 /**
  * \brief get a random floating point number with min and max
  * \return random float
- */
+**/
 float UtilMath::randomFloat(float MinVal, float MaxVal) {
 	float Rnd = random();
 	float Range = MaxVal - MinVal;
@@ -96,7 +96,7 @@ float UtilMath::randomFloat(float MinVal, float MaxVal) {
 /**
  * \brief get a random integer with min and max
  * \return random int
- */
+**/
 int UtilMath::randomInt(int MinVal, int MaxVal) {
 	float Rnd = random();
 	float Range = MaxVal - MinVal;

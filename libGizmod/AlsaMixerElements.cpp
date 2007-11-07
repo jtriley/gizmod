@@ -41,7 +41,7 @@ using namespace Gizmod;
 
 /** 
  * \brief  AlsaMixerElements Default Constructor
- */
+**/
 AlsaMixerElements::AlsaMixerElements() {
 	IsActive = false;
 	HasCommonVolume = false;
@@ -72,7 +72,7 @@ AlsaMixerElements::AlsaMixerElements() {
 
 /** 
  * \brief  AlsaMixerElements Init Constructor
- */
+**/
 AlsaMixerElements::AlsaMixerElements(AlsaMixerElements const & Init) {
 	IsActive = Init.IsActive;
 	HasCommonVolume = Init.HasCommonVolume;
@@ -103,7 +103,7 @@ AlsaMixerElements::AlsaMixerElements(AlsaMixerElements const & Init) {
 
 /**
  * \brief  AlsaMixerElements Destructor
- */
+**/
 AlsaMixerElements::~AlsaMixerElements() {
 }
 
@@ -116,7 +116,7 @@ AlsaMixerElements::~AlsaMixerElements() {
  * \param  Event The return event
  * \param  OldElements The old mixer state
  * \param  NewElements The new mixer state
- */
+**/
 void AlsaMixerElements::buildEventFromMixerStates(AlsaEvent & Event, AlsaMixerElements const & OldElements, AlsaMixerElements const & NewElements) {
 	Event.IsActiveChanged = false;
 	Event.ElementsChanged = false;

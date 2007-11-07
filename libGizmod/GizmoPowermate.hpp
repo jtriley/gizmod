@@ -58,7 +58,7 @@ namespace Gizmod {
  * \brief Powermate Gizmo
  *
  * This class contains all of the helper functions for making use of the Powermate
- */
+**/
 class GizmoPowermate : public Gizmo, public GizmoLinuxInputDevice {
 public:
 	// public functions

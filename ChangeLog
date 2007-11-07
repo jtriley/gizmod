@@ -7,6 +7,9 @@
 	- Switch to CMake from autotools
 	- Add initial suport for Logitech MOMO Racing Wheel
 		- Can mouse scroll via foot pedals
+	- Fix CPU usage bug in X11 focus watcher
+	- Change Debug class to simulate lazy evaluation of output params
+		- Decreased overall CPU usage
 
 ----------------------------------------
 -- v 3.3

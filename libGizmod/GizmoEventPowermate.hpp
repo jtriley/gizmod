@@ -60,7 +60,7 @@ namespace Gizmod {
  * \brief Class for Powermate events
  *
  * This class is for all GizmoEventPowermates attached to the system.
- */
+**/
 class GizmoEventPowermate : public GizmoEvent, public GizmoLinuxInputEvent {
 public:
 	// public member variabled

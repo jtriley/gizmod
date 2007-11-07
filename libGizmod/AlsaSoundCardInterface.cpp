@@ -44,14 +44,14 @@ using namespace Gizmod;
 
 /** 
  * \brief  AlsaSoundCardInterface Default Constructor
- */
+**/
 AlsaSoundCardInterface::AlsaSoundCardInterface(AlsaInterface * piAlsa) {
 	mpiAlsa = piAlsa;
 }
 
 /**
  * \brief  AlsaSoundCardInterface Destructor
- */
+**/
 AlsaSoundCardInterface::~AlsaSoundCardInterface() {
 }
 
@@ -62,7 +62,7 @@ AlsaSoundCardInterface::~AlsaSoundCardInterface() {
 /**
  * \brief  Add a mixer to the manual update list
  * \param  pMixer The mixer to add
- */
+**/
 void AlsaSoundCardInterface::addManualUpdater(AlsaMixerInterface * pMixer) {
 	// make sure it's not already in the list
 	for (list<AlsaMixerInterface *>::iterator iter = mUpdateList.begin(); iter != mUpdateList.end(); iter ++)
@@ -75,7 +75,7 @@ void AlsaSoundCardInterface::addManualUpdater(AlsaMixerInterface * pMixer) {
 /**
  * \brief  Get a pointer to the Alsa intantiation
  * \return Point to the AlsaInterface
- */
+**/
 AlsaInterface * AlsaSoundCardInterface::getAlsa() {
 	return mpiAlsa;
 }

@@ -49,13 +49,13 @@ using namespace Gizmod;
 /**
  * \def    PROC_STAT_PATH
  * \brief  Path to /proc/stat
- */
+**/
 #define PROC_STAT_PATH		"/proc/stat"
 
 /**
  * \def    DEFAULT_UPDATE_DELAY
  * \brief  The default amount of seconds between process tree rebuilds
- */
+**/
 #define DEFAULT_UPDATE_DELAY	0.1f
 
 ////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ using namespace Gizmod;
 
 /**
  * \brief CPUUsage Default Constructor
- */
+**/
 CPUUsage::CPUUsage() : mThreadProc(this) {
 	mSecsBetweenUpdates = DEFAULT_UPDATE_DELAY;
 	mWatching = false;
@@ -78,7 +78,7 @@ CPUUsage::CPUUsage() : mThreadProc(this) {
 
 /**
  * \brief CPUUsageInfo Default Constructor
- */
+**/
 CPUUsageInfo::CPUUsageInfo() {
 	memset(Field, 0, sizeof(double) * CPUUSAGE_MAX);
 	memset(Stat, 0, sizeof(double) * CPUUSAGE_MAX);	
@@ -88,14 +88,14 @@ CPUUsageInfo::CPUUsageInfo() {
 
 /**
  * \brief CPUUsage Destructor
- */
+**/
 CPUUsage::~CPUUsage() {
 	shutdown();
 }
 
 /**
  * \brief CPUUsageInfo Destructor
- */
+**/
 CPUUsageInfo::~CPUUsageInfo() {
 }
 
@@ -106,7 +106,7 @@ CPUUsageInfo::~CPUUsageInfo() {
 /**
  * \brief  Get the number of CPUs on the system
  * \return The number of CPUs
- */
+**/
 size_t CPUUsage::getNumCPUs() {
 	if (mCPUUsage.size() == 0) {
 		if (!filesystem::exists(path(PROC_STAT_PATH))) {
@@ -142,7 +142,7 @@ size_t CPUUsage::getNumCPUs() {
 
 /**
  * \brief  Start the Usage watcher thread
- */
+**/
 void CPUUsage::init() {
 	if (getNumCPUs() < 0) {
 		cdbg << "Cannot give CPU Usage Stats! -- Cannot access [" << PROC_STAT_PATH << "]" << endl;
@@ -156,7 +156,7 @@ void CPUUsage::init() {
 /**
  * \brief  Event triggered when CPU Usage stats are updated
  * \param  Event A vector of CPU Usage info, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
- */
+**/
 void CPUUsage::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) {
 	// override me
 }
@@ -164,14 +164,14 @@ void CPUUsage::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const &
 /**
  * \brief  Set the time between updates in seconds
  * \param  Seconds Number of seconds between updates
- */
+**/
 void CPUUsage::setTimeBetweenUpdates(float Seconds) {
 	mSecsBetweenUpdates = Seconds;
 }
 
 /**
  * \brief  Shutdown the CPUUsage watcher
- */
+**/
 void CPUUsage::shutdown() {
 	mWatching = false;
 	while (mThreading) {
@@ -182,7 +182,7 @@ void CPUUsage::shutdown() {
 
 /**
  * \brief  The thread procedure loop
- */
+**/
 void CPUUsage::threadProc() {
 	// wait for events to occur
 	mWatching = true;
@@ -194,7 +194,7 @@ void CPUUsage::threadProc() {
 
 /**
  * \brief  Force an update of the CPU Usage stats
- */
+**/
 void CPUUsage::updateUsageStats() {
 	// open the file
 	FILE * StatFile;

@@ -43,7 +43,7 @@ using namespace Gizmod;
 /**
  * \def   GIZMO_TYPE_UNSPECIFIED
  * \brief String returned if a super class failed to reimplement getGizmoType
- */
+**/
 #define GIZMO_TYPE_UNSPECIFIED	"Unspecified"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ using namespace Gizmod;
 
 /**
  * \brief Gizmo Default Constructor
- */
+**/
 Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : DeviceInfo(deviceInfo) {
 	mClass = Class;
 	mDeviceID = DeviceID;
@@ -62,13 +62,13 @@ Gizmo::Gizmo(GizmoClass Class, const H::DeviceInfo & deviceInfo, int DeviceID, i
 
 /**
  * \brief Gizmo Serialize Constructor
- */
+**/
 Gizmo::Gizmo() {
 }
 
 /**
  * \brief Gizmo Destructor
- */
+**/
 Gizmo::~Gizmo() {
 }
 
@@ -82,7 +82,7 @@ Gizmo::~Gizmo() {
  * 
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".GizmoClass"
- */
+**/
 GizmoClass Gizmo::getClass() {
 	return mClass;
 }
@@ -92,7 +92,7 @@ GizmoClass Gizmo::getClass() {
  * \return The Device ID
  *
  * This is the unique Device ID of the Gizmo
- */
+**/
 int Gizmo::getDeviceID() {
 	return mDeviceID;
 }
@@ -104,7 +104,7 @@ int Gizmo::getDeviceID() {
  * Each Gizmo in this GizmoClass will have an ID that is unique only amongst this class.
  *
  * Effectively this can be used to find out which Powermate device an event belongs to, and so forth.
- */
+**/
 int Gizmo::getDeviceClassID() {
 	return mDeviceClassID;
 } 
@@ -113,7 +113,7 @@ int Gizmo::getDeviceClassID() {
  * \brief  Get the class of the Gizmo
  * \param  Key The key to inquire upon
  * \return The value of the button (0 == off, 1 == on, 2 == repeating)
- */
+**/
 int Gizmo::getKeyState(GizmoKey Key) {
 	return mKeyState[Key];
 }
@@ -124,7 +124,7 @@ int Gizmo::getKeyState(GizmoKey Key) {
  *
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".GizmoType"
- */
+**/
 std::string Gizmo::getType() {
 	return GIZMO_TYPE_UNSPECIFIED;
 }
@@ -133,7 +133,7 @@ std::string Gizmo::getType() {
  * \brief  Process an event
  * \param  pEvent The event to process
  * \return True on if the event should get passed on to the script
- */
+**/
 bool Gizmo::processEvent(GizmoEvent * pEvent) {
 	// override me
 	return true;
@@ -143,7 +143,7 @@ bool Gizmo::processEvent(GizmoEvent * pEvent) {
  * \brief  Set a keystate of the Gizmo
  * \param  Key The key to change states
  * \param  State The new state (0 == off, 1 == on, 2 == repeating)
- */
+**/
 void Gizmo::setKeyState(GizmoKey Key, int State) {
 	mKeyState[Key] = State;
 }

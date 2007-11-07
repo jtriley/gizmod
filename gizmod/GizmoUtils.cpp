@@ -44,13 +44,13 @@ using namespace H;
 
 /**
  * \brief GizmoUtils Default Constructor
- */
+**/
 GizmoUtils::GizmoUtils() {
 }
 
 /**
  * \brief GizmoUtils Destructor
- */
+**/
 GizmoUtils::~GizmoUtils() {
 }
 
@@ -63,7 +63,7 @@ GizmoUtils::~GizmoUtils() {
  * \param  ReferenceCode The reference code to test against
  * \param  ActualCode The actual received code
  * \return Number of differing bits
- */
+**/
 int GizmoUtils::bitDifference(unsigned char ReferenceCode, unsigned char ActualCode) {
 	unsigned char DifferingBits = ReferenceCode ^ ActualCode;
 	bitset<sizeof(unsigned char) * 8> bits(DifferingBits);

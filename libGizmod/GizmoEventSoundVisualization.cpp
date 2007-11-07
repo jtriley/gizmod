@@ -46,7 +46,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoEventSoundVisualization Default Constructor
- */
+**/
 GizmoEventSoundVisualization::GizmoEventSoundVisualization() : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION, false) {
 	mVULeft = mVURight = mVUCombined = 0;
 	mType = SOUNDVISUALIZATION_RENDER;
@@ -54,7 +54,7 @@ GizmoEventSoundVisualization::GizmoEventSoundVisualization() : GizmoEvent(GIZMO_
 
 /**
  * \brief GizmoEventSoundVisualization Init Constructor
- */
+**/
 GizmoEventSoundVisualization::GizmoEventSoundVisualization(float VULeft, float VURight, float VUCombined, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION, IsRemote) {
 	mVULeft = VULeft;
 	mVURight = VURight;
@@ -64,7 +64,7 @@ GizmoEventSoundVisualization::GizmoEventSoundVisualization(float VULeft, float V
 
 /**
  * \brief GizmoEventSoundVisualization Init Constructor
- */
+**/
 GizmoEventSoundVisualization::GizmoEventSoundVisualization(SoundVisualizationEventType Type, bool IsRemote) : GizmoEvent(GIZMO_EVENTCLASS_SOUNDVISUALIZATION, IsRemote) {
 	mVULeft = mVURight = mVUCombined = 0;
 	mType = Type;
@@ -72,7 +72,7 @@ GizmoEventSoundVisualization::GizmoEventSoundVisualization(SoundVisualizationEve
 
 /**
  * \brief GizmoEventSoundVisualization Destructor
- */
+**/
 GizmoEventSoundVisualization::~GizmoEventSoundVisualization() {
 }
 
@@ -83,7 +83,7 @@ GizmoEventSoundVisualization::~GizmoEventSoundVisualization() {
 /**
  * \brief  Get VU data for the left channel
  * \return The VU data
- */
+**/
 float GizmoEventSoundVisualization::getVULeft() {
 	return mVULeft;
 }
@@ -91,7 +91,7 @@ float GizmoEventSoundVisualization::getVULeft() {
 /**
  * \brief  Get VU data for the right channel
  * \return The VU data
- */
+**/
 float GizmoEventSoundVisualization::getVURight() {
 	return mVURight;
 }
@@ -99,7 +99,7 @@ float GizmoEventSoundVisualization::getVURight() {
 /**
  * \brief  Get VU data for both channels
  * \return The VU data
- */
+**/
 float GizmoEventSoundVisualization::getVUCombined() {
 	return mVUCombined;
 }
@@ -107,7 +107,7 @@ float GizmoEventSoundVisualization::getVUCombined() {
 /**
  * \brief  Get VU data for both channels
  * \return The VU data
- */
+**/
 SoundVisualizationEventType GizmoEventSoundVisualization::getType() {
 	return mType;
 }

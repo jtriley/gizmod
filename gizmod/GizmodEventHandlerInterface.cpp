@@ -43,13 +43,13 @@ using namespace H;
 
 /**
  * \brief Default Constructor
- */
+**/
 GizmodEventHandlerInterface::GizmodEventHandlerInterface() {
 }
 
 /**
  * \brief Default Destructor
- */
+**/
 GizmodEventHandlerInterface::~GizmodEventHandlerInterface() {
 }
 

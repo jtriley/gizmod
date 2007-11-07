@@ -50,13 +50,13 @@ using namespace Gizmod;
 /**
  * \def    PROC_PATH
  * \brief  Path to /proc
- */
+**/
 #define PROC_PATH		"/proc"
 
 /**
  * \def    DEFAULT_UPDATE_DELAY
  * \brief  The default amount of time between process tree rebuilds
- */
+**/
 #define DEFAULT_UPDATE_DELAY	2500000
 
 ////////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ unsigned long Processes::mMsBetweenUpdates = DEFAULT_UPDATE_DELAY; ///< Time bet
 
 /**
  * \brief Processes Default Constructor
- */
+**/
 Processes::Processes() {
 	// update the process tree if necessary
 	isProcessRunning("");
@@ -82,20 +82,20 @@ Processes::Processes() {
 
 /**
  * \brief Process Default Constructor
- */
+**/
 Process::Process() {
 	PID = -1;
 }
 
 /**
  * \brief Processes Destructor
- */
+**/
 Processes::~Processes() {
 }
 
 /**
  * \brief Process Destructor
- */
+**/
 Process::~Process() {
 }
 
@@ -107,7 +107,7 @@ Process::~Process() {
  * \brief  Check is a process is running
  * \param  ProcessName The name of the process to check on
  * \return PID of the process if found, or a negative value if not found
- */
+**/
 int Processes::isProcessRunning(std::string ProcessName) {
 	if (UtilTime::getTicks() - mLastUpdateTime >= mMsBetweenUpdates)
 		updateProcessTree();
@@ -125,14 +125,14 @@ int Processes::isProcessRunning(std::string ProcessName) {
 /**
  * \brief  Set the time between updates in seconds
  * \param  Seconds Number of seconds between updates
- */
+**/
 void Processes::setTimeBetweenUpdates(float Seconds) {
 	mMsBetweenUpdates = (unsigned long) (Seconds * 1000000.0f);
 }
 
 /**
  * \brief  Force an update of the process tree
- */
+**/
 void Processes::updateProcessTree() {
 	cdbg5 << "Building Process Tree" << endl;
 	if (!filesystem::exists(path(PROC_PATH))) {

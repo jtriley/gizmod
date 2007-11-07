@@ -57,7 +57,7 @@ namespace Gizmod {
 /**
  * \class  AlsaMixer
  * \brief  Data structure that holds information about each Mixer
- */
+**/
 class AlsaMixer : public AlsaMixerInterface, public AlsaMixerElements {
 public:	
 	// public member variables

@@ -58,7 +58,7 @@ namespace Gizmod {
  * \brief Standard Gizmos
  *
  * This class contains all of the helper functions for making use of standard devices
- */
+**/
 class GizmoStandard : public Gizmo, public GizmoLinuxInputDevice {
 public:
 	// public functions

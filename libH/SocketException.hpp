@@ -54,7 +54,7 @@ namespace H {
  * \brief Main SocketException class
  *
  * This class provides an easy way for dealing with signals
- */
+**/
 class SocketException : public Exception {
 public:
 	// Public Member Functions

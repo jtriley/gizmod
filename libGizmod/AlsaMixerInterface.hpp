@@ -53,7 +53,7 @@ namespace Gizmod {
 /**
  * \class  AlsaMixerInterface
  * \brief  Data structure that holds information about Alsa events
- */
+**/
 class AlsaMixerInterface {
 public:	
 	// public member variables

@@ -61,7 +61,7 @@ namespace Gizmod {
  * \brief Class for SoundCard events
  *
  * This class is for all GizmoEventSoundCards attached to the system.
- */
+**/
 class GizmoEventSoundCard : public AlsaEvent, public GizmoEvent {
 public:
 	// public member variables

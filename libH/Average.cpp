@@ -47,7 +47,7 @@ using namespace H;
 
 /**
  * \brief  Default Constructor
- */
+**/
 Average::Average(int Size) {
 	mValues.resize(Size);
 	mHeadIdx = 0;
@@ -57,7 +57,7 @@ Average::Average(int Size) {
 
 /**
  * \brief  Destructor
- */
+**/
 Average::~Average() {
 }
 
@@ -68,7 +68,7 @@ Average::~Average() {
 /**
  * \brief  Push a value to be averaged
  * \param  Value The value
- */
+**/
 void Average::push(double Value) {
 	if (mFillState == mValues.size()) {
 		mSum += Value - mValues[mHeadIdx];
@@ -84,7 +84,7 @@ void Average::push(double Value) {
 /**
  * \brief  Get the average
  * \return The average of all pushed values
- */
+**/
 double Average::average(void) {
    if (mFillState == 0)
       return 0.0;

@@ -56,7 +56,7 @@ namespace Gizmod {
 /**
  * \class  AlsaInterface
  * \brief  Interface to the Alsa class
- */
+**/
 class AlsaInterface {
 public:	
 	// public functions

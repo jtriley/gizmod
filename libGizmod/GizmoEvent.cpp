@@ -46,7 +46,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoEvent Default Constructor
- */
+**/
 GizmoEvent::GizmoEvent(GizmoEventClass Class, bool IsRemote) {
 	mClass = Class;
 	mIsRemote = IsRemote;
@@ -54,7 +54,7 @@ GizmoEvent::GizmoEvent(GizmoEventClass Class, bool IsRemote) {
 
 /**
  * \brief GizmoEvent Serialize Constructor
- */
+**/
 GizmoEvent::GizmoEvent() {
 	mClass = GIZMO_EVENTCLASS_STANDARD;
 	mIsRemote = false;
@@ -62,7 +62,7 @@ GizmoEvent::GizmoEvent() {
 
 /**
  * \brief GizmoEvent Destructor
- */
+**/
 GizmoEvent::~GizmoEvent() {
 }
 
@@ -76,7 +76,7 @@ GizmoEvent::~GizmoEvent() {
  * 
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".GizmoClass"
- */
+**/
 GizmoEventClass GizmoEvent::getClass() {
 	return mClass;
 }
@@ -87,7 +87,7 @@ GizmoEventClass GizmoEvent::getClass() {
  * 
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".RemoteEvent"
- */
+**/
 bool GizmoEvent::isRemote() {
 	return mIsRemote;
 }
@@ -95,7 +95,7 @@ bool GizmoEvent::isRemote() {
 /**
  * \brief  Set whether or not it's a remote event
  * \param  IsRemote True if the remote is from afar
- */
+**/
 void GizmoEvent::setIsRemote(bool IsRemote) {
 	mIsRemote = IsRemote;
 }

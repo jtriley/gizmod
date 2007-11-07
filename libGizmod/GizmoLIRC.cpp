@@ -45,7 +45,7 @@ using namespace Gizmod;
 /**
  * \def   GIZMO_LIRC_TYPE
  * \brief String type of this gizmo
- */
+**/
 #define GIZMO_LIRC_TYPE	"LIRC"
 	
 ////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ using namespace Gizmod;
 
 /**
  * \brief GizmoLIRC Default Constructor
- */
+**/
 GizmoLIRC::GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceClassID) : Gizmo(GIZMO_CLASS_LIRC, deviceInfo, DeviceID, DeviceClassID)  {
 	mDisabledRepeats = 1;
 	mLastEventTime = UtilTime::getTicks();
@@ -67,7 +67,7 @@ GizmoLIRC::GizmoLIRC(const H::DeviceInfo & deviceInfo, int DeviceID, int DeviceC
 
 /**
  * \brief GizmoLIRC Serialize Constructor
- */
+**/
 GizmoLIRC::GizmoLIRC()  {
 	mDisabledRepeats = 1;
 	mLastEventTime = UtilTime::getTicks();
@@ -76,7 +76,7 @@ GizmoLIRC::GizmoLIRC()  {
 
 /**
  * \brief GizmoLIRC Destructor
- */
+**/
 GizmoLIRC::~GizmoLIRC() {
 }
 
@@ -87,7 +87,7 @@ GizmoLIRC::~GizmoLIRC() {
 /**
  * \brief  Get the type of this Gizmo
  * \return Type of the Gizmo
- */
+**/
 std::string GizmoLIRC::getType() {
 	return GIZMO_LIRC_TYPE;
 }
@@ -115,7 +115,7 @@ bool GizmoLIRC::processEvent(GizmoEvent * pEvent) {
  *
  * If repeats is 1 this will cancel the first repeat of a keypress
  * This is intented to smooth out certain trigger happy remotes
- */
+**/
 void GizmoLIRC::setDisableFirstRepeats(int Repeats) {
 	mDisabledRepeats = Repeats;
 }
@@ -126,7 +126,7 @@ void GizmoLIRC::setDisableFirstRepeats(int Repeats) {
  *
  * This is for remotes that are a bit jittery, or trigger happy.
  * Set this to an appropriate value (issue -V 5 to see the timings)
- */
+**/
 void GizmoLIRC::setMinimumTimeBetweenEvents(float Seconds) {
 	mMinTimeBetweenEvents = Seconds;
 }

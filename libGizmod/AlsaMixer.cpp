@@ -48,7 +48,7 @@ using namespace Gizmod;
  * \return 0 on success otherwise a negative error code
  *
  * Just pass off the event to the appropriate AlsaSoundCard instantiation
- */
+**/
 int AlsaMixer::MixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int EventMask) {
 	AlsaMixer * pAlsaMixer = static_cast<AlsaMixer *>(snd_mixer_elem_get_callback_private(MixerElement));
 	if (!pAlsaMixer)
@@ -63,7 +63,7 @@ int AlsaMixer::MixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int E
  * \return 0 on success otherwise a negative error code
  *
  * Handle the mixer element event
- */
+**/
 int AlsaMixer::mixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int EventMask) {
 	// grab new info from the sound card
 	populateInfo();
@@ -87,7 +87,7 @@ int AlsaMixer::mixerElemCallback(snd_mixer_elem_t * MixerElement, unsigned int E
  * \return 0 on success otherwise a negative error code
  *
  * Handle a manual mixer element event
- */
+**/
 int AlsaMixer::signalMixerEvent() {
 	return mixerElemCallback(mMixerElement, 0);
 }
@@ -98,7 +98,7 @@ int AlsaMixer::signalMixerEvent() {
 
 /** 
  * \brief  AlsaMixer Default Constructor
- */
+**/
 AlsaMixer::AlsaMixer() {
 	mpiAlsa = NULL;
 	mMixerElement = NULL;
@@ -108,7 +108,7 @@ AlsaMixer::AlsaMixer() {
 
 /** 
  * \brief  AlsaMixer Default Constructor
- */
+**/
 AlsaMixer::AlsaMixer(AlsaSoundCardInterface * piSoundCard, snd_mixer_elem_t * MixerElement, std::string MixerName, std::string MixerNameUnique, unsigned int MixerID) {
 	mpiAlsa = piSoundCard->getAlsa();
 	mpiSoundCard = piSoundCard;
@@ -122,7 +122,7 @@ AlsaMixer::AlsaMixer(AlsaSoundCardInterface * piSoundCard, snd_mixer_elem_t * Mi
 
 /**
  * \brief  AlsaMixer Destructor
- */
+**/
 AlsaMixer::~AlsaMixer() {
 	shutdown();
 }
@@ -134,7 +134,7 @@ AlsaMixer::~AlsaMixer() {
 /**
  * \brief  Get the unique name of the mixer
  * \return Unique mixer name
- */
+**/
 std::string AlsaMixer::getName() const {
 	return mMixerNameUnique;
 }
@@ -142,14 +142,14 @@ std::string AlsaMixer::getName() const {
 /**
  * \brief  Get the name of the mixer
  * \return Mixer name
- */
+**/
 std::string AlsaMixer::getNameShort() const {
 	return mMixerName;
 }
 
 /**
  * \brief  Initialize the mixer
- */
+**/
 void AlsaMixer::init() { 
 	// fire the event
 	static_cast<Alsa *>(mpiAlsa)->onAlsaEventMixerElementAttach(AlsaEvent(ALSAEVENT_MIXERELEMENT_ATTACH), static_cast<AlsaSoundCard &>(*mpiSoundCard), *this);	
@@ -162,7 +162,7 @@ void AlsaMixer::init() {
  * \brief  Populate the mixer info
  *
  * Load the mixer up with data from the sound card
- */
+**/
 void AlsaMixer::populateInfo() {
 	// get the data
 	long tempMin, tempMax, temp;	
@@ -240,7 +240,7 @@ void AlsaMixer::populateInfo() {
  * \brief  Set the capture switch
  * \param  Enable Set to true if the switch should be enabled
  * \return True on success
- */
+**/
 bool AlsaMixer::setSwitchCapture(bool Enable) {
 	if (snd_mixer_selem_set_capture_switch_all(mMixerElement, Enable) < 0)
 		return false;
@@ -253,7 +253,7 @@ bool AlsaMixer::setSwitchCapture(bool Enable) {
  * \brief  Set the playback switch
  * \param  Enable Set to true if the switch should be enabled
  * \return True on success
- */
+**/
 bool AlsaMixer::setSwitchPlayback(bool Enable) {
 	if (snd_mixer_selem_set_playback_switch_all(mMixerElement, Enable) < 0)
 		return false;
@@ -266,7 +266,7 @@ bool AlsaMixer::setSwitchPlayback(bool Enable) {
  * \brief  Set the Capture volume
  * \param  Volume Absolute volume level
  * \return True on success
- */
+**/
 bool AlsaMixer::setVolumeCapture(long Volume) {
 	if (Volume < VolumeCaptureMin)
 		Volume = VolumeCaptureMin;
@@ -284,7 +284,7 @@ bool AlsaMixer::setVolumeCapture(long Volume) {
  * \brief  Set the Capture volume as a percent
  * \param  Percent Volume level percentage
  * \return True on success
- */
+**/
 bool AlsaMixer::setVolumeCapturePercent(float Percent) {
 	if (Percent < 0.0f)
 		Percent = 0.0f;
@@ -302,7 +302,7 @@ bool AlsaMixer::setVolumeCapturePercent(float Percent) {
  * \brief  Set the Playback volume
  * \param  Volume Absolute volume level
  * \return True on success
- */
+**/
 bool AlsaMixer::setVolumePlayback(long Volume) {
 	if (Volume < VolumePlaybackMin)
 		Volume = VolumePlaybackMin;
@@ -320,7 +320,7 @@ bool AlsaMixer::setVolumePlayback(long Volume) {
  * \brief  Set the Playback volume as a percent
  * \param  Percent Volume level percentage
  * \return True on success
- */
+**/
 bool AlsaMixer::setVolumePlaybackPercent(float Percent) {
 	if (Percent < 0.0f)
 		Percent = 0.0f;
@@ -337,7 +337,7 @@ bool AlsaMixer::setVolumePlaybackPercent(float Percent) {
 
 /**
  * \brief  Shutdown the mixer
- */
+**/
 void AlsaMixer::shutdown() { 
 	// fire the event
 	static_cast<Alsa *>(mpiAlsa)->onAlsaEventMixerElementDetach(AlsaEvent(ALSAEVENT_MIXERELEMENT_DETACH), static_cast<AlsaSoundCard &>(*mpiSoundCard), *this);	

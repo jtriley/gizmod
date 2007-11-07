@@ -60,7 +60,7 @@ namespace Gizmod {
  * \brief Class for Standard events
  *
  * This class is for all GizmoEventStandards attached to the system.
- */
+**/
 class GizmoEventStandard : public GizmoEvent, public GizmoLinuxInputEvent {
 public:
 	// public functions

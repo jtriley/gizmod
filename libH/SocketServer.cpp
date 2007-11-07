@@ -48,13 +48,13 @@ using namespace std;
 
 /**
  * \brief Default Constructor
- */
+**/
 SocketServer::SocketServer() : mThreadProc(this) {
 }
 
 /**
  * \brief Destructor
- */
+**/
 SocketServer::~SocketServer() {
 	shutdown();
 }
@@ -68,7 +68,7 @@ SocketServer::~SocketServer() {
  * \param  ListenPort Port to listen on
  * \param  Domain Socket domain
  * \param  Type Socket type
- */
+**/
 void SocketServer::acceptConnections(int ListenPort, SocketDomain Domain, SocketType Type) {
 	if (mSocket != SOCKET_ERROR)
 		throw SocketException("Socket Already Created!", __FILE__, __FUNCTION__, __LINE__);
@@ -91,7 +91,7 @@ void SocketServer::acceptConnections(int ListenPort, SocketDomain Domain, Socket
  * \param iSocket The Socket that triggered the event
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketServer::onSocketConnect(SocketInterface const & iSocket) {
 	// this is only for client socket connections
 }
@@ -101,7 +101,7 @@ void SocketServer::onSocketConnect(SocketInterface const & iSocket) {
  * \param iSocket The Socket that triggered the event
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketServer::onSocketDisconnect(SocketInterface const & iSocket) {
 	shared_ptr<Socket> pSocket = mSockets[iSocket.getOldSocket()];
 	if (!pSocket) {
@@ -118,7 +118,7 @@ void SocketServer::onSocketDisconnect(SocketInterface const & iSocket) {
  * \param  Message The message
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketServer::onSocketMessage(SocketInterface const & iSocket, std::string const & Message) {
 	onSocketServerMessage(static_cast<Socket const &>(iSocket), Message);
 }
@@ -129,7 +129,7 @@ void SocketServer::onSocketMessage(SocketInterface const & iSocket, std::string 
  * \param ReadBuffer The Buffer
  *
  * SocketEventWatcher triggers this event
- */
+**/
 void SocketServer::onSocketRead(SocketInterface const & iSocket, DynamicBuffer<char> & ReadBuffer) {
 	onSocketServerRead(static_cast<Socket const &>(iSocket), ReadBuffer);
 }
@@ -137,7 +137,7 @@ void SocketServer::onSocketRead(SocketInterface const & iSocket, DynamicBuffer<c
 /**
  * \brief  Event triggered when a new connection is detected
  * \param  pSocket The new socket
- */
+**/
 void SocketServer::onSocketServerConnect(boost::shared_ptr<Socket> pSocket) {
 	// override me
 	cdbg << "SocketServer :: New Socket Connection Detected" << endl;
@@ -146,7 +146,7 @@ void SocketServer::onSocketServerConnect(boost::shared_ptr<Socket> pSocket) {
 /**
  * \brief  Event triggered on a socket disconnect
  * \param  socket The socket
- */
+**/
 void SocketServer::onSocketServerDisconnect(Socket const & socket) {
 	// override me
 	cdbg << "SocketServer :: Socket Disconnect Detected" << endl;
@@ -156,7 +156,7 @@ void SocketServer::onSocketServerDisconnect(Socket const & socket) {
  * \brief  Event triggered on a socket server message
  * \param  socket The Socket that triggered the event
  * \param  Message The message
- */
+**/
 void SocketServer::onSocketServerMessage(Socket const & socket, std::string const & Message) {
 	// override me
 	cdbg << "SocketServer :: Socket Message [" << Message.length() << "] Bytes -- " << Message << endl;
@@ -166,7 +166,7 @@ void SocketServer::onSocketServerMessage(Socket const & socket, std::string cons
  * \brief  Event triggered on a socket read
  * \param  socket The socket
  * \param  ReadBuffer The data
- */
+**/
 void SocketServer::onSocketServerRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer) {
 	// override me
 	cdbg << "SocketServer :: Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
@@ -174,7 +174,7 @@ void SocketServer::onSocketServerRead(Socket const & socket, DynamicBuffer<char>
 
 /**
  * \brief  Shutdown all socket processing
- */
+**/
 void SocketServer::shutdown() {
 	// wait until thead finishes done 
 	mProcessing = false;
@@ -186,7 +186,7 @@ void SocketServer::shutdown() {
 
 /**
  * \brief  The thread procedure loop
- */
+**/
 void SocketServer::threadProc() {
 	cdbg << "Listening for connections on port [" << mPort << "]..." << endl;
 	mProcessing = true;

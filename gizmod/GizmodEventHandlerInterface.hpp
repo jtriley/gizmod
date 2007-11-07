@@ -59,13 +59,13 @@ using namespace Gizmod;
 /**
  * \class GizmodEventHandlerInterface
  * \brief Main GizmodEventHandlerInterface class
- */
+**/
 class GizmodEventHandlerInterface : public boost::noncopyable {
 public:
 	/**
 	 * \brief  Get whether or not the object has been initialized
 	 * \return (bool) True if initialized
-	 */
+	**/
 	virtual bool			getInitialized() = 0;
 	
 	/**
@@ -75,114 +75,114 @@ public:
 	 * user specific initialization code to be executed during program startup.
 	 * 
 	 * It is defined in Gizmod.py in class GizmodDispatcher that inherits from GizmodEventHandler
-	 */
+	**/
 	virtual void			initialize() = 0; 		///< Initialization that gets called inside python to init python stuff
 			
 	/**
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onDeregisterDevice(GizmoATIX10 const * Device) = 0;	
 		
 	/**
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onDeregisterDevice(GizmoLIRC const * Device) = 0;
 	
 	/**
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onDeregisterDevice(GizmoPowermate const * Device) = 0;
 			
 	/**
 	 * \brief  Event triggered when device has been deregistered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onDeregisterDevice(GizmoStandard const * Device) = 0;	
 	
 	/**
 	 * \brief  ATI X10 Event trigger
 	 * \param  Event The event information 
 	 * \param  Device The device that triggered the event
-	 */
+	**/
 	virtual void			onEvent(GizmoEventATIX10 const * Event, GizmoATIX10 const * Device) = 0;
 	
 	/**
 	 * \brief  CPU Event trigger
 	 * \param  Event The event information 
-	 */
+	**/
 	virtual void			onEvent(GizmoEventCPUUsage const * Event) = 0;
 	
 	/**
 	 * \brief  LIRC Event trigger
 	 * \param  Event The event information 
 	 * \param  Device The device that triggered the event
-	 */
+	**/
 	virtual void			onEvent(GizmoEventLIRC const * Event, GizmoLIRC const * Device) = 0;
 	
 	/**
 	 * \brief  Powermate Event trigger
 	 * \param  Event The event information 
 	 * \param  Device The device that triggered the event
-	 */
+	**/
 	virtual void			onEvent(GizmoEventPowermate const * Event, GizmoPowermate const * Device) = 0;
 		
 	/**
 	 * \brief  SoundCard Event trigger
 	 * \param  Event The event information 
-	 */
+	**/
 	virtual void			onEvent(GizmoEventSoundCard const * Event) = 0;
 	
 	/**
 	 * \brief  SoundVisualization Event trigger
 	 * \param  Event The event information 
-	 */
+	**/
 	virtual void			onEvent(GizmoEventSoundVisualization const * Event) = 0;
 	
 	/**
 	 * \brief  Standard Event trigger
 	 * \param  Event The event information 
 	 * \param  Device The device that triggered the event
-	 */
+	**/
 	virtual void			onEvent(GizmoEventStandard const * Event, GizmoStandard const * Device) = 0;
 	
 	/**
 	 * \brief  Window Focus Event trigger
 	 * \param  Event The event information 
-	 */
+	**/
 	virtual void			onEvent(GizmoEventWindowFocus const * Event) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device is being registered
 	 * \param  DeviceInformation The information about the device being registered
 	 * \return The class of the device
-	 */
+	**/
 	virtual GizmoClass		onQueryDeviceClass(H::DeviceInfo const DeviceInformation) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device has been registered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onRegisterDevice(GizmoATIX10 const * Device) = 0;
 		
 	/**
 	 * \brief  Event triggered when a new device has been registered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onRegisterDevice(GizmoLIRC const * Device) = 0;
 	
 	/**
 	 * \brief  Event triggered when a new device has been registered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onRegisterDevice(GizmoPowermate const * Device) = 0;
 		
 	/**
 	 * \brief  Event triggered when a new device has been registered
 	 * \param  Device The device
-	 */
+	**/
 	virtual void			onRegisterDevice(GizmoStandard const * Device) = 0;	
 		
 	// construction / deconstruction

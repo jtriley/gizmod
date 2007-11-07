@@ -55,7 +55,7 @@ namespace H {
  * \brief Main SocketInterface class
  *
  * This is an interface for classes wishing to receive socket events
- */
+**/
 class SocketInterface {
 public:
 	// Public Member Functions

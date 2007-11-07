@@ -39,17 +39,17 @@
 
 /**
  * \brief  Clean up
- */
+**/
 void GizmodLibVisual_CleanUp();
 
 /**
  * \brief  Initialize
- */
+**/
 void GizmodLibVisual_Init();
 
 /**
  * \brief  Render
- */
+**/
 void GizmodLibVisual_Render(float VULeft, float VURight, float VUCombined);
 
 #endif // __GizmodLibVisualCInterface_h

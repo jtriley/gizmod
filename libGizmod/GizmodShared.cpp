@@ -52,13 +52,13 @@ boost::mutex GizmodShared::mMutexScript;	///< Mutex for the python script
 
 /**
  * \brief GizmodShared Default Constructor
- */
+**/
 GizmodShared::GizmodShared() {
 }
 
 /**
  * \brief GizmodShared Destructor
- */
+**/
 GizmodShared::~GizmodShared() {
 }
 

@@ -34,21 +34,21 @@
 
 /**
  * The Plugin Object
- */
+**/
 GizmodLibVisualPlugin Plugin;
 
 extern "C" {
 
 /**
  * \brief  Initialize
- */
+**/
 void GizmodLibVisual_Init() {
 	Plugin.init();
 }
 
 /**
  * \brief  Clean up
- */
+**/
 void GizmodLibVisual_CleanUp() {
 	Plugin.shutdown();
 }
@@ -58,7 +58,7 @@ void GizmodLibVisual_CleanUp() {
  * \param  VULeft VU information for the left channel
  * \param  VURight VU information for the right channel
  * \param  VUCombined VU information for both channels
- */
+**/
 void GizmodLibVisual_Render(float VULeft, float VURight, float VUCombined) {
 	Plugin.render(VULeft, VURight, VUCombined);
 }

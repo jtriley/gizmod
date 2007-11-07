@@ -83,73 +83,73 @@ using namespace H;
 /** 
  * \def    CONFIG_FILE
  * \brief  The default path of the config file
- */
+**/
 #define CONFIG_FILE		PACKAGE ".conf"
 
 /** 
  * \def    SCRIPT_DIR
  * \brief  The default path of the config file
- */
+**/
 #define SCRIPT_DIR		SYSCONFDIR "/gizmod/"
 
 /** 
  * \def    HOME_SCRIPT_DIR
  * \brief  The default path of the users home script dir
- */
+**/
 #define HOME_SCRIPT_DIR		"~/.gizmod/"
 
 /** 
  * \def    CONFIG_FILE_PATH
  * \brief  The default full path of the config file
- */
+**/
 #define CONFIG_FILE_PATH	HOME_SCRIPT_DIR PACKAGE ".conf"
 
 /** 
  * \def    USER_SCRIPT_DIR
  * \brief  The default path of the modules.d dir
- */
+**/
 #define USER_SCRIPT_DIR		"modules.d"
 
 /** 
  * \def    SCRIPT_DISPATCHER
  * \brief  The path of the initial config script
- */
+**/
 #define SCRIPT_DISPATCHER 	"GizmodDispatcher.py"
 
 /** 
  * \def    SCRIPT_USER
  * \brief  The path of the user config script that gets run after SCRIPT_DISPATCH
- */
+**/
 #define SCRIPT_USER		"GizmodUser.py"
 
 /** 
  * \def    EVENT_NODE_DIR
  * \brief  Default path to the event nodes
- */
+**/
 #define EVENT_NODE_DIR		"/dev/input"
 
 /** 
  * \def    LIRC_DEV
  * \brief  Default path to the LIRC device node
- */
+**/
 #define LIRC_DEV		"/dev/lircd"
 
 /** 
  * \def    NO_GETTER
  * \brief  Used when adding properties to pythong classes without a getter
- */
+**/
 #define NO_GETTER		python::object()
 
 /** 
  * \def    DEFAULT_PORT
  * \brief  Default port to start the server on
- */
+**/
 #define DEFAULT_PORT		30303
 
 /** 
  * \def    DEFAULT_PORT_STR
  * \brief  Default port to start the server on
- */
+**/
 #define DEFAULT_PORT_STR	"30303"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ using namespace H;
 /**
  * \struct GizmodEventHandlerInterfaceWrap
  * \brief  Wrapper for GizmodEventHandlerInterface so Python can inherit the abstract class
- */
+**/
 struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 	/// Default Constructor
 	GizmodEventHandlerInterfaceWrap(PyObject * self_) : self(self_) {}
@@ -189,7 +189,7 @@ struct GizmodEventHandlerInterfaceWrap : public GizmodEventHandlerInterface {
 
 /**
  * \brief  Python module definition
- */
+**/
 BOOST_PYTHON_MODULE(GizmoDaemon) {
 	/////////////////////////////////////////////////////////////////////
 	// Enum exports
@@ -572,7 +572,7 @@ BOOST_PYTHON_MODULE(GizmoDaemon) {
 
 /**
  * \brief  Default Constructor
- */
+**/
 GizmoDaemon::GizmoDaemon() {
 	cout << getProps();
 	
@@ -600,7 +600,7 @@ GizmoDaemon::GizmoDaemon() {
 
 /**
  * \brief  Default Destructor
- */
+**/
 GizmoDaemon::~GizmoDaemon() {
 	if (!mDisableShutdownMessage)
 		cout << "GizmoDaemon Shutting Down... ";
@@ -625,7 +625,7 @@ GizmoDaemon::~GizmoDaemon() {
  * \param  Version The script's version
  * \param  Strict If set, the versions need to exactly match otherwise the script's Version signifies a minimum version level that Gizmod needs to be
  * \return True if versions are okay
- */
+**/
 bool GizmoDaemon::checkVersion(double Version, bool Strict) {
 	double VersionDiff = fabs(Version - mVersion);
 	if (Strict) {
@@ -641,7 +641,7 @@ bool GizmoDaemon::checkVersion(double Version, bool Strict) {
 /**
  * \brief  Delete a Gizmo
  * \param  FileName The filename of the Gizmo to be deleted
- */
+**/
 void GizmoDaemon::deleteGizmo(std::string FileName) {
 	if (mShuttingDown)
 		return;
@@ -687,7 +687,7 @@ void GizmoDaemon::deleteGizmo(std::string FileName) {
  * \brief  Deserialize a network message into event Objects
  * \param  EventClass The class of object to deserialize
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessage(GizmoEventClass EventClass, std::string const & Message) {	
 	switch (EventClass) {
 	case GIZMO_EVENTCLASS_ATIX10:
@@ -720,7 +720,7 @@ void GizmoDaemon::deserializeMessage(GizmoEventClass EventClass, std::string con
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessageATIX10(std::string const & Message) {	
 	// separate the two components of the message
 	size_t SepPos = Message.find("|");
@@ -758,7 +758,7 @@ void GizmoDaemon::deserializeMessageATIX10(std::string const & Message) {
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessageCPUUsage(std::string const & Message) {	
 	// deserialize
 	stringstream InStream(Message);
@@ -782,7 +782,7 @@ void GizmoDaemon::deserializeMessageCPUUsage(std::string const & Message) {
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessageLIRC(std::string const & Message) {	
 	// separate the two components of the message
 	size_t SepPos = Message.find("|");
@@ -820,7 +820,7 @@ void GizmoDaemon::deserializeMessageLIRC(std::string const & Message) {
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {	
 	// separate the two components of the message
 	size_t SepPos = Message.find("|");
@@ -858,7 +858,7 @@ void GizmoDaemon::deserializeMessagePowermate(std::string const & Message) {
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessageSoundcard(std::string const & Message) {	
 	// deserialize
 	stringstream InStream(Message);
@@ -882,7 +882,7 @@ void GizmoDaemon::deserializeMessageSoundcard(std::string const & Message) {
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessageSoundVisualization(std::string const & Message) {	
 	// deserialize
 	stringstream InStream(Message);
@@ -906,7 +906,7 @@ void GizmoDaemon::deserializeMessageSoundVisualization(std::string const & Messa
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {	
 	// separate the two components of the message
 	size_t SepPos = Message.find("|");
@@ -944,7 +944,7 @@ void GizmoDaemon::deserializeMessageStandard(std::string const & Message) {
 /**
  * \brief  Deserialize a network message into event Objects
  * \param  Message The message to be deserialized
- */
+**/
 void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {	
 	// deserialize
 	stringstream InStream(Message);
@@ -967,7 +967,7 @@ void GizmoDaemon::deserializeMessageWindowFocus(std::string const & Message) {
 
 /**
  * \brief  Enter the main run loop
- */
+**/
 void GizmoDaemon::enterLoop() {
 	if (mShuttingDown)
 		return;
@@ -983,7 +983,7 @@ void GizmoDaemon::enterLoop() {
  * 
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".CurrentFocus"
- */
+**/
 X11FocusEvent GizmoDaemon::getCurrentFocus() {
 	return mCurrentFocus;
 }
@@ -994,7 +994,7 @@ X11FocusEvent GizmoDaemon::getCurrentFocus() {
  * 
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".DebugEnabled"
- */
+**/
 bool GizmoDaemon::getDebugEnabled() {
 	return Debug::getEnabled();
 }
@@ -1002,7 +1002,7 @@ bool GizmoDaemon::getDebugEnabled() {
 /**
  * \brief  Get the event handler / dispatcher
  * \return The dispatcher
- */
+**/
 GizmodEventHandlerInterface * GizmoDaemon::getDispatcher() {
 	return mpPyDispatcher;
 }
@@ -1011,7 +1011,7 @@ GizmodEventHandlerInterface * GizmoDaemon::getDispatcher() {
  * \brief  Get a Gizmo by its file name
  * \param  FileName The filename of the gizmo to find
  * \return The Gizmo (shared_ptr) or a NULL shared_ptr if not found
- */
+**/
 boost::shared_ptr<Gizmo> GizmoDaemon::getGizmoByFileName(std::string FileName) {
 	return mGizmos[FileName];
 }
@@ -1020,7 +1020,7 @@ boost::shared_ptr<Gizmo> GizmoDaemon::getGizmoByFileName(std::string FileName) {
  * \brief  Get the number of Gizmos of a particular class
  * \param  Class The desired class
  * \return The number of Gizmos
- */
+**/
 int GizmoDaemon::getNumGizmosByClass(GizmoClass Class) {
 	int Count = 0;
 	for (map< string, shared_ptr<Gizmo> >::iterator iter = mGizmos.begin(); iter != mGizmos.end(); iter ++) {
@@ -1035,7 +1035,7 @@ int GizmoDaemon::getNumGizmosByClass(GizmoClass Class) {
  * \brief  Get a Gizmo Class ID
  * \param  Class The desired class
  * \return The Class ID
- */
+**/
 int GizmoDaemon::getGizmoClassID(GizmoClass Class) {
 	vector<bool> IDs;
 	int tot = getNumGizmosByClass(Class);
@@ -1057,7 +1057,7 @@ int GizmoDaemon::getGizmoClassID(GizmoClass Class) {
 
 /**
  * \brief  Get the program's propers
- */
+**/
 string GizmoDaemon::getProps() {
 	return "\nGizmoDaemon v" VERSION " -=- (c) 2007, Tim Burrell <tim.burrell@gmail.com>\n=---------=\n";
 }
@@ -1065,7 +1065,7 @@ string GizmoDaemon::getProps() {
 /**
  * \brief  Get whether or not to reload the config
  * \return True if yes
- */
+**/
 bool GizmoDaemon::getReloadConfig() {
 	return mReloadConfig;
 }
@@ -1073,7 +1073,7 @@ bool GizmoDaemon::getReloadConfig() {
 /**
  * \brief  Get whether or not to visualize on the keyboard LEDs
  * \return True if yes
- */
+**/
 bool GizmoDaemon::getUseKeyboardLEDs() {
 	return mUseKeyboardLEDs;
 }
@@ -1081,7 +1081,7 @@ bool GizmoDaemon::getUseKeyboardLEDs() {
 /**
  * \brief  Get whether or not to load the remote control script
  * \return True if yes
- */
+**/
 bool GizmoDaemon::getUseRemoteControl() {
 	return mUseRemoteControl;
 }
@@ -1092,7 +1092,7 @@ bool GizmoDaemon::getUseRemoteControl() {
  * This is for modifying the import path so that users can 
  * create directories inside the user script dir of scripts
  * to be imported
- */
+**/
 std::string GizmoDaemon::getUserScriptDirPaths() {
 	string ret;
 	string UserScriptDir = mConfigDir + USER_SCRIPT_DIR;
@@ -1117,7 +1117,7 @@ std::string GizmoDaemon::getUserScriptDirPaths() {
  *
  * Note that this is also implemented in Python as a property so it can
  * be accessed as a variable by referencing ".Version"
- */
+**/
 double GizmoDaemon::getVersion() {
 	return mVersion;
 }
@@ -1126,7 +1126,7 @@ double GizmoDaemon::getVersion() {
  * \brief Handle incoming ATIX10 events
  * \param pWatchee The Watchee that triggered the event
  * \param ReadBuffer The data that was waiting on the device
- */
+**/
 void GizmoDaemon::handleFileEventReadATIX10(GizmoATIX10 & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
 	std::vector< boost::shared_ptr<GizmoEventATIX10> > EventVector;
 	GizmoEventATIX10::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
@@ -1155,7 +1155,7 @@ void GizmoDaemon::handleFileEventReadATIX10(GizmoATIX10 & Gizmo, DynamicBuffer<c
  * \brief Handle incoming LIRC events
  * \param pWatchee The Watchee that triggered the event
  * \param ReadBuffer The data that was waiting on the device
- */
+**/
 void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
 	std::vector< boost::shared_ptr<GizmoEventLIRC> > EventVector;
 	GizmoEventLIRC::buildEventsVectorFromBuffer(EventVector, ReadBuffer);
@@ -1186,7 +1186,7 @@ void GizmoDaemon::handleFileEventReadLIRC(GizmoLIRC & Gizmo, DynamicBuffer<char>
  * \brief Handle incoming Powermate events
  * \param pWatchee The Watchee that triggered the event
  * \param ReadBuffer The data that was waiting on the device
- */
+**/
 void GizmoDaemon::handleFileEventReadPowermate(GizmoPowermate & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
 	std::vector< boost::shared_ptr<GizmoEventPowermate> > EventVector;
 	GizmoEventPowermate::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
@@ -1215,7 +1215,7 @@ void GizmoDaemon::handleFileEventReadPowermate(GizmoPowermate & Gizmo, DynamicBu
  * \brief Handle incoming Standard events
  * \param pWatchee The Watchee that triggered the event
  * \param ReadBuffer The data that was waiting on the device
- */
+**/
 void GizmoDaemon::handleFileEventReadStandard(GizmoStandard & Gizmo, DynamicBuffer<char> const & ReadBuffer) {
 	std::vector< boost::shared_ptr<GizmoEventStandard> > EventVector;
 	GizmoEventStandard::buildEventsVectorFromBuffer(EventVector, ReadBuffer, Gizmo.getSendNullEvents());
@@ -1244,7 +1244,7 @@ void GizmoDaemon::handleFileEventReadStandard(GizmoStandard & Gizmo, DynamicBuff
  * \brief  Setup GizmoDaemon
  * 
  * Initialize GizmoDaemon
- */
+**/
 void GizmoDaemon::initGizmod() {
 	if (mInitialized)
 		return;
@@ -1325,7 +1325,7 @@ void GizmoDaemon::initGizmod() {
 
 /**
  * \brief  Initialize the Python interpreter
- */
+**/
 void GizmoDaemon::initPython() {
 	try {
 		cdbg1 << "Embedding Python Interpreter..." << endl;
@@ -1397,7 +1397,7 @@ void GizmoDaemon::initPython() {
  * \return true if the program should continue, false otherwise
  * 
  * load the config file, process command line options, etc
- */
+**/
 bool GizmoDaemon::initialize(int argc, char ** argv) {
 	// generic options
 	options_description GenericOptions("Generic Options");
@@ -1550,7 +1550,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 
 /**
  * \brief Load user scripts
- */
+**/
 void GizmoDaemon::loadUserScripts() {
 	cout << "Loading User Scripts:" << endl << endl;
 	
@@ -1580,7 +1580,7 @@ void GizmoDaemon::loadUserScripts() {
 /**
  * \brief Load user scripts functor
  * \param UserScript The user script to load
- */
+**/
 void GizmoDaemon::loadUserScriptsFunctor(std::string UserScript) {
 	// Note: Mutex is already locked!
 	
@@ -1610,7 +1610,7 @@ void GizmoDaemon::loadUserScriptsFunctor(std::string UserScript) {
  * \param  Text1 Text field 1
  * \param  Text2 Text field 2
  * \param  Text3 Text field 3
- */
+**/
 void GizmoDaemon::printNiceScriptInit(int Width, std::string Text1, std::string Text2, std::string Text3) {
 	replace_all(Text1, "\n", ""); 
 	replace_all(Text2, "\n", ""); 
@@ -1645,7 +1645,7 @@ void GizmoDaemon::printNiceScriptInit(int Width, std::string Text1, std::string 
  * \param  Text3 Text field 3
  * \param  Text4 Text field 4
  * \param  Text5 Text field 5
- */
+**/
 void GizmoDaemon::printNiceScriptRegister(int Width, std::string Text1, std::string Text2, std::string Text3, std::string Text4, std::string Text5) {
 	replace_all(Text1, "\n", ""); 
 	replace_all(Text2, "\n", ""); 
@@ -1689,7 +1689,7 @@ void GizmoDaemon::printNiceScriptRegister(int Width, std::string Text1, std::str
  * \param  Event The event
  * \param  SoundCard The sound card that triggered the event
  * \param  Mixer The mixer element that triggered the event
- */
+**/
 void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	if (mShuttingDown)
 		return;
@@ -1712,7 +1712,7 @@ void GizmoDaemon::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSou
  * \param  Event The event
  * \param  SoundCard The sound card that triggered the event
  * \param  Mixer The mixer element that triggered the event
- */
+**/
 void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	if (mShuttingDown)
 		return;
@@ -1739,7 +1739,7 @@ void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSou
  * \param  Event The event
  * \param  SoundCard The sound card that triggered the event
  * \param  Mixer The mixer element that triggered the event
- */
+**/
 void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	if (mShuttingDown)
 		return;
@@ -1761,7 +1761,7 @@ void GizmoDaemon::onAlsaEventMixerElementDetach(AlsaEvent const & Event, AlsaSou
  * \brief  Triggered when a new sound card is detected
  * \param  Event The event
  * \param  SoundCard The sound card that triggered the event
- */
+**/
 void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
 	if (mShuttingDown)
 		return;
@@ -1783,7 +1783,7 @@ void GizmoDaemon::onAlsaEventSoundCardAttach(AlsaEvent const & Event, AlsaSoundC
  * \brief  Triggered when a sound card is removed
  * \param  Event The event
  * \param  SoundCard The sound card that triggered the event
- */
+**/
 void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundCard const & SoundCard) {
 	if (mShuttingDown)
 		return;
@@ -1804,7 +1804,7 @@ void GizmoDaemon::onAlsaEventSoundCardDetach(AlsaEvent const & Event, AlsaSoundC
 /**
  * \brief  Event triggered when CPU Usage stats are updated
  * \param  Event A vector of CPU Usage info, where index 0 is ALL processors, 1 is proc 1, 2 is cpu 2, etc
- */
+**/
 void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > const & Event) {	
 	if (mShuttingDown)
 		return;
@@ -1834,7 +1834,7 @@ void GizmoDaemon::onCPUUsage(std::vector< boost::shared_ptr<CPUUsageInfo> > cons
  * \param pWatchee The Watchee that triggered the event
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
- */
+**/
 void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	if (FileName.find("event") != 0) {
 		cout << "onFileEventCreate [" << FullPath << "]" << endl;
@@ -1848,7 +1848,7 @@ void GizmoDaemon::onFileEventCreate(boost::shared_ptr<H::FileWatchee> pWatchee, 
  * \param pWatchee The Watchee that triggered the event
  * \param FullPath The full (absolute) path of the new file
  * \param FileName The file name (relative ) of the new file
- */
+**/
 void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, std::string FullPath, std::string FileName) {
 	cdbg5 << "onFileEventDelete [" << FullPath << "] -- " << pWatchee->FileName << endl;
 	deleteGizmo(pWatchee->FileName);
@@ -1857,7 +1857,7 @@ void GizmoDaemon::onFileEventDelete(boost::shared_ptr<H::FileWatchee> pWatchee, 
 /**
  * \brief Event triggered when a file is disconnected
  * \param pWatchee The Watchee that triggered the event
- */
+**/
 void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatchee) {
 	cdbg5 << "onFileEventDisconnect [" << pWatchee->FileName << "]: " << pWatchee->DeviceName << endl;
 	deleteGizmo(pWatchee->FileName);
@@ -1867,7 +1867,7 @@ void GizmoDaemon::onFileEventDisconnect(boost::shared_ptr<H::FileWatchee> pWatch
  * \brief Event triggered when data is waiting on a device
  * \param pWatchee The Watchee that triggered the event
  * \param ReadBuffer The data that was waiting on the device
- */
+**/
 void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, DynamicBuffer<char> const & ReadBuffer) {
 	if (mShuttingDown)
 		return;
@@ -1904,7 +1904,7 @@ void GizmoDaemon::onFileEventRead(boost::shared_ptr<H::FileWatchee> pWatchee, Dy
 /**
  * \brief Event triggered when a new device is registered
  * \param pWatchee The Watchee that triggered the event
- */
+**/
 void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee) {
 	if (mShuttingDown)
 		return;
@@ -1943,20 +1943,20 @@ void GizmoDaemon::onFileEventRegister(boost::shared_ptr<H::FileWatchee> pWatchee
 
 /**
  * \brief Event called when the class will begin watching for events (and blocking)
- */
+**/
 void GizmoDaemon::onFileEventWatchBegin() {
 }
 
 /**
  * \brief Event called when the class has ended watching for events (and done blocking)
- */
+**/
 void GizmoDaemon::onFileEventWatchEnd() {
 }
 
 /**
  * \brief  Event triggered on a Focus In
  * \param  Event The Focus Event
- */
+**/
 void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 	if (mShuttingDown)
 		return;
@@ -1977,7 +1977,7 @@ void GizmoDaemon::onFocusIn(X11FocusEvent const & Event) {
 /**
  * \brief  Event triggered on a Focus Out
  * \param  Event The Focus Event
- */
+**/
 void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
 	if (mShuttingDown)
 		return;
@@ -1996,7 +1996,7 @@ void GizmoDaemon::onFocusOut(X11FocusEvent const & Event) {
 
 /**
  * \brief Signal handler for SEGV
- */
+**/
 void GizmoDaemon::onSignalSegv() {
 	cerr << "Segmentation Fault Detected" << endl;
 	signalShutdown();
@@ -2004,7 +2004,7 @@ void GizmoDaemon::onSignalSegv() {
 
 /**
  * \brief Signal handler for INT
- */
+**/
 void GizmoDaemon::onSignalInt() {
 	cdbg << "Keyboard Interrupt Received..." << endl;
 	signalShutdown();
@@ -2012,7 +2012,7 @@ void GizmoDaemon::onSignalInt() {
 
 /**
  * \brief Signal handler for HUP
- */
+**/
 void GizmoDaemon::onSignalHup() {
 	cout << "HUP signal received, reloading config..." << endl;
 	mReloadConfig = true;
@@ -2021,7 +2021,7 @@ void GizmoDaemon::onSignalHup() {
 
 /**
  * \brief Signal handler for QUIT
- */
+**/
 void GizmoDaemon::onSignalQuit() {
 	cdbg << "Request to Quit Received..." << endl;
 	signalShutdown();
@@ -2029,7 +2029,7 @@ void GizmoDaemon::onSignalQuit() {
 
 /**
  * \brief Signal handler for KILL
- */
+**/
 void GizmoDaemon::onSignalKill() {
 	cdbg << "Kill signal Received..." << endl;
 	signalShutdown();
@@ -2037,7 +2037,7 @@ void GizmoDaemon::onSignalKill() {
 
 /**
  * \brief Signal handler for TERM
- */
+**/
 void GizmoDaemon::onSignalTerm() {
 	cdbg << "Request to Terminate Received..." << endl;
 	signalShutdown();
@@ -2045,7 +2045,7 @@ void GizmoDaemon::onSignalTerm() {
 
 /**
  * \brief Signal handler for STOP
- */
+**/
 void GizmoDaemon::onSignalStop() {
 	cdbg << "Request to Stop Received..." << endl;
 	signalShutdown();
@@ -2053,7 +2053,7 @@ void GizmoDaemon::onSignalStop() {
 
 /**
  * \brief Signal handler for Unknown Signals
- */
+**/
 void GizmoDaemon::onSignalUnknown(int Signal) {
 	cerr << "Unhandled Unknown Signal" << endl;
 }
@@ -2061,7 +2061,7 @@ void GizmoDaemon::onSignalUnknown(int Signal) {
 /**
  * \brief  Event triggered when a new connection is detected
  * \param  socket The new socket
- */
+**/
 void GizmoDaemon::onSocketClientConnect(Socket const & socket) {
 	cdbg << "Successfully Connected to [" << mClientHost << "] at Port [" << mClientPort << "]" << endl;
 }
@@ -2069,7 +2069,7 @@ void GizmoDaemon::onSocketClientConnect(Socket const & socket) {
 /**
  * \brief  Event triggered on a socket disconnect
  * \param  socket The socket
- */
+**/
 void GizmoDaemon::onSocketClientDisconnect(Socket const & socket) {
 	cdbg << "Disconnected from Server" << endl;
 }
@@ -2078,7 +2078,7 @@ void GizmoDaemon::onSocketClientDisconnect(Socket const & socket) {
  * \brief  Event triggered on a socket server message
  * \param  socket The Socket that triggered the event
  * \param  Message The message
- */
+**/
 void GizmoDaemon::onSocketClientMessage(Socket const & socket, std::string const & Message) {
 	cdbg << "Client Socket Message [" << Message.length() << "] Bytes -- " << Message << endl;
 }
@@ -2087,7 +2087,7 @@ void GizmoDaemon::onSocketClientMessage(Socket const & socket, std::string const
  * \brief  Event triggered on a socket read
  * \param  socket The socket
  * \param  ReadBuffer The data
- */
+**/
 void GizmoDaemon::onSocketClientRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer) {
 	cdbg << "Client Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
 }
@@ -2095,7 +2095,7 @@ void GizmoDaemon::onSocketClientRead(Socket const & socket, DynamicBuffer<char> 
 /**
  * \brief  Event triggered when a new connection is detected
  * \param  pSocket The new socket
- */
+**/
 void GizmoDaemon::onSocketServerConnect(boost::shared_ptr<Socket> pSocket) {
 	cdbg << "Client Connection from [" << pSocket->getAddress() << "]" << endl;
 }
@@ -2103,7 +2103,7 @@ void GizmoDaemon::onSocketServerConnect(boost::shared_ptr<Socket> pSocket) {
 /**
  * \brief  Event triggered on a socket disconnect
  * \param  socket The socket
- */
+**/
 void GizmoDaemon::onSocketServerDisconnect(Socket const & socket) {
 	cdbg << "Client Disconnected [" << socket.getAddress() << "]" << endl;
 }
@@ -2112,7 +2112,7 @@ void GizmoDaemon::onSocketServerDisconnect(Socket const & socket) {
  * \brief  Event triggered on a socket server message
  * \param  socket The Socket that triggered the event
  * \param  Message The message
- */
+**/
 void GizmoDaemon::onSocketServerMessage(Socket const & socket, std::string const & Message) {
 	if (mShuttingDown)
 		return;
@@ -2146,7 +2146,7 @@ void GizmoDaemon::onSocketServerMessage(Socket const & socket, std::string const
  * \brief  Event triggered on a socket read
  * \param  socket The socket
  * \param  ReadBuffer The data
- */
+**/
 void GizmoDaemon::onSocketServerRead(Socket const & socket, DynamicBuffer<char> & ReadBuffer) {
 	//cdbg4 << "Socket Read [" << ReadBuffer.length() << "] Bytes" << endl;
 }
@@ -2156,7 +2156,7 @@ void GizmoDaemon::onSocketServerRead(Socket const & socket, DynamicBuffer<char> 
  * 
  * This function creates a registry of all the attached devices
  * and inserts them into Python for use by the user
- */
+**/
 void GizmoDaemon::registerDevices() {
 	cout << "Registering Devices:" << endl << endl;
 	
@@ -2172,7 +2172,7 @@ void GizmoDaemon::registerDevices() {
 
 /**
  * \brief  Register all of the input event devices with Gizmo Daemon
- */
+**/
 void GizmoDaemon::registerInputEventDevices() {
 	cdbg1 << "Registering Input Event Devices in [" << mEventsDir << "]" << endl;
 	path EventsDirPath(mEventsDir);
@@ -2201,7 +2201,7 @@ void GizmoDaemon::registerInputEventDevices() {
 
 /**
  * \brief  Register the LIRC device
- */
+**/
 void GizmoDaemon::registerLircDevice() {
 	cdbg1 << "Registering LIRC device node [" << mLircDev << "]" << endl;
 	path LircDevPath(mLircDev);
@@ -2221,7 +2221,7 @@ void GizmoDaemon::registerLircDevice() {
 
 /**
  * \brief  Set the config directory
- */
+**/
 void GizmoDaemon::setConfigDir() {
 	// get the hoome directory
 	string HomeScriptDir = HOME_SCRIPT_DIR;
@@ -2249,7 +2249,7 @@ void GizmoDaemon::setConfigDir() {
 
 /**
  * \brief  Set the version information
- */
+**/
 void GizmoDaemon::setVersionInfo() {
 	string Version = VERSION;
 	size_t cPos = Version.find(":");
@@ -2274,7 +2274,7 @@ void GizmoDaemon::setVersionInfo() {
 
 /**
  * \brief  Shutdown Gizmo Daemon
- */
+**/
 void GizmoDaemon::signalShutdown() {
 	mShuttingDown = true;
 	FileEventWatcher::shutdown();

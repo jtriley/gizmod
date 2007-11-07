@@ -51,7 +51,7 @@ namespace H {
  * \brief Cast a string into another type
  *
  * Converts various datatypes from string
- */
+**/
 template <class T>
 bool from_string(T& t, const std::string & s, std::ios_base & (*f) (std::ios_base&)) {
 	std::istringstream iss(s);
@@ -63,7 +63,7 @@ bool from_string(T& t, const std::string & s, std::ios_base & (*f) (std::ios_bas
  * \brief Generic stringconverter class
  *
  * Converts various datatypes to string
- */
+**/
 class stringconverter : public std::string {
 public:	
 	// public functions

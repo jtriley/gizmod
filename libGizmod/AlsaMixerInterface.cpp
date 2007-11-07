@@ -44,13 +44,13 @@ using namespace Gizmod;
 
 /** 
  * \brief  AlsaMixerInterface Default Constructor
- */
+**/
 AlsaMixerInterface::AlsaMixerInterface() {
 }
 
 /**
  * \brief  AlsaMixerInterface Destructor
- */
+**/
 AlsaMixerInterface::~AlsaMixerInterface() {
 }
 

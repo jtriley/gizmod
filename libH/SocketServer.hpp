@@ -57,7 +57,7 @@ namespace H {
  * \brief Main SocketServer class
  *
  * This creates generic a threaded network server
- */
+**/
 class SocketServer : public Socket, private SocketEventWatcher {
 public:
 	// Public Member Functions
@@ -85,7 +85,7 @@ private:
 
 	/**
 	 * Thread callback procedure struct
-	 */
+	**/
 	struct SocketServerThreadProc {
 		SocketServerThreadProc(SocketServer * pSocketServer) : mpSocketServer(pSocketServer) {
 			mpSocketServer->mThreading = false;

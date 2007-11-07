@@ -50,13 +50,13 @@ using namespace Gizmod;
 /**
  * \def    WINDOW_UNKNOWN
  * \brief  Default text used to describe an unknown Window (Formal)
- */
+**/
 #define WINDOW_UNKNOWN		"Unknown"
 
 /**
  * \def    TITLE_UNKNOWN
  * \brief  Default text used to describe an unknown Window (Title)
- */
+**/
 #define TITLE_UNKNOWN		"(No Name)"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ using namespace Gizmod;
 
 /**
  * \brief  Handle X11 errors
- */
+**/
 int X11FocusWatcher::x11ErrorHandler(Display * display, XErrorEvent * error) {
 	// do nothing we don't care
 	return 0;
@@ -73,7 +73,7 @@ int X11FocusWatcher::x11ErrorHandler(Display * display, XErrorEvent * error) {
 
 /**
  * \brief  Handle X11 IO errors
- */
+**/
 int X11FocusWatcher::x11IOErrorHandler(Display * display) {
 	// do nothing we don't care
 	return 0;
@@ -85,7 +85,7 @@ int X11FocusWatcher::x11IOErrorHandler(Display * display) {
 
 /** 
  * \brief  X11FocusEvent Default Constructor
- */
+**/
 X11FocusEvent::X11FocusEvent() {
 	EventType = X11FOCUSEVENT_IN;
 	WindowName = TITLE_UNKNOWN;
@@ -95,7 +95,7 @@ X11FocusEvent::X11FocusEvent() {
 
 /** 
  * \brief  X11FocusEvent Init Constructor
- */
+**/
 X11FocusEvent::X11FocusEvent(X11FocusEventType eventType, std::string windowName, std::string windowNameFormal, std::string windowClass) {
 	EventType = eventType;
 	WindowName = windowName;
@@ -105,7 +105,7 @@ X11FocusEvent::X11FocusEvent(X11FocusEventType eventType, std::string windowName
 
 /** 
  * \brief  X11FocusEvent Init Constructor
- */
+**/
 X11FocusEvent::X11FocusEvent(X11FocusEvent const & Event) {
 	EventType = Event.EventType;
 	WindowName = Event.WindowName;
@@ -115,7 +115,7 @@ X11FocusEvent::X11FocusEvent(X11FocusEvent const & Event) {
 
 /** 
  * \brief  X11FocusWatcher Default Constructor
- */
+**/
 X11FocusWatcher::X11FocusWatcher() : mThreadProc(this) {
 	mCurrentWindow = -1;
 	mDisplay = NULL;
@@ -125,13 +125,13 @@ X11FocusWatcher::X11FocusWatcher() : mThreadProc(this) {
 
 /**
  * \brief  X11FocusEvent Destructor
- */
+**/
 X11FocusEvent::~X11FocusEvent() {
 }
 
 /**
  * \brief  X11FocusWatcher Destructor
- */
+**/
 X11FocusWatcher::~X11FocusWatcher() {
 	shutdown();
 }
@@ -142,7 +142,7 @@ X11FocusWatcher::~X11FocusWatcher() {
 
 /**
  * \brief  Close the X11 display
- */
+**/
 void X11FocusWatcher::closeDisplay() {
  	if (!mDisplay)
 		return;
@@ -155,7 +155,7 @@ void X11FocusWatcher::closeDisplay() {
  * \brief  Create a X11FocusEvent from a Window
  * \param  window The Window to create an event from
  * \return The event
- */
+**/
 X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusEventType EventType) {
 	tuple<string, string, string> WindowInfo = getWindowName(mDisplay, window);
 	X11FocusEvent Event(EventType, WindowInfo.get<0>(), WindowInfo.get<1>(), WindowInfo.get<2>());
@@ -174,7 +174,7 @@ X11FocusEvent X11FocusWatcher::createFocusEvent(Window const & window, X11FocusE
  *
  * Modified to correctly get the parent window if necessary, as well
  * as window class and formal name information
- */
+**/
 boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowName(Display * dpy, Window const & window, bool recurse) {
 	XTextProperty tp;
 	string WindowName = TITLE_UNKNOWN;
@@ -190,7 +190,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 		}
 		#ifdef NO_I18N
 			char * win_name;
-			if (!XFetchName(dpy, window, &win_name)) { /* Get window name if any */
+			if (!XFetchName(dpy, window, &win_name)) { /* Get window name if any**/
 				XFree(win_name);
 				Window root_ret, parent_ret;
 				unsigned int nChildren;
@@ -306,7 +306,7 @@ boost::tuple<std::string, std::string, std::string> X11FocusWatcher::getWindowNa
 
 /**
  * \brief  Initialize the focus watcher (create a new thread and start watching)
- */
+**/
 void X11FocusWatcher::init() {
 	if (mWatching)
 		return;
@@ -319,7 +319,7 @@ void X11FocusWatcher::init() {
  *
  * Note this opens a new display so that the focus watcher
  * can remain using single threaded X11
- */
+**/
 bool X11FocusWatcher::isApplicationRunning(std::string WindowTitle) {
 	Display * Dsp;
 	if ( (Dsp = XOpenDisplay(mDisplayName.c_str())) == NULL )
@@ -346,7 +346,7 @@ bool X11FocusWatcher::isApplicationRunning(std::string WindowTitle) {
 /**
  * \brief  Check if the event is a useless event
  * \return Check if the event is a null event
- */
+**/
 bool X11FocusEvent::isNull() {
 	if ( (WindowName == TITLE_UNKNOWN) && (WindowNameFormal == WINDOW_UNKNOWN) && (WindowClass == WINDOW_UNKNOWN) )
 		return true;
@@ -356,7 +356,7 @@ bool X11FocusEvent::isNull() {
 /**
  * \brief  Event triggered on a Focus In
  * \param  Event The Focus Event
- */
+**/
 void X11FocusWatcher::onFocusIn(X11FocusEvent const & Event) {
 	// override me
 	cdbg << "X11FocusWatcher -- Current Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
@@ -365,7 +365,7 @@ void X11FocusWatcher::onFocusIn(X11FocusEvent const & Event) {
 /**
  * \brief  Event triggered on a Focus In
  * \param  Event The Focus Event
- */
+**/
 void X11FocusWatcher::onFocusOut(X11FocusEvent const & Event) {
 	// override me
 	cdbg << "X11FocusWatcher -- Leaving Focus: " << Event.WindowName << " [" << Event.WindowNameFormal << "] <" << Event.WindowClass << ">" << endl;
@@ -374,7 +374,7 @@ void X11FocusWatcher::onFocusOut(X11FocusEvent const & Event) {
 /** 
  * \brief  Open an X11 Display
  * \param  DisplayName The display to open (ie, "" for default, or ":1" for 1)
- */
+**/
 bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 	if (mDisplay)
 		closeDisplay();
@@ -405,7 +405,7 @@ bool X11FocusWatcher::openDisplay(std::string DisplayName) {
 /**
  * \brief  != operator
  * \param  Event The test event
- */
+**/
 bool X11FocusEvent::operator != (X11FocusEvent const & Event) {
 	if ( (EventType == Event.EventType) &&
 	     (WindowClass == Event.WindowClass) &&
@@ -418,7 +418,7 @@ bool X11FocusEvent::operator != (X11FocusEvent const & Event) {
 /**
  * \brief  == operator
  * \param  Event The test event
- */
+**/
 bool X11FocusEvent::operator == (X11FocusEvent const & Event) {
 	if ( (EventType == Event.EventType) &&
 	     (WindowClass == Event.WindowClass) &&
@@ -430,7 +430,7 @@ bool X11FocusEvent::operator == (X11FocusEvent const & Event) {
 
 /**
  * \brief  Set all windows to report the FocusChangeMask
- */
+**/
 void X11FocusWatcher::setFocusEventMasks() {
 	Window RootRet, ParentRet;
 	unsigned int nChildren;
@@ -450,7 +450,7 @@ void X11FocusWatcher::setFocusEventMasks() {
  *
  * Note this opens a new display so that the focus watcher
  * can remain using single threaded X11
- */
+**/
 bool X11FocusWatcher::setInputFocus(std::string WindowTitle) {
 	Display * Dsp;
 	if ( (Dsp = XOpenDisplay(mDisplayName.c_str())) == NULL )
@@ -477,7 +477,7 @@ bool X11FocusWatcher::setInputFocus(std::string WindowTitle) {
 
 /**
  * \brief  Signal the watching thread to shut itself down
- */
+**/
 void X11FocusWatcher::shutdown() {
 	mWatching = false;
 	
@@ -509,7 +509,7 @@ void X11FocusWatcher::shutdown() {
  * \brief  The ThreadProc
  *
  * This is where all the magic happens
- */
+**/
 void X11FocusWatcher::threadProc() {
 	// open the display
 	if ( (!openDisplay(mDisplayName)) || (mWatching) )

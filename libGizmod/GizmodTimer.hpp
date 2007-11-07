@@ -56,7 +56,7 @@ namespace Gizmod {
  *
  * Note that for some reason Python's threading API doesn't
  * work very well embedded inside C++
- */
+**/
 class GizmodTimer : public GizmodShared {
 public:
 	// public functions
@@ -87,7 +87,7 @@ private:
 	
 	/**
 	 * Thread callback procedure struct
-	 */
+	**/
 	struct GizmodTimerThreadProc {
 		GizmodTimerThreadProc(GizmodTimer * pGizmodTimer) : mpGizmodTimer(pGizmodTimer) {
 			mpGizmodTimer->mThreading = false;

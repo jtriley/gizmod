@@ -60,7 +60,7 @@ namespace Gizmod {
  * \brief Class for LIRC events
  *
  * This class is for all GizmoEventLIRCs attached to the system.
- */
+**/
 class GizmoEventLIRC : public GizmoEvent {
 public:
 	// public variables

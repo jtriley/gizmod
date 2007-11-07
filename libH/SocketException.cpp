@@ -43,20 +43,20 @@ using namespace std;
 
 /**
  * \brief Default Constructor
- */
+**/
 SocketException::SocketException(std::string const & Message, ExceptionType Type) : Exception(Message, Type) {
 }
 
 /**
  * \brief Init Constructor
- */
+**/
 SocketException::SocketException(std::string const & Message, std::string const & File, std::string const & Function, int LineNumber, ExceptionType Type) : Exception(Message, File, Function, LineNumber, Type) {
 }
 
 
 /**
  * \brief Destructor
- */
+**/
 SocketException::~SocketException() throw() {
 }
 

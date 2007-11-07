@@ -3,6 +3,7 @@
 ##############
 
 file(GLOB scripts "${CMAKE_CURRENT_SOURCE_DIR}/*.py")
+
 install(
 	FILES
 		${scripts}

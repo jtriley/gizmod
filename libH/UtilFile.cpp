@@ -56,12 +56,12 @@ using namespace std;
 /**
  * \def   DIRCHAR
  * \brief Platform dependant directory separator char
- */
+**/
 
 /**
  * \def   DIRSTR
  * \brief Platform dependant directory separator string
- */
+**/
 
 #ifdef WIN32
 	#define DIRCHAR		'\\'
@@ -77,13 +77,13 @@ using namespace std;
 
 /**
  * \brief Default Constructor
- */
+**/
 UtilFile::UtilFile() {
 }
 
 /**
  * \brief Destructor
- */
+**/
 UtilFile::~UtilFile() {
 }
 
@@ -95,7 +95,7 @@ UtilFile::~UtilFile() {
  * \brief  Create a directory
  * \param  FileName The directory to create
  * \return true on success
- */
+**/
 bool UtilFile::createDirectory(std::string const & FileName) {
 #ifndef WIN32
 	if (mkdir(FileName.c_str(), 0755) == -1)
@@ -110,7 +110,7 @@ bool UtilFile::createDirectory(std::string const & FileName) {
 /**
  * \brief  Change a file path from relative to absolute
  * \param  FilePath The path
- */
+**/
 void UtilFile::relativeToAbsolute(std::string & FilePath) {
 	size_t tPos;
 	if ((tPos = FilePath.find("~" DIRSTR)) == string::npos)
@@ -125,7 +125,7 @@ void UtilFile::relativeToAbsolute(std::string & FilePath) {
  * \brief  Touch a file
  * \param  FilePath The file / directory to touch
  * \return true on success
- */
+**/
 bool UtilFile::touch(std::string const & FilePath) {
 	// check if it's a directory
 	if (FilePath[FilePath.length() - 1] == DIRCHAR) {
@@ -145,7 +145,7 @@ bool UtilFile::touch(std::string const & FilePath) {
  * \param  FilePath The file to touch
  * \param  DoRecursive Do the operation recursively if true
  * \return true on success
- */
+**/
 bool UtilFile::touchRecursive(std::string const & FilePath, bool DoRecursive) {	
 	// let's try to create it!
 	if (touch(FilePath))

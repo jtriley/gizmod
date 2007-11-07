@@ -55,7 +55,7 @@ namespace Gizmod {
 /**
  * \class  AlsaSoundCardInterface
  * \brief  Data structure that holds information about Alsa events
- */
+**/
 class AlsaSoundCardInterface {
 public:	
 	// public member variables
