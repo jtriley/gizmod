@@ -17,7 +17,9 @@
 #
 # author Jan Woetzel 2004-2006
 # www.mip.informatik.uni-kiel.de/~jw
-
+#
+# Redistribution and use is allowed according to the terms of the BSD license.
+# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 FIND_PACKAGE(Doxygen)
 
