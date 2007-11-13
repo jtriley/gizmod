@@ -82,6 +82,8 @@ add_library(Gizmod SHARED
 	X11FocusWatcher.cpp
 )
 
+set_target_properties(Gizmod PROPERTIES VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}" SOVERSION "${CPACK_PACKAGE_VERSION_MAJOR}")
+
 #################################
 # Linking
 ##############
@@ -115,6 +117,10 @@ install(
 		include/gizmod
 )
 
-install(TARGETS Gizmod
-	LIBRARY DESTINATION lib
+install(FILES	
+		${CMAKE_CURRENT_BINARY_DIR}/libGizmod.so.${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}
+		${CMAKE_CURRENT_BINARY_DIR}/libGizmod.so.${CPACK_PACKAGE_VERSION_MAJOR}
+		${CMAKE_CURRENT_BINARY_DIR}/libGizmod.so
+	DESTINATION 
+		lib
 )
