@@ -102,6 +102,12 @@ class ATIX10MPlayer(GizmoScriptActiveApplication):
 	   	elif Event.Code == GizmoKey.KEY_F:
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_F)
 	   		return True
+		elif Event.Code == GizmoKey.KEY_VOLUMEUP:
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_0)
+			return True
+		elif Event.Code == GizmoKey.KEY_VOLUMEDOWN:
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_9)
+			return True		
 	   	else:
 	   		# unmatched event, keep processing
 			return False				

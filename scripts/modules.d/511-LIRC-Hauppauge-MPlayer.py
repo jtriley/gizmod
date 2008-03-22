@@ -109,10 +109,12 @@ class LIRCHauppaugeMPlayer(GizmoScriptActiveApplication):
 	   	elif Event.Button == "Menu/i":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_O)
 	   		return True
-	   	elif Event.Button == "Vol+":
-	   		return False
+		elif Event.Button == "Vol+":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_0)
+			return True
 	   	elif Event.Button == "Vol-":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_9)
+			return True		
 	   	elif Event.Button == "Prev.Ch":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_H)
 	   		return True

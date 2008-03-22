@@ -119,10 +119,12 @@ class LIRCMceUSB2MPlayer(GizmoScriptActiveApplication):
 	   		return False
 	   	elif Event.Button == "Down":
 	   		return False
-	   	elif Event.Button == "VolUp":
-	   		return False
+		elif Event.Button == "VolUp":
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_0)
+			return True
 	   	elif Event.Button == "VolDown":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_9)
+			return True		
 	   	elif Event.Button == "Home":
 	   		return False
 	   	elif Event.Button == "ChanUp":
