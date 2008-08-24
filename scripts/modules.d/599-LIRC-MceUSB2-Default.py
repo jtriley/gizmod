@@ -83,11 +83,13 @@ class LIRCMceUSB2Default(GizmoScriptDefault):
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_P)
 	   		return True
 	   	elif Event.Button == "Rewind":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEUP)
+	   		return True
 	   	elif Event.Button == "Play":
 	   		return False
 	   	elif Event.Button == "Forward":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_PAGEDOWN)
+	   		return True
 	   	elif Event.Button == "Replay":
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_BACKSPACE)
 	   		return True
@@ -125,9 +127,11 @@ class LIRCMceUSB2Default(GizmoScriptDefault):
 	   		self.AltTabber.doAltTab()
 	   		return True
 	   	elif Event.Button == "ChanUp":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_KPPLUS)
+	   		return True
 	   	elif Event.Button == "ChanDown":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_KPMINUS)
+	   		return True
 	   	elif Event.Button == "RecTV":
 	   		return False
 	   	elif Event.Button == "Mute":

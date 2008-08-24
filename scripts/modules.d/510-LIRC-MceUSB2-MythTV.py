@@ -115,11 +115,14 @@ class LIRCMceUSB2MythTV(GizmoScriptActiveApplication):
 			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_M)
 	   		return True
 	   	elif Event.Button == "Left":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_LEFT)
+	   		return True
 	   	elif Event.Button == "OK":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_ENTER)
+	   		return True
 	   	elif Event.Button == "Right":
-	   		return False
+			Gizmod.Keyboards[0].createEvent(GizmoEventType.EV_KEY, GizmoKey.KEY_RIGHT)
+	   		return True
 	   	elif Event.Button == "Down":
 	   		return False
 	   	elif Event.Button == "VolUp":
