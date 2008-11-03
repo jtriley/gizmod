@@ -34,6 +34,7 @@
 #include <boost/mem_fn.hpp>
 #include <boost/bind.hpp>
 #include <string>
+#include <limits.h>
 
 using namespace std;
 using namespace boost;

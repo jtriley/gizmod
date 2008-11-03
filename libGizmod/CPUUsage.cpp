@@ -204,15 +204,18 @@ void CPUUsage::updateUsageStats() {
 	}
 
 	// read and close
+	int ret;
 	for (size_t cpu = 0; cpu < mCPUUsage.size(); cpu ++) {
 		double Info[CPUUSAGE_MAX];
 		int CpuIndex = 0;
 		shared_ptr<CPUUsageInfo> pUsage = mCPUUsage[cpu];
 		if (cpu == 0)
-			fscanf(StatFile, "cpu %lf %lf %lf %lf %lf %lf %lf %lf\n", Info, Info + 1, Info + 2, Info + 3, Info + 4, Info + 5, Info + 6, Info + 7);
+			ret = fscanf(StatFile, "cpu %lf %lf %lf %lf %lf %lf %lf %lf\n", Info, Info + 1, Info + 2, Info + 3, Info + 4, Info + 5, Info + 6, Info + 7);
 		else {
-			fscanf(StatFile, "cpu%d %lf %lf %lf %lf %lf %lf %lf %lf\n", &CpuIndex, Info, Info + 1, Info + 2, Info + 3, Info + 4, Info + 5, Info + 6, Info + 7);
+			ret = fscanf(StatFile, "cpu%d %lf %lf %lf %lf %lf %lf %lf %lf\n", &CpuIndex, Info, Info + 1, Info + 2, Info + 3, Info + 4, Info + 5, Info + 6, Info + 7);
 		}
+		if (!ret)
+			continue;
 		
 		// calculate the total
 		double Total = 0.0;

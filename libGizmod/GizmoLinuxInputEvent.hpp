@@ -54,7 +54,7 @@ namespace Gizmod {
  * \struct GizmoTimeVal
  * \brief  Wrapper for the C timeval struct (for exposure to Python)
 **/
-typedef struct GizmoTimeVal {
+struct GizmoTimeVal {
 	unsigned int Seconds;							///< Time in Seconds
 	unsigned int MicroSeconds;						///< Time remaining (after Seconds) in MicroSeconds
 	

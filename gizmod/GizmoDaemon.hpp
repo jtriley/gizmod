@@ -45,7 +45,6 @@
 #include "../libH/FileEventWatcher.hpp"
 #include "../libH/SignalHandler.hpp"
 #include "../libH/SocketServer.hpp"
-#include <ext/hash_map>
 #include <map>
 #include <string>
 #include <boost/python.hpp>
