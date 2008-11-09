@@ -1259,7 +1259,7 @@ void GizmoDaemon::initGizmod() {
 			return;
 	} catch (H::Exception & e) {
 		throw e;
-	} catch (exception & e) {
+	} catch (std::exception & e) {
 		throw H::Exception("Failed to Initialize Python!", __FILE__, __FUNCTION__, __LINE__);
 	}
 	
@@ -1448,7 +1448,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 	// try parsing the command line
 	try {
 		store(parse_command_line(argc, argv, CommandLineOptions), VarMap);
-	} catch (exception & e) {
+	} catch (std::exception & e) {
 		cout << VisibleOptions;
 		throw H::Exception("Invalid Command Line Argument(s)");
 	}
@@ -1460,7 +1460,7 @@ bool GizmoDaemon::initialize(int argc, char ** argv) {
 		ifstream ifs(ConfigFile.c_str());
 		if (ifs.is_open())
 			store(parse_config_file(ifs, ConfigFileOptions), VarMap);
-	} catch (exception & e) {
+	} catch (std::exception & e) {
 		cout << VisibleOptions;
 		throw H::Exception("Invalid Configuration File");
 	}
@@ -1564,7 +1564,7 @@ void GizmoDaemon::loadUserScripts() {
 	directory_iterator endItr;
 	for (directory_iterator iter(mConfigDir + USER_SCRIPT_DIR); iter != endItr; iter ++) {
 		if ( (!filesystem::is_directory(*iter)) && (!filesystem::symbolic_link_exists(*iter)) ) {
-			UserScripts.push_back(iter->leaf());
+			UserScripts.push_back(iter->path().leaf());
 		}
 	}
 	
@@ -1717,10 +1717,11 @@ void GizmoDaemon::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSou
 	if (mShuttingDown)
 		return;
 	
-	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) 
+	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) {
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.IsActiveChanged << Event.ElementsChanged << Event.VolumePlaybackChanged << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
-	else
+	} else {
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << Event.Mask << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+        }
 	
 	try {
 		mutex::scoped_lock lock(mMutexScript);
@@ -2188,9 +2189,9 @@ void GizmoDaemon::registerInputEventDevices() {
 	directory_iterator endItr;
 	for (directory_iterator iter(mEventsDir); iter != endItr; iter ++) {
 		if ( (!filesystem::is_directory(*iter)) && (!filesystem::symbolic_link_exists(*iter)) ) {
-			if (iter->leaf().find("event") != 0)
+			if (iter->path().leaf().find("event") != 0)
 				continue;
-			eventsFiles.push_back(mEventsDir + "/" + iter->leaf());
+			eventsFiles.push_back(mEventsDir + "/" + iter->path().leaf());
 		}
 	}
 	

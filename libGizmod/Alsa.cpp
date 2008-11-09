@@ -150,10 +150,11 @@ void Alsa::onAlsaEventMixerElementAttach(AlsaEvent const & Event, AlsaSoundCard 
 **/
 void Alsa::onAlsaEventMixerElementChange(AlsaEvent const & Event, AlsaSoundCard const & SoundCard, AlsaMixer const & Mixer) {
 	// override me
-	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) 
+	if (Event.Type == ALSAEVENT_MIXERELEMENT_CHANGE) {
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << stringconverter(Event.IsActiveChanged) << stringconverter(Event.ElementsChanged) << stringconverter(Event.VolumePlaybackChanged) << "] on Sound Card [" << SoundCard.getCardName() << "] " << Mixer.VolumePlaybackPercent << endl;
-	else
+	} else {
 		cdbg2 << "Mixer Element Changed [" << Mixer.getName() << "] with Mask [" << stringconverter(Event.Mask) << "] on Sound Card [" << SoundCard.getCardName() << "]" << endl;
+        }
 }
 
 /**

@@ -453,11 +453,12 @@ void FileEventWatcher::handleEventsOnFile(struct pollfd & item) {
 			// read from the inotify device
 			char ReadBuffer[NOTIFY_READ_BUF_SIZE];
 			int BytesRead = read(mInotifyFD, ReadBuffer, NOTIFY_READ_BUF_SIZE);
-			if (BytesRead < 0)
+			if (BytesRead < 0) {
 				if (errno == EINTR)
 					return;
 				else
 					throw H::Exception("Failed to Read from Inotify Device!", __FILE__, __FUNCTION__, __LINE__);
+                        }
 				
 			// loop through all of the returned inotify_event structures and produce events
 			int BytesHandled = 0;
