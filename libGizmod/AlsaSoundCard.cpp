@@ -203,15 +203,15 @@ void AlsaSoundCard::init() {
 	mCardHWID = str(format("hw:%1%") % mCardID);
 		
 	// get the card name
-	char * Name;
-	if (snd_card_get_name(mCardID, &Name) == -1) {
+	char * Name = NULL;
+	if (snd_card_get_name(mCardID, &Name) < 0) {
 		mCardName = CARD_NAME_UNKNOWN;
 		cdbg << "Failed to retreive name of Sound Card [" << mCardID << "]" << endl;
 	} else
 		mCardName = Name;		
 
 	// long name
-	if (snd_card_get_longname(mCardID, &Name) == -1) {
+	if (snd_card_get_longname(mCardID, &Name) < 0) {
 		mCardNameLong = CARD_NAME_UNKNOWN;
 		cdbg << "Failed to retreive long name of Sound Card [" << mCardID << "]" << endl;
 	} else

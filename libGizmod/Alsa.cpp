@@ -112,15 +112,17 @@ void Alsa::init() {
 	shutdown();
 	
 	// initialize
-	int ret = -1, CardID;
+	int ret = -1;
+	int CardID = -1;
 	do {
 		// get the next sound card
-		if ((CardID = snd_card_next(&ret)) < 0) {
-			cerr << "Failed to Query Sound Card [" << ret + 1 << "] -- Error Code: " << CardID;
+		if ((ret = snd_card_next(&CardID)) < 0) {
+			cerr << "Failed to Query Sound Card [" << CardID + 1 << "] -- Error Code: " << ret << endl;
 			continue;
 		}
-		if (ret > -1) {
+		if (CardID > -1) {
 			try {
+				cdbg3 << "Initializing Sound Card [" << CardID << "] w/ret [" << ret << "]..." << endl;
 				shared_ptr<AlsaSoundCard> pSoundCard = shared_ptr<AlsaSoundCard>(new AlsaSoundCard(this, CardID));
 				mSoundCards.push_back(pSoundCard);
 			} catch (H::Exception & e) {
@@ -128,7 +130,7 @@ void Alsa::init() {
 				cdbg1 << e.getExceptionMessage() << endl;
 			}
 		}
-	} while (ret != -1);
+	} while (CardID != -1);
 }
 
 /**
