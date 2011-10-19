@@ -231,7 +231,7 @@ boost::shared_ptr<FileWatchee> FileEventWatcher::addFileToWatch(std::string File
 		break;
 	case WATCH_INOUT:
 		flags = O_RDWR;
-		events = POLLIN | POLLOUT;
+		events = POLLIN;// | POLLOUT;
 		ModeString = "Read / Write";
 		break;
 	case WATCH_INVALID:
