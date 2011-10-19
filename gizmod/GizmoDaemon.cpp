@@ -1106,7 +1106,7 @@ std::string GizmoDaemon::getUserScriptDirPaths() {
 	directory_iterator endItr;
 	for (directory_iterator iter(UserScriptDir); iter != endItr; iter ++) {
 		if (filesystem::is_directory(*iter))
-			ret += "sys.path.insert(0, \"" + iter->string() + "\")\n";
+			ret += "sys.path.insert(0, \"" + iter->path().string() + "\")\n";
 	}
 	
 	return ret;
@@ -1564,7 +1564,7 @@ void GizmoDaemon::loadUserScripts() {
 	directory_iterator endItr;
 	for (directory_iterator iter(mConfigDir + USER_SCRIPT_DIR); iter != endItr; iter ++) {
 		if ( (!filesystem::is_directory(*iter)) && (!filesystem::symbolic_link_exists(*iter)) ) {
-			UserScripts.push_back(iter->path().leaf());
+			UserScripts.push_back(iter->path().filename().string());
 		}
 	}
 	
@@ -2189,9 +2189,9 @@ void GizmoDaemon::registerInputEventDevices() {
 	directory_iterator endItr;
 	for (directory_iterator iter(mEventsDir); iter != endItr; iter ++) {
 		if ( (!filesystem::is_directory(*iter)) && (!filesystem::symbolic_link_exists(*iter)) ) {
-			if (iter->path().leaf().find("event") != 0)
+			if (iter->path().filename().string().find("event") != 0)
 				continue;
-			eventsFiles.push_back(mEventsDir + "/" + iter->path().leaf());
+			eventsFiles.push_back(mEventsDir + "/" + iter->path().filename().string());
 		}
 	}
 	

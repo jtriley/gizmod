@@ -154,7 +154,7 @@ void Processes::updateProcessTree() {
 	// get a file listing
 	directory_iterator endItr;
 	for (directory_iterator iter(PROC_PATH); iter != endItr; iter ++) {
-		string StatPath = iter->string() + "/stat";
+		string StatPath = iter->path().string() + "/stat";
 		try {
 			if ( (filesystem::is_directory(*iter)) && (filesystem::exists(path(StatPath))) ) {
 				ifstream StatFile(StatPath.c_str());
