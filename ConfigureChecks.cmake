@@ -46,7 +46,7 @@ SET(SYSCONFDIR ${SYSCONF_INSTALL_DIR})
 
 # set default build type to release
 if (NOT BUILD_VIS_PLUGIN)
-	set(BUILD_VIS_PLUGIN True CACHE BOOLEAN TRUE FORCE)
+	set(BUILD_VIS_PLUGIN False CACHE BOOLEAN FALSE FORCE)
 endif (NOT BUILD_VIS_PLUGIN)
 
 #################################
