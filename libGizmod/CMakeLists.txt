@@ -44,6 +44,9 @@ find_package(Boost REQUIRED QUIET)
 	if (NOT BOOST_SERIALIZATION_FOUND)
 		message(FATAL_ERROR "Boost serialization was not found!\nPlease check your boost development library installation.")
 	endif (NOT BOOST_SERIALIZATION_FOUND)
+	if (NOT BOOST_SYSTEM_FOUND)
+		message(FATAL_ERROR "Boost system was not found!\nPlease check your boost development library installation.")
+	endif (NOT BOOST_SYSTEM_FOUND)
 find_package(PythonLibs REQUIRED)
 find_package(Alsa REQUIRED)
 find_package(X11 REQUIRED)
@@ -121,6 +124,7 @@ target_link_libraries(Gizmod
 	${BOOST_FILESYSTEM_LIBRARY}
 	${BOOST_THREAD_LIBRARY}
 	${BOOST_SERIALIZATION_LIBRARY}
+	${BOOST_SYSTEM_LIBRARY}
 	${BOOST_PYTHON_LIBRARY}
 	${PYTHON_LIBRARIES}
 	${ASOUND_LIBRARY}
