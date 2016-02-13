@@ -21,6 +21,7 @@
 #  BOOST_THREAD-MT_FOUND               True if Boost Thread was found.
 #  BOOST_UNIT_TEST_FRAMEWORK_FOUND     True if Boost Unit Test Framework was found.
 #  BOOST_WSERIALIZATION_FOUND          True if Boost WSerialization was found.
+#  BOOST_SYSTEM_FOUND                  True if Boost System was found.
 #
 #  BOOST_DATE_TIME_LIBRARY             The Boost Date Time libary.
 #  BOOST_FILESYSTEM_LIBRARY            The Boost Filesystem libary.
@@ -35,6 +36,7 @@
 #  BOOST_THREAD_LIBRARY                The Boost Thread libary.
 #  BOOST_UNIT_TEST_FRAMEWORK_LIBRARY   The Boost Unit Test Framework libary.
 #  BOOST_WSERIALIZATION_LIBRARY        The Boost WSerialization libary.
+#  BOOST_SYSTEM_LIBRARY                The Boost System libary.
 #
 #  Copyright (c) 2006 Andreas Schneider <mail@cynapses.org>
 #  Copyright (c) 2007 Wengo
@@ -313,6 +315,15 @@ else (BOOST_LIBRARIES AND BOOST_INCLUDE_DIRS)
       )
     endif (NOT BOOST_WSERIALIZATION_LIBRARY)
 
+    if (NOT BOOST_SYSTEM_LIBRARY)
+      find_library(BOOST_SYSTEM_LIBRARY
+        NAMES
+          boost_system${TMP_BOOST_LIBRARIES_SUFFIX}
+        PATHS
+          ${BOOST_LIBRARIES_SEARCH_DIRS}
+      )
+    endif (NOT BOOST_SYSTEM_LIBRARY)
+
     if (BOOST_DATE_TIME_LIBRARY)
       set(BOOST_DATE_TIME_FOUND TRUE)
     endif (BOOST_DATE_TIME_LIBRARY)
@@ -352,6 +363,9 @@ else (BOOST_LIBRARIES AND BOOST_INCLUDE_DIRS)
     if (BOOST_WSERIALIZATION_LIBRARY)
       set(BOOST_WSERIALIZATION_FOUND TRUE)
     endif (BOOST_WSERIALIZATION_LIBRARY)
+    if (BOOST_SYSTEM_LIBRARY)
+      set(BOOST_SYSTEM_FOUND TRUE)
+    endif (BOOST_SYSTEM_LIBRARY)
 
   endforeach (TMP_BOOST_LIBRARIES_SUFFIX)
 
@@ -437,6 +451,12 @@ else (BOOST_LIBRARIES AND BOOST_INCLUDE_DIRS)
       ${BOOST_WSERIALIZATION_LIBRARY}
     )
   endif (BOOST_WSERIALIZATION_FOUND)
+  if (BOOST_SYSTEM_FOUND)
+    set(BOOST_LIBRARIES
+      ${BOOST_LIBRARIES}
+      ${BOOST_SYSTEM_LIBRARY}
+    )
+  endif (BOOST_SYSTEM_FOUND)
 
   if (BOOST_INCLUDE_DIRS AND BOOST_LIBRARIES)
     set(BOOST_FOUND TRUE)
