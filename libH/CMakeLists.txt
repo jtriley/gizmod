@@ -32,6 +32,9 @@ endif(COMMAND cmake_policy)
 ##############
 
 find_package(Boost REQUIRED)
+	if (NOT BOOST_SYSTEM_FOUND)
+		message(FATAL_ERROR "Boost system was not found!\nPlease check your boost development library installation.")
+	endif (NOT BOOST_SYSTEM_FOUND)
 	if (NOT BOOST_FILESYSTEM_FOUND)
 		message(FATAL_ERROR "Boost filesystem was not found!\nPlease check your boost development library installation.")
 	endif (NOT BOOST_FILESYSTEM_FOUND)
@@ -85,6 +88,7 @@ link_directories(
 )
 
 target_link_libraries(H 
+	${BOOST_SYSTEM_LIBRARY}
 	${BOOST_FILESYSTEM_LIBRARY}
 	${BOOST_THREAD_LIBRARY}
 )

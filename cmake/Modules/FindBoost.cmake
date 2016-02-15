@@ -9,6 +9,7 @@
 #  BOOST_LIBRARIES_SUFFIX - Boost libraries name suffix (e.g -vc71-mt-gd-1_34, -gcc41-mt...)
 #
 #  BOOST_DATE_TIME_FOUND               True if Boost Date Time was found.
+#  BOOST_SYSTEM_FOUND                  True if Boost System was found.
 #  BOOST_FILESYSTEM_FOUND              True if Boost Filesystem was found.
 #  BOOST_IOSTREAMS_FOUND               True if Boost Iostream was found.
 #  BOOST_PRG_EXEC_MONITOR_FOUND        True if Boost Program Exec Monitor was found.
@@ -24,6 +25,7 @@
 #  BOOST_SYSTEM_FOUND                  True if Boost System was found.
 #
 #  BOOST_DATE_TIME_LIBRARY             The Boost Date Time libary.
+#  BOOST_SYSTEM_LIBRARY                The Boost System libary.
 #  BOOST_FILESYSTEM_LIBRARY            The Boost Filesystem libary.
 #  BOOST_IOSTREAMS_LIBRARY             The Boost Iostream libary.
 #  BOOST_PRG_EXEC_MONITOR_LIBRARY      The Boost Program libary.
@@ -195,6 +197,15 @@ else (BOOST_LIBRARIES AND BOOST_INCLUDE_DIRS)
 
     endif (NOT BOOST_DATE_TIME_LIBRARY)
 
+    if (NOT BOOST_SYSTEM_LIBRARY)
+      find_library(BOOST_SYSTEM_LIBRARY
+        NAMES
+          boost_system${TMP_BOOST_LIBRARIES_SUFFIX}
+        PATHS
+          ${BOOST_LIBRARIES_SEARCH_DIRS}
+      )
+    endif (NOT BOOST_SYSTEM_LIBRARY)
+
     if (NOT BOOST_FILESYSTEM_LIBRARY)
       find_library(BOOST_FILESYSTEM_LIBRARY
         NAMES
@@ -327,6 +338,9 @@ else (BOOST_LIBRARIES AND BOOST_INCLUDE_DIRS)
     if (BOOST_DATE_TIME_LIBRARY)
       set(BOOST_DATE_TIME_FOUND TRUE)
     endif (BOOST_DATE_TIME_LIBRARY)
+    if (BOOST_SYSTEM_LIBRARY)
+      set(BOOST_SYSTEM_FOUND TRUE)
+    endif (BOOST_SYSTEM_LIBRARY)
     if (BOOST_FILESYSTEM_LIBRARY)
       set(BOOST_FILESYSTEM_FOUND TRUE)
     endif (BOOST_FILESYSTEM_LIBRARY)
@@ -379,6 +393,12 @@ else (BOOST_LIBRARIES AND BOOST_INCLUDE_DIRS)
       ${BOOST_DATE_TIME_LIBRARY}
     )
   endif (BOOST_DATE_TIME_FOUND)
+  if (BOOST_SYSTEM_FOUND)
+    set(BOOST_LIBRARIES
+      ${BOOST_LIBRARIES}
+      ${BOOST_SYSTEM_LIBRARY}
+    )
+  endif (BOOST_SYSTEM_FOUND)
   if (BOOST_FILESYSTEM_FOUND)
     set(BOOST_LIBRARIES
       ${BOOST_LIBRARIES}
