@@ -31,13 +31,8 @@ endif(COMMAND cmake_policy)
 # Dependencies
 ##############
 
-find_package(Boost REQUIRED)
-	if (NOT BOOST_FILESYSTEM_FOUND)
-		message(FATAL_ERROR "Boost filesystem was not found!\nPlease check your boost development library installation.")
-	endif (NOT BOOST_FILESYSTEM_FOUND)
-	if (NOT BOOST_THREAD-MT_FOUND)
-		message(FATAL_ERROR "Boost thread was not found!\nPlease check your boost development library installation.")
-	endif (NOT BOOST_THREAD-MT_FOUND)
+set(Boost_USE_MULTITHREADED ON)
+find_package(Boost REQUIRED COMPONENTS filesystem thread)
 
 #################################
 # Compiler Switches
@@ -46,11 +41,11 @@ find_package(Boost REQUIRED)
 include_directories(
 	${includes} 
 	${CMAKE_BINARY_DIR}
-	${BOOST_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
 )
 
 add_definitions(
-	${BOOST_DEFINITIONS}
+	${Boost_DEFINITIONS}
 )
 
 #################################
@@ -81,12 +76,12 @@ add_library(H STATIC
 ##############
 
 link_directories(
-	${BOOST_LIBRARY_DIRS}
+	${Boost_LIBRARY_DIRS}
 )
 
-target_link_libraries(H 
-	${BOOST_FILESYSTEM_LIBRARY}
-	${BOOST_THREAD_LIBRARY}
+target_link_libraries(H
+	${Boost_FILESYSTEM_LIBRARY}
+	${Boost_THREAD_LIBRARY}
 )
 
 #################################
